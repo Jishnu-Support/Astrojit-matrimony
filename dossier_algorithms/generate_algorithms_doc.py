@@ -1,0 +1,961 @@
+# -*- coding: utf-8 -*-
+"""
+Generator script for the Complete 51-Page Thirukanitha Vedic Horoscope Algorithm Specification.
+Produces a self-contained, publication-grade HTML document and converts it to PDF using headless Chrome.
+"""
+
+import os
+import subprocess
+
+html_content = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Thirukanitha Vedic Horoscope Dossier: Complete 51-Page Mathematical & Algorithmic Specification</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 14mm 14mm 16mm 14mm;
+    @bottom-center {
+      content: "Page " counter(page) " of " counter(pages);
+      font-size: 8pt;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: #64748b;
+    }
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 9.5pt;
+    line-height: 1.5;
+    color: #0f172a;
+    background: #ffffff;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1, h2, h3, h4, h5 {
+    color: #0f172a;
+    font-weight: 800;
+    margin-top: 1.2em;
+    margin-bottom: 0.4em;
+    page-break-after: avoid;
+  }
+
+  h1 {
+    font-size: 18pt;
+    border-bottom: 2.5px solid #0284c7;
+    padding-bottom: 4px;
+    margin-top: 0;
+    color: #0369a1;
+  }
+
+  h2 {
+    font-size: 13pt;
+    border-bottom: 1.5px solid #cbd5e1;
+    padding-bottom: 3px;
+    color: #0f766e;
+    margin-top: 1.4em;
+  }
+
+  h3 {
+    font-size: 10.5pt;
+    color: #b45309;
+    margin-top: 1em;
+  }
+
+  p {
+    margin: 0.4em 0;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+
+  .avoid-break {
+    page-break-inside: avoid;
+  }
+
+  .header-box {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #ffffff;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+  }
+
+  .header-box h1 {
+    color: #38bdf8;
+    border-bottom: 1px solid #334155;
+    margin: 0 0 6px 0;
+    font-size: 16pt;
+  }
+
+  .header-box p {
+    margin: 2px 0;
+    font-size: 9pt;
+    color: #94a3b8;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 7.5pt;
+    font-weight: 700;
+    border-radius: 4px;
+    background: #e0f2fe;
+    color: #0369a1;
+    margin-right: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 12px 0;
+    font-size: 8.5pt;
+    page-break-inside: avoid;
+  }
+
+  th, td {
+    border: 1px solid #cbd5e1;
+    padding: 4.5px 7px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    background: #f1f5f9;
+    color: #1e293b;
+    font-weight: 700;
+  }
+
+  tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+
+  .formula-box {
+    background: #f8fafc;
+    border-left: 3px solid #0284c7;
+    padding: 8px 12px;
+    margin: 6px 0 10px 0;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 8.5pt;
+    color: #0369a1;
+    border-radius: 0 6px 6px 0;
+    page-break-inside: avoid;
+  }
+
+  .note-box {
+    background: #fffbeb;
+    border-left: 3px solid #f59e0b;
+    padding: 7px 10px;
+    margin: 6px 0;
+    font-size: 8.5pt;
+    color: #92400e;
+    border-radius: 0 6px 6px 0;
+    page-break-inside: avoid;
+  }
+
+  .grid-2 {
+    display: flex;
+    gap: 12px;
+  }
+
+  .grid-2 > div {
+    flex: 1;
+  }
+
+  code {
+    font-family: "Courier New", Courier, monospace;
+    background: #f1f5f9;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 8pt;
+    color: #0f172a;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-box">
+  <h1>THIRUKANITHA VEDIC HOROSCOPE DOSSIER (51 PAGES)</h1>
+  <p><strong>Complete Mathematical, Astronomical & Algorithmic Blueprint (From Scratch)</strong></p>
+  <p>System: Pure Drik Siddhanta (Thirukanitha) • Ayanamsha: Chitra Paksha (Lahiri) • House System: Sripati Bhava Paddhati • Ephemeris: True Planetary Longitudes • Year Basis: 365.25 Solar Days</p>
+</div>
+
+<h2>Table of Dossier Page Groups</h2>
+<table>
+  <thead>
+    <tr>
+      <th style="width: 14%;">Page Range</th>
+      <th style="width: 32%;">Module & Content</th>
+      <th style="width: 54%;">Primary Mathematical / Astrological Algorithms</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Page 1 - 2</strong></td>
+      <td>Title, Astronomical Index & Invocation</td>
+      <td>LMT Desantara correction, Astronomical Solar Day determination, Invocatory verses.</td>
+    </tr>
+    <tr>
+      <td><strong>Page 3 - 4</strong></td>
+      <td>Janana Vivaram (Birth Ephemeris & Coordinates)</td>
+      <td>Sunrise/Sunset (disc center), Udayadi Nazhigai, Nakshatra elapsed/balance, Tithi, Yoga, Karana, Yogi/Avayogi, Lagna Subha/Papa.</td>
+    </tr>
+    <tr>
+      <td><strong>Page 5 - 6</strong></td>
+      <td>Rashi & Navamsha (D1, D9) & Planetary Table</td>
+      <td>Lahiri Ayanamsha subtraction, Nirayana Longitudes, Nakshatra-Pada mapping, Planetary Dignities (Aatchi, Uccham, Neecham, Natpu, Pagai, Samam).</td>
+    </tr>
+    <tr>
+      <td><strong>Page 7</strong></td>
+      <td>Sripati Bhava Sphutam & Bhava Sandhi</td>
+      <td>Trisection of diurnal/nocturnal arcs, Bhava Arambam-Madhya-Mudivu, Bhava Shift (Bhavaka Matram) detection algorithm.</td>
+    </tr>
+    <tr>
+      <td><strong>Page 8 - 12</strong></td>
+      <td>Divisional Varga Charts (D2 to D60)</td>
+      <td>Algorithms for Hora (D2), Drekkana (D3), Chaturthamsha (D4), Saptamamsha (D7), Dashamamsha (D10), Dwadashamsha (D12), Shodashamsha (D16), Trimshamsha (D30), Shashtiamsha (D60).</td>
+    </tr>
+    <tr>
+      <td><strong>Page 13</strong></td>
+      <td>Shadbala & Bhava Bala (6-Fold Potency)</td>
+      <td>Sthana Bala, Dik Bala, Kala Bala, Cheshta Bala, Naisargika Bala, Drik Bala (Drigbala), Ishta/Kashta Bala, Bhava Bala.</td>
+    </tr>
+    <tr>
+      <td><strong>Page 14 - 15</strong></td>
+      <td>Upagrahas (Gulikadi) & Special Lagnas</td>
+      <td>Parashara vs. Kalidasa 8-fold day/night split, Dhumaadi 5 non-luminous planets, Hora/Ghati/Bhava/Sree/Indu/Arudha Lagnas, Beeja/Kshetra Sphutam.</td>
+    </tr>
+    <tr>
+      <td><strong>Page 16 - 17</strong></td>
+      <td>Planetary Relationships & Avasthas</td>
+      <td>Naisargika Maitri, Tatkalika Maitri (2, 3, 4, 10, 11, 12 rule), Panchadha Maitri, Baladi Avasthas, Dasa Mandalam, 18 Dasa Samayams.</td>
+    </tr>
+    <tr>
+      <td><strong>Page 18 - 19</strong></td>
+      <td>Mutual Planetary & Bhava Aspect Angles</td>
+      <td>Full 9x9 angular separation matrix, 12x9 Bhava-to-Planet Drishti angles, auspicious aspect threshold detection.</td>
+    </tr>
+    <tr>
+      <td><strong>Page 20</strong></td>
+      <td>Dashavarga Composite Strength Matrix</td>
+      <td>Evaluation of 10 Vargas, Shubha vs. Ashubha count per planet (Total = 100 points).</td>
+    </tr>
+    <tr>
+      <td><strong>Page 21</strong></td>
+      <td>Pancha Pakshi Sastra</td>
+      <td>5-Bird assignment based on Janma Nakshatra and Shukla/Krishna Paksha, friend/enemy/Padu (death) bird days.</td>
+    </tr>
+    <tr>
+      <td><strong>Page 22 - 30</strong></td>
+      <td>Vimshottari Mahadasha & Bhukti Chronology</td>
+      <td>Sequential 120-year cycle, proportional opening balance, Bhukti start/end dates, age at transition, remedial sthalam, color, grain, deity.</td>
+    </tr>
+    <tr>
+      <td><strong>Page 31 - 33</strong></td>
+      <td>Functional Roles, Tara Balam & Sevvai Dosha</td>
+      <td>Pasakar-Pothakar-Karakar-Vedhakar, 9-Tara matrix, 3-point Sevvai Dosha check (Lagna, Moon, Venus) with classical exceptions.</td>
+    </tr>
+    <tr>
+      <td><strong>Page 34 - 42</strong></td>
+      <td>Vimshottari Antara Dasha Sub-Sub Breakdown</td>
+      <td>Granular sub-sub periods for all 9 Mahadashas calibrated strictly to 365.25 days per astronomical solar year.</td>
+    </tr>
+    <tr>
+      <td><strong>Page 43 - 49</strong></td>
+      <td>Planetary Ashtakavarga & Dual Shodhana</td>
+      <td>Individual Bhinnashtakavarga (BAV) for 7 planets (Total = 337 Bindus), Trikona Shodhana, Ekadhipatya Shodhana, Rashi Pinda, Graha Pinda, Shodhya Pinda.</td>
+    </tr>
+    <tr>
+      <td><strong>Page 50</strong></td>
+      <td>Sarvashtakavarga (SAV) Master Matrix</td>
+      <td>Total 337 bindus distributed across 12 signs, 4 cardinal directions (East, South, West, North), Kendra/Panaphara/Apoklima, Aya vs. Vyaya.</td>
+    </tr>
+    <tr>
+      <td><strong>Page 51</strong></td>
+      <td>Chaldean / Cheiro Numerology</td>
+      <td>Birth number, Life path/Destiny number, Name letter total, Lucky dates, lucky colors, gemstones, beneficial deities.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h2>1. Fundamental Astronomical Engine & Coordinates (Pages 1 - 4)</h2>
+
+<h3>1.1 Time System & Local Mean Time (LMT) Correction</h3>
+<p>All planetary positions are computed at the exact Universal Time (UT) corresponding to the native's local birth event. Indian Standard Time (IST) is synchronized with the reference longitude $82^\circ 30' \text{ E} = 82.5^\circ \text{ E}$.</p>
+<div class="formula-box">
+  Desantara (LMT Correction) in minutes = (Longitude_Place° - 82.5°) × 4.0<br>
+  LMT = Standard_Time + Desantara<br>
+  UT = Standard_Time - 5h 30m = LMT - (Longitude_Place° / 15.0)
+</div>
+<p><strong>Worked Example from Salem ($78^\circ 12' \text{ E}$):</strong></p>
+<div class="formula-box">
+  ΔLongitude = 78.20° - 82.50° = -4.30° = -4° 18'<br>
+  Desantara = -4.30 × 4 = -17.20 minutes = -17 minutes 12 seconds (-0:17:12).
+</div>
+
+<h3>1.2 Chitra Paksha (Lahiri) Ayanamsha Formulation</h3>
+<p>Nirayana (sidereal) longitudes are derived by deducting the true precession arc (Ayanamsha) from the Sayana (tropical) positions computed via high-precision planetary theory (VSOP87 / JPL DE405):</p>
+<div class="formula-box">
+  T = (Julian_Date_TT - 2451545.0) / 36525.0<br>
+  Ayanamsha_Lahiri(T) = 23° 51' 25.53'' + 5029.0966'' × T + 1.1116'' × T² - 0.0001'' × T³ - Nutation_in_Longitude × cos(True_Obliquity)
+</div>
+
+<h3>1.3 Sunrise (`சூரிய உதயம்`) & Sunset (`சூரிய அஸ்தமனம்`) for Disc Center (`பிம்ப மத்தி`)</h3>
+<p>Unlike civil sunrise (which includes atmospheric refraction of 34' plus semi-diameter 16' = 50' below horizon), this system computes the rising/setting of the <strong>center of the solar disc (`பிம்ப மத்தி`)</strong>:</p>
+<div class="formula-box">
+  True Zenith Distance z₀ = 90° + Atmospheric_Refraction(0.5667°)<br>
+  cos(H₀) = [cos(z₀) - sin(Latitude) × sin(Sun_Declination)] / [cos(Latitude) × cos(Sun_Declination)]<br>
+  Half_Day_Arc (Dinamana) = 2 × H₀ (converted to hours)<br>
+  Sunrise_LMT = Local_Apparent_Noon - H₀<br>
+  Sunset_LMT  = Local_Apparent_Noon + H₀
+</div>
+
+<h3>1.4 Udayadi Nazhigai (`உதயாதி நாழிகை`)</h3>
+<p>The elapsed time from local sunrise to the moment of birth, measured in the ancient sexagesimal units of Ghati (Nazhigai) and Vighati (Vinazhigai):</p>
+<div class="formula-box">
+  If Birth_Time >= Sunrise: Elapsed_Hours = Birth_Time - Sunrise<br>
+  If Birth_Time &lt; Sunrise: Elapsed_Hours = (Birth_Time + 24.0) - Previous_Day_Sunrise<br>
+  Total_Nazhigai = Elapsed_Hours / 0.4  (Since 1 Nazhigai = 24 minutes = 0.4 hours)<br>
+  Nazhigai = floor(Total_Nazhigai)<br>
+  Vinazhigai = floor((Total_Nazhigai - Nazhigai) × 60)<br>
+  Tatpara = round((((Total_Nazhigai - Nazhigai) × 60) - Vinazhigai) × 60)
+</div>
+
+<h3>1.5 Janma Nakshatra, Pada & Mathematical Dasha Balance</h3>
+<p>Let $\lambda_{\text{Moon}}$ be the Moon's Nirayana longitude in decimal degrees ($0^\circ \le \lambda_{\text{Moon}} &lt; 360^\circ$):</p>
+<div class="formula-box">
+  Nakshatra_Span = 13° 20' = 13.333333° = 800 arcminutes<br>
+  Pada_Span = 3° 20' = 3.333333° = 200 arcminutes<br>
+  Nakshatra_Index = floor(λ_Moon / 13.333333°)<br>
+  Arc_Within_Star = λ_Moon - (Nakshatra_Index × 13.333333°)<br>
+  Pada = floor(Arc_Within_Star / 3.333333°) + 1<br>
+  <br>
+  Elapsed_Fraction (Garbhasel) = Arc_Within_Star / 13.333333°<br>
+  Remaining_Fraction (Iruppu)  = 1.0 - Elapsed_Fraction<br>
+  <br>
+  Mahadasha_Years = [Ketu: 7, Venus: 20, Sun: 6, Moon: 10, Mars: 7, Rahu: 18, Jupiter: 16, Saturn: 19, Mercury: 17][Lord]<br>
+  Dasha_Balance_Years = Remaining_Fraction × Mahadasha_Years<br>
+  Total_Days = Dasha_Balance_Years × 365.25
+</div>
+
+<h3>1.6 Panchangam Elements (Tithi, Yoga, Karana, Paksha, Ayana)</h3>
+<div class="formula-box">
+  Phase_Angle = (λ_Moon - λ_Sun) mod 360°<br>
+  Tithi_Index = floor(Phase_Angle / 12.0) + 1  (1 to 15: Shukla Paksha; 16 to 30: Krishna Paksha)<br>
+  Karana_Index = floor(Phase_Angle / 6.0) + 1   (Half of Tithi)<br>
+  Yoga_Index   = floor(((λ_Moon + λ_Sun) mod 360°) / 13.333333°) + 1  (1: Vishkambha ... 27: Vaidhriti)<br>
+  Ayana = Uttarayana if (Sayana_Sun between 270° and 90°) else Dakshinayana
+</div>
+
+<h3>1.7 Yogi, Avayogi & Matru Yogi Formulations (Page 4)</h3>
+<div class="formula-box">
+  Yogi_Sphutam = (λ_Sun + λ_Moon + 93° 20') mod 360°<br>
+  Yogi_Nakshatra = floor(Yogi_Sphutam / 13° 20')<br>
+  Yogi_Planet = Vimshottari_Lord(Yogi_Nakshatra)<br>
+  <br>
+  Avayogi_Sphutam = (Yogi_Sphutam + 186° 40') mod 360°  (The 6th Nakshatra from Yogi)<br>
+  Avayogi_Nakshatra = floor(Avayogi_Sphutam / 13° 20')<br>
+  Avayogi_Planet = Vimshottari_Lord(Avayogi_Nakshatra)<br>
+  <br>
+  Matru_Yogi (Duplicate Yogi) = Rashi_Lord(floor(Yogi_Sphutam / 30°))
+</div>
+
+<div class="page-break"></div>
+
+<h2>2. Sripati Bhava Sphutam & House Shift Mechanics (Page 7)</h2>
+
+<h3>2.1 Mathematical Construction of the Sripati Quadrants</h3>
+<p>Unlike Equal or Placidus houses, traditional South Indian Thirukanitha horoscopes uniformly apply <strong>Sripati Bhava Paddhati</strong> (derived from the classical text <em>Sripati Paddhati</em>):</p>
+<div class="formula-box">
+  1. Ascendant (Lagna) = Center of Bhava 1 (B₁) = RAMC & Obliquity solution at Horizon.<br>
+  2. Medium Coeli (MC / Dasama Sphutam) = Center of Bhava 10 (B₁₀) = arctan[tan(RAMC) / cos(ε)].<br>
+  3. Descendant = Center of Bhava 7 (B₇) = (B₁ + 180°) mod 360°.<br>
+  4. Imum Coeli (IC) = Center of Bhava 4 (B₄) = (B₁₀ + 180°) mod 360°.<br>
+  <br>
+  Quadrants are trisected to find the intermediate Bhava Madhyas (Centers):<br>
+  Arc_Asc_to_IC = (B₄ - B₁) mod 360°<br>
+  B₂ = (B₁ + Arc_Asc_to_IC / 3.0) mod 360°<br>
+  B₃ = (B₁ + 2.0 × Arc_Asc_to_IC / 3.0) mod 360°<br>
+  <br>
+  Arc_IC_to_Desc = (B₇ - B₄) mod 360°<br>
+  B₅ = (B₄ + Arc_IC_to_Desc / 3.0) mod 360°<br>
+  B₆ = (B₄ + 2.0 × Arc_IC_to_Desc / 3.0) mod 360°<br>
+  <br>
+  B₈ = (B₂ + 180°) mod 360°;  B₉ = (B₃ + 180°) mod 360°<br>
+  B₁₁ = (B₅ + 180°) mod 360°; B₁₂ = (B₆ + 180°) mod 360°
+</div>
+
+<h3>2.2 Bhava Sandhi (Junctions: Arambam & Mudivu)</h3>
+<p>The boundaries of each Bhava are calculated as the arithmetic midpoints between consecutive centers:</p>
+<div class="formula-box">
+  Arambam(Bhava n) = (B_{n-1} + B_n) / 2.0<br>
+  Mudivu(Bhava n)  = (B_n + B_{n+1}) / 2.0<br>
+  Note: Arambam of Bhava n is strictly equal to the Mudivu of Bhava (n-1).
+</div>
+
+<h3>2.3 Bhava Shift Detection Algorithm (`ஜாதகத்தில் பாவக மாற்றம்`)</h3>
+<div class="formula-box">
+  Rashi_House = floor((λ_Planet - λ_Lagna) / 30°) + 1<br>
+  True_Bhava = n  where  Arambam(Bhava n) &lt;= λ_Planet &lt; Mudivu(Bhava n)<br>
+  If True_Bhava != Rashi_House:<br>
+      Report Bhava_Shift = Planet_Name + "-" + True_Bhava
+</div>
+
+<div class="page-break"></div>
+
+<h2>3. Shodashavarga Divisional Chart Algorithms (Pages 5, 8 - 12, 20)</h2>
+<p>Every divisional chart $D_N$ maps a Nirayana longitude $\lambda$ ($0^\circ \le \lambda &lt; 360^\circ$) to a destination sign index ($0 = \text{Aries}, \dots, 11 = \text{Pisces}$):</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 10%;">Chart</th>
+      <th style="width: 20%;">Name</th>
+      <th style="width: 15%;">Segment Size</th>
+      <th style="width: 55%;">Algorithmic Mapping Rule</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>D1</strong></td>
+      <td>Rashi</td>
+      <td>30° 00'</td>
+      <td><code>sign = floor(λ / 30°)</code></td>
+    </tr>
+    <tr>
+      <td><strong>D2</strong></td>
+      <td>Hora</td>
+      <td>15° 00'</td>
+      <td>In odd signs: 0°-15° = Sun (Leo / 4), 15°-30° = Moon (Cancer / 3). In even signs: 0°-15° = Moon (3), 15°-30° = Sun (4).</td>
+    </tr>
+    <tr>
+      <td><strong>D3</strong></td>
+      <td>Drekkana</td>
+      <td>10° 00'</td>
+      <td>0°-10° = same sign; 10°-20° = (sign + 4) mod 12; 20°-30° = (sign + 8) mod 12.</td>
+    </tr>
+    <tr>
+      <td><strong>D4</strong></td>
+      <td>Chaturthamsha</td>
+      <td>7° 30'</td>
+      <td>Part $k \in \{0, 1, 2, 3\}$: mapped to <code>(sign + k × 3) mod 12</code> (1st, 4th, 7th, 10th Kendra).</td>
+    </tr>
+    <tr>
+      <td><strong>D7</strong></td>
+      <td>Saptamamsha</td>
+      <td>4° 17' 08.57''</td>
+      <td>Part $k \in \{0..6\}$: if sign is odd: <code>(sign + k) mod 12</code>; if sign is even: <code>(sign + 6 + k) mod 12</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>D9</strong></td>
+      <td>Navamsha</td>
+      <td>3° 20'</td>
+      <td>Total navamshas from 0° Aries: <code>N = floor(λ / 3.333333°)</code>. Destination sign = <code>N mod 12</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>D10</strong></td>
+      <td>Dashamamsha</td>
+      <td>3° 00'</td>
+      <td>Part $k \in \{0..9\}$: if sign is odd: <code>(sign + k) mod 12</code>; if sign is even: <code>(sign + 8 + k) mod 12</code> (9th from sign).</td>
+    </tr>
+    <tr>
+      <td><strong>D12</strong></td>
+      <td>Dwadashamsha</td>
+      <td>2° 30'</td>
+      <td>Part $k \in \{0..11\}$: destination sign = <code>(sign + k) mod 12</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>D16</strong></td>
+      <td>Shodashamsha</td>
+      <td>1° 52' 30''</td>
+      <td>Part $k \in \{0..15\}$: Movable signs start Aries (0); Fixed start Leo (4); Dual start Sagittarius (8): <code>(start + k) mod 12</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>D30</strong></td>
+      <td>Trimshamsha</td>
+      <td>Variable</td>
+      <td>Odd signs: 0°-5° Mars (Aries), 5°-10° Sat (Aquarius), 10°-18° Jup (Sagittarius), 18°-25° Merc (Gemini), 25°-30° Ven (Taurus). Even signs: inverted degree ranges and signs.</td>
+    </tr>
+    <tr>
+      <td><strong>D60</strong></td>
+      <td>Shashtiamsha</td>
+      <td>0° 30'</td>
+      <td>Part $k = \text{floor}((\lambda \pmod{30^\circ}) / 0.5^\circ) \in \{0..59\}$. Associated with 60 Shashtiamsha deities; odd signs sequence 1 to 60, even signs sequence 60 down to 1.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h2>4. Complete Shadbala (6-Fold Strength) Formulation (Page 13)</h2>
+<p>Shadbala measures the absolute physical, celestial, and temporal strength of the 7 planets (Sun to Saturn) in Virupas (60 Virupas = 1 Rupa). All values in Page 13 are printed in Rupas ($= \text{Virupas} / 60$).</p>
+
+<h3>4.1 Sthana Bala (Positional Strength - Max ~390 Virupas)</h3>
+<p>Sum of five sub-components:</p>
+<div class="formula-box">
+  Sthana_Bala = Uccha_Bala + Saptavargaja_Bala + Ojayugmarasyamsa_Bala + Kendradi_Bala + Drekkana_Bala<br>
+  - Uccha_Bala: Degrees from deep debilitation point (Neecha) / 3.0 (Max = 60 Virupas).<br>
+  - Saptavargaja_Bala: Sum of dignities across D1, D2, D3, D7, D9, D12, D30 (Moolatrikona: 45, Swakshetra: 30, Mitra: 15, Sama: 7.5, Satru: 3.75).<br>
+  - Kendradi_Bala: In Kendra (1, 4, 7, 10) = 60 Virupas; Panaphara (2, 5, 8, 11) = 30; Apoklima (3, 6, 9, 12) = 15.<br>
+  - Ojayugmarasyamsa_Bala: 15 Virupas if male planet in odd sign/navamsha, or female planet in even sign/navamsha.<br>
+  - Drekkana_Bala: 15 Virupas according to male/hermaphrodite/female planetary lordship over 1st/2nd/3rd decanate.
+</div>
+
+<h3>4.2 Dik Bala (Directional Strength - Max 60 Virupas)</h3>
+<div class="formula-box">
+  Zero-point (Nirbala): Jupiter & Mercury = 7th house (Descendant); Sun & Mars = 4th house (Nadir);<br>
+  Saturn = 1st house (Ascendant); Moon & Venus = 10th house (Zenith).<br>
+  Dik_Bala = |λ_Planet - Zero_Point_Degree| / 3.0  (if > 180°, subtract from 360°). Max = 60 Virupas.
+</div>
+
+<h3>4.3 Kala Bala (Temporal Strength - Max ~300 Virupas)</h3>
+<div class="formula-box">
+  Kala_Bala = Natonnata_Bala + Paksha_Bala + Tribhaga_Bala + Varsha-Masa-Dina-Hora_Bala + Ayana_Bala + Yuddha_Bala<br>
+  - Natonnata: Moon, Mars, Saturn strong at midnight (60); Sun, Jupiter, Venus strong at noon (60); Mercury always 60.<br>
+  - Paksha_Bala: Benefics gain strength in Shukla Paksha; Malefics gain strength in Krishna Paksha (Max = 60).<br>
+  - Ayana_Bala: Function of planetary declination (Kranti). Sun, Mars, Jupiter, Venus gain strength with North declination; Moon, Saturn with South declination.
+</div>
+
+<h3>4.4 Cheshta Bala (Motional Strength - Max 60 Virupas)</h3>
+<div class="formula-box">
+  Computed from planetary speed relative to mean motion:<br>
+  Retrograde (Vakra) = 60 Virupas; Stationary (Anuvakra) = 30 Virupas; Fast (Vikala) = 45 Virupas;<br>
+  Slow (Manda) = 15 Virupas. (For Sun and Moon, Cheshta Bala equals their Ayana Bala).
+</div>
+
+<h3>4.5 Naisargika Bala (Natural Luminosity - Fixed Constant)</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Planet</th>
+      <th>Sun (சூரி)</th>
+      <th>Moon (சந்)</th>
+      <th>Venus (சுக்)</th>
+      <th>Jupiter (குரு)</th>
+      <th>Mercury (புத)</th>
+      <th>Mars (செவ்)</th>
+      <th>Saturn (சனி)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Virupas</strong></td>
+      <td>60.00</td>
+      <td>51.43</td>
+      <td>42.86</td>
+      <td>34.29</td>
+      <td>25.71</td>
+      <td>17.14</td>
+      <td>8.57</td>
+    </tr>
+    <tr>
+      <td><strong>Rupas (Page 13)</strong></td>
+      <td><strong>1.000</strong></td>
+      <td><strong>0.857</strong></td>
+      <td><strong>0.714</strong></td>
+      <td><strong>0.571</strong></td>
+      <td><strong>0.428</strong></td>
+      <td><strong>0.286</strong></td>
+      <td><strong>0.143</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>4.6 Drik Bala / Drigbala (Aspect Strength)</h3>
+<div class="formula-box">
+  Evaluates the angular distance θ = (λ_Aspecting - λ_Aspectee) mod 360°.<br>
+  Aspect Value = piecewise linear function based on Parasara slokas:<br>
+  - If 30° &lt; θ &lt;= 60°: Aspect = (θ - 30°) / 2<br>
+  - If 60° &lt; θ &lt;= 90°: Aspect = (θ - 60°) + 15°<br>
+  - If 90° &lt; θ &lt;= 120°: Aspect = (120° - θ) / 2 + 30°<br>
+  - If 120° &lt; θ &lt;= 150°: Aspect = (150° - θ)<br>
+  - If 150° &lt; θ &lt;= 180°: Aspect = (θ - 150°) × 2 (Special full aspect at 180° = 60 Virupas)<br>
+  Special aspects added: Mars 4th/8th (100%), Jupiter 5th/9th (100%), Saturn 3rd/10th (100%).<br>
+  Benefic aspects yield positive values; malefic aspects yield negative values.
+</div>
+
+<h3>4.7 Ishta Bala & Kashta Bala (Page 13)</h3>
+<div class="formula-box">
+  Ishta_Bala = sqrt(Uccha_Bala × Cheshta_Bala) / 60.0  (Expressed in Rupas, 0.0 to 1.0)<br>
+  Kashta_Bala = sqrt((60.0 - Uccha_Bala) × (60.0 - Cheshta_Bala)) / 60.0
+</div>
+
+<div class="page-break"></div>
+
+<h2>5. Upagrahas: Parashara & Kalidasa Dual Methods (Pages 14 - 15)</h2>
+<p>Each daytime (Sunrise to Sunset) and nighttime (Sunset to Sunrise) period is partitioned into <strong>8 equal parts (Kalas)</strong>. The 8 parts are allocated sequentially to the 7 weekdays plus an empty 8th lord-less segment.</p>
+
+<h3>5.1 Segment Lord Order for Day and Night</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Weekday</th>
+      <th>Day Part 1 to 7 Lord Sequence</th>
+      <th>Night Part 1 to 7 Lord Sequence</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Sunday</strong></td>
+      <td>Sun, Mars, Jup, Merc, Ven, Sat, Moon</td>
+      <td>Jup, Merc, Ven, Sat, Moon, Sun, Mars</td>
+    </tr>
+    <tr>
+      <td><strong>Monday</strong></td>
+      <td>Moon, Sun, Mars, Jup, Merc, Ven, Sat</td>
+      <td>Ven, Sat, Moon, Sun, Mars, Jup, Merc</td>
+    </tr>
+    <tr>
+      <td><strong>Tuesday</strong></td>
+      <td>Mars, Jup, Merc, Ven, Sat, Moon, Sun</td>
+      <td>Sat, Moon, Sun, Mars, Jup, Merc, Ven</td>
+    </tr>
+    <tr>
+      <td><strong>Wednesday</strong></td>
+      <td>Merc, Ven, Sat, Moon, Sun, Mars, Jup</td>
+      <td>Sun, Mars, Jup, Merc, Ven, Sat, Moon</td>
+    </tr>
+    <tr>
+      <td><strong>Thursday</strong></td>
+      <td>Jup, Merc, Ven, Sat, Moon, Sun, Mars</td>
+      <td>Moon, Sun, Mars, Jup, Merc, Ven, Sat</td>
+    </tr>
+    <tr>
+      <td><strong>Friday</strong></td>
+      <td>Ven, Sat, Moon, Sun, Mars, Jup, Merc</td>
+      <td>Mars, Jup, Merc, Ven, Sat, Moon, Sun</td>
+    </tr>
+    <tr>
+      <td><strong>Saturday</strong></td>
+      <td>Sat, Moon, Sun, Mars, Jup, Merc, Ven</td>
+      <td>Merc, Ven, Sat, Moon, Sun, Mars, Jup</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>5.2 Upagraha Assignment & The Dual Algorithmic Split</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Upagraha</th>
+      <th>Tamil Name</th>
+      <th>Sub-period Ruler</th>
+      <th>Parashara Method (`பராசரர் முறை`)</th>
+      <th>Kalidasa Method (`காளிதாசர் முறை`)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Kala</strong></td>
+      <td>காலன்</td>
+      <td>Sun</td>
+      <td>Rising degree at <strong>START</strong> of Sun's part</td>
+      <td>Rising degree at <strong>END</strong> of Sun's part</td>
+    </tr>
+    <tr>
+      <td><strong>Mrityu</strong></td>
+      <td>மிருத்யு</td>
+      <td>Mars</td>
+      <td>Rising degree at <strong>START</strong> of Mars's part</td>
+      <td>Rising degree at <strong>END</strong> of Mars's part</td>
+    </tr>
+    <tr>
+      <td><strong>Ardhaprahara</strong></td>
+      <td>அர்த்தப்பிரஹரன்</td>
+      <td>Mercury</td>
+      <td>Rising degree at <strong>START</strong> of Mercury's part</td>
+      <td>Rising degree at <strong>END</strong> of Mercury's part</td>
+    </tr>
+    <tr>
+      <td><strong>Yamakantaka</strong></td>
+      <td>யமகண்டன்</td>
+      <td>Jupiter</td>
+      <td>Rising degree at <strong>START</strong> of Jupiter's part</td>
+      <td>Rising degree at <strong>END</strong> of Jupiter's part</td>
+    </tr>
+    <tr>
+      <td><strong>Gulika / Mandi</strong></td>
+      <td>குளிகன் / மாந்தி</td>
+      <td>Saturn</td>
+      <td>Rising degree at <strong>START</strong> of Saturn's part</td>
+      <td>Rising degree at <strong>END</strong> of Saturn's part</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>5.3 Dhumaadi Upagraha Longitudes (Calculated from Sun $\lambda_{\odot}$)</h3>
+<div class="formula-box">
+  Dhuma (`தூமன்`)         = (λ_Sun + 133° 20') mod 360°<br>
+  Vyatipata (`வியதிபாதன்`)   = (360° - Dhuma) mod 360° = (226° 40' - λ_Sun) mod 360°<br>
+  Parivesha (`பரிவேடன்`)     = (Vyatipata + 180°) mod 360° = (46° 40' - λ_Sun) mod 360°<br>
+  Indradhanus (`இந்திரதனுஸ்`) = (360° - Parivesha) mod 360° = (λ_Sun + 313° 20') mod 360°<br>
+  Upaketu (`உபகேது`)        = (Indradhanus + 16° 40') mod 360° = (λ_Sun - 30° 00') mod 360°
+</div>
+
+<h3>5.4 Special Sensitive Sphutas (Page 15)</h3>
+<div class="formula-box">
+  - Hora Lagna (HL): λ_Sun + (Elapsed_Nazhigai × 30° / 2.5) mod 360°<br>
+  - Ghati Lagna (GL): λ_Sun + (Elapsed_Nazhigai × 30° / 1.0) mod 360°<br>
+  - Bhava Lagna (BL): λ_Sun + (Elapsed_Nazhigai × 30° / 5.0) mod 360°<br>
+  - Sree Lagna (SL):  λ_Lagna + (Arc_Moon_in_Nakshatra / 13°20') × 30° mod 360°<br>
+  - Indu Lagna: Sum of Rashi-ray units of 9th lords from Lagna and Moon, projected from Moon's sign.<br>
+  - Beeja Sphutam (Male fertility): (λ_Sun + λ_Venus + λ_Jupiter) mod 360°<br>
+  - Kshetra Sphutam (Female fertility): (λ_Moon + λ_Mars + λ_Jupiter) mod 360°<br>
+  - 22nd Drekkana: Longitude of (Lagna + 210°) in D3.<br>
+  - 64th Navamsha: Longitude of (Moon + 210°) in D9.
+</div>
+
+<div class="page-break"></div>
+
+<h2>6. Complete Ashtakavarga Reductions & Pinda Sadhana (Pages 43 - 50)</h2>
+
+<h3>6.1 The 337 Invariant Bindus of Bhinnashtakavarga (BAV)</h3>
+<p>Each of the 7 planets contributes benefic dots (Bindus) to each sign based on fixed classical reception distances from the 7 planets plus Lagna:</p>
+<div class="formula-box">
+  Sun BAV = 48 Bindus  |  Moon BAV = 49 Bindus  |  Mars BAV = 39 Bindus<br>
+  Mercury BAV = 54 Bindus  |  Jupiter BAV = 56 Bindus  |  Venus BAV = 52 Bindus<br>
+  Saturn BAV = 39 Bindus<br>
+  Grand Total Sarvashtakavarga (SAV) = 48 + 49 + 39 + 54 + 56 + 52 + 39 = 337 Bindus (Invariant).
+</div>
+
+<h3>6.2 Step 1: Trikona Shodhana (Trinal Reduction)</h3>
+<p>Signs are partitioned into 4 elemental triads (Trikonas):</p>
+<ul>
+  <li>Fire: Aries (1), Leo (5), Sagittarius (9)</li>
+  <li>Earth: Taurus (2), Virgo (6), Capricorn (10)</li>
+  <li>Air: Gemini (3), Libra (7), Aquarius (11)</li>
+  <li>Water: Cancer (4), Scorpio (8), Pisces (12)</li>
+</ul>
+<div class="formula-box">
+  For each triad {s₁, s₂, s₃} with bindus {b₁, b₂, b₃}:<br>
+  min_val = min(b₁, b₂, b₃)<br>
+  Reduced_Bindu(s) = b_s - min_val  for each s in triad.<br>
+  (If all three signs have equal bindus, all three become 0).
+</div>
+
+<h3>6.3 Step 2: Ekadhipatya Shodhana (Dual Ownership Reduction)</h3>
+<p>Applied to signs sharing a common planetary ruler (Mars: 1 & 8; Mercury: 3 & 6; Jupiter: 9 & 12; Venus: 2 & 7; Saturn: 10 & 11). Sun (5) and Moon (4) are single-owned and never reduced in this step:</p>
+<div class="formula-box">
+  Let the dual signs be s₁ and s₂ with post-Trikona bindus b₁ and b₂:<br>
+  Case 1: Both signs have 0 bindus → No change.<br>
+  Case 2: One sign has 0 bindus → The other sign retains its bindus.<br>
+  Case 3: Both signs have planets occupied → Retain original bindus in both.<br>
+  Case 4: Neither sign has a planet occupied:<br>
+          If b₁ == b₂, set both to 0.<br>
+          If b₁ != b₂, set both to min(b₁, b₂).<br>
+  Case 5: One sign is occupied, one is unoccupied:<br>
+          If occupied sign has fewer bindus than unoccupied sign, reduce unoccupied to occupied's count.<br>
+          If occupied sign has more bindus, reduce unoccupied sign to 0.
+</div>
+
+<h3>6.4 Step 3: Pinda Sadhana (Rashi Pinda, Graha Pinda & Shodhya Pinda)</h3>
+<div class="formula-box">
+  Rashi_Gunakara (Multipliers for signs 1 to 12):<br>
+  [Aries: 7, Taurus: 10, Gemini: 8, Cancer: 4, Leo: 10, Virgo: 5, Libra: 7, Scorpio: 8, Sagittarius: 9, Capricorn: 5, Aquarius: 11, Pisces: 12]<br>
+  Rashi_Pinda = Sum(Final_Reduced_Bindus[sign] × Rashi_Gunakara[sign]) for sign = 1..12<br>
+  <br>
+  Graha_Gunakara (Multipliers for occupant planets):<br>
+  [Sun: 5, Moon: 5, Mars: 8, Mercury: 5, Jupiter: 10, Venus: 7, Saturn: 5]<br>
+  Graha_Pinda = Sum(Final_Reduced_Bindus[sign] × Graha_Gunakara[Planet_in_sign]) for all planets<br>
+  <br>
+  Shodhya_Pinda = Rashi_Pinda + Graha_Pinda
+</div>
+
+<h3>6.5 Sarvashtakavarga Quadrant & Directional Metrics (Page 50)</h3>
+<div class="formula-box">
+  Directional Sums:<br>
+  - East (`கிழக்கு`): Aries (1) + Leo (5) + Sagittarius (9)<br>
+  - South (`தெற்கு`): Taurus (2) + Virgo (6) + Capricorn (10)<br>
+  - West (`மேற்கு`): Gemini (3) + Libra (7) + Aquarius (11)<br>
+  - North (`வடக்கு`): Cancer (4) + Scorpio (8) + Pisces (12)<br>
+  <br>
+  House Groupings:<br>
+  - Kendra (`கேந்திரம்`): Houses 1 + 4 + 7 + 10<br>
+  - Panaphara (`பணபரம்`): Houses 2 + 5 + 8 + 11<br>
+  - Apoklima (`ஆபோக்லீயம்`): Houses 3 + 6 + 9 + 12<br>
+  - Upachaya (`உபசெயக்`): Houses 3 + 6 + 10 + 11<br>
+  - Trikona (`திரிகோணம்`): Houses 1 + 5 + 9<br>
+  - Aya (`வரவினம்` / Income): 11th House SAV Bindus<br>
+  - Vyaya (`செலவினம்` / Expense): 12th House SAV Bindus
+</div>
+
+<div class="page-break"></div>
+
+<h2>7. Vimshottari Sub-period Mathematical Calendar (Pages 22 - 30, 34 - 42)</h2>
+<p>The timeline of all Mahadashas, Bhuktis, and Antaras is constructed using the precise astronomical solar year constant:</p>
+<div class="formula-box">
+  1 Solar Year = 365.25 Days (Explicitly certified on every PDF table)<br>
+  <br>
+  Bhukti_Span_Days = (Mahadasha_Years × Bhukti_Years / 120.0) × 365.25<br>
+  Antara_Span_Days = (Mahadasha_Years × Bhukti_Years × Antara_Years / (120.0 × 120.0)) × 365.25<br>
+  <br>
+  End_Date(Subperiod) = Start_Date + Subperiod_Span_Days
+</div>
+
+<h2>8. Sevvai Dosha (Mars / Kuja Dosha) Tri-Point Evaluation (Page 33)</h2>
+<p>The presence or cancellation of Kuja Dosha is algorithmically evaluated from three pivotal reference points:</p>
+<div class="formula-box">
+  Evaluate Mars placement relative to:<br>
+  1. Lagna (Ascendant)<br>
+  2. Chandra (Moon Sign)<br>
+  3. Sukra (Venus Sign)<br>
+  <br>
+  Afflicted Houses = {1, 2, 4, 7, 8, 12}<br>
+  <br>
+  Standard Cancellation Rules Applied in Engine:<br>
+  - Mars in Aries, Scorpio (own signs) or Capricorn (exalted) → Dosha cancelled.<br>
+  - Mars in Cancer (debilitated) → Dosha neutralized.<br>
+  - Mars conjunct or aspected by Jupiter or Moon → Complete cancellation.<br>
+  - 2nd house Mars in Gemini or Virgo → Cancelled.<br>
+  - 4th house Mars in Aries or Scorpio → Cancelled.<br>
+  - 7th house Mars in Cancer or Capricorn → Cancelled.<br>
+  - 8th house Mars in Sagittarius or Pisces → Cancelled.<br>
+  - 12th house Mars in Taurus or Libra → Cancelled.
+</div>
+
+<h2>9. Chaldean / Cheiro Numerology Formulation (Page 51)</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Letters</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>1</strong></td><td>A, I, J, Q, Y</td></tr>
+    <tr><td><strong>2</strong></td><td>B, K, R</td></tr>
+    <tr><td><strong>3</strong></td><td>C, G, L, S</td></tr>
+    <tr><td><strong>4</strong></td><td>D, M, T</td></tr>
+    <tr><td><strong>5</strong></td><td>E, H, N, X</td></tr>
+    <tr><td><strong>6</strong></td><td>U, V, W</td></tr>
+    <tr><td><strong>7</strong></td><td>O, Z</td></tr>
+    <tr><td><strong>8</strong></td><td>F, P</td></tr>
+  </tbody>
+</table>
+<div class="formula-box">
+  Name_Number = Digital_Root(Sum of letter values for all characters in full name)<br>
+  Birth_Number (Body / `உடல் எண்`) = Digital_Root(Day of Birth)  [e.g., 25th -> 2+5 = 7]<br>
+  Destiny_Number (Life / `உயிர் எண்`) = Digital_Root(Day + Month + Year)  [e.g., 25-03-1983 -> 28 -> 10 -> 1]
+</div>
+
+<div class="page-break"></div>
+
+<h2>10. Complete Thirukanitha Drik Ganitha Computational Architecture (Summary)</h2>
+<p>This technical summary consolidates the end-to-end mathematical and astronomical methodology implemented in the local engine for calculating the entire 51-page Thirukanitha Vedic Horoscope dossier:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 25%;">Astrological Domain</th>
+      <th style="width: 35%;">Algorithmic Principle</th>
+      <th style="width: 40%;">Core Mathematical Equation / Standard</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Astronomical Ephemeris</strong></td>
+      <td>Drik Siddhanta (Thirukanitha) based on high-precision geocentric planetary theory (VSOP87 / JPL Ephemeris).</td>
+      <td><code>λ_Sayana = VSOP87(Planet, JD_UT)</code><br><code>λ_Nirayana = (λ_Sayana - Ayanamsha_Lahiri) mod 360°</code></td>
+    </tr>
+    <tr>
+      <td><strong>Ayanamsha Model</strong></td>
+      <td>True Chitra Paksha (Lahiri) Ayanamsha. Precession rate: 50.29'' per tropical year.</td>
+      <td><code>Ayanamsha = 23° 51' 25.53'' + 5029.0966'' × T + 1.1116'' × T²</code><br>Aligns Spica (Chitra) exactly at 180° 00' 00''.</td>
+    </tr>
+    <tr>
+      <td><strong>House System (Bhava Sphutam)</strong></td>
+      <td>Sripati Bhava Paddhati with true diurnal/nocturnal quadrant trisection.</td>
+      <td>Ascendant = 1st House Madhya; Midheaven (MC) = 10th House Madhya.<br>Intermediate centers derived by trisecting quadrant arcs.<br><code>Arambam(n) = (Madhya(n-1) + Madhya(n)) / 2</code><br><code>Mudivu(n) = (Madhya(n) + Madhya(n+1)) / 2</code></td>
+    </tr>
+    <tr>
+      <td><strong>Bhava Chalit Shifts</strong></td>
+      <td>Dynamic house membership determined by true cusp boundaries rather than equal 30° rashi boundaries.</td>
+      <td>If <code>Arambam(n) &lt;= λ_Planet &lt; Mudivu(n)</code> and <code>n != Rashi_House</code>, the planet undergoes Bhava Chalit shift.</td>
+    </tr>
+    <tr>
+      <td><strong>Vimshottari Dasha Engine</strong></td>
+      <td>Proportional Nakshatra arc elapsed based on Moon's longitude, computed using astronomical solar year.</td>
+      <td><code>Balance = [1 - (λ_Moon mod 13°20') / 13°20'] × Dasha_Years</code><br>Duration standard: <strong>365.25 days</strong> per Dasha year.<br><code>Bhukti_Days = (MD_Years × Bhukti_Years / 120.0) × 365.25</code></td>
+    </tr>
+    <tr>
+      <td><strong>Shadbala Potency (6-Fold)</strong></td>
+      <td>Classical Parashari Virupas and Rupas (1 Rupa = 60 Virupas).</td>
+      <td><code>Total_Bala = Sthana + Dig + Kaala + Chesta + Naisargika + Drik</code><br><code>Ishta = sqrt(Uccha × Chesta)</code>; <code>Kashta = sqrt((60 - Uccha) × (60 - Chesta))</code></td>
+    </tr>
+    <tr>
+      <td><strong>Upagrahas (Time-Based)</strong></td>
+      <td>Mandhyadhi Upagrahas (Mandi, Gulika, Kaala, Ardhaprahara, Yamaghantaka).</td>
+      <td>Dinamana and Ratrimana divided into 8 equal parts.<br>Parashara Tradition: Longitude at start of segment.<br>Kalidasa Tradition: Longitude at end of segment.</td>
+    </tr>
+    <tr>
+      <td><strong>Upagrahas (Mathematical)</strong></td>
+      <td>Dhumyadhi 5 non-luminous planets projected from Sun's longitude.</td>
+      <td><code>Dhuma = λ_Sun + 133°20'</code><br><code>Vyatipata = 360° - Dhuma</code><br><code>Parivesha = Vyatipata + 180°</code><br><code>Indradhanus = 360° - Parivesha</code><br><code>Upaketu = Indradhanus + 16°40'</code></td>
+    </tr>
+    <tr>
+      <td><strong>Ashtakavarga & Shodhana</strong></td>
+      <td>337 Sarvashtakavarga bindus with two-stage classical reductions.</td>
+      <td>1. Trikona Shodhana (subtraction of trinal minimum).<br>2. Ekadhipatya Shodhana (dual lordship reduction).<br>3. Shodhya Pindas = Rashi Pinda + Graha Pinda.</td>
+    </tr>
+    <tr>
+      <td><strong>Divisional Vargas (D1 - D60)</strong></td>
+      <td>Complete Parashari Shodashavarga and Shashtiamsha divisional systems.</td>
+      <td>Includes D1 (Rashi), D2 (Hora), D3 (Drekkana), D4, D7, D9 (Navamsha), D10, D12, D16, D20, D24, D27, D30, D40, D45, and D60 (Shashtiamsha).</td>
+    </tr>
+    <tr>
+      <td><strong>Sensitive Sensitive Points</strong></td>
+      <td>Khara Drekkana, Navamsha, and reproductive vitality indices.</td>
+      <td><code>22nd Drekkana = Lagna + 210°</code><br><code>64th Navamsha = Moon + 210°</code><br><code>Beeja Sphutam (Male) = Sun + Venus + Jupiter</code><br><code>Kshetra Sphutam (Female) = Moon + Mars + Jupiter</code></td>
+    </tr>
+    <tr>
+      <td><strong>Chevvai / Kuja Dosha</strong></td>
+      <td>Tri-point evaluation (Lagna, Moon, Venus) with classical Parashari exemptions.</td>
+      <td>Checked across houses 1, 2, 4, 7, 8, 12.<br>Exemptions: Own sign (Aries, Scorpio), exaltation (Capricorn), debilitation (Cancer), Jupiter aspect, and specific house-sign combinations.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 20px 0 10px 0;">
+<p style="text-align: center; font-size: 8pt; color: #64748b;">
+  Generated for Complete Algorithmic & Mathematical Verification • Pure Thirukanitha Drik Ganitha Specification
+</p>
+
+</body>
+</html>
+"""
+
+html_path = r"C:\Users\HP\.gemini\antigravity\scratch\astrojit\dossier_algorithms\thirukanitha_51page_algorithms.html"
+pdf_path  = r"C:\Users\HP\.gemini\antigravity\scratch\astrojit\dossier_algorithms\thirukanitha_51page_algorithms.pdf"
+
+with open(html_path, "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print(f"HTML successfully generated at: {html_path}")
+
+# Convert HTML to PDF using Chrome Headless
+chrome_cmd = [
+    r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+    "--headless=new",
+    "--disable-gpu",
+    "--no-pdf-header-footer",
+    f"--print-to-pdf={pdf_path}",
+    html_path
+]
+
+print("Rendering PDF via headless Chrome...")
+res = subprocess.run(chrome_cmd, capture_output=True, text=True)
+if os.path.exists(pdf_path) and os.path.getsize(pdf_path) > 0:
+    print(f"PDF successfully generated at: {pdf_path} (Size: {os.path.getsize(pdf_path)} bytes)")
+else:
+    print(f"Error generating PDF. Returncode: {res.returncode}. Stderr: {res.stderr}")

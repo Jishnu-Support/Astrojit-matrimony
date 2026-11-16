@@ -1,0 +1,3227 @@
+{
+  "clients": [
+    {
+      "id": "client-1",
+      "name": "Aarav Kumar Sharma",
+      "fatherName": "Vikram Sharma",
+      "motherName": "Sunita Sharma",
+      "dob": "1996-08-15",
+      "dobTime": "06:30",
+      "dobPlace": "New Delhi, India",
+      "mobile": "9123456789",
+      "passwordHash": "$2b$08$f2748.gAPEL1oBlcOc/wL.kjKvrdnGkW78wyV0kZ2aQxMmx7E.Xge",
+      "astrologerReferralCode": "PANDIT101",
+      "createdAt": "2026-02-20T14:20:00.000Z",
+      "isMatchmakingSubscribed": true,
+      "clientCode": "CLI-910000",
+      "plainInitialPassword": "Astro@123"
+    },
+    {
+      "id": "client-2",
+      "name": "Pooja Iyer",
+      "fatherName": "Narayanan Iyer",
+      "motherName": "Lakshmi Iyer",
+      "dob": "1998-11-23",
+      "dobTime": "17:45",
+      "dobPlace": "Chennai, Tamil Nadu",
+      "mobile": "9345678901",
+      "passwordHash": "$2b$08$f2748.gAPEL1oBlcOc/wL.kjKvrdnGkW78wyV0kZ2aQxMmx7E.Xge",
+      "astrologerReferralCode": "ASTROVEDA",
+      "createdAt": "2026-03-01T09:15:00.000Z",
+      "clientCode": "CLI-911111",
+      "plainInitialPassword": "Astro@123"
+    },
+    {
+      "id": "client-314cb57d",
+      "clientCode": "CLI-417378",
+      "name": "Mr. K",
+      "fatherName": "Father",
+      "motherName": "Mother",
+      "gender": "male",
+      "dob": "1993-11-04",
+      "dobTime": "19:46:00",
+      "dobPlace": "Krishnagiri (Tamil Nadu, India)",
+      "nativePlace": "Krishnagiri (Tamil Nadu, India)",
+      "mobile": "9845112233",
+      "email": "",
+      "gotra": "",
+      "passwordHash": "$2b$08$1Q9d6FcsGO0jdXKOIhDNUONgDFUvCqHJDKBDteW4RR5DmH0cFX3K.",
+      "plainInitialPassword": "Astro@489",
+      "astrologerReferralCode": "PANDIT101",
+      "registeredByAstrologerId": "astro-1",
+      "createdAt": "2026-11-13T08:03:03.575Z",
+      "isMatchmakingSubscribed": false,
+      "country": "India",
+      "state": "Tamil Nadu",
+      "city": "Krishnagiri",
+      "latitude": "12° 31' N",
+      "longitude": "78° 13' E",
+      "coordinates": "12° 31' N , 78° 13' E",
+      "dobTime12": "07:46:00 PM",
+      "starBasis": "moon",
+      "updatedAt": "2026-11-16T03:58:39.743Z"
+    },
+    {
+      "id": "client-15750017",
+      "clientCode": "CLI-149886",
+      "name": "Kavya Sundaram",
+      "fatherName": "Sundaram Raman",
+      "motherName": "Meenakshi Sundaram",
+      "gender": "male",
+      "dob": "2026-10-30",
+      "dobTime": "04:15:30",
+      "dobPlace": "Chennai (Tamil Nadu, India)",
+      "nativePlace": "Chennai (Tamil Nadu, India)",
+      "country": "India",
+      "state": "Tamil Nadu",
+      "city": "Chennai",
+      "latitude": "13° 05' N",
+      "longitude": "80° 16' E",
+      "coordinates": "13° 05' N , 80° 16' E",
+      "dobTime12": "04:15:30 AM",
+      "mobile": "9887766554",
+      "email": "",
+      "gotra": "Vishwamitra",
+      "passwordHash": "$2b$08$t3XaN22/QwCnGV9NEKe34uRO3PcjVe.xmR.mCsmv3FA0iyWAh4DPC",
+      "plainInitialPassword": "Astro@740",
+      "astrologerReferralCode": "PANDIT101",
+      "registeredByAstrologerId": "astro-1",
+      "createdAt": "2026-11-13T08:25:18.415Z",
+      "isMatchmakingSubscribed": false
+    },
+    {
+      "id": "client-7e73c00a",
+      "clientCode": "CLI-201884",
+      "name": "Ananya Krishnan",
+      "fatherName": "Sundaram Raman",
+      "motherName": "Meenakshi Sundaram",
+      "gender": "male",
+      "dob": "2026-10-30",
+      "dobTime": "16:15:30",
+      "dobPlace": "Coimbatore (Tamil Nadu, India)",
+      "nativePlace": "Coimbatore (Tamil Nadu, India)",
+      "country": "India",
+      "state": "Tamil Nadu",
+      "city": "Coimbatore",
+      "latitude": "11° 01' N",
+      "longitude": "76° 57' E",
+      "coordinates": "11° 01' N , 76° 57' E",
+      "dobTime12": "04:15:30 PM",
+      "mobile": "9845998877",
+      "email": "",
+      "gotra": "Vishwamitra",
+      "passwordHash": "$2b$08$X85GBpo00Fxl8nQIXfHHM.BIuoQhs8z94PCOAWP.T60tokkzN3cxa",
+      "plainInitialPassword": "Astro@740",
+      "astrologerReferralCode": "PANDIT101",
+      "registeredByAstrologerId": "astro-1",
+      "createdAt": "2026-11-13T08:26:55.633Z",
+      "isMatchmakingSubscribed": false
+    },
+    {
+      "id": "client-b77686c4",
+      "clientCode": "CLI-119638",
+      "name": "Rajeshwari Natarajan",
+      "fatherName": "Sample father",
+      "motherName": "Sample Mother",
+      "gender": "male",
+      "dob": "2026-10-30",
+      "dobTime": "10:55:00",
+      "dobPlace": "Hosur (Tamil Nadu, India)",
+      "nativePlace": "Hosur (Tamil Nadu, India)",
+      "country": "India",
+      "state": "Tamil Nadu",
+      "city": "Hosur",
+      "latitude": "12° 44' N",
+      "longitude": "77° 49' E",
+      "coordinates": "12° 44' N , 77° 49' E",
+      "dobTime12": "10:55:00 AM",
+      "starBasis": "sun",
+      "mobile": "9845119988",
+      "email": "",
+      "gotra": "Vishwamitra",
+      "passwordHash": "$2b$08$K8TQ.cQ4H21kMovL1ePoxO35QbE/pEscyIevn7CmKQSUcJNlWmRdy",
+      "plainInitialPassword": "Astro@774",
+      "astrologerReferralCode": "PANDIT101",
+      "registeredByAstrologerId": "astro-1",
+      "createdAt": "2026-11-13T08:36:03.799Z",
+      "isMatchmakingSubscribed": false
+    },
+    {
+      "id": "client-fa884421",
+      "clientCode": "CLI-252316",
+      "name": "Dharshan R",
+      "fatherName": "Ramesh Reddy K",
+      "motherName": "Sudha",
+      "gender": "male",
+      "dob": "2004-07-02",
+      "dobTime": "05:15:00",
+      "dobPlace": "Hosur (Tamil Nadu, India)",
+      "nativePlace": "Hosur (Tamil Nadu, India)",
+      "country": "India",
+      "state": "Tamil Nadu",
+      "city": "Hosur",
+      "latitude": "12° 44' N",
+      "longitude": "77° 49' E",
+      "coordinates": "12° 44' N , 77° 49' E",
+      "dobTime12": "05:15:00 AM",
+      "starBasis": "moon",
+      "mobile": "9962775630",
+      "email": "",
+      "gotra": "Kanala",
+      "passwordHash": "$2b$08$EGxhrstnDmSQOjhAmfZOQuY0g6rL3iADXoSvnLmDxuVd40.cLD/by",
+      "plainInitialPassword": "Dharshan@123",
+      "astrologerReferralCode": "PANDIT101",
+      "registeredByAstrologerId": "astro-1",
+      "createdAt": "2026-11-14T03:57:39.418Z",
+      "isMatchmakingSubscribed": false
+    },
+    {
+      "id": "client-25abc33f",
+      "clientCode": "CLI-820340",
+      "name": "Mr. K",
+      "fatherName": "Father",
+      "motherName": "Mother",
+      "gender": "male",
+      "dob": "1993-11-04",
+      "dobTime": "19:46:00",
+      "dobPlace": "Krishnagiri (Tamil Nadu, India)",
+      "nativePlace": "Krishnagiri (Tamil Nadu, India)",
+      "country": "India",
+      "state": "Tamil Nadu",
+      "city": "Krishnagiri",
+      "latitude": "12° 31' N",
+      "longitude": "78° 13' E",
+      "coordinates": "12° 31' N , 78° 13' E",
+      "dobTime12": "07:46:00 PM",
+      "starBasis": "moon",
+      "mobile": "9876543210",
+      "email": "",
+      "gotra": "Vishwamitra",
+      "passwordHash": "$2b$08$jhAZYfg.Iaal2ycFUseXH.vE8JvO.y7Ajtu8oxr12q9iafODHOmfS",
+      "plainInitialPassword": "Astro@920",
+      "astrologerReferralCode": "PANDIT101",
+      "registeredByAstrologerId": "astro-1",
+      "createdAt": "2026-11-16T08:34:08.890Z",
+      "isMatchmakingSubscribed": false,
+      "updatedAt": "2026-11-16T08:38:09.912Z"
+    }
+  ],
+  "astrologers": [
+    {
+      "id": "astro-1",
+      "type": "individual",
+      "name": "Pandit Rajesh Sharma",
+      "mobile": "9876543210",
+      "passwordHash": "$2b$08$ApyupzhOzekfzDOv8AJU9e9ZQ7T/BD7.dW.yUn3xNfh8AjiqWlxDm",
+      "address": "14, Gayatri Nagar, Sector 4, Varanasi, UP",
+      "specializations": [
+        "Vedic Astrology",
+        "Kundli Analysis",
+        "Muhurat & Remedies"
+      ],
+      "experience": "22 Years",
+      "languages": "Hindi, Sanskrit, English",
+      "bio": "Senior Vedic Astrologer certified from Sampurnanand Sanskrit Vishwavidyalaya, specializing in career progression and planetary dosha nivaran.",
+      "referralCode": "PANDIT101",
+      "verified": true,
+      "rating": 4.9,
+      "consultationsCount": 149,
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "availableSlots": [
+        "10:00 AM",
+        "11:30 AM",
+        "04:00 PM",
+        "06:30 PM"
+      ],
+      "officeAddress": "14, Gayatri Nagar, Sector 4, Varanasi, UP",
+      "isOnline": true,
+      "ratePerMinute": 25
+    },
+    {
+      "id": "astro-2",
+      "type": "company",
+      "name": "AstroVeda Consultancy LLP",
+      "contactPerson": "Dr. Meenakshi Sundaram",
+      "mobile": "9845012345",
+      "passwordHash": "$2b$08$yJ.AkPUKilMG7TyMSyZThOEVF7Eoa3w3da9j2Fq2nzb8pF337CW9a",
+      "address": "Plot 42, Temple Road, Malleshwaram, Bengaluru, Karnataka",
+      "gstNumber": "29ABCDE1234F1Z5",
+      "specializations": [
+        "Vastu Shastra",
+        "KP System",
+        "Corporate Astrology",
+        "Gemstone Recommendation"
+      ],
+      "experience": "18 Years",
+      "languages": "Kannada, Tamil, English, Telugu",
+      "bio": "Premier astrology consultancy firm providing institutional and personalized predictive analysis with ancient astrological methodologies.",
+      "referralCode": "ASTROVEDA",
+      "verified": true,
+      "rating": 4.8,
+      "consultationsCount": 320,
+      "createdAt": "2026-02-10T11:30:00.000Z",
+      "availableSlots": [
+        "09:30 AM",
+        "11:00 AM",
+        "03:00 PM",
+        "05:30 PM"
+      ],
+      "officeAddress": "Plot 42, Temple Road, Malleshwaram, Bengaluru, Karnataka",
+      "teamMembers": [
+        {
+          "id": "astro-2-1",
+          "name": "Dr. Meenakshi Sundaram",
+          "title": "Lead KP Astrologer & Gemstone Specialist",
+          "specializations": [
+            "KP Astrology",
+            "Gemstone Consultation",
+            "Corporate Astrology"
+          ],
+          "experience": "20 Years",
+          "referralCode": "MEENAKSHI",
+          "availableSlots": [
+            "09:30 AM",
+            "11:00 AM",
+            "03:00 PM",
+            "05:30 PM"
+          ],
+          "rating": 4.9
+        },
+        {
+          "id": "astro-2-2",
+          "name": "Acharya Venkatesh Shastri",
+          "title": "Senior Vedic Vastu & Muhurat Specialist",
+          "specializations": [
+            "Vastu Shastra",
+            "Auspicious Muhurat",
+            "Remedial Homams"
+          ],
+          "experience": "16 Years",
+          "referralCode": "VENKATESH",
+          "availableSlots": [
+            "10:30 AM",
+            "02:00 PM",
+            "04:30 PM",
+            "07:00 PM"
+          ],
+          "rating": 4.8
+        },
+        {
+          "id": "astro-2-3",
+          "name": "Vidushi Sowmya Rao",
+          "title": "Prashna Kundli & Numerology Expert",
+          "specializations": [
+            "Prashna Kundli",
+            "Numerology",
+            "Marriage Matching"
+          ],
+          "experience": "14 Years",
+          "referralCode": "SOWMYA",
+          "availableSlots": [
+            "11:00 AM",
+            "01:30 PM",
+            "04:00 PM",
+            "06:00 PM"
+          ],
+          "rating": 4.8
+        }
+      ]
+    }
+  ],
+  "vendors": [
+    {
+      "id": "vendor-1",
+      "shopName": "Shree Kashi Divine Samagri & Gems",
+      "contactPerson": "Suresh Agarwal",
+      "mobile": "9811223344",
+      "passwordHash": "$2b$08$g/EC/Bo4/DKXidvTHuU7wOPbtttUTb8Wwf4DpT0bvojEJsX2BPwkK",
+      "address": "Shop 12, Dashashwamedh Ghat Marg",
+      "city": "Varanasi",
+      "state": "Uttar Pradesh",
+      "pincode": "221001",
+      "gstNumber": "09AAECR4567M1ZV",
+      "category": "Puja Samagri & Gemstones",
+      "upiId": "sureshkashi@upi",
+      "verified": true,
+      "createdAt": "2026-01-20T08:00:00.000Z"
+    },
+    {
+      "id": "vendor-2",
+      "shopName": "MahaYagna Vedic Rituals & Services",
+      "contactPerson": "Acharya Vidyadhar",
+      "mobile": "9765432109",
+      "passwordHash": "$2b$08$g/EC/Bo4/DKXidvTHuU7wOPbtttUTb8Wwf4DpT0bvojEJsX2BPwkK",
+      "address": "88, Agrahara Street, Srirangam",
+      "city": "Tiruchirappalli",
+      "state": "Tamil Nadu",
+      "pincode": "620006",
+      "gstNumber": "33AABCV9876P1ZH",
+      "category": "Pooja & Homam Services",
+      "upiId": "mahayagna@upi",
+      "verified": true,
+      "createdAt": "2026-02-05T12:00:00.000Z"
+    }
+  ],
+  "company": {
+    "name": "Astrojit Technologies (JIT)",
+    "mobile": "9999999999",
+    "email": "admin@astrojit.com",
+    "role": "company",
+    "passwordHash": "$2b$08$vMaZAZk1W5WKcMRr33BTP.f5lmH2weGRjMZFxhDkqMzsGFTNOlocy"
+  },
+  "products": [
+    {
+      "id": "prod-1",
+      "vendorId": "vendor-1",
+      "vendorName": "Shree Kashi Divine Samagri & Gems",
+      "title": "Authentic 5-Mukhi Nepali Rudraksha Mala (108 Beads)",
+      "type": "Product",
+      "category": "Rudraksha & Gemstones",
+      "price": 1899,
+      "description": "Certified natural Himalayan 5-Mukhi Rudraksha with silver capping, energized at Kashi Vishwanath temple for peace, health, and spiritual focus.",
+      "imageUrl": "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80",
+      "inStock": true,
+      "stockCount": 45,
+      "rating": 4.9,
+      "createdAt": "2026-02-25T10:00:00.000Z"
+    },
+    {
+      "id": "prod-2",
+      "vendorId": "vendor-1",
+      "vendorName": "Shree Kashi Divine Samagri & Gems",
+      "title": "Complete Navagraha Shanti Puja Samagri Kit",
+      "type": "Product",
+      "category": "Puja Samagri",
+      "price": 1250,
+      "description": "Premium organic kit including 9 planetary cloths, samidha woods, pure cow ghee, camphor, dhoop, navadhanya grains, and copper yantra plate.",
+      "imageUrl": "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=600&auto=format&fit=crop&q=80",
+      "inStock": true,
+      "stockCount": 120,
+      "rating": 4.8,
+      "createdAt": "2026-02-26T11:00:00.000Z"
+    },
+    {
+      "id": "prod-3",
+      "vendorId": "vendor-2",
+      "vendorName": "MahaYagna Vedic Rituals & Services",
+      "title": "Maha Mrityunjaya Homam & Jaap (11,000 Chants)",
+      "type": "Service",
+      "category": "Pooja Services",
+      "price": 5100,
+      "description": "Conducted by experienced Vedic Pandits with Sankalpa in client name for long life, alleviation of severe health afflictions, and planetary peace.",
+      "imageUrl": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80",
+      "inStock": true,
+      "stockCount": 999,
+      "rating": 5,
+      "createdAt": "2026-03-02T15:00:00.000Z"
+    },
+    {
+      "id": "prod-4",
+      "vendorId": "vendor-2",
+      "vendorName": "MahaYagna Vedic Rituals & Services",
+      "title": "Shani Sade Sati Nivaran Puja with Sesame Oil Archana",
+      "type": "Service",
+      "category": "Pooja Services",
+      "price": 3500,
+      "description": "Special remedial archana performed on Saturdays at sacred shrine with Shani Tailabhishekam and Black Urad daal offering.",
+      "imageUrl": "https://images.unsplash.com/photo-1545231027-637d2f6210f8?w=600&auto=format&fit=crop&q=80",
+      "inStock": true,
+      "stockCount": 999,
+      "rating": 4.9,
+      "createdAt": "2026-03-03T16:00:00.000Z"
+    }
+  ],
+  "consultations": [
+    {
+      "id": "cons-1",
+      "astrologerId": "astro-1",
+      "astrologerName": "Pandit Rajesh Sharma",
+      "clientMobile": "9123456789",
+      "clientName": "Aarav Kumar Sharma",
+      "notes": "Client consulted regarding career transition and job offer from abroad. Lagna lord Sun is well placed in Leo 1st house. Favorable Jupiter transit in 9th house indicates high likelihood of relocation after October.",
+      "remediesSuggested": "Offer Arghya (water) with red sandalwood powder to Surya Dev every morning. Wear 5-Mukhi Rudraksha. Chant Aditya Hridaya Stotra on Sundays.",
+      "date": "2026-03-05T11:00:00.000Z"
+    }
+  ],
+  "matchmakingRequests": [
+    {
+      "id": "match-req-3aedb598",
+      "clientId": "client-1",
+      "clientName": "Aarav Kumar Sharma",
+      "clientMobile": "9123456789",
+      "astrologerId": "astro-2",
+      "astrologerName": "AstroVeda Consultancy LLP",
+      "boy": {
+        "name": "Aarav Kumar Sharma",
+        "dob": "1996-08-15",
+        "dobTime": "06:30",
+        "dobPlace": "New Delhi, India"
+      },
+      "girl": {
+        "name": "Pooja Iyer",
+        "dob": "1998-11-23",
+        "dobTime": "17:45",
+        "dobPlace": "Chennai, Tamil Nadu"
+      },
+      "clientQuery": "Please examine the 36 Gunas compatibility and Manglik Dosha alignment.",
+      "source": "self_check_review",
+      "status": "pending",
+      "matchReport": {
+        "boy": {
+          "name": "Aarav Kumar Sharma",
+          "moonSign": "Simha (Leo)",
+          "nakshatra": "Magha",
+          "pada": 4,
+          "nadi": "Antya",
+          "gana": "Rakshasa",
+          "isManglik": false
+        },
+        "girl": {
+          "name": "Pooja Iyer",
+          "moonSign": "Makara (Capricorn)",
+          "nakshatra": "Uttara Ashadha",
+          "pada": 3,
+          "nadi": "Antya",
+          "gana": "Manushya",
+          "isManglik": true
+        },
+        "kootas": [
+          {
+            "name": "Varna",
+            "koota": "Varna",
+            "max": 1,
+            "obtained": 0,
+            "desc": "Spiritual ego & work ethos",
+            "description": "Spiritual ego & work ethos"
+          },
+          {
+            "name": "Vashya",
+            "koota": "Vashya",
+            "max": 2,
+            "obtained": 2,
+            "desc": "Mutual affection & dominance",
+            "description": "Mutual affection & dominance"
+          },
+          {
+            "name": "Tara",
+            "koota": "Tara",
+            "max": 3,
+            "obtained": 1.5,
+            "desc": "Destiny, health & longevity",
+            "description": "Destiny, health & longevity"
+          },
+          {
+            "name": "Yoni",
+            "koota": "Yoni",
+            "max": 4,
+            "obtained": 2.5,
+            "desc": "Biological & physical compatibility",
+            "description": "Biological & physical compatibility"
+          },
+          {
+            "name": "Graha Maitri",
+            "koota": "Graha Maitri",
+            "max": 5,
+            "obtained": 1,
+            "desc": "Intellectual & emotional bonding",
+            "description": "Intellectual & emotional bonding"
+          },
+          {
+            "name": "Gana",
+            "koota": "Gana",
+            "max": 6,
+            "obtained": 0,
+            "desc": "Temperament & social outlook",
+            "description": "Temperament & social outlook"
+          },
+          {
+            "name": "Bhakoota",
+            "koota": "Bhakoota",
+            "max": 7,
+            "obtained": 0,
+            "desc": "Family growth, love & wealth",
+            "description": "Family growth, love & wealth"
+          },
+          {
+            "name": "Nadi",
+            "koota": "Nadi",
+            "max": 8,
+            "obtained": 0,
+            "desc": "Genetic health, bloodline & progeny",
+            "description": "Genetic health, bloodline & progeny"
+          }
+        ],
+        "totalGunas": 7,
+        "totalScore": 7,
+        "maxGunas": 36,
+        "percentage": 19,
+        "compatibility": "Adhama (Low Compatibility)",
+        "manglikMatch": "One Partner Manglik (Remedies Advised before Vivah)",
+        "manglik": {
+          "boy": {
+            "isManglik": false,
+            "details": "Mars favorably placed. Non-Manglik."
+          },
+          "girl": {
+            "isManglik": true,
+            "details": "Mars in 1st/4th/7th/8th/12th house (Manglik)"
+          },
+          "compatibility": "One Partner Manglik (Remedies Advised before Vivah)"
+        },
+        "verdict": "Adhama (Low Compatibility)",
+        "recommendation": "Score is below 18 Gunas. Consultation with senior astrologer strongly advised.",
+        "tamilPorutham": {
+          "poruthams": [
+            {
+              "name": "Dina Porutham",
+              "tamilName": "தினப் பொருத்தம்",
+              "significance": "Health, longevity & freedom from physical afflictions (க்ஷேமமாக இருத்தல்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Dina count is 17 (Inauspicious Tarabalam)."
+            },
+            {
+              "name": "Gana Porutham",
+              "tamilName": "கணப் பொருத்தம்",
+              "significance": "Temperament, mental peace & mutual affection (செல்வத்துடன் இருத்தல் / அன்யோன்ய வசியம்)",
+              "status": "Madhyamam",
+              "statusTamil": "மத்யமம்",
+              "points": 0.5,
+              "maxPoints": 1,
+              "rule": "Girl Rakshasa Gana Dosha is cancelled because Boy star is > 14 stars away (17 stars)."
+            },
+            {
+              "name": "Mahendra Porutham",
+              "tamilName": "மகேந்திரப் பொருத்தம்",
+              "significance": "Longevity of progeny & family lineage growth (ஆயுள் விருத்தி & சந்தான விருத்தி)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Count 17 does not fall in Mahendra series (1, 4, 7, 10, 13, 16, 19, 22, 25)."
+            },
+            {
+              "name": "Stree Deergham",
+              "tamilName": "ஸ்திரீ தீர்க்கம்",
+              "significance": "Longevity, prosperity & continuous well-being of the bride (மணப்பெண் ஆயுள் & தாம்பத்ய சௌக்கியம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Distance is 17 stars (> 13 stars) - Uttama Deergham for Bride."
+            },
+            {
+              "name": "Yoni Porutham",
+              "tamilName": "யோனிப் பொருத்தம்",
+              "significance": "Physical, biological & intimate mutual harmony (அன்யோன்ய வசியம் & தேக சௌக்கியம்)",
+              "status": "Madhyamam",
+              "statusTamil": "மத்யமம்",
+              "points": 0.5,
+              "maxPoints": 1,
+              "rule": "Different friendly Yonis (Rat & Mongoose) - Compatible."
+            },
+            {
+              "name": "Rasi Porutham",
+              "tamilName": "ராசிப் பொருத்தம்",
+              "significance": "Family welfare, prosperity & lineage growth (வம்ச விருத்தி & மன ஒற்றுமை)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Shashtashtakam (6-8 distance) - Inauspicious unless remedial propitiations performed."
+            },
+            {
+              "name": "Rasi Adhipathi Porutham",
+              "tamilName": "ராசி அதிபதி பொருத்தம்",
+              "significance": "Parental friendship, intellectual bonding & planetary accord (சம்பந்திகள் நட்பு & கிரக அனுகூலம்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Planetary enmity exists between Sun and Saturn."
+            },
+            {
+              "name": "Vashya Porutham",
+              "tamilName": "வசியப் பொருத்தம்",
+              "significance": "Mutual magnetic attraction & devoted marital affection (ஒருவருக்கொருவர் வசியமாக இருத்தல்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "No direct Vashya attraction between Makara and Simha."
+            },
+            {
+              "name": "Rajju Porutham",
+              "tamilName": "ரஜ்ஜுப் பொருத்தம்",
+              "significance": "Mangalya Bhagyam & long wedded life (தீர்க்க சுமங்கலியாயிருத்தல் - தலையாய பொருத்தம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Different Rajjus (Groom: Pada, Bride: Udara) - Auspicious! (ரஜ்ஜு தோஷமில்லை).",
+              "isArohaAvarohaException": false,
+              "hasDosha": false
+            },
+            {
+              "name": "Vedha Porutham",
+              "tamilName": "வேதைப் பொருத்தம்",
+              "significance": "Absence of mutual repulsion, sorrow & occult affliction (தம்பதிகள் சௌக்கியம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "No Vedha affliction between Magha and Uttara Ashadha (வேதை தோஷமில்லை)."
+            },
+            {
+              "name": "Nadi Porutham",
+              "tamilName": "நாடிப் பொருத்தம்",
+              "significance": "Genetic vitality, bloodline & physiological health (நாடிப் பொருத்தம் / ஆரோக்கியம்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Both have Vama Nadi (தக்ஷிண/வாம பார்சுவ நாடி) - Threatens health of Groom."
+            },
+            {
+              "name": "Vriksha Porutham",
+              "tamilName": "விருட்சப் பொருத்தம்",
+              "significance": "Physical well-being, tree energy & prosperity (பால் உள்ள மரங்கள் சுப விருத்தி)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Both trees are milky trees (பால் உள்ள மரங்கள்: ஆல் & பலா) - Highly auspicious."
+            }
+          ],
+          "primary10Poruthams": [
+            {
+              "name": "Dina Porutham",
+              "tamilName": "தினப் பொருத்தம்",
+              "significance": "Health, longevity & freedom from physical afflictions (க்ஷேமமாக இருத்தல்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Dina count is 17 (Inauspicious Tarabalam)."
+            },
+            {
+              "name": "Gana Porutham",
+              "tamilName": "கணப் பொருத்தம்",
+              "significance": "Temperament, mental peace & mutual affection (செல்வத்துடன் இருத்தல் / அன்யோன்ய வசியம்)",
+              "status": "Madhyamam",
+              "statusTamil": "மத்யமம்",
+              "points": 0.5,
+              "maxPoints": 1,
+              "rule": "Girl Rakshasa Gana Dosha is cancelled because Boy star is > 14 stars away (17 stars)."
+            },
+            {
+              "name": "Mahendra Porutham",
+              "tamilName": "மகேந்திரப் பொருத்தம்",
+              "significance": "Longevity of progeny & family lineage growth (ஆயுள் விருத்தி & சந்தான விருத்தி)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Count 17 does not fall in Mahendra series (1, 4, 7, 10, 13, 16, 19, 22, 25)."
+            },
+            {
+              "name": "Stree Deergham",
+              "tamilName": "ஸ்திரீ தீர்க்கம்",
+              "significance": "Longevity, prosperity & continuous well-being of the bride (மணப்பெண் ஆயுள் & தாம்பத்ய சௌக்கியம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Distance is 17 stars (> 13 stars) - Uttama Deergham for Bride."
+            },
+            {
+              "name": "Yoni Porutham",
+              "tamilName": "யோனிப் பொருத்தம்",
+              "significance": "Physical, biological & intimate mutual harmony (அன்யோன்ய வசியம் & தேக சௌக்கியம்)",
+              "status": "Madhyamam",
+              "statusTamil": "மத்யமம்",
+              "points": 0.5,
+              "maxPoints": 1,
+              "rule": "Different friendly Yonis (Rat & Mongoose) - Compatible."
+            },
+            {
+              "name": "Rasi Porutham",
+              "tamilName": "ராசிப் பொருத்தம்",
+              "significance": "Family welfare, prosperity & lineage growth (வம்ச விருத்தி & மன ஒற்றுமை)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Shashtashtakam (6-8 distance) - Inauspicious unless remedial propitiations performed."
+            },
+            {
+              "name": "Rasi Adhipathi Porutham",
+              "tamilName": "ராசி அதிபதி பொருத்தம்",
+              "significance": "Parental friendship, intellectual bonding & planetary accord (சம்பந்திகள் நட்பு & கிரக அனுகூலம்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Planetary enmity exists between Sun and Saturn."
+            },
+            {
+              "name": "Vashya Porutham",
+              "tamilName": "வசியப் பொருத்தம்",
+              "significance": "Mutual magnetic attraction & devoted marital affection (ஒருவருக்கொருவர் வசியமாக இருத்தல்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "No direct Vashya attraction between Makara and Simha."
+            },
+            {
+              "name": "Rajju Porutham",
+              "tamilName": "ரஜ்ஜுப் பொருத்தம்",
+              "significance": "Mangalya Bhagyam & long wedded life (தீர்க்க சுமங்கலியாயிருத்தல் - தலையாய பொருத்தம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Different Rajjus (Groom: Pada, Bride: Udara) - Auspicious! (ரஜ்ஜு தோஷமில்லை).",
+              "isArohaAvarohaException": false,
+              "hasDosha": false
+            },
+            {
+              "name": "Vedha Porutham",
+              "tamilName": "வேதைப் பொருத்தம்",
+              "significance": "Absence of mutual repulsion, sorrow & occult affliction (தம்பதிகள் சௌக்கியம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "No Vedha affliction between Magha and Uttara Ashadha (வேதை தோஷமில்லை)."
+            }
+          ],
+          "totalScore": 4,
+          "maxScore": 10,
+          "percentage": 40,
+          "overallVerdict": "Adhama Vivaham (Not Recommended)",
+          "overallVerdictTamil": "பொருந்தாது (தோஷம் உள்ளது)",
+          "rajjuAnalysis": {
+            "hasDosha": false,
+            "isArohaAvarohaException": false,
+            "boyRajju": "Pada",
+            "girlRajju": "Udara",
+            "boyDirection": "Aroha",
+            "girlDirection": "Aroha"
+          },
+          "vedhaAnalysis": {
+            "hasVedha": false,
+            "boyStar": "Magha",
+            "girlStar": "Uttara Ashadha"
+          },
+          "subhaShashtashtakam": {
+            "is6_8": true,
+            "isSubha": false
+          },
+          "boyDetails": {
+            "star": "Magha",
+            "tamilStar": "மகம்",
+            "rasi": "Simha",
+            "padam": 4,
+            "gana": "Rakshasa",
+            "animal": "Rat",
+            "yoniSex": "Male",
+            "bird": "Male Vulture",
+            "tree": "ஆல்",
+            "milkyTree": true,
+            "nadi": "Vama",
+            "rajju": "Pada",
+            "rajjuDirection": "Aroha"
+          },
+          "girlDetails": {
+            "star": "Uttara Ashadha",
+            "tamilStar": "உத்திராடம்",
+            "rasi": "Makara",
+            "padam": 3,
+            "gana": "Manushya",
+            "animal": "Mongoose",
+            "yoniSex": "Male",
+            "bird": "Swift",
+            "tree": "பலா",
+            "milkyTree": true,
+            "nadi": "Vama",
+            "rajju": "Udara",
+            "rajjuDirection": "Aroha"
+          }
+        },
+        "chevvaiAnalysis": {
+          "boy": {
+            "isCandidate": true,
+            "hasDosha": false,
+            "isCancelled": true,
+            "houses": {
+              "lagna": 10,
+              "moon": 10,
+              "venus": 12
+            },
+            "gender": "male",
+            "cancellations": [
+              "Born in Simha (Leo): Mars is auspicious Yogakaraka (கடக, சிம்ம லக்னங்களுக்கு செவ்வாயினால் தோஷமில்லை)."
+            ],
+            "statusText": "Chevvai Dosha Cancelled (செவ்வாய் தோஷ நிவர்த்தி)"
+          },
+          "girl": {
+            "isCandidate": true,
+            "hasDosha": false,
+            "isCancelled": true,
+            "houses": {
+              "lagna": 4,
+              "moon": 8,
+              "venus": 11
+            },
+            "gender": "female",
+            "cancellations": [
+              "Mars placed in own/exaltation/friendly sign Simha (Leo) (செவ்வாய் சிம்மம், மேஷம், விருச்சிகம், மகரம், கும்பத்தில் இருந்தால் தோஷமில்லை)."
+            ],
+            "statusText": "Chevvai Dosha Cancelled (செவ்வாய் தோஷ நிவர்த்தி)"
+          }
+        }
+      },
+      "astrologerReview": null,
+      "createdAt": "2026-11-13T10:55:10.680Z"
+    },
+    {
+      "id": "match-req-da130e7b",
+      "clientId": "astro-1",
+      "clientName": "Pandit Rajesh Sharma",
+      "clientMobile": "9876543210",
+      "astrologerId": "astro-1",
+      "astrologerName": "Pandit Rajesh Sharma",
+      "boy": {
+        "name": "Pandit Rajesh Sharma",
+        "dob": "1996-08-15",
+        "dobTime": "06:30",
+        "dobPlace": "New Delhi, India"
+      },
+      "girl": {
+        "name": "Pooja Iyer",
+        "dob": "1998-11-23",
+        "dobTime": "17:45",
+        "dobPlace": "Chennai, Tamil Nadu"
+      },
+      "clientQuery": "Please examine the 36 Gunas compatibility and Manglik Dosha alignment.",
+      "source": "client_request",
+      "status": "pending",
+      "matchReport": null,
+      "astrologerReview": null,
+      "createdAt": "2026-11-13T06:05:17.697Z"
+    },
+    {
+      "id": "match-req-ece98625",
+      "clientId": "client-1",
+      "clientName": "Aarav Kumar Sharma",
+      "clientMobile": "9123456789",
+      "astrologerId": "astro-1",
+      "astrologerName": "Pandit Rajesh Sharma",
+      "boy": {
+        "name": "Aarav Kumar Sharma",
+        "dob": "1996-08-15",
+        "dobTime": "06:30",
+        "dobPlace": "New Delhi, India"
+      },
+      "girl": {
+        "name": "Pooja Iyer",
+        "dob": "1998-11-23",
+        "dobTime": "17:45",
+        "dobPlace": "Chennai, Tamil Nadu"
+      },
+      "clientQuery": "Please check the Marriage Matching.",
+      "source": "client_request",
+      "status": "completed",
+      "matchReport": {
+        "boy": {
+          "name": "Aarav Kumar Sharma",
+          "moonSign": "Simha (Leo)",
+          "nakshatra": "Magha",
+          "pada": 4,
+          "nadi": "Antya",
+          "gana": "Rakshasa",
+          "isManglik": false
+        },
+        "girl": {
+          "name": "Pooja Iyer",
+          "moonSign": "Makara (Capricorn)",
+          "nakshatra": "Uttara Ashadha",
+          "pada": 3,
+          "nadi": "Antya",
+          "gana": "Manushya",
+          "isManglik": true
+        },
+        "kootas": [
+          {
+            "name": "Varna",
+            "koota": "Varna",
+            "max": 1,
+            "obtained": 0,
+            "desc": "Spiritual ego & work ethos",
+            "description": "Spiritual ego & work ethos"
+          },
+          {
+            "name": "Vashya",
+            "koota": "Vashya",
+            "max": 2,
+            "obtained": 2,
+            "desc": "Mutual affection & dominance",
+            "description": "Mutual affection & dominance"
+          },
+          {
+            "name": "Tara",
+            "koota": "Tara",
+            "max": 3,
+            "obtained": 1.5,
+            "desc": "Destiny, health & longevity",
+            "description": "Destiny, health & longevity"
+          },
+          {
+            "name": "Yoni",
+            "koota": "Yoni",
+            "max": 4,
+            "obtained": 2.5,
+            "desc": "Biological & physical compatibility",
+            "description": "Biological & physical compatibility"
+          },
+          {
+            "name": "Graha Maitri",
+            "koota": "Graha Maitri",
+            "max": 5,
+            "obtained": 1,
+            "desc": "Intellectual & emotional bonding",
+            "description": "Intellectual & emotional bonding"
+          },
+          {
+            "name": "Gana",
+            "koota": "Gana",
+            "max": 6,
+            "obtained": 0,
+            "desc": "Temperament & social outlook",
+            "description": "Temperament & social outlook"
+          },
+          {
+            "name": "Bhakoota",
+            "koota": "Bhakoota",
+            "max": 7,
+            "obtained": 0,
+            "desc": "Family growth, love & wealth",
+            "description": "Family growth, love & wealth"
+          },
+          {
+            "name": "Nadi",
+            "koota": "Nadi",
+            "max": 8,
+            "obtained": 0,
+            "desc": "Genetic health, bloodline & progeny",
+            "description": "Genetic health, bloodline & progeny"
+          }
+        ],
+        "totalGunas": 7,
+        "totalScore": 7,
+        "maxGunas": 36,
+        "percentage": 19,
+        "compatibility": "Adhama (Low Compatibility)",
+        "manglikMatch": "One Partner Manglik (Remedies Advised before Vivah)",
+        "manglik": {
+          "boy": {
+            "isManglik": false,
+            "details": "Mars favorably placed. Non-Manglik."
+          },
+          "girl": {
+            "isManglik": true,
+            "details": "Mars in 1st/4th/7th/8th/12th house (Manglik)"
+          },
+          "compatibility": "One Partner Manglik (Remedies Advised before Vivah)"
+        },
+        "verdict": "Adhama (Low Compatibility)",
+        "recommendation": "Score is below 18 Gunas. Consultation with senior astrologer strongly advised.",
+        "tamilPorutham": {
+          "poruthams": [
+            {
+              "name": "Dina Porutham",
+              "tamilName": "தினப் பொருத்தம்",
+              "significance": "Health, longevity & freedom from physical afflictions (க்ஷேமமாக இருத்தல்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Dina count is 17 (Inauspicious Tarabalam)."
+            },
+            {
+              "name": "Gana Porutham",
+              "tamilName": "கணப் பொருத்தம்",
+              "significance": "Temperament, mental peace & mutual affection (செல்வத்துடன் இருத்தல் / அன்யோன்ய வசியம்)",
+              "status": "Madhyamam",
+              "statusTamil": "மத்யமம்",
+              "points": 0.5,
+              "maxPoints": 1,
+              "rule": "Girl Rakshasa Gana Dosha is cancelled because Boy star is > 14 stars away (17 stars)."
+            },
+            {
+              "name": "Mahendra Porutham",
+              "tamilName": "மகேந்திரப் பொருத்தம்",
+              "significance": "Longevity of progeny & family lineage growth (ஆயுள் விருத்தி & சந்தான விருத்தி)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Count 17 does not fall in Mahendra series (1, 4, 7, 10, 13, 16, 19, 22, 25)."
+            },
+            {
+              "name": "Stree Deergham",
+              "tamilName": "ஸ்திரீ தீர்க்கம்",
+              "significance": "Longevity, prosperity & continuous well-being of the bride (மணப்பெண் ஆயுள் & தாம்பத்ய சௌக்கியம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Distance is 17 stars (> 13 stars) - Uttama Deergham for Bride."
+            },
+            {
+              "name": "Yoni Porutham",
+              "tamilName": "யோனிப் பொருத்தம்",
+              "significance": "Physical, biological & intimate mutual harmony (அன்யோன்ய வசியம் & தேக சௌக்கியம்)",
+              "status": "Madhyamam",
+              "statusTamil": "மத்யமம்",
+              "points": 0.5,
+              "maxPoints": 1,
+              "rule": "Different friendly Yonis (Rat & Mongoose) - Compatible."
+            },
+            {
+              "name": "Rasi Porutham",
+              "tamilName": "ராசிப் பொருத்தம்",
+              "significance": "Family welfare, prosperity & lineage growth (வம்ச விருத்தி & மன ஒற்றுமை)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Shashtashtakam (6-8 distance) - Inauspicious unless remedial propitiations performed."
+            },
+            {
+              "name": "Rasi Adhipathi Porutham",
+              "tamilName": "ராசி அதிபதி பொருத்தம்",
+              "significance": "Parental friendship, intellectual bonding & planetary accord (சம்பந்திகள் நட்பு & கிரக அனுகூலம்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Planetary enmity exists between Sun and Saturn."
+            },
+            {
+              "name": "Vashya Porutham",
+              "tamilName": "வசியப் பொருத்தம்",
+              "significance": "Mutual magnetic attraction & devoted marital affection (ஒருவருக்கொருவர் வசியமாக இருத்தல்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "No direct Vashya attraction between Makara and Simha."
+            },
+            {
+              "name": "Rajju Porutham",
+              "tamilName": "ரஜ்ஜுப் பொருத்தம்",
+              "significance": "Mangalya Bhagyam & long wedded life (தீர்க்க சுமங்கலியாயிருத்தல் - தலையாய பொருத்தம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Different Rajjus (Groom: Pada, Bride: Udara) - Auspicious! (ரஜ்ஜு தோஷமில்லை).",
+              "isArohaAvarohaException": false,
+              "hasDosha": false
+            },
+            {
+              "name": "Vedha Porutham",
+              "tamilName": "வேதைப் பொருத்தம்",
+              "significance": "Absence of mutual repulsion, sorrow & occult affliction (தம்பதிகள் சௌக்கியம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "No Vedha affliction between Magha and Uttara Ashadha (வேதை தோஷமில்லை)."
+            },
+            {
+              "name": "Nadi Porutham",
+              "tamilName": "நாடிப் பொருத்தம்",
+              "significance": "Genetic vitality, bloodline & physiological health (நாடிப் பொருத்தம் / ஆரோக்கியம்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Both have Vama Nadi (தக்ஷிண/வாம பார்சுவ நாடி) - Threatens health of Groom."
+            },
+            {
+              "name": "Vriksha Porutham",
+              "tamilName": "விருட்சப் பொருத்தம்",
+              "significance": "Physical well-being, tree energy & prosperity (பால் உள்ள மரங்கள் சுப விருத்தி)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Both trees are milky trees (பால் உள்ள மரங்கள்: ஆல் & பலா) - Highly auspicious."
+            }
+          ],
+          "primary10Poruthams": [
+            {
+              "name": "Dina Porutham",
+              "tamilName": "தினப் பொருத்தம்",
+              "significance": "Health, longevity & freedom from physical afflictions (க்ஷேமமாக இருத்தல்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Dina count is 17 (Inauspicious Tarabalam)."
+            },
+            {
+              "name": "Gana Porutham",
+              "tamilName": "கணப் பொருத்தம்",
+              "significance": "Temperament, mental peace & mutual affection (செல்வத்துடன் இருத்தல் / அன்யோன்ய வசியம்)",
+              "status": "Madhyamam",
+              "statusTamil": "மத்யமம்",
+              "points": 0.5,
+              "maxPoints": 1,
+              "rule": "Girl Rakshasa Gana Dosha is cancelled because Boy star is > 14 stars away (17 stars)."
+            },
+            {
+              "name": "Mahendra Porutham",
+              "tamilName": "மகேந்திரப் பொருத்தம்",
+              "significance": "Longevity of progeny & family lineage growth (ஆயுள் விருத்தி & சந்தான விருத்தி)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Count 17 does not fall in Mahendra series (1, 4, 7, 10, 13, 16, 19, 22, 25)."
+            },
+            {
+              "name": "Stree Deergham",
+              "tamilName": "ஸ்திரீ தீர்க்கம்",
+              "significance": "Longevity, prosperity & continuous well-being of the bride (மணப்பெண் ஆயுள் & தாம்பத்ய சௌக்கியம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Distance is 17 stars (> 13 stars) - Uttama Deergham for Bride."
+            },
+            {
+              "name": "Yoni Porutham",
+              "tamilName": "யோனிப் பொருத்தம்",
+              "significance": "Physical, biological & intimate mutual harmony (அன்யோன்ய வசியம் & தேக சௌக்கியம்)",
+              "status": "Madhyamam",
+              "statusTamil": "மத்யமம்",
+              "points": 0.5,
+              "maxPoints": 1,
+              "rule": "Different friendly Yonis (Rat & Mongoose) - Compatible."
+            },
+            {
+              "name": "Rasi Porutham",
+              "tamilName": "ராசிப் பொருத்தம்",
+              "significance": "Family welfare, prosperity & lineage growth (வம்ச விருத்தி & மன ஒற்றுமை)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Shashtashtakam (6-8 distance) - Inauspicious unless remedial propitiations performed."
+            },
+            {
+              "name": "Rasi Adhipathi Porutham",
+              "tamilName": "ராசி அதிபதி பொருத்தம்",
+              "significance": "Parental friendship, intellectual bonding & planetary accord (சம்பந்திகள் நட்பு & கிரக அனுகூலம்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Planetary enmity exists between Sun and Saturn."
+            },
+            {
+              "name": "Vashya Porutham",
+              "tamilName": "வசியப் பொருத்தம்",
+              "significance": "Mutual magnetic attraction & devoted marital affection (ஒருவருக்கொருவர் வசியமாக இருத்தல்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "No direct Vashya attraction between Makara and Simha."
+            },
+            {
+              "name": "Rajju Porutham",
+              "tamilName": "ரஜ்ஜுப் பொருத்தம்",
+              "significance": "Mangalya Bhagyam & long wedded life (தீர்க்க சுமங்கலியாயிருத்தல் - தலையாய பொருத்தம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Different Rajjus (Groom: Pada, Bride: Udara) - Auspicious! (ரஜ்ஜு தோஷமில்லை).",
+              "isArohaAvarohaException": false,
+              "hasDosha": false
+            },
+            {
+              "name": "Vedha Porutham",
+              "tamilName": "வேதைப் பொருத்தம்",
+              "significance": "Absence of mutual repulsion, sorrow & occult affliction (தம்பதிகள் சௌக்கியம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "No Vedha affliction between Magha and Uttara Ashadha (வேதை தோஷமில்லை)."
+            }
+          ],
+          "totalScore": 4,
+          "maxScore": 10,
+          "percentage": 40,
+          "overallVerdict": "Adhama Vivaham (Not Recommended)",
+          "overallVerdictTamil": "பொருந்தாது (தோஷம் உள்ளது)",
+          "rajjuAnalysis": {
+            "hasDosha": false,
+            "isArohaAvarohaException": false,
+            "boyRajju": "Pada",
+            "girlRajju": "Udara",
+            "boyDirection": "Aroha",
+            "girlDirection": "Aroha"
+          },
+          "vedhaAnalysis": {
+            "hasVedha": false,
+            "boyStar": "Magha",
+            "girlStar": "Uttara Ashadha"
+          },
+          "subhaShashtashtakam": {
+            "is6_8": true,
+            "isSubha": false
+          },
+          "boyDetails": {
+            "star": "Magha",
+            "tamilStar": "மகம்",
+            "rasi": "Simha",
+            "padam": 4,
+            "gana": "Rakshasa",
+            "animal": "Rat",
+            "yoniSex": "Male",
+            "bird": "Male Vulture",
+            "tree": "ஆல்",
+            "milkyTree": true,
+            "nadi": "Vama",
+            "rajju": "Pada",
+            "rajjuDirection": "Aroha"
+          },
+          "girlDetails": {
+            "star": "Uttara Ashadha",
+            "tamilStar": "உத்திராடம்",
+            "rasi": "Makara",
+            "padam": 3,
+            "gana": "Manushya",
+            "animal": "Mongoose",
+            "yoniSex": "Male",
+            "bird": "Swift",
+            "tree": "பலா",
+            "milkyTree": true,
+            "nadi": "Vama",
+            "rajju": "Udara",
+            "rajjuDirection": "Aroha"
+          }
+        },
+        "chevvaiAnalysis": {
+          "boy": {
+            "isCandidate": true,
+            "hasDosha": false,
+            "isCancelled": true,
+            "houses": {
+              "lagna": 10,
+              "moon": 10,
+              "venus": 12
+            },
+            "gender": "male",
+            "cancellations": [
+              "Born in Simha (Leo): Mars is auspicious Yogakaraka (கடக, சிம்ம லக்னங்களுக்கு செவ்வாயினால் தோஷமில்லை)."
+            ],
+            "statusText": "Chevvai Dosha Cancelled (செவ்வாய் தோஷ நிவர்த்தி)"
+          },
+          "girl": {
+            "isCandidate": true,
+            "hasDosha": false,
+            "isCancelled": true,
+            "houses": {
+              "lagna": 4,
+              "moon": 8,
+              "venus": 11
+            },
+            "gender": "female",
+            "cancellations": [
+              "Mars placed in own/exaltation/friendly sign Simha (Leo) (செவ்வாய் சிம்மம், மேஷம், விருச்சிகம், மகரம், கும்பத்தில் இருந்தால் தோஷமில்லை)."
+            ],
+            "statusText": "Chevvai Dosha Cancelled (செவ்வாய் தோஷ நிவர்த்தி)"
+          }
+        }
+      },
+      "astrologerReview": {
+        "verdict": "Not Recommended (Inauspicious Dosha)",
+        "suggestions": "The horoscopes of Aarav Kumar Sharma and Pooja Iyer show auspicious mental and spiritual alignment. Favorable planetary aspects support domestic harmony and shared prosperity.",
+        "remedies": "Perform joint archana to Lord Shiva & Goddess Parvati on a favorable Nakshatra day. Chant Gayatri Mantra daily.",
+        "reviewedAt": "2026-11-11T09:19:16.162Z",
+        "astrologerName": "Pandit Rajesh Sharma"
+      },
+      "createdAt": "2026-11-11T07:08:02.009Z"
+    },
+    {
+      "id": "match-req-ef5e61d0",
+      "clientId": "client-1",
+      "clientName": "Aarav Kumar Sharma",
+      "clientMobile": "9123456789",
+      "astrologerId": "astro-1",
+      "astrologerName": "Pandit Rajesh Sharma",
+      "boy": {
+        "name": "Aarav Kumar Sharma",
+        "dob": "1996-08-15",
+        "dobTime": "06:30",
+        "dobPlace": "New Delhi, India"
+      },
+      "girl": {
+        "name": "Pooja Iyer",
+        "dob": "1998-11-23",
+        "dobTime": "17:45",
+        "dobPlace": "Chennai, Tamil Nadu"
+      },
+      "clientQuery": "Please examine the 36 Gunas compatibility and Manglik Dosha alignment.",
+      "source": "self_check_review",
+      "status": "completed",
+      "matchReport": {
+        "boy": {
+          "name": "Aarav Kumar Sharma",
+          "moonSign": "Simha (Leo)",
+          "nakshatra": "Magha",
+          "pada": 4,
+          "nadi": "Antya",
+          "gana": "Rakshasa",
+          "isManglik": false
+        },
+        "girl": {
+          "name": "Pooja Iyer",
+          "moonSign": "Makara (Capricorn)",
+          "nakshatra": "Uttara Ashadha",
+          "pada": 3,
+          "nadi": "Antya",
+          "gana": "Manushya",
+          "isManglik": true
+        },
+        "kootas": [
+          {
+            "name": "Varna",
+            "koota": "Varna",
+            "max": 1,
+            "obtained": 0,
+            "desc": "Spiritual ego & work ethos",
+            "description": "Spiritual ego & work ethos"
+          },
+          {
+            "name": "Vashya",
+            "koota": "Vashya",
+            "max": 2,
+            "obtained": 2,
+            "desc": "Mutual affection & dominance",
+            "description": "Mutual affection & dominance"
+          },
+          {
+            "name": "Tara",
+            "koota": "Tara",
+            "max": 3,
+            "obtained": 1.5,
+            "desc": "Destiny, health & longevity",
+            "description": "Destiny, health & longevity"
+          },
+          {
+            "name": "Yoni",
+            "koota": "Yoni",
+            "max": 4,
+            "obtained": 2.5,
+            "desc": "Biological & physical compatibility",
+            "description": "Biological & physical compatibility"
+          },
+          {
+            "name": "Graha Maitri",
+            "koota": "Graha Maitri",
+            "max": 5,
+            "obtained": 1,
+            "desc": "Intellectual & emotional bonding",
+            "description": "Intellectual & emotional bonding"
+          },
+          {
+            "name": "Gana",
+            "koota": "Gana",
+            "max": 6,
+            "obtained": 0,
+            "desc": "Temperament & social outlook",
+            "description": "Temperament & social outlook"
+          },
+          {
+            "name": "Bhakoota",
+            "koota": "Bhakoota",
+            "max": 7,
+            "obtained": 0,
+            "desc": "Family growth, love & wealth",
+            "description": "Family growth, love & wealth"
+          },
+          {
+            "name": "Nadi",
+            "koota": "Nadi",
+            "max": 8,
+            "obtained": 0,
+            "desc": "Genetic health, bloodline & progeny",
+            "description": "Genetic health, bloodline & progeny"
+          }
+        ],
+        "totalGunas": 7,
+        "totalScore": 7,
+        "maxGunas": 36,
+        "percentage": 19,
+        "compatibility": "Adhama (Low Compatibility)",
+        "manglikMatch": "One Partner Manglik (Remedies Advised before Vivah)",
+        "manglik": {
+          "boy": {
+            "isManglik": false,
+            "details": "Mars favorably placed. Non-Manglik."
+          },
+          "girl": {
+            "isManglik": true,
+            "details": "Mars in 1st/4th/7th/8th/12th house (Manglik)"
+          },
+          "compatibility": "One Partner Manglik (Remedies Advised before Vivah)"
+        },
+        "verdict": "Adhama (Low Compatibility)",
+        "recommendation": "Score is below 18 Gunas. Consultation with senior astrologer strongly advised.",
+        "tamilPorutham": {
+          "poruthams": [
+            {
+              "name": "Dina Porutham",
+              "tamilName": "தினப் பொருத்தம்",
+              "significance": "Health, longevity & freedom from physical afflictions (க்ஷேமமாக இருத்தல்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Dina count is 17 (Inauspicious Tarabalam)."
+            },
+            {
+              "name": "Gana Porutham",
+              "tamilName": "கணப் பொருத்தம்",
+              "significance": "Temperament, mental peace & mutual affection (செல்வத்துடன் இருத்தல் / அன்யோன்ய வசியம்)",
+              "status": "Madhyamam",
+              "statusTamil": "மத்யமம்",
+              "points": 0.5,
+              "maxPoints": 1,
+              "rule": "Girl Rakshasa Gana Dosha is cancelled because Boy star is > 14 stars away (17 stars)."
+            },
+            {
+              "name": "Mahendra Porutham",
+              "tamilName": "மகேந்திரப் பொருத்தம்",
+              "significance": "Longevity of progeny & family lineage growth (ஆயுள் விருத்தி & சந்தான விருத்தி)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Count 17 does not fall in Mahendra series (1, 4, 7, 10, 13, 16, 19, 22, 25)."
+            },
+            {
+              "name": "Stree Deergham",
+              "tamilName": "ஸ்திரீ தீர்க்கம்",
+              "significance": "Longevity, prosperity & continuous well-being of the bride (மணப்பெண் ஆயுள் & தாம்பத்ய சௌக்கியம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Distance is 17 stars (> 13 stars) - Uttama Deergham for Bride."
+            },
+            {
+              "name": "Yoni Porutham",
+              "tamilName": "யோனிப் பொருத்தம்",
+              "significance": "Physical, biological & intimate mutual harmony (அன்யோன்ய வசியம் & தேக சௌக்கியம்)",
+              "status": "Madhyamam",
+              "statusTamil": "மத்யமம்",
+              "points": 0.5,
+              "maxPoints": 1,
+              "rule": "Different friendly Yonis (Rat & Mongoose) - Compatible."
+            },
+            {
+              "name": "Rasi Porutham",
+              "tamilName": "ராசிப் பொருத்தம்",
+              "significance": "Family welfare, prosperity & lineage growth (வம்ச விருத்தி & மன ஒற்றுமை)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Shashtashtakam (6-8 distance) - Inauspicious unless remedial propitiations performed."
+            },
+            {
+              "name": "Rasi Adhipathi Porutham",
+              "tamilName": "ராசி அதிபதி பொருத்தம்",
+              "significance": "Parental friendship, intellectual bonding & planetary accord (சம்பந்திகள் நட்பு & கிரக அனுகூலம்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Planetary enmity exists between Sun and Saturn."
+            },
+            {
+              "name": "Vashya Porutham",
+              "tamilName": "வசியப் பொருத்தம்",
+              "significance": "Mutual magnetic attraction & devoted marital affection (ஒருவருக்கொருவர் வசியமாக இருத்தல்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "No direct Vashya attraction between Makara and Simha."
+            },
+            {
+              "name": "Rajju Porutham",
+              "tamilName": "ரஜ்ஜுப் பொருத்தம்",
+              "significance": "Mangalya Bhagyam & long wedded life (தீர்க்க சுமங்கலியாயிருத்தல் - தலையாய பொருத்தம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Different Rajjus (Groom: Pada, Bride: Udara) - Auspicious! (ரஜ்ஜு தோஷமில்லை).",
+              "isArohaAvarohaException": false,
+              "hasDosha": false
+            },
+            {
+              "name": "Vedha Porutham",
+              "tamilName": "வேதைப் பொருத்தம்",
+              "significance": "Absence of mutual repulsion, sorrow & occult affliction (தம்பதிகள் சௌக்கியம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "No Vedha affliction between Magha and Uttara Ashadha (வேதை தோஷமில்லை)."
+            },
+            {
+              "name": "Nadi Porutham",
+              "tamilName": "நாடிப் பொருத்தம்",
+              "significance": "Genetic vitality, bloodline & physiological health (நாடிப் பொருத்தம் / ஆரோக்கியம்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Both have Vama Nadi (தக்ஷிண/வாம பார்சுவ நாடி) - Threatens health of Groom."
+            },
+            {
+              "name": "Vriksha Porutham",
+              "tamilName": "விருட்சப் பொருத்தம்",
+              "significance": "Physical well-being, tree energy & prosperity (பால் உள்ள மரங்கள் சுப விருத்தி)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Both trees are milky trees (பால் உள்ள மரங்கள்: ஆல் & பலா) - Highly auspicious."
+            }
+          ],
+          "primary10Poruthams": [
+            {
+              "name": "Dina Porutham",
+              "tamilName": "தினப் பொருத்தம்",
+              "significance": "Health, longevity & freedom from physical afflictions (க்ஷேமமாக இருத்தல்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Dina count is 17 (Inauspicious Tarabalam)."
+            },
+            {
+              "name": "Gana Porutham",
+              "tamilName": "கணப் பொருத்தம்",
+              "significance": "Temperament, mental peace & mutual affection (செல்வத்துடன் இருத்தல் / அன்யோன்ய வசியம்)",
+              "status": "Madhyamam",
+              "statusTamil": "மத்யமம்",
+              "points": 0.5,
+              "maxPoints": 1,
+              "rule": "Girl Rakshasa Gana Dosha is cancelled because Boy star is > 14 stars away (17 stars)."
+            },
+            {
+              "name": "Mahendra Porutham",
+              "tamilName": "மகேந்திரப் பொருத்தம்",
+              "significance": "Longevity of progeny & family lineage growth (ஆயுள் விருத்தி & சந்தான விருத்தி)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Count 17 does not fall in Mahendra series (1, 4, 7, 10, 13, 16, 19, 22, 25)."
+            },
+            {
+              "name": "Stree Deergham",
+              "tamilName": "ஸ்திரீ தீர்க்கம்",
+              "significance": "Longevity, prosperity & continuous well-being of the bride (மணப்பெண் ஆயுள் & தாம்பத்ய சௌக்கியம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Distance is 17 stars (> 13 stars) - Uttama Deergham for Bride."
+            },
+            {
+              "name": "Yoni Porutham",
+              "tamilName": "யோனிப் பொருத்தம்",
+              "significance": "Physical, biological & intimate mutual harmony (அன்யோன்ய வசியம் & தேக சௌக்கியம்)",
+              "status": "Madhyamam",
+              "statusTamil": "மத்யமம்",
+              "points": 0.5,
+              "maxPoints": 1,
+              "rule": "Different friendly Yonis (Rat & Mongoose) - Compatible."
+            },
+            {
+              "name": "Rasi Porutham",
+              "tamilName": "ராசிப் பொருத்தம்",
+              "significance": "Family welfare, prosperity & lineage growth (வம்ச விருத்தி & மன ஒற்றுமை)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Shashtashtakam (6-8 distance) - Inauspicious unless remedial propitiations performed."
+            },
+            {
+              "name": "Rasi Adhipathi Porutham",
+              "tamilName": "ராசி அதிபதி பொருத்தம்",
+              "significance": "Parental friendship, intellectual bonding & planetary accord (சம்பந்திகள் நட்பு & கிரக அனுகூலம்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Planetary enmity exists between Sun and Saturn."
+            },
+            {
+              "name": "Vashya Porutham",
+              "tamilName": "வசியப் பொருத்தம்",
+              "significance": "Mutual magnetic attraction & devoted marital affection (ஒருவருக்கொருவர் வசியமாக இருத்தல்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "No direct Vashya attraction between Makara and Simha."
+            },
+            {
+              "name": "Rajju Porutham",
+              "tamilName": "ரஜ்ஜுப் பொருத்தம்",
+              "significance": "Mangalya Bhagyam & long wedded life (தீர்க்க சுமங்கலியாயிருத்தல் - தலையாய பொருத்தம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Different Rajjus (Groom: Pada, Bride: Udara) - Auspicious! (ரஜ்ஜு தோஷமில்லை).",
+              "isArohaAvarohaException": false,
+              "hasDosha": false
+            },
+            {
+              "name": "Vedha Porutham",
+              "tamilName": "வேதைப் பொருத்தம்",
+              "significance": "Absence of mutual repulsion, sorrow & occult affliction (தம்பதிகள் சௌக்கியம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "No Vedha affliction between Magha and Uttara Ashadha (வேதை தோஷமில்லை)."
+            }
+          ],
+          "totalScore": 4,
+          "maxScore": 10,
+          "percentage": 40,
+          "overallVerdict": "Adhama Vivaham (Not Recommended)",
+          "overallVerdictTamil": "பொருந்தாது (தோஷம் உள்ளது)",
+          "rajjuAnalysis": {
+            "hasDosha": false,
+            "isArohaAvarohaException": false,
+            "boyRajju": "Pada",
+            "girlRajju": "Udara",
+            "boyDirection": "Aroha",
+            "girlDirection": "Aroha"
+          },
+          "vedhaAnalysis": {
+            "hasVedha": false,
+            "boyStar": "Magha",
+            "girlStar": "Uttara Ashadha"
+          },
+          "subhaShashtashtakam": {
+            "is6_8": true,
+            "isSubha": false
+          },
+          "boyDetails": {
+            "star": "Magha",
+            "tamilStar": "மகம்",
+            "rasi": "Simha",
+            "padam": 4,
+            "gana": "Rakshasa",
+            "animal": "Rat",
+            "yoniSex": "Male",
+            "bird": "Male Vulture",
+            "tree": "ஆல்",
+            "milkyTree": true,
+            "nadi": "Vama",
+            "rajju": "Pada",
+            "rajjuDirection": "Aroha"
+          },
+          "girlDetails": {
+            "star": "Uttara Ashadha",
+            "tamilStar": "உத்திராடம்",
+            "rasi": "Makara",
+            "padam": 3,
+            "gana": "Manushya",
+            "animal": "Mongoose",
+            "yoniSex": "Male",
+            "bird": "Swift",
+            "tree": "பலா",
+            "milkyTree": true,
+            "nadi": "Vama",
+            "rajju": "Udara",
+            "rajjuDirection": "Aroha"
+          }
+        },
+        "chevvaiAnalysis": {
+          "boy": {
+            "isCandidate": true,
+            "hasDosha": false,
+            "isCancelled": true,
+            "houses": {
+              "lagna": 10,
+              "moon": 10,
+              "venus": 12
+            },
+            "gender": "male",
+            "cancellations": [
+              "Born in Simha (Leo): Mars is auspicious Yogakaraka (கடக, சிம்ம லக்னங்களுக்கு செவ்வாயினால் தோஷமில்லை)."
+            ],
+            "statusText": "Chevvai Dosha Cancelled (செவ்வாய் தோஷ நிவர்த்தி)"
+          },
+          "girl": {
+            "isCandidate": true,
+            "hasDosha": false,
+            "isCancelled": true,
+            "houses": {
+              "lagna": 4,
+              "moon": 8,
+              "venus": 11
+            },
+            "gender": "female",
+            "cancellations": [
+              "Mars placed in own/exaltation/friendly sign Simha (Leo) (செவ்வாய் சிம்மம், மேஷம், விருச்சிகம், மகரம், கும்பத்தில் இருந்தால் தோஷமில்லை)."
+            ],
+            "statusText": "Chevvai Dosha Cancelled (செவ்வாய் தோஷ நிவர்த்தி)"
+          }
+        }
+      },
+      "astrologerReview": {
+        "verdict": "Not Recommended (Inauspicious Dosha)",
+        "suggestions": "The horoscopes of Aarav Kumar Sharma and Pooja Iyer show auspicious mental and spiritual alignment. Favorable planetary aspects support domestic harmony and shared prosperity.",
+        "remedies": "Perform joint archana to Lord Shiva & Goddess Parvati on a favorable Nakshatra day. Chant Gayatri Mantra daily.",
+        "reviewedAt": "2026-11-11T09:20:06.774Z",
+        "astrologerName": "Pandit Rajesh Sharma"
+      },
+      "createdAt": "2026-11-11T06:58:20.369Z"
+    },
+    {
+      "id": "match-req-2026-001",
+      "clientId": "client-1",
+      "clientName": "Aarav Kumar Sharma",
+      "clientMobile": "9123456789",
+      "astrologerId": "astro-1",
+      "astrologerName": "Pandit Rajesh Sharma",
+      "boy": {
+        "name": "Aarav Kumar Sharma",
+        "dob": "1996-08-15",
+        "dobTime": "06:30",
+        "dobPlace": "New Delhi, India"
+      },
+      "girl": {
+        "name": "Pooja Iyer",
+        "dob": "1998-11-23",
+        "dobTime": "17:45",
+        "dobPlace": "Chennai, Tamil Nadu"
+      },
+      "clientQuery": "Kindly examine the Ashtakoota compatibility and Manglik Dosha alignment for marriage.",
+      "source": "client_request",
+      "status": "completed",
+      "matchReport": {
+        "boy": {
+          "name": "Aarav Kumar Sharma",
+          "moonSign": "Simha (Leo)",
+          "nakshatra": "Magha",
+          "pada": 4,
+          "nadi": "Antya",
+          "gana": "Rakshasa",
+          "isManglik": false
+        },
+        "girl": {
+          "name": "Pooja Iyer",
+          "moonSign": "Makara (Capricorn)",
+          "nakshatra": "Uttara Ashadha",
+          "pada": 3,
+          "nadi": "Antya",
+          "gana": "Manushya",
+          "isManglik": true
+        },
+        "kootas": [
+          {
+            "name": "Varna",
+            "koota": "Varna",
+            "max": 1,
+            "obtained": 0,
+            "desc": "Spiritual ego & work ethos",
+            "description": "Spiritual ego & work ethos"
+          },
+          {
+            "name": "Vashya",
+            "koota": "Vashya",
+            "max": 2,
+            "obtained": 2,
+            "desc": "Mutual affection & dominance",
+            "description": "Mutual affection & dominance"
+          },
+          {
+            "name": "Tara",
+            "koota": "Tara",
+            "max": 3,
+            "obtained": 1.5,
+            "desc": "Destiny, health & longevity",
+            "description": "Destiny, health & longevity"
+          },
+          {
+            "name": "Yoni",
+            "koota": "Yoni",
+            "max": 4,
+            "obtained": 2.5,
+            "desc": "Biological & physical compatibility",
+            "description": "Biological & physical compatibility"
+          },
+          {
+            "name": "Graha Maitri",
+            "koota": "Graha Maitri",
+            "max": 5,
+            "obtained": 1,
+            "desc": "Intellectual & emotional bonding",
+            "description": "Intellectual & emotional bonding"
+          },
+          {
+            "name": "Gana",
+            "koota": "Gana",
+            "max": 6,
+            "obtained": 0,
+            "desc": "Temperament & social outlook",
+            "description": "Temperament & social outlook"
+          },
+          {
+            "name": "Bhakoota",
+            "koota": "Bhakoota",
+            "max": 7,
+            "obtained": 0,
+            "desc": "Family growth, love & wealth",
+            "description": "Family growth, love & wealth"
+          },
+          {
+            "name": "Nadi",
+            "koota": "Nadi",
+            "max": 8,
+            "obtained": 0,
+            "desc": "Genetic health, bloodline & progeny",
+            "description": "Genetic health, bloodline & progeny"
+          }
+        ],
+        "totalGunas": 7,
+        "totalScore": 7,
+        "maxGunas": 36,
+        "percentage": 19,
+        "compatibility": "Adhama (Low Compatibility)",
+        "manglikMatch": "One Partner Manglik (Remedies Advised before Vivah)",
+        "manglik": {
+          "boy": {
+            "isManglik": false,
+            "details": "Mars favorably placed. Non-Manglik."
+          },
+          "girl": {
+            "isManglik": true,
+            "details": "Mars in 1st/4th/7th/8th/12th house (Manglik)"
+          },
+          "compatibility": "One Partner Manglik (Remedies Advised before Vivah)"
+        },
+        "verdict": "Adhama (Low Compatibility)",
+        "recommendation": "Score is below 18 Gunas. Consultation with senior astrologer strongly advised.",
+        "tamilPorutham": {
+          "poruthams": [
+            {
+              "name": "Dina Porutham",
+              "tamilName": "தினப் பொருத்தம்",
+              "significance": "Health, longevity & freedom from physical afflictions (க்ஷேமமாக இருத்தல்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Dina count is 17 (Inauspicious Tarabalam)."
+            },
+            {
+              "name": "Gana Porutham",
+              "tamilName": "கணப் பொருத்தம்",
+              "significance": "Temperament, mental peace & mutual affection (செல்வத்துடன் இருத்தல் / அன்யோன்ய வசியம்)",
+              "status": "Madhyamam",
+              "statusTamil": "மத்யமம்",
+              "points": 0.5,
+              "maxPoints": 1,
+              "rule": "Girl Rakshasa Gana Dosha is cancelled because Boy star is > 14 stars away (17 stars)."
+            },
+            {
+              "name": "Mahendra Porutham",
+              "tamilName": "மகேந்திரப் பொருத்தம்",
+              "significance": "Longevity of progeny & family lineage growth (ஆயுள் விருத்தி & சந்தான விருத்தி)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Count 17 does not fall in Mahendra series (1, 4, 7, 10, 13, 16, 19, 22, 25)."
+            },
+            {
+              "name": "Stree Deergham",
+              "tamilName": "ஸ்திரீ தீர்க்கம்",
+              "significance": "Longevity, prosperity & continuous well-being of the bride (மணப்பெண் ஆயுள் & தாம்பத்ய சௌக்கியம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Distance is 17 stars (> 13 stars) - Uttama Deergham for Bride."
+            },
+            {
+              "name": "Yoni Porutham",
+              "tamilName": "யோனிப் பொருத்தம்",
+              "significance": "Physical, biological & intimate mutual harmony (அன்யோன்ய வசியம் & தேக சௌக்கியம்)",
+              "status": "Madhyamam",
+              "statusTamil": "மத்யமம்",
+              "points": 0.5,
+              "maxPoints": 1,
+              "rule": "Different friendly Yonis (Rat & Mongoose) - Compatible."
+            },
+            {
+              "name": "Rasi Porutham",
+              "tamilName": "ராசிப் பொருத்தம்",
+              "significance": "Family welfare, prosperity & lineage growth (வம்ச விருத்தி & மன ஒற்றுமை)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Shashtashtakam (6-8 distance) - Inauspicious unless remedial propitiations performed."
+            },
+            {
+              "name": "Rasi Adhipathi Porutham",
+              "tamilName": "ராசி அதிபதி பொருத்தம்",
+              "significance": "Parental friendship, intellectual bonding & planetary accord (சம்பந்திகள் நட்பு & கிரக அனுகூலம்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Planetary enmity exists between Sun and Saturn."
+            },
+            {
+              "name": "Vashya Porutham",
+              "tamilName": "வசியப் பொருத்தம்",
+              "significance": "Mutual magnetic attraction & devoted marital affection (ஒருவருக்கொருவர் வசியமாக இருத்தல்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "No direct Vashya attraction between Makara and Simha."
+            },
+            {
+              "name": "Rajju Porutham",
+              "tamilName": "ரஜ்ஜுப் பொருத்தம்",
+              "significance": "Mangalya Bhagyam & long wedded life (தீர்க்க சுமங்கலியாயிருத்தல் - தலையாய பொருத்தம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Different Rajjus (Groom: Pada, Bride: Udara) - Auspicious! (ரஜ்ஜு தோஷமில்லை).",
+              "isArohaAvarohaException": false,
+              "hasDosha": false
+            },
+            {
+              "name": "Vedha Porutham",
+              "tamilName": "வேதைப் பொருத்தம்",
+              "significance": "Absence of mutual repulsion, sorrow & occult affliction (தம்பதிகள் சௌக்கியம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "No Vedha affliction between Magha and Uttara Ashadha (வேதை தோஷமில்லை)."
+            },
+            {
+              "name": "Nadi Porutham",
+              "tamilName": "நாடிப் பொருத்தம்",
+              "significance": "Genetic vitality, bloodline & physiological health (நாடிப் பொருத்தம் / ஆரோக்கியம்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Both have Vama Nadi (தக்ஷிண/வாம பார்சுவ நாடி) - Threatens health of Groom."
+            },
+            {
+              "name": "Vriksha Porutham",
+              "tamilName": "விருட்சப் பொருத்தம்",
+              "significance": "Physical well-being, tree energy & prosperity (பால் உள்ள மரங்கள் சுப விருத்தி)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Both trees are milky trees (பால் உள்ள மரங்கள்: ஆல் & பலா) - Highly auspicious."
+            }
+          ],
+          "primary10Poruthams": [
+            {
+              "name": "Dina Porutham",
+              "tamilName": "தினப் பொருத்தம்",
+              "significance": "Health, longevity & freedom from physical afflictions (க்ஷேமமாக இருத்தல்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Dina count is 17 (Inauspicious Tarabalam)."
+            },
+            {
+              "name": "Gana Porutham",
+              "tamilName": "கணப் பொருத்தம்",
+              "significance": "Temperament, mental peace & mutual affection (செல்வத்துடன் இருத்தல் / அன்யோன்ய வசியம்)",
+              "status": "Madhyamam",
+              "statusTamil": "மத்யமம்",
+              "points": 0.5,
+              "maxPoints": 1,
+              "rule": "Girl Rakshasa Gana Dosha is cancelled because Boy star is > 14 stars away (17 stars)."
+            },
+            {
+              "name": "Mahendra Porutham",
+              "tamilName": "மகேந்திரப் பொருத்தம்",
+              "significance": "Longevity of progeny & family lineage growth (ஆயுள் விருத்தி & சந்தான விருத்தி)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Count 17 does not fall in Mahendra series (1, 4, 7, 10, 13, 16, 19, 22, 25)."
+            },
+            {
+              "name": "Stree Deergham",
+              "tamilName": "ஸ்திரீ தீர்க்கம்",
+              "significance": "Longevity, prosperity & continuous well-being of the bride (மணப்பெண் ஆயுள் & தாம்பத்ய சௌக்கியம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Distance is 17 stars (> 13 stars) - Uttama Deergham for Bride."
+            },
+            {
+              "name": "Yoni Porutham",
+              "tamilName": "யோனிப் பொருத்தம்",
+              "significance": "Physical, biological & intimate mutual harmony (அன்யோன்ய வசியம் & தேக சௌக்கியம்)",
+              "status": "Madhyamam",
+              "statusTamil": "மத்யமம்",
+              "points": 0.5,
+              "maxPoints": 1,
+              "rule": "Different friendly Yonis (Rat & Mongoose) - Compatible."
+            },
+            {
+              "name": "Rasi Porutham",
+              "tamilName": "ராசிப் பொருத்தம்",
+              "significance": "Family welfare, prosperity & lineage growth (வம்ச விருத்தி & மன ஒற்றுமை)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Shashtashtakam (6-8 distance) - Inauspicious unless remedial propitiations performed."
+            },
+            {
+              "name": "Rasi Adhipathi Porutham",
+              "tamilName": "ராசி அதிபதி பொருத்தம்",
+              "significance": "Parental friendship, intellectual bonding & planetary accord (சம்பந்திகள் நட்பு & கிரக அனுகூலம்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "Planetary enmity exists between Sun and Saturn."
+            },
+            {
+              "name": "Vashya Porutham",
+              "tamilName": "வசியப் பொருத்தம்",
+              "significance": "Mutual magnetic attraction & devoted marital affection (ஒருவருக்கொருவர் வசியமாக இருத்தல்)",
+              "status": "Porunthathu",
+              "statusTamil": "பொருந்தாது",
+              "points": 0,
+              "maxPoints": 1,
+              "rule": "No direct Vashya attraction between Makara and Simha."
+            },
+            {
+              "name": "Rajju Porutham",
+              "tamilName": "ரஜ்ஜுப் பொருத்தம்",
+              "significance": "Mangalya Bhagyam & long wedded life (தீர்க்க சுமங்கலியாயிருத்தல் - தலையாய பொருத்தம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "Different Rajjus (Groom: Pada, Bride: Udara) - Auspicious! (ரஜ்ஜு தோஷமில்லை).",
+              "isArohaAvarohaException": false,
+              "hasDosha": false
+            },
+            {
+              "name": "Vedha Porutham",
+              "tamilName": "வேதைப் பொருத்தம்",
+              "significance": "Absence of mutual repulsion, sorrow & occult affliction (தம்பதிகள் சௌக்கியம்)",
+              "status": "Uttamam",
+              "statusTamil": "உத்தமம்",
+              "points": 1,
+              "maxPoints": 1,
+              "rule": "No Vedha affliction between Magha and Uttara Ashadha (வேதை தோஷமில்லை)."
+            }
+          ],
+          "totalScore": 4,
+          "maxScore": 10,
+          "percentage": 40,
+          "overallVerdict": "Adhama Vivaham (Not Recommended)",
+          "overallVerdictTamil": "பொருந்தாது (தோஷம் உள்ளது)",
+          "rajjuAnalysis": {
+            "hasDosha": false,
+            "isArohaAvarohaException": false,
+            "boyRajju": "Pada",
+            "girlRajju": "Udara",
+            "boyDirection": "Aroha",
+            "girlDirection": "Aroha"
+          },
+          "vedhaAnalysis": {
+            "hasVedha": false,
+            "boyStar": "Magha",
+            "girlStar": "Uttara Ashadha"
+          },
+          "subhaShashtashtakam": {
+            "is6_8": true,
+            "isSubha": false
+          },
+          "boyDetails": {
+            "star": "Magha",
+            "tamilStar": "மகம்",
+            "rasi": "Simha",
+            "padam": 4,
+            "gana": "Rakshasa",
+            "animal": "Rat",
+            "yoniSex": "Male",
+            "bird": "Male Vulture",
+            "tree": "ஆல்",
+            "milkyTree": true,
+            "nadi": "Vama",
+            "rajju": "Pada",
+            "rajjuDirection": "Aroha"
+          },
+          "girlDetails": {
+            "star": "Uttara Ashadha",
+            "tamilStar": "உத்திராடம்",
+            "rasi": "Makara",
+            "padam": 3,
+            "gana": "Manushya",
+            "animal": "Mongoose",
+            "yoniSex": "Male",
+            "bird": "Swift",
+            "tree": "பலா",
+            "milkyTree": true,
+            "nadi": "Vama",
+            "rajju": "Udara",
+            "rajjuDirection": "Aroha"
+          }
+        },
+        "chevvaiAnalysis": {
+          "boy": {
+            "isCandidate": true,
+            "hasDosha": false,
+            "isCancelled": true,
+            "houses": {
+              "lagna": 10,
+              "moon": 10,
+              "venus": 12
+            },
+            "gender": "male",
+            "cancellations": [
+              "Born in Simha (Leo): Mars is auspicious Yogakaraka (கடக, சிம்ம லக்னங்களுக்கு செவ்வாயினால் தோஷமில்லை)."
+            ],
+            "statusText": "Chevvai Dosha Cancelled (செவ்வாய் தோஷ நிவர்த்தி)"
+          },
+          "girl": {
+            "isCandidate": true,
+            "hasDosha": false,
+            "isCancelled": true,
+            "houses": {
+              "lagna": 4,
+              "moon": 8,
+              "venus": 11
+            },
+            "gender": "female",
+            "cancellations": [
+              "Mars placed in own/exaltation/friendly sign Simha (Leo) (செவ்வாய் சிம்மம், மேஷம், விருச்சிகம், மகரம், கும்பத்தில் இருந்தால் தோஷமில்லை)."
+            ],
+            "statusText": "Chevvai Dosha Cancelled (செவ்வாய் தோஷ நிவர்த்தி)"
+          }
+        }
+      },
+      "astrologerReview": {
+        "verdict": "Not Recommended (Inauspicious Dosha)",
+        "suggestions": "The horoscopes show a splendid 28/36 Gunas alignment with excellent Graha Maitri and mutual respect. The planetary transits indicate a flourishing bond with strong familial prosperity.",
+        "remedies": "Perform joint Sankalpa and archana to Lord Shiva & Goddess Parvati on Rohini Nakshatra. Fasting on Shukla Ekadashi recommended.",
+        "reviewedAt": "2026-11-11T09:19:52.737Z",
+        "astrologerName": "Pandit Rajesh Sharma"
+      },
+      "createdAt": "2026-11-10T14:30:00.000Z"
+    }
+  ],
+  "appointments": [
+    {
+      "id": "apt-2026-c101",
+      "clientMobile": "9123456789",
+      "clientName": "Aarav Kumar Sharma",
+      "astrologerId": "astro-1",
+      "astrologerName": "Pandit Rajesh Sharma",
+      "appointmentType": "online",
+      "officeAddress": "14, Gayatri Nagar, Sector 4, Varanasi, UP",
+      "date": "2026-11-08",
+      "slotTime": "11:30 AM",
+      "isCustomSlot": false,
+      "queryArea": "Career & Financial Guidance",
+      "clientQuery": "I am facing career stagnancy and delays in promotion despite strong appraisal. Will changing jobs after the next solar transit be auspicious or should I stay in current firm?",
+      "status": "Completed",
+      "astrologerAnswer": "Detailed examination of your 10th house (Karma Bhava) and Sun transit shows that Saturn aspect is causing a temporary delay until mid-December. Post 14th December, Sun enters Sagittarius which activates your 5th and 9th house trikona. It is highly recommended to wait until mid-December before accepting external offers; a promotion or favorable salary revision in your current organization is strongly indicated.",
+      "prescribedRemedies": "1. Chant Aditya Hridaya Stotra every Sunday morning during Surya Hora.\n2. Offer water (Arghya) with red kumkum and akshat to rising Sun.\n3. Wear a genuine 5-Mukhi Nepali Rudraksha in silver casing.\n4. Avoid signing major employment contracts during Rahu Kalam hours.",
+      "completedAt": "2026-11-08T12:30:00.000Z",
+      "createdAt": "2026-11-05T10:00:00.000Z"
+    },
+    {
+      "id": "apt-2026-u102",
+      "clientMobile": "9123456789",
+      "clientName": "Aarav Kumar Sharma",
+      "astrologerId": "astro-1",
+      "astrologerName": "Pandit Rajesh Sharma",
+      "appointmentType": "offline",
+      "officeAddress": "14, Gayatri Nagar, Sector 4, Varanasi, UP",
+      "date": "2026-11-15",
+      "slotTime": "04:00 PM",
+      "isCustomSlot": false,
+      "queryArea": "Kundali (Marriage / Matchmaking Review)",
+      "clientQuery": "Review of Ashtakoota compatibility with Pooja Iyer, specifically addressing Nadi Dosha mitigation and auspicious Vivaha Muhurat dates for early 2027.",
+      "status": "Confirmed",
+      "createdAt": "2026-11-10T11:00:00.000Z"
+    },
+    {
+      "id": "apt-e451e18d",
+      "clientMobile": "9123456789",
+      "clientName": "Aarav Kumar Sharma",
+      "astrologerId": "astro-1",
+      "astrologerName": "Pandit Rajesh Sharma",
+      "consultancyId": null,
+      "consultancyName": null,
+      "memberAstrologerId": null,
+      "memberAstrologerName": null,
+      "appointmentType": "offline",
+      "officeAddress": "14, Gayatri Nagar, Sector 4, Varanasi, UP",
+      "slotTime": "08:30 PM (Requested Custom Time)",
+      "isCustomSlot": true,
+      "date": "2026-11-11",
+      "queryArea": "Vastu",
+      "consultationTopic": "Vastu",
+      "clientQuery": "We are constructing a new north-facing residential home in Varanasi. I want to check the kitchen placement in Southeast vs Northwest and recommended puja for Griha Pravesh.",
+      "status": "Completed",
+      "astrologerAnswer": "According to classical Vastu Shastra (Mayamatam), the Southeast (Agneya kona) is ruled by Agni Deva and is the strictly auspicious quadrant for the kitchen and cooking hearth. Northwest (Vayavya) should only be used as a secondary alternative if plumbing constraints arise. The cooking platform must face East so the cook faces sunrise.",
+      "prescribedRemedies": "1. Perform Vastu Shanti Homam and Navagraha Havan on Shukla Trayodashi before Griha Pravesh.\n2. Bury a small energized Copper Swastika and Vastu Yantra at Northeast (Ishanya) corner foundation.\n3. Conduct Go-Pooja (Cow & Calf worship) during the Griha Pravesh Brahma Muhurat.",
+      "privateNotes": "Client will share blueprint cad file on next visit for exact bedroom directional checking.",
+      "completedAt": "2026-11-11T07:16:47.548Z",
+      "createdAt": "2026-11-11T07:15:44.143Z",
+      "resolvedBy": "Pandit Rajesh Sharma"
+    }
+  ],
+  "subscribers": [
+    {
+      "mobile": "919123456789",
+      "lang": "kn",
+      "receivePanchangam": true,
+      "receiveRahuKalam": true,
+      "receiveHoroscopeTips": true,
+      "subscribedAt": "2026-11-11T15:30:40.184Z",
+      "lastDispatched": "2026-11-11T15:30:40.184Z"
+    },
+    {
+      "mobile": "918973251594",
+      "lang": "en",
+      "receivePanchangam": true,
+      "receiveRahuKalam": true,
+      "receiveHoroscopeTips": true,
+      "subscribedAt": "2026-11-11T16:28:30.402Z",
+      "lastDispatched": "2026-11-11T16:28:30.402Z"
+    }
+  ],
+  "familyMembers": [
+    {
+      "id": "fam-1",
+      "clientId": "client-1",
+      "relation": "Sister",
+      "name": "Priyanka Sharma",
+      "gender": "female",
+      "dob": "1999-05-14",
+      "dobTime": "08:15",
+      "dobPlace": "New Delhi, India",
+      "fatherName": "Vikram Sharma",
+      "motherName": "Sunita Sharma",
+      "maritalStatus": "Never Married",
+      "motherTongue": "Hindi / Tamil",
+      "highestEducation": "M.Tech in Artificial Intelligence",
+      "occupation": "Senior AI Engineer",
+      "company": "Infosys Innovation Labs",
+      "annualIncome": "₹18,00,000",
+      "workLocation": "Bengaluru, Karnataka",
+      "height": "5'5\" (165 cm)",
+      "weight": "54 kg",
+      "nakshatra": "Bharani (பரணி)",
+      "rasi": "Mesha (Aries) (மேஷம்)",
+      "lagna": "Mithuna (Gemini)",
+      "chevvaiDosha": "No Dosha",
+      "photoUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&auto=format&fit=crop&q=80",
+      "createdAt": "2026-03-01T10:00:00.000Z"
+    },
+    {
+      "id": "fam-2",
+      "clientId": "client-1",
+      "relation": "Brother",
+      "name": "Rohan Sharma",
+      "gender": "male",
+      "dob": "1994-03-22",
+      "dobTime": "11:20",
+      "dobPlace": "New Delhi, India",
+      "fatherName": "Vikram Sharma",
+      "motherName": "Sunita Sharma",
+      "maritalStatus": "Never Married",
+      "motherTongue": "Hindi / Tamil",
+      "highestEducation": "MBA - Finance",
+      "occupation": "Investment Banking Vice President",
+      "company": "HDFC Capital",
+      "annualIncome": "₹34,00,000",
+      "workLocation": "Mumbai, Maharashtra",
+      "height": "6'0\" (183 cm)",
+      "weight": "75 kg",
+      "nakshatra": "Pushya (பூசம்)",
+      "rasi": "Karka (Cancer) (கடகம்)",
+      "lagna": "Vrishabha (Taurus)",
+      "chevvaiDosha": "Cancelled (செவ்வாய் தோஷ நிவர்த்தி)",
+      "photoUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&auto=format&fit=crop&q=80",
+      "createdAt": "2026-03-02T11:00:00.000Z"
+    }
+  ],
+  "matrimonyProfiles": [
+    {
+      "id": "AJ-MAT-2026-1001",
+      "clientId": "client-1",
+      "createdByMobile": "9123456789",
+      "profileCreatedBy": "Self",
+      "profileType": "Groom",
+      "name": "Aarav Kumar Sharma",
+      "gender": "male",
+      "dob": "1996-08-15",
+      "dobTime": "06:30",
+      "dobPlace": "New Delhi, India",
+      "age": 30,
+      "height": "5'11\" (180 cm)",
+      "weight": "76 kg",
+      "maritalStatus": "Never Married",
+      "physicalStatus": "Normal",
+      "bloodGroup": "O+",
+      "motherTongue": "Hindi / Tamil",
+      "aboutMe": "Senior Software Engineering Lead based in Bengaluru. Passionate about Vedic astrology, technology, and classical music. Looking for a cultured, intellectually curious life partner.",
+      "religion": "Hindu",
+      "caste": "Brahmin",
+      "subCaste": "Shukla Yajurvedi",
+      "community": "North / South Indian Vedic Brahmin Friendly",
+      "sect": "Smartha",
+      "gotra": "Kashyapa",
+      "manglikStatus": "Chevvai Dosha Cancelled",
+      "eatingHabits": "Vegetarian",
+      "drinkingHabits": "No",
+      "smokingHabits": "No",
+      "hobbies": [
+        "Classical Sitar",
+        "Trekking",
+        "Vedic Philosophy",
+        "Chess"
+      ],
+      "personality": "Calm, analytical, family-centric and progressive",
+      "languagesKnown": [
+        "English",
+        "Tamil",
+        "Hindi"
+      ],
+      "nakshatra": "Magha",
+      "rasi": "Simha (Leo)",
+      "lagna": "Simha (Leo)",
+      "pada": 4,
+      "doshaDetails": "Mars placed in Simha in friendly house with canonical cancellation.",
+      "horoscopeMatchingPreference": "Strict 10 Poruthams & 36 Gunas alignment desired",
+      "highestEducation": "B.Tech & M.S. in Computer Science",
+      "degree": "M.S. in Computer Science",
+      "specialization": "Distributed Systems & Cloud Architecture",
+      "college": "IIT Delhi / CMU Exchange",
+      "yearOfPassing": 2019,
+      "additionalQualifications": "AWS Certified Solutions Architect Professional",
+      "employmentStatus": "Employed",
+      "occupation": "Software Engineering Lead",
+      "jobTitle": "Lead Architect",
+      "company": "Top Tier Tech Unicorn",
+      "industry": "Information Technology",
+      "workLocation": "Bengaluru, Karnataka, India",
+      "annualIncome": "₹38,00,000 - ₹45,00,000",
+      "monthlyIncome": "₹3,20,000",
+      "workExperience": "7 Years",
+      "fatherName": "Vikram Sharma",
+      "fatherOccupation": "Retired Chief Engineer (PWD)",
+      "motherName": "Sunita Sharma",
+      "motherOccupation": "Homemaker & Music Teacher",
+      "brothersCount": 1,
+      "brothersMarried": 0,
+      "sistersCount": 1,
+      "sistersMarried": 0,
+      "familyType": "Nuclear",
+      "familyStatus": "Upper Middle Class",
+      "familyValues": "Moderate Traditional",
+      "nativePlace": "Varanasi / New Delhi",
+      "familyOrigin": "Traditional Vedic Brahmin family with roots in Varanasi",
+      "familyDescription": "Cultured family with strong values for higher education and mutual respect.",
+      "country": "India",
+      "state": "Karnataka",
+      "district": "Bengaluru Urban",
+      "city": "Bengaluru",
+      "currentResidence": "Indiranagar, Bengaluru",
+      "citizenship": "Indian",
+      "residentialStatus": "Citizen",
+      "bodyType": "Athletic",
+      "complexion": "Wheatish",
+      "physicalDisability": "None",
+      "photoUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80",
+      "galleryPhotos": [
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&auto=format&fit=crop&q=80"
+      ],
+      "partnerPreferences": {
+        "minAge": 24,
+        "maxAge": 29,
+        "minHeight": "5'2\"",
+        "maxHeight": "5'8\"",
+        "maritalStatus": "Never Married",
+        "religion": "Hindu",
+        "caste": "Brahmin / Open to progressive families",
+        "subCaste": "Any",
+        "motherTongue": "Tamil / Hindi / Kannada",
+        "education": "Graduate / Post Graduate / Professional",
+        "occupation": "Working Professional / Doctor / Tech / Creative",
+        "annualIncome": "₹10,00,000+",
+        "location": "Bengaluru / Chennai / Hyderabad / Overseas",
+        "diet": "Vegetarian",
+        "lifestyle": "Non-smoker, teetotaler preferred",
+        "familyValues": "Traditional or Moderate",
+        "horoscopePreference": "Must match 10 Poruthams or minimum 18 Gunas",
+        "doshaPreference": "Non-Manglik or Cancelled Manglik",
+        "specialExpectations": "Kind-hearted, career-oriented with respect for elders and spiritual grounding."
+      },
+      "contact": {
+        "mobile": "9123456789",
+        "whatsapp": "9123456789",
+        "email": "aarav.sharma@example.com",
+        "visibility": "Members Only"
+      },
+      "account": {
+        "status": "Active",
+        "profileVisibility": "Members Only",
+        "isVerified": true,
+        "completenessPercentage": 96,
+        "termsAccepted": true,
+        "createdAt": "2026-03-01T10:00:00.000Z"
+      },
+      "starNakshatra": "Magha",
+      "rasiMoonSign": "Simha (Leo)",
+      "lagnamAscendant": "Simha (Leo)",
+      "padam": 4,
+      "manglikDosha": "Chevvai Dosha Cancelled",
+      "birthTime": "06:30",
+      "birthPlace": "New Delhi, India",
+      "mobile": "9123456789",
+      "whatsapp": "9123456789",
+      "email": "aarav.sharma@example.com",
+      "visibility": "Members Only",
+      "partnerAgeMin": 24,
+      "partnerAgeMax": 29,
+      "partnerHeightMin": "5'2\"",
+      "partnerHeightMax": "5'8\"",
+      "partnerDiet": "Vegetarian",
+      "specialExpectations": "Kind-hearted, career-oriented with respect for elders and spiritual grounding.",
+      "companyName": "Top Tier Tech Unicorn",
+      "updatedAt": "2026-11-12T08:42:40.425Z",
+      "completenessScore": 85
+    },
+    {
+      "id": "AJ-MAT-2026-1002",
+      "clientId": "client-2",
+      "createdByMobile": "9345678901",
+      "profileCreatedBy": "Self",
+      "profileType": "Bride",
+      "name": "Pooja Iyer",
+      "gender": "female",
+      "dob": "1998-11-23",
+      "dobTime": "17:45",
+      "dobPlace": "Chennai, Tamil Nadu",
+      "age": 28,
+      "height": "5'4\" (163 cm)",
+      "weight": "55 kg",
+      "maritalStatus": "Never Married",
+      "physicalStatus": "Normal",
+      "bloodGroup": "B+",
+      "motherTongue": "Tamil",
+      "aboutMe": "Senior Product Manager at a global cloud software firm. Carnatic classical vocalist and Bharatanatyam enthusiast. Value Vedic traditions while leading an active, fulfilling corporate journey.",
+      "religion": "Hindu",
+      "caste": "Brahmin",
+      "subCaste": "Vadama",
+      "community": "Tamil Brahmin (Iyer)",
+      "sect": "Smartha",
+      "gotra": "Harita",
+      "manglikStatus": "No Dosha",
+      "eatingHabits": "Vegetarian",
+      "drinkingHabits": "No",
+      "smokingHabits": "No",
+      "hobbies": [
+        "Carnatic Vocal",
+        "Classical Dance",
+        "Reading History",
+        "Baking"
+      ],
+      "personality": "Warm, empathetic, expressive and cultured",
+      "languagesKnown": [
+        "Tamil",
+        "English",
+        "Kannada",
+        "Hindi"
+      ],
+      "nakshatra": "Uttara Ashadha",
+      "rasi": "Dhanus (Sagittarius)",
+      "lagna": "Rishabham (Taurus)",
+      "pada": 1,
+      "doshaDetails": "Mars located peacefully in Upachaya sthana (3rd house).",
+      "horoscopeMatchingPreference": "Thirukanitha 10 Poruthams & Graha Maitri alignment",
+      "highestEducation": "M.S. in Software Systems",
+      "degree": "B.Tech & M.S.",
+      "specialization": "Product Management & Cloud Systems",
+      "college": "Anna University (CEG Guindy)",
+      "yearOfPassing": 2021,
+      "additionalQualifications": "Pragmatic Institute Certified Product Manager",
+      "employmentStatus": "Employed",
+      "occupation": "Senior Product Manager",
+      "jobTitle": "Senior PM",
+      "company": "Global Enterprise SaaS Corp",
+      "industry": "Information Technology",
+      "workLocation": "Chennai / Bengaluru (Hybrid)",
+      "annualIncome": "₹28,00,000 - ₹34,00,000",
+      "monthlyIncome": "₹2,40,000",
+      "workExperience": "5 Years",
+      "fatherName": "Narayanan Iyer",
+      "fatherOccupation": "Senior Consultant (Chartered Accountant)",
+      "motherName": "Lakshmi Iyer",
+      "motherOccupation": "School Principal (Retd.)",
+      "brothersCount": 0,
+      "brothersMarried": 0,
+      "sistersCount": 1,
+      "sistersMarried": 1,
+      "familyType": "Nuclear",
+      "familyStatus": "Upper Middle Class",
+      "familyValues": "Traditional with Modern Outlook",
+      "nativePlace": "Tirunelveli / Chennai",
+      "familyOrigin": "Vadama Tamil Brahmin family settled in Chennai for 3 generations",
+      "familyDescription": "Respectful, spiritually inclined family with deep devotion to Kanchi Kamakoti & Sringeri Peetham.",
+      "country": "India",
+      "state": "Tamil Nadu",
+      "district": "Chennai",
+      "city": "Chennai",
+      "currentResidence": "Mylapore, Chennai",
+      "citizenship": "Indian",
+      "residentialStatus": "Citizen",
+      "bodyType": "Slim",
+      "complexion": "Fair",
+      "physicalDisability": "None",
+      "photoUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80",
+      "galleryPhotos": [
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&auto=format&fit=crop&q=80"
+      ],
+      "partnerPreferences": {
+        "minAge": 27,
+        "maxAge": 32,
+        "minHeight": "5'8\"",
+        "maxHeight": "6'2\"",
+        "maritalStatus": "Never Married",
+        "religion": "Hindu",
+        "caste": "Brahmin (Iyer / Iyengar / Vedic Brahmin)",
+        "subCaste": "Vadama / Brahacharanam / Open",
+        "motherTongue": "Tamil / Kannada / Telugu",
+        "education": "B.Tech / M.S. / MBA / MD",
+        "occupation": "Tech / Corporate / Finance / Management",
+        "annualIncome": "₹25,00,000+",
+        "location": "Bengaluru / Chennai / Hyderabad / US / Singapore",
+        "diet": "Vegetarian strictly",
+        "lifestyle": "Teetotaler, healthy lifestyle",
+        "familyValues": "Traditional or Moderate",
+        "horoscopePreference": "Good Porutham agreement (Minimum 7/10 Poruthams)",
+        "doshaPreference": "No Sevvai Dosham",
+        "specialExpectations": "Mutual respect, family warmth and intellectual companionship."
+      },
+      "contact": {
+        "mobile": "9345678901",
+        "altMobile": "9444112233",
+        "email": "pooja.iyer@example.com",
+        "whatsapp": "9345678901",
+        "contactPerson": "Narayanan Iyer (Father)",
+        "preferredMethod": "WhatsApp / Phone",
+        "visibility": "Members Only"
+      },
+      "account": {
+        "status": "Active",
+        "profileVisibility": "Members Only",
+        "isVerified": true,
+        "completenessPercentage": 98,
+        "termsAccepted": true,
+        "createdAt": "2026-03-01T11:00:00.000Z"
+      }
+    },
+    {
+      "id": "AJ-MAT-2026-1003",
+      "clientId": "client-3",
+      "createdByMobile": "9845011223",
+      "profileCreatedBy": "Father",
+      "profileType": "Bride",
+      "name": "Ananya Sundaram",
+      "gender": "female",
+      "dob": "2000-02-18",
+      "dobTime": "07:10",
+      "dobPlace": "Coimbatore, Tamil Nadu",
+      "age": 26,
+      "height": "5'3\" (160 cm)",
+      "weight": "52 kg",
+      "maritalStatus": "Never Married",
+      "physicalStatus": "Normal",
+      "bloodGroup": "A+",
+      "motherTongue": "Tamil",
+      "aboutMe": "Lead UX Researcher and Product Designer with passion for traditional silk weaving, South Indian temple heritage, and sketching. Cheerful, ambitious and deeply respectful.",
+      "religion": "Hindu",
+      "caste": "Mudaliar",
+      "subCaste": "Saiva Mudaliar",
+      "community": "Tamil Mudaliar",
+      "sect": "Saiva Siddhanta",
+      "gotra": "Siva Gotram",
+      "manglikStatus": "No Dosha",
+      "eatingHabits": "Vegetarian",
+      "drinkingHabits": "No",
+      "smokingHabits": "No",
+      "hobbies": [
+        "Temple Architecture",
+        "Pencil Sketching",
+        "Yoga",
+        "Culinary Arts"
+      ],
+      "personality": "Creative, soft-spoken, organized and compassionate",
+      "languagesKnown": [
+        "Tamil",
+        "English"
+      ],
+      "nakshatra": "Hasta",
+      "rasi": "Kanya (Virgo)",
+      "lagna": "Kumbha (Aquarius)",
+      "pada": 2,
+      "doshaDetails": "Mars located auspiciously in 11th house (Labha Sthana).",
+      "horoscopeMatchingPreference": "10 Poruthams verified matching",
+      "highestEducation": "Master of Design (M.Des)",
+      "degree": "B.Des & M.Des",
+      "specialization": "Human Computer Interaction",
+      "college": "NID Ahmedabad / NIFT",
+      "yearOfPassing": 2023,
+      "additionalQualifications": "Design Thinking Certified",
+      "employmentStatus": "Employed",
+      "occupation": "Lead UX Designer",
+      "jobTitle": "Design Lead",
+      "company": "Fintech Innovations Pvt Ltd",
+      "industry": "Design & Technology",
+      "workLocation": "Chennai, Tamil Nadu",
+      "annualIncome": "₹20,00,000 - ₹24,00,000",
+      "monthlyIncome": "₹1,80,000",
+      "workExperience": "4 Years",
+      "fatherName": "Sundaramurthy Mudaliar",
+      "fatherOccupation": "Managing Director (Textile Exports)",
+      "motherName": "Manimegalai Sundaram",
+      "motherOccupation": "Homemaker",
+      "brothersCount": 1,
+      "brothersMarried": 1,
+      "sistersCount": 0,
+      "sistersMarried": 0,
+      "familyType": "Joint",
+      "familyStatus": "Rich / Affluent",
+      "familyValues": "Traditional",
+      "nativePlace": "Coimbatore / Tiruppur",
+      "familyOrigin": "Established business family in Coimbatore textile sector",
+      "familyDescription": "Prominent, noble Saiva Mudaliar family with strong philanthropic legacy.",
+      "country": "India",
+      "state": "Tamil Nadu",
+      "district": "Coimbatore",
+      "city": "Coimbatore",
+      "currentResidence": "Race Course, Coimbatore",
+      "citizenship": "Indian",
+      "residentialStatus": "Citizen",
+      "bodyType": "Slim",
+      "complexion": "Fair",
+      "physicalDisability": "None",
+      "photoUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&auto=format&fit=crop&q=80",
+      "galleryPhotos": [
+        "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&auto=format&fit=crop&q=80"
+      ],
+      "partnerPreferences": {
+        "minAge": 27,
+        "maxAge": 32,
+        "minHeight": "5'7\"",
+        "maxHeight": "6'1\"",
+        "maritalStatus": "Never Married",
+        "religion": "Hindu",
+        "caste": "Mudaliar / Chettiar / Pillai",
+        "subCaste": "Saiva Mudaliar / Any Saivite",
+        "motherTongue": "Tamil",
+        "education": "Masters / Engineering / Medicine / MBA",
+        "occupation": "Tech / Business / Entrepreneur / Civil Services",
+        "annualIncome": "₹20,00,000+",
+        "location": "Chennai / Coimbatore / Bengaluru / Overseas",
+        "diet": "Vegetarian strictly",
+        "lifestyle": "Teetotaler",
+        "familyValues": "Traditional family background",
+        "horoscopePreference": "Good Porutham matching essential",
+        "doshaPreference": "No Sevvai Dosham",
+        "specialExpectations": "Groom from respectable, cultured family with warmth and dignity."
+      },
+      "contact": {
+        "mobile": "9845011223",
+        "altMobile": "9845011224",
+        "email": "sundaram.family@example.com",
+        "whatsapp": "9845011223",
+        "contactPerson": "Sundaramurthy (Father)",
+        "preferredMethod": "Call & WhatsApp",
+        "visibility": "Members Only"
+      },
+      "account": {
+        "status": "Active",
+        "profileVisibility": "Members Only",
+        "isVerified": true,
+        "completenessPercentage": 95,
+        "termsAccepted": true,
+        "createdAt": "2026-03-02T09:30:00.000Z"
+      }
+    },
+    {
+      "id": "AJ-MAT-2026-1004",
+      "clientId": "client-4",
+      "createdByMobile": "9789012345",
+      "profileCreatedBy": "Mother",
+      "profileType": "Bride",
+      "name": "Deepika Pillai",
+      "gender": "female",
+      "dob": "1999-09-12",
+      "dobTime": "14:25",
+      "dobPlace": "Madurai, Tamil Nadu",
+      "age": 27,
+      "height": "5'5\" (165 cm)",
+      "weight": "56 kg",
+      "maritalStatus": "Never Married",
+      "physicalStatus": "Normal",
+      "bloodGroup": "O+",
+      "motherTongue": "Tamil",
+      "aboutMe": "Senior Financial Analyst at an international investment firm. Trained violinist and avid marathon runner. Believe in mutual empowerment, family bonds and ethical living.",
+      "religion": "Hindu",
+      "caste": "Pillai",
+      "subCaste": "Saiva Pillai",
+      "community": "Tamil Saiva Pillai",
+      "sect": "Saivism",
+      "gotra": "Siva Gotram",
+      "manglikStatus": "No Dosha",
+      "eatingHabits": "Vegetarian",
+      "drinkingHabits": "No",
+      "smokingHabits": "No",
+      "hobbies": [
+        "Carnatic Violin",
+        "Running",
+        "Nature Photography",
+        "Reading"
+      ],
+      "personality": "Energetic, articulate, grounded and loving",
+      "languagesKnown": [
+        "Tamil",
+        "English",
+        "Malayalam"
+      ],
+      "nakshatra": "Rohini",
+      "rasi": "Rishabham (Taurus)",
+      "lagna": "Dhanus (Sagittarius)",
+      "pada": 2,
+      "doshaDetails": "Mars positioned favorably in 6th house.",
+      "horoscopeMatchingPreference": "Porutham & Dasha Sandhi verification required",
+      "highestEducation": "Chartered Accountant (CA) & B.Com",
+      "degree": "CA & B.Com (Hons)",
+      "specialization": "Corporate Audit & Equity Valuation",
+      "college": "Loyola College Chennai & ICAI",
+      "yearOfPassing": 2022,
+      "additionalQualifications": "CFA Level 2 Candidate",
+      "employmentStatus": "Employed",
+      "occupation": "Senior Financial Analyst",
+      "jobTitle": "Senior Analyst - Valuation",
+      "company": "Big 4 Advisory Firm",
+      "industry": "Financial Services",
+      "workLocation": "Chennai, Tamil Nadu",
+      "annualIncome": "₹24,00,000",
+      "monthlyIncome": "₹2,00,000",
+      "workExperience": "5 Years",
+      "fatherName": "Dr. Somasundaram Pillai",
+      "fatherOccupation": "Chief Medical Officer (Cardiologist)",
+      "motherName": "Dr. Kalyani Somasundaram",
+      "motherOccupation": "Professor of Chemistry",
+      "brothersCount": 1,
+      "brothersMarried": 0,
+      "sistersCount": 0,
+      "sistersMarried": 0,
+      "familyType": "Nuclear",
+      "familyStatus": "Upper Middle Class",
+      "familyValues": "Moderate Traditional",
+      "nativePlace": "Madurai / Tirunelveli",
+      "familyOrigin": "Respected lineage of doctors and academicians in Madurai",
+      "familyDescription": "High academic ethos, spiritual devotion to Madurai Meenakshi Amman.",
+      "country": "India",
+      "state": "Tamil Nadu",
+      "district": "Chennai",
+      "city": "Chennai",
+      "currentResidence": "Anna Nagar, Chennai",
+      "citizenship": "Indian",
+      "residentialStatus": "Citizen",
+      "bodyType": "Slim",
+      "complexion": "Wheatish",
+      "physicalDisability": "None",
+      "photoUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&auto=format&fit=crop&q=80",
+      "galleryPhotos": [
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&auto=format&fit=crop&q=80"
+      ],
+      "partnerPreferences": {
+        "minAge": 27,
+        "maxAge": 32,
+        "minHeight": "5'8\"",
+        "maxHeight": "6'2\"",
+        "maritalStatus": "Never Married",
+        "religion": "Hindu",
+        "caste": "Pillai / Mudaliar / Chettiar",
+        "subCaste": "Saiva Pillai / Any Saivite",
+        "motherTongue": "Tamil",
+        "education": "CA / MBA / Doctor / Engineering",
+        "occupation": "Finance / Tech / Healthcare / Management",
+        "annualIncome": "₹22,00,000+",
+        "location": "Chennai / Bengaluru / Hyderabad",
+        "diet": "Vegetarian",
+        "lifestyle": "Teetotaler preferred",
+        "familyValues": "Values-based cultured family",
+        "horoscopePreference": "Thirukanitha Porutham agreement",
+        "doshaPreference": "No Sevvai Dosham",
+        "specialExpectations": "Emotionally mature, respectful and ambitious partner."
+      },
+      "contact": {
+        "mobile": "9789012345",
+        "altMobile": "9789012346",
+        "email": "somasundaram.pillai@example.com",
+        "whatsapp": "9789012345",
+        "contactPerson": "Dr. Kalyani Somasundaram (Mother)",
+        "preferredMethod": "WhatsApp & Call",
+        "visibility": "Members Only"
+      },
+      "account": {
+        "status": "Active",
+        "profileVisibility": "Members Only",
+        "isVerified": true,
+        "completenessPercentage": 97,
+        "termsAccepted": true,
+        "createdAt": "2026-03-03T14:00:00.000Z"
+      }
+    },
+    {
+      "id": "AJ-MAT-2026-1005",
+      "clientId": "client-5",
+      "createdByMobile": "9841234567",
+      "profileCreatedBy": "Self",
+      "profileType": "Groom",
+      "name": "Karthik Narayanan",
+      "gender": "male",
+      "dob": "1995-04-10",
+      "dobTime": "05:40",
+      "dobPlace": "Bengaluru, Karnataka",
+      "age": 31,
+      "height": "6'0\" (183 cm)",
+      "weight": "78 kg",
+      "maritalStatus": "Never Married",
+      "physicalStatus": "Normal",
+      "bloodGroup": "A+",
+      "motherTongue": "Tamil / Kannada",
+      "aboutMe": "Senior Data Scientist & AI Researcher. Passionate about machine learning, astronomy, cycling, and Carnatic flute. Looking for a bright, kind-hearted companion with shared cultural values.",
+      "religion": "Hindu",
+      "caste": "Brahmin",
+      "subCaste": "Vadama",
+      "community": "Tamil / Kannada Brahmin",
+      "sect": "Smartha",
+      "gotra": "Srivatsa",
+      "manglikStatus": "No Dosha",
+      "eatingHabits": "Vegetarian",
+      "drinkingHabits": "No",
+      "smokingHabits": "No",
+      "hobbies": [
+        "Carnatic Flute",
+        "Cycling",
+        "Astronomy",
+        "Gardening"
+      ],
+      "personality": "Thoughtful, humorous, calm and supportive",
+      "languagesKnown": [
+        "Tamil",
+        "Kannada",
+        "English",
+        "Hindi"
+      ],
+      "nakshatra": "Ashwini",
+      "rasi": "Mesha (Aries)",
+      "lagna": "Meena (Pisces)",
+      "pada": 3,
+      "doshaDetails": "Mars placed in Kendra sign with Jupiter benefic aspect.",
+      "horoscopeMatchingPreference": "36 Gunas and 10 Poruthams matching",
+      "highestEducation": "M.S. in Data Science & Machine Learning",
+      "degree": "B.Tech & M.S.",
+      "specialization": "AI & Computational Statistics",
+      "college": "BITS Pilani & University of Washington",
+      "yearOfPassing": 2018,
+      "additionalQualifications": "Published author in IEEE AI Transactions",
+      "employmentStatus": "Employed",
+      "occupation": "Principal Data Scientist",
+      "jobTitle": "Lead AI Researcher",
+      "company": "Multinational Cloud AI Lab",
+      "industry": "Information Technology / AI",
+      "workLocation": "Bengaluru, Karnataka",
+      "annualIncome": "₹42,00,000 - ₹48,00,000",
+      "monthlyIncome": "₹3,50,000",
+      "workExperience": "8 Years",
+      "fatherName": "Narayanaswamy Shastri",
+      "fatherOccupation": "Professor of Mathematics (Retd.)",
+      "motherName": "Saraswathi Narayanaswamy",
+      "motherOccupation": "Homemaker",
+      "brothersCount": 1,
+      "brothersMarried": 1,
+      "sistersCount": 0,
+      "sistersMarried": 0,
+      "familyType": "Nuclear",
+      "familyStatus": "Upper Middle Class",
+      "familyValues": "Traditional with Modern Thinking",
+      "nativePlace": "Palakkad / Bengaluru",
+      "familyOrigin": "Tamil Brahmin family settled in Malleshwaram, Bengaluru",
+      "familyDescription": "High academic tradition, deeply grounded in spiritual harmony.",
+      "country": "India",
+      "state": "Karnataka",
+      "district": "Bengaluru Urban",
+      "city": "Bengaluru",
+      "currentResidence": "Malleshwaram, Bengaluru",
+      "citizenship": "Indian",
+      "residentialStatus": "Citizen",
+      "bodyType": "Athletic",
+      "complexion": "Fair",
+      "physicalDisability": "None",
+      "photoUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&auto=format&fit=crop&q=80",
+      "galleryPhotos": [
+        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&auto=format&fit=crop&q=80"
+      ],
+      "partnerPreferences": {
+        "minAge": 25,
+        "maxAge": 30,
+        "minHeight": "5'3\"",
+        "maxHeight": "5'9\"",
+        "maritalStatus": "Never Married",
+        "religion": "Hindu",
+        "caste": "Brahmin (Iyer / Iyengar / Madhwa / Open)",
+        "subCaste": "Any",
+        "motherTongue": "Tamil / Kannada / Telugu",
+        "education": "Post Graduate / B.Tech / Masters / CA",
+        "occupation": "Tech / Research / Finance / Teaching",
+        "annualIncome": "₹15,00,000+",
+        "location": "Bengaluru / Chennai / Hyderabad / US",
+        "diet": "Vegetarian strictly",
+        "lifestyle": "Teetotaler",
+        "familyValues": "Warm, family-centric",
+        "horoscopePreference": "Good Porutham matching preferred",
+        "doshaPreference": "No Sevvai Dosham",
+        "specialExpectations": "Affectionate, intellectually compatible partner who appreciates music and art."
+      },
+      "contact": {
+        "mobile": "9841234567",
+        "altMobile": "9841234568",
+        "email": "karthik.narayanan@example.com",
+        "whatsapp": "9841234567",
+        "contactPerson": "Karthik Narayanan (Self)",
+        "preferredMethod": "WhatsApp & Call",
+        "visibility": "Members Only"
+      },
+      "account": {
+        "status": "Active",
+        "profileVisibility": "Members Only",
+        "isVerified": true,
+        "completenessPercentage": 98,
+        "termsAccepted": true,
+        "createdAt": "2026-03-04T12:00:00.000Z"
+      }
+    },
+    {
+      "id": "AJ-MAT-2026-1006",
+      "clientId": "client-6",
+      "createdByMobile": "9940123456",
+      "profileCreatedBy": "Father",
+      "profileType": "Groom",
+      "name": "Vignesh Balaji Chettiar",
+      "gender": "male",
+      "dob": "1997-07-29",
+      "dobTime": "09:50",
+      "dobPlace": "Karaikudi, Tamil Nadu",
+      "age": 29,
+      "height": "5'9\" (175 cm)",
+      "weight": "72 kg",
+      "maritalStatus": "Never Married",
+      "physicalStatus": "Normal",
+      "bloodGroup": "B+",
+      "motherTongue": "Tamil",
+      "aboutMe": "Cloud Solutions Architect and Entrepreneur. Passionate about Chettinad architectural preservation, startup ventures, and organic farming. Looking for a charming, ambitious life partner.",
+      "religion": "Hindu",
+      "caste": "Chettiar",
+      "subCaste": "Nattukottai Chettiar",
+      "community": "Nagarathar / Chettiar",
+      "sect": "Saivism",
+      "gotra": "Nemam Kovil Pirivu",
+      "manglikStatus": "Chevvai Dosha Cancelled",
+      "eatingHabits": "Vegetarian",
+      "drinkingHabits": "No",
+      "smokingHabits": "No",
+      "hobbies": [
+        "Heritage Architecture",
+        "Organic Farming",
+        "Travel",
+        "Table Tennis"
+      ],
+      "personality": "Warm, enterprising, reliable and grounded",
+      "languagesKnown": [
+        "Tamil",
+        "English"
+      ],
+      "nakshatra": "Swati",
+      "rasi": "Thula (Libra)",
+      "lagna": "Simha (Leo)",
+      "pada": 4,
+      "doshaDetails": "Mars located in own exaltation house in Navamsha; cancelled.",
+      "horoscopeMatchingPreference": "Nagarathar Kovil Pirivu & 10 Poruthams matching",
+      "highestEducation": "B.Tech & M.Tech in Information Technology",
+      "degree": "M.Tech",
+      "specialization": "Enterprise Cloud Computing",
+      "college": "PSG Tech Coimbatore",
+      "yearOfPassing": 2020,
+      "additionalQualifications": "Google Cloud Certified Professional Cloud Architect",
+      "employmentStatus": "Employed",
+      "occupation": "Cloud Solutions Architect",
+      "jobTitle": "Senior Architect",
+      "company": "Leading Cloud Advisory Firm",
+      "industry": "Information Technology",
+      "workLocation": "Chennai, Tamil Nadu",
+      "annualIncome": "₹30,00,000 - ₹36,00,000",
+      "monthlyIncome": "₹2,60,000",
+      "workExperience": "6 Years",
+      "fatherName": "Balaji Chettiar",
+      "fatherOccupation": "Managing Partner (Financier & Merchant)",
+      "motherName": "Visalakshi Balaji",
+      "motherOccupation": "Homemaker",
+      "brothersCount": 0,
+      "brothersMarried": 0,
+      "sistersCount": 1,
+      "sistersMarried": 1,
+      "familyType": "Joint",
+      "familyStatus": "Rich / Affluent",
+      "familyValues": "Traditional",
+      "nativePlace": "Karaikudi / Kanadukathan",
+      "familyOrigin": "Prominent Nagarathar family in Karaikudi with deep temple trusts",
+      "familyDescription": "Generous, respected family devoted to Pillayarpatti Karpaga Vinayagar.",
+      "country": "India",
+      "state": "Tamil Nadu",
+      "district": "Chennai",
+      "city": "Chennai",
+      "currentResidence": "R.A. Puram, Chennai",
+      "citizenship": "Indian",
+      "residentialStatus": "Citizen",
+      "bodyType": "Average",
+      "complexion": "Wheatish",
+      "physicalDisability": "None",
+      "photoUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&auto=format&fit=crop&q=80",
+      "galleryPhotos": [
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&auto=format&fit=crop&q=80"
+      ],
+      "partnerPreferences": {
+        "minAge": 23,
+        "maxAge": 28,
+        "minHeight": "5'2\"",
+        "maxHeight": "5'8\"",
+        "maritalStatus": "Never Married",
+        "religion": "Hindu",
+        "caste": "Chettiar / Nagarathar / Mudaliar / Pillai",
+        "subCaste": "Nattukottai Chettiar / Any Chettiar",
+        "motherTongue": "Tamil",
+        "education": "Graduate / Masters / B.Tech / MBA",
+        "occupation": "Working Professional / Corporate / Business",
+        "annualIncome": "₹12,00,000+",
+        "location": "Chennai / Coimbatore / Madurai / Overseas",
+        "diet": "Vegetarian",
+        "lifestyle": "Teetotaler",
+        "familyValues": "Traditional family background",
+        "horoscopePreference": "Good Porutham matching",
+        "doshaPreference": "No Sevvai Dosham or Cancelled",
+        "specialExpectations": "Cultured bride with family affection and mutual enthusiasm."
+      },
+      "contact": {
+        "mobile": "9940123456",
+        "altMobile": "9940123457",
+        "email": "balaji.chettiar@example.com",
+        "whatsapp": "9940123456",
+        "contactPerson": "Balaji Chettiar (Father)",
+        "preferredMethod": "Call & WhatsApp",
+        "visibility": "Members Only"
+      },
+      "account": {
+        "status": "Active",
+        "profileVisibility": "Members Only",
+        "isVerified": true,
+        "completenessPercentage": 96,
+        "termsAccepted": true,
+        "createdAt": "2026-03-05T15:00:00.000Z"
+      }
+    }
+  ],
+  "matrimonyInterests": [
+    {
+      "id": "int-1",
+      "fromProfileId": "AJ-MAT-2026-1001",
+      "toProfileId": "AJ-MAT-2026-1002",
+      "fromName": "Aarav Kumar Sharma",
+      "toName": "Pooja Iyer",
+      "status": "accepted",
+      "message": "Namaste! Our horoscopes align with excellent Graha Maitri (28/36 Gunas). We would like to initiate family dialogue.",
+      "sentAt": "2026-03-05T10:00:00.000Z",
+      "updatedAt": "2026-03-06T12:00:00.000Z"
+    }
+  ],
+  "matrimonyShortlists": [
+    {
+      "clientId": "client-1",
+      "profileId": "AJ-MAT-2026-1002",
+      "shortlistedAt": "2026-03-05T09:00:00.000Z"
+    },
+    {
+      "clientId": "client-1",
+      "profileId": "AJ-MAT-2026-1004",
+      "shortlistedAt": "2026-03-06T14:30:00.000Z"
+    }
+  ]
+}

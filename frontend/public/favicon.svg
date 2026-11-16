@@ -1,0 +1,50 @@
+<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fav_bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#7F1D1D" />
+      <stop offset="50%" stopColor="#991B1B" />
+      <stop offset="100%" stopColor="#4C0519" />
+    </linearGradient>
+    <linearGradient id="fav_gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#FEF08A" />
+      <stop offset="40%" stopColor="#F59E0B" />
+      <stop offset="100%" stopColor="#D97706" />
+    </linearGradient>
+    <linearGradient id="fav_chandra" x1="15%" y1="15%" x2="85%" y2="85%">
+      <stop offset="0%" stopColor="#FFFFFF" />
+      <stop offset="70%" stopColor="#FEF3C7" />
+      <stop offset="100%" stopColor="#FDE68A" />
+    </linearGradient>
+    <linearGradient id="fav_star" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#FFFFFF" />
+      <stop offset="50%" stopColor="#FDE047" />
+      <stop offset="100%" stopColor="#D97706" />
+    </linearGradient>
+  </defs>
+
+  <!-- Sacred Medallion -->
+  <rect x="4" y="4" width="112" height="112" rx="30" fill="url(#fav_bg)" stroke="url(#fav_gold)" stroke-width="3" />
+  <circle cx="60" cy="60" r="48" stroke="#FDE68A" stroke-width="1.2" stroke-dasharray="4 2.5" opacity="0.6" />
+
+  <!-- 12 Solar Rays -->
+  <g stroke="url(#fav_gold)" stroke-width="1.8" stroke-linecap="round">
+    <line x1="60" y1="12" x2="60" y2="21" />
+    <line x1="60" y1="99" x2="60" y2="108" />
+    <line x1="12" y1="60" x2="21" y2="60" />
+    <line x1="99" y1="60" x2="108" y2="60" />
+    <line x1="26" y1="26" x2="33" y2="33" />
+    <line x1="87" y1="87" x2="94" y2="94" />
+    <line x1="94" y1="26" x2="87" y2="33" />
+    <line x1="33" y1="87" x2="26" y2="94" />
+  </g>
+
+  <!-- Chandra Moon -->
+  <path d="M68 28 C47 28 34 42 34 59 C34 76 47 90 68 90 C57 82 51 72 51 59 C51 46 57 36 68 28 Z" fill="url(#fav_chandra)" stroke="#F59E0B" stroke-width="0.8" />
+
+  <!-- 8-Pointed Jyotish Star -->
+  <polygon points="70,38 73.5,52 86,50 75.5,58 81,71 70,63 59,71 64.5,58 54,50 66.5,52" fill="url(#fav_star)" stroke="#B45309" stroke-width="0.9" />
+
+  <!-- Central Bindu -->
+  <circle cx="70" cy="56" r="5" fill="#991B1B" stroke="#FEF08A" stroke-width="1.2" />
+  <circle cx="70" cy="56" r="2" fill="#FEF08A" />
+</svg>

@@ -1,0 +1,20 @@
+{
+  "name": "astrojit",
+  "version": "1.0.0",
+  "description": "Astrojit - Multi-Role Vedic Astrology, Daily Panchangam, One-Page Kundli, Astrologer Client Search & Marketplace Platform",
+  "scripts": {
+    "start": "node backend/server.js",
+    "backend": "cd backend && npm start",
+    "frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build"
+  },
+  "keywords": [
+    "astrology",
+    "panchangam",
+    "kundli",
+    "vedic-astrology",
+    "astrojit"
+  ],
+  "author": "Astrojit Technologies (JIT)",
+  "license": "ISC"
+}
