@@ -31,6 +31,51 @@ export function formatDegInSign(deg) {
   return `${d}° ${String(m).padStart(2, '0')}′ ${String(s).padStart(2, '0')}″`;
 }
 
+export function parseUtcOffset(tzVal) {
+  if (typeof tzVal === 'number') return isNaN(tzVal) ? 5.5 : tzVal;
+  if (!tzVal) return 5.5;
+  const str = String(tzVal).trim();
+  const m = str.match(/([+-]?\d{1,2}):(\d{2})/);
+  if (m) {
+    const isNeg = str.trim().startsWith('-');
+    const h = parseInt(m[1], 10);
+    const min = parseInt(m[2], 10);
+    const num = Math.abs(h) + min / 60;
+    return isNeg ? -num : num;
+  }
+  const f = parseFloat(str.replace(/[^\d.-]/g, ''));
+  return isNaN(f) ? 5.5 : f;
+}
+
+export function formatUtcOffset(offsetNum) {
+  if (typeof offsetNum === 'string' && offsetNum.includes('UTC')) return offsetNum;
+  const num = typeof offsetNum === 'number' ? offsetNum : parseUtcOffset(offsetNum);
+  const sign = num < 0 ? '-' : '+';
+  const abs = Math.abs(num);
+  const h = Math.floor(abs);
+  const m = Math.round((abs - h) * 60);
+  return `${sign}${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')} UTC`;
+}
+
+export function parseLocalHour(timeVal) {
+  if (typeof timeVal === 'number') return timeVal;
+  if (!timeVal) return 0;
+  const str = String(timeVal).trim();
+  const isPM = /pm/i.test(str);
+  const isAM = /am/i.test(str);
+  const clean = str.replace(/[^\d:]/g, '');
+  const [hStr = '0', mStr = '0', sStr = '0'] = clean.split(':');
+  let h = parseInt(hStr, 10) || 0;
+  const m = parseInt(mStr, 10) || 0;
+  const s = parseFloat(sStr) || 0;
+  if (isPM) {
+    if (h < 12) h += 12;
+  } else if (isAM) {
+    if (h === 12) h = 0;
+  }
+  return h + m / 60 + s / 3600;
+}
+
 export const PRESETS = [
   { name: 'Salem', lat: 11.65, lon: 78.20, labelTa: 'சேலம்' },
   { name: 'Chennai', lat: 13.0827, lon: 80.2707, labelTa: 'சென்னை' },
@@ -191,6 +236,10 @@ export function calculateThirukanithaHoroscope({
   name = 'Native',
   dob = '2026-11-05',
   dobTime = '21:04',
+  dobTime12 = '',
+  country = 'India',
+  state = 'Tamil Nadu',
+  city = '',
   placeName = 'Salem',
   lat = 11.65,
   lon = 78.20,
@@ -201,14 +250,11 @@ export function calculateThirukanithaHoroscope({
   const M = parseInt(mStr, 10);
   const D = parseInt(dStr, 10);
 
-  const [hStr, minStr, secStr] = dobTime.split(':');
-  const h = parseInt(hStr || '0', 10);
-  const min = parseInt(minStr || '0', 10);
-  const sec = parseFloat(secStr || '0');
-  const localHour = h + min / 60 + sec / 3600;
+  const localHour = parseLocalHour(dobTime12 || dobTime);
+  const numUtcOffset = parseUtcOffset(utcOffset);
 
   // 1. TIME
-  const UT = localHour - utcOffset;
+  const UT = localHour - numUtcOffset;
   let Yp = Y, Mp = M;
   if (M <= 2) {
     Yp = Y - 1;
@@ -418,7 +464,7 @@ export function calculateThirukanithaHoroscope({
   const firstMdStartMs = birthUtcMs - f * DASHA_LORDS[i0].years * 365.25 * 86400000;
 
   function formatLocalDate(ms) {
-    const dt = new Date(ms + utcOffset * 3600000);
+    const dt = new Date(ms + numUtcOffset * 3600000);
     const day = String(dt.getUTCDate()).padStart(2, '0');
     const mon = String(dt.getUTCMonth() + 1).padStart(2, '0');
     const yr = dt.getUTCFullYear();
@@ -514,10 +560,16 @@ export function calculateThirukanithaHoroscope({
       name,
       dob,
       dobTime,
-      placeName,
+      dobTime12,
+      country,
+      state,
+      city: city || placeName,
+      placeName: city || placeName,
       lat,
       lon,
       utcOffset,
+      utcOffsetFormatted: formatUtcOffset(numUtcOffset),
+      utcOffsetNum: numUtcOffset,
       JD,
       T
     },

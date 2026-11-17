@@ -765,10 +765,14 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
             name: 'Sample',
             dob: '2026-11-05',
             dobTime: '21:04',
+            dobTime12: '09:04:00 PM',
+            country: 'India',
+            state: 'Tamil Nadu',
             placeName: 'Salem',
+            city: 'Salem',
             lat: 11.65,
             lon: 78.20,
-            utcOffset: 5.5
+            utcOffset: '05:30 UTC'
           }}
         />
       )}

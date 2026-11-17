@@ -5,8 +5,11 @@ import {
   NAKSHATRAS,
   WEEKDAYS,
   DASHA_LORDS,
-  calculateThirukanithaHoroscope
+  calculateThirukanithaHoroscope,
+  parseUtcOffset,
+  formatUtcOffset
 } from '../utils/thirukanithaEngine';
+import { COUNTRIES, GEO_DATA, lookupCoordinates } from '../data/geoCoordinates';
 
 // South Indian Chart Fixed Sign Layout (4x4 Grid)
 // [Pisces(11), Aries(0),   Taurus(1),  Gemini(2) ]
@@ -28,19 +31,76 @@ const SOUTH_INDIAN_CELLS = [
   { row: 1, col: 0, rasi: 10 }
 ];
 
+function parseInitialTime(timeStr) {
+  let raw = timeStr || '21:04:00';
+  let isPM = /pm/i.test(raw);
+  let isAM = /am/i.test(raw);
+  let clean = raw.replace(/[^\d:]/g, '');
+  let [hStr = '21', mStr = '04', sStr = '00'] = clean.split(':');
+  let hNum = parseInt(hStr, 10) || 0;
+  let mNum = parseInt(mStr, 10) || 0;
+  let sNum = parseInt(sStr, 10) || 0;
+
+  let period = 'AM';
+  let hour12 = hNum;
+
+  if (isPM) {
+    period = 'PM';
+    if (hour12 > 12) hour12 -= 12;
+    if (hour12 === 0) hour12 = 12;
+  } else if (isAM) {
+    period = 'AM';
+    if (hour12 === 0) hour12 = 12;
+    if (hour12 > 12) hour12 -= 12;
+  } else {
+    // 24-hr format
+    if (hNum >= 12) {
+      period = 'PM';
+      hour12 = hNum === 12 ? 12 : hNum - 12;
+    } else {
+      period = 'AM';
+      hour12 = hNum === 0 ? 12 : hNum;
+    }
+  }
+
+  return {
+    hour: String(hour12).padStart(2, '0'),
+    minute: String(mNum).padStart(2, '0'),
+    second: String(sNum).padStart(2, '0'),
+    period
+  };
+}
+
+const HOURS_12 = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+const MINUTES_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
+const SECONDS_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
+
 export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
   const [lang, setLang] = useState('ta'); // 'ta' or 'en'
   const [theme, setTheme] = useState('light'); // 'light' or 'dark'
+
+  const [selectedCountry, setSelectedCountry] = useState(initialData?.country || 'India');
+  const [selectedState, setSelectedState] = useState(initialData?.state || 'Tamil Nadu');
+  const [selectedCity, setSelectedCity] = useState(initialData?.city || initialData?.placeName || 'Salem');
+  const [citySearch, setCitySearch] = useState('');
+
+  const [timeState, setTimeState] = useState(() =>
+    parseInitialTime(initialData?.dobTime12 || initialData?.dobTime || '21:04:00')
+  );
 
   // Form State
   const [form, setForm] = useState(() => ({
     name: initialData?.name || 'Aarav Kumar',
     dob: initialData?.dob || '2026-11-05',
-    dobTime: initialData?.dobTime || '21:04',
+    dobTime: initialData?.dobTime || '21:04:00',
+    dobTime12: initialData?.dobTime12 || '09:04:00 PM',
+    country: initialData?.country || 'India',
+    state: initialData?.state || 'Tamil Nadu',
     placeName: initialData?.placeName || 'Salem',
+    city: initialData?.city || 'Salem',
     lat: initialData?.lat !== undefined ? initialData.lat : 11.65,
     lon: initialData?.lon !== undefined ? initialData.lon : 78.20,
-    utcOffset: initialData?.utcOffset !== undefined ? initialData.utcOffset : 5.5
+    utcOffset: (typeof initialData?.utcOffset === 'number' ? (initialData.utcOffset === 5.5 ? '05:30 UTC' : formatUtcOffset(initialData.utcOffset)) : (initialData?.utcOffset || '05:30 UTC'))
   }));
 
   const [activeChartKey, setActiveChartKey] = useState('D1');
@@ -51,22 +111,99 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
     return calculateThirukanithaHoroscope(form);
   }, [form]);
 
-  const handlePresetChange = (e) => {
-    const pName = e.target.value;
-    const p = PRESETS.find(item => item.name === pName);
-    if (p) {
-      setForm(prev => ({
-        ...prev,
-        placeName: p.name,
-        lat: p.lat,
-        lon: p.lon
-      }));
+  const applySelection = (cntry, st, cty) => {
+    const preset = PRESETS.find(p => p.name.toLowerCase() === cty.toLowerCase());
+    const cityList = GEO_DATA[cntry]?.[st] || [];
+    const cityObj = cityList.find(c => c.name.toLowerCase() === cty.toLowerCase());
+
+    let lat = 11.65;
+    let lon = 78.20;
+    let tz = '05:30 UTC';
+
+    if (preset) {
+      lat = preset.lat;
+      lon = preset.lon;
+    } else if (cityObj) {
+      lat = cityObj.latDec;
+      lon = cityObj.lonDec;
+      if (cityObj.tz) {
+        const rawTz = cityObj.tz.trim();
+        tz = `${rawTz.startsWith('+') ? rawTz.slice(1) : rawTz} UTC`;
+      }
     }
+
+    setForm(prev => ({
+      ...prev,
+      country: cntry,
+      state: st,
+      placeName: cty,
+      city: cty,
+      lat,
+      lon,
+      utcOffset: tz
+    }));
+  };
+
+  const handleCountryChange = (e) => {
+    const cName = e.target.value;
+    setSelectedCountry(cName);
+    setCitySearch('');
+    const countryObj = COUNTRIES.find(c => c.name === cName);
+    const availableStates = Object.keys(GEO_DATA[cName] || {});
+    const newState = countryObj?.defaultState || availableStates[0] || '';
+    setSelectedState(newState);
+
+    const availableCities = GEO_DATA[cName]?.[newState] || [];
+    const newCity = countryObj?.defaultCity || availableCities[0]?.name || '';
+    setSelectedCity(newCity);
+
+    applySelection(cName, newState, newCity);
+  };
+
+  const handleStateChange = (e) => {
+    const sName = e.target.value;
+    setSelectedState(sName);
+    setCitySearch('');
+    const availableCities = GEO_DATA[selectedCountry]?.[sName] || [];
+    const newCity = availableCities[0]?.name || '';
+    setSelectedCity(newCity);
+
+    applySelection(selectedCountry, sName, newCity);
+  };
+
+  const handleCityChange = (e) => {
+    const cty = e.target.value;
+    setSelectedCity(cty);
+    applySelection(selectedCountry, selectedState, cty);
+  };
+
+  const updateTimeField = (field, val) => {
+    const nextTime = { ...timeState, [field]: val };
+    setTimeState(nextTime);
+
+    let hNum = parseInt(nextTime.hour, 10) || 12;
+    let h24 = hNum % 12;
+    if (nextTime.period === 'PM') h24 += 12;
+
+    const time24Str = `${String(h24).padStart(2, '0')}:${nextTime.minute}:${nextTime.second}`;
+    const time12Str = `${nextTime.hour}:${nextTime.minute}:${nextTime.second} ${nextTime.period}`;
+
+    setForm(prev => ({
+      ...prev,
+      dobTime: time24Str,
+      dobTime12: time12Str
+    }));
   };
 
   const handlePrint = () => {
     window.print();
   };
+
+  const availableStates = Object.keys(GEO_DATA[selectedCountry] || {});
+  const availableCities = GEO_DATA[selectedCountry]?.[selectedState] || [];
+  const filteredCities = citySearch.trim()
+    ? availableCities.filter(c => c.name.toLowerCase().includes(citySearch.toLowerCase()))
+    : availableCities;
 
   const isTamil = lang === 'ta';
 
@@ -79,11 +216,18 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
     calcForm: isTamil ? 'பிறப்பு விவரப் படிவம்' : 'Birth Details Input',
     name: isTamil ? 'பெயர்' : 'Full Name',
     dob: isTamil ? 'பிறந்த தேதி' : 'Date of Birth',
-    time: isTamil ? 'பிறந்த நேரம் (உள்ளூர்)' : 'Birth Time (Local)',
-    place: isTamil ? 'ஊர் (முன் தேர்வு)' : 'Place Preset',
+    time: isTamil ? 'பிறந்த நேரம் (12 மணி நேரம் AM/PM)' : 'Birth Time (12-Hour AM/PM)',
+    hour: isTamil ? 'மணி' : 'Hour',
+    minute: isTamil ? 'நிமிடம்' : 'Min',
+    second: isTamil ? 'விநாடி' : 'Sec',
+    period: isTamil ? 'பகல்/இரவு' : 'AM/PM',
+    country: isTamil ? 'நாடு (Country)' : 'Country',
+    state: isTamil ? 'மாநிலம் (State)' : 'State / Province',
+    city: isTamil ? 'ஊர் / நகரம் (City / Place)' : 'City / Place',
+    searchCity: isTamil ? 'ஊர் வடிகட்டல்...' : 'Filter city...',
     latitude: isTamil ? 'அட்சரேகை (Lat °N)' : 'Latitude (°N)',
     longitude: isTamil ? 'தீர்க்கரேகை (Lon °E)' : 'Longitude (°E)',
-    utcOffset: isTamil ? 'UTC ஆஃப்செட் (Hours)' : 'UTC Offset (Hours)',
+    utcOffset: isTamil ? 'UTC ஆஃப்செட் (Timezone)' : 'UTC Offset (e.g. 05:30 UTC)',
     calculate: isTamil ? 'ஜாதகம் கணிக்க' : 'Recalculate Horoscope',
     birthSummary: isTamil ? 'ஜனன விவரக் குறிப்பு' : 'Birth & Planetary Summary',
     ayanamsha: isTamil ? 'அயனாம்சம் (Lahiri)' : 'Ayanamsha (Lahiri)',
@@ -205,12 +349,23 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
 
         {/* SECTION 1: Input Form (Hidden on Print) */}
         <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-6 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs print:hidden space-y-4">
-          <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] border-b border-amber-900/10 pb-2 flex items-center gap-2">
-            <span>📝</span>
-            <span>{T.calcForm}</span>
-          </h2>
+          <div className="flex items-center justify-between border-b border-amber-900/10 pb-2 flex-wrap gap-2">
+            <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
+              <span>📝</span>
+              <span>{T.calcForm}</span>
+            </h2>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-mono font-bold text-amber-950 dark:text-amber-200 bg-amber-100 dark:bg-stone-800 px-2.5 py-0.5 rounded-full border border-amber-300 dark:border-stone-700">
+                🕒 {timeState.hour}:{timeState.minute}:{timeState.second} {timeState.period}
+              </span>
+              <span className="text-[11px] font-mono font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800">
+                🌐 {form.utcOffset}
+              </span>
+            </div>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+          {/* ROW 1: Name, DOB, 12-Hour Birth Time */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
             <div>
               <label className="block font-bold mb-1 opacity-90">{T.name}</label>
               <input
@@ -231,32 +386,144 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               />
             </div>
 
+            {/* 12-Hour Time Format with AM/PM */}
             <div>
               <label className="block font-bold mb-1 opacity-90">{T.time}</label>
-              <input
-                type="time"
-                step="1"
-                value={form.dobTime}
-                onChange={e => setForm({ ...form, dobTime: e.target.value })}
-                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:border-[#7A1A22]"
-              />
-            </div>
+              <div className="grid grid-cols-4 gap-1">
+                <div>
+                  <span className="text-[9px] text-stone-500 font-bold block mb-0.5">{T.hour}</span>
+                  <select
+                    value={timeState.hour}
+                    onChange={e => updateTimeField('hour', e.target.value)}
+                    className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-lg px-1.5 py-1.5 text-xs font-mono font-bold focus:outline-none focus:border-[#7A1A22] cursor-pointer"
+                  >
+                    {HOURS_12.map(h => (
+                      <option key={h} value={h}>{h}</option>
+                    ))}
+                  </select>
+                </div>
 
+                <div>
+                  <span className="text-[9px] text-stone-500 font-bold block mb-0.5">{T.minute}</span>
+                  <select
+                    value={timeState.minute}
+                    onChange={e => updateTimeField('minute', e.target.value)}
+                    className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-lg px-1.5 py-1.5 text-xs font-mono font-bold focus:outline-none focus:border-[#7A1A22] cursor-pointer"
+                  >
+                    {MINUTES_60.map(m => (
+                      <option key={m} value={m}>{m}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <span className="text-[9px] text-stone-500 font-bold block mb-0.5">{T.second}</span>
+                  <select
+                    value={timeState.second}
+                    onChange={e => updateTimeField('second', e.target.value)}
+                    className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-lg px-1.5 py-1.5 text-xs font-mono font-bold focus:outline-none focus:border-[#7A1A22] cursor-pointer"
+                  >
+                    {SECONDS_60.map(s => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <span className="text-[9px] text-stone-500 font-bold block mb-0.5">{T.period}</span>
+                  <div className="flex bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-lg p-0.5">
+                    <button
+                      type="button"
+                      onClick={() => updateTimeField('period', 'AM')}
+                      className={`flex-1 py-1 rounded text-[11px] font-black cursor-pointer transition-all ${
+                        timeState.period === 'AM'
+                          ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
+                          : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                      }`}
+                    >
+                      AM
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => updateTimeField('period', 'PM')}
+                      className={`flex-1 py-1 rounded text-[11px] font-black cursor-pointer transition-all ${
+                        timeState.period === 'PM'
+                          ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
+                          : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                      }`}
+                    >
+                      PM
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ROW 2: Hierarchical Place of Birth (Country -> State -> City / Place) */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-1 border-t border-amber-900/10">
+            {/* 1. Country */}
             <div>
-              <label className="block font-bold mb-1 opacity-90">{T.place}</label>
+              <label className="block font-bold mb-1 opacity-90">🌐 {T.country}</label>
               <select
-                value={form.placeName}
-                onChange={handlePresetChange}
+                value={selectedCountry}
+                onChange={handleCountryChange}
                 className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#7A1A22] cursor-pointer"
               >
-                {PRESETS.map(p => (
-                  <option key={p.name} value={p.name}>
-                    {isTamil ? `${p.labelTa} (${p.lat}°N, ${p.lon}°E)` : `${p.name} (${p.lat}°N, ${p.lon}°E)`}
+                {COUNTRIES.map(c => (
+                  <option key={c.code} value={c.name}>
+                    {c.name}
                   </option>
                 ))}
               </select>
             </div>
 
+            {/* 2. State */}
+            <div>
+              <label className="block font-bold mb-1 opacity-90">🏛️ {T.state}</label>
+              <select
+                value={selectedState}
+                onChange={handleStateChange}
+                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#7A1A22] cursor-pointer"
+              >
+                {availableStates.map(st => (
+                  <option key={st} value={st}>
+                    {st}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* 3. City / Place */}
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <label className="font-bold opacity-90">📍 {T.city}</label>
+                {availableCities.length > 8 && (
+                  <input
+                    type="text"
+                    placeholder={T.searchCity}
+                    value={citySearch}
+                    onChange={e => setCitySearch(e.target.value)}
+                    className="w-28 text-[10px] bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded px-1.5 py-0.5 focus:outline-none"
+                  />
+                )}
+              </div>
+              <select
+                value={selectedCity}
+                onChange={handleCityChange}
+                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#7A1A22] cursor-pointer"
+              >
+                {filteredCities.map(c => (
+                  <option key={c.name} value={c.name}>
+                    {c.name} ({c.latDec?.toFixed(2)}°N, {c.lonDec?.toFixed(2)}°E)
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* ROW 3: Exact Coordinates & UTC Offset (auto-matched and fine-tunable) */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs pt-1 border-t border-amber-900/10">
             <div>
               <label className="block font-bold mb-1 opacity-90">{T.latitude}</label>
               <input
@@ -282,12 +549,33 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
             <div>
               <label className="block font-bold mb-1 opacity-90">{T.utcOffset}</label>
               <input
-                type="number"
-                step="0.5"
+                type="text"
+                list="thirukanitha-utc-presets"
                 value={form.utcOffset}
-                onChange={e => setForm({ ...form, utcOffset: parseFloat(e.target.value) || 0 })}
-                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:border-[#7A1A22]"
+                onChange={e => setForm({ ...form, utcOffset: e.target.value })}
+                placeholder="05:30 UTC"
+                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-mono font-bold focus:outline-none focus:border-[#7A1A22]"
               />
+              <datalist id="thirukanitha-utc-presets">
+                <option value="05:30 UTC">05:30 UTC (IST - India)</option>
+                <option value="+05:30 UTC">+05:30 UTC (IST - India)</option>
+                <option value="+00:00 UTC">+00:00 UTC (GMT/UTC)</option>
+                <option value="+04:00 UTC">+04:00 UTC (GST - UAE)</option>
+                <option value="+08:00 UTC">+08:00 UTC (SGT/MYT - Singapore/Malaysia)</option>
+                <option value="-05:00 UTC">-05:00 UTC (EST - USA)</option>
+                <option value="-08:00 UTC">-08:00 UTC (PST - USA)</option>
+              </datalist>
+            </div>
+
+            <div className="flex items-end">
+              <button
+                type="button"
+                onClick={() => setForm({ ...form })}
+                className="w-full bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-amber-100 hover:from-[#5C1017] hover:to-[#7A1A22] py-2 px-3 rounded-xl font-bold text-xs shadow-md shadow-red-950/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 h-[38px]"
+              >
+                <span>🪐</span>
+                <span>{T.calculate}</span>
+              </button>
             </div>
           </div>
         </div>
@@ -301,7 +589,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
             {T.title}
           </h1>
           <p className="text-xs text-stone-600 dark:text-stone-300">
-            {form.name} • {form.dob} ({form.dobTime}) • {form.placeName} ({form.lat}°N, {form.lon}°E, UTC+{form.utcOffset})
+            {form.name} • {form.dob} ({form.dobTime12 || form.dobTime}) • {form.city || form.placeName}, {form.state}, {form.country} ({form.lat}°N, {form.lon}°E, {form.utcOffset})
           </p>
         </div>
 

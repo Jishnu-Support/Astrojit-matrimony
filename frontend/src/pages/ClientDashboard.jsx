@@ -395,10 +395,14 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
             name: user?.name || 'Aarav Kumar',
             dob: user?.dob || '2026-11-05',
             dobTime: user?.dobTime || '21:04',
+            dobTime12: '09:04:00 PM',
+            country: 'India',
+            state: 'Tamil Nadu',
             placeName: user?.dobPlace || 'Salem',
+            city: user?.dobPlace || 'Salem',
             lat: 11.65,
             lon: 78.20,
-            utcOffset: 5.5
+            utcOffset: '05:30 UTC'
           }}
         />
       )}
