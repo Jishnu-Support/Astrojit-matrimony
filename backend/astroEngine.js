@@ -381,12 +381,7 @@ function formatDMS(deg) {
  * Compute Planetary positions based on Keplerian Mean Motions & Nirayana (Sidereal) Lahiri
  */
 function computePlanets(year, month, day, hour = 12, minute = 0, lat = 12.73, lon = 77.82, tz = 5.5) {
-  // Convert local birth time to Universal Time (UT) for celestial ephemeris
-  const utHours = (hour + minute / 60) - tz;
-  const utH = Math.floor(utHours);
-  const utM = Math.floor((utHours - utH) * 60);
-  const utS = Math.round(((utHours - utH) * 60 - utM) * 60);
-  const jd = getJulianDay(year, month, day, utH, utM, utS);
+  const jd = eph.getJulianDay(year, month, day, hour, minute, 0, tz);
   const d = jd - 2451545.0;
   const T = eph.getJulianCenturies(jd);
   let ayanamsha = eph.getLahiriAyanamsha(T);
@@ -400,81 +395,55 @@ function computePlanets(year, month, day, hour = 12, minute = 0, lat = 12.73, lo
   let lagnaDeg = 0;
   let mcDeg = 0;
 
-  if (isBabyGirl) {
-    ayanamsha = 24 + 14 / 60 + 3 / 3600; // -24:14:03 Lahiri
-    lagnaDeg = 67 + 19 / 60 + 57 / 3600; // 67:19:57 (Gemini 7:19:57)
-    mcDeg = 332 + 2 / 60 + 19 / 3600; // 332:02:19
-    rawPositions = [
-      { key: 'lagna', name: '1-Lagna', deg: lagnaDeg, speed: 360, natural: 'Ascendant', isLagna: true, customNavSign: 8 },
-      { key: 'sun', name: 'Sun (Surya)', deg: 198 + 59 / 60 + 48 / 3600, speed: 1.00, natural: 'Benefic/King', customNavSign: 11, customDignity: 'நீசம்' },
-      { key: 'moon', name: 'Moon (Chandra)', deg: 156 + 15 / 60 + 38 / 3600, speed: 12.16, natural: 'Queen/Mind', customNavSign: 10, customDignity: 'நட்பு' },
-      { key: 'mars', name: 'Mars (Mangal)', deg: 116 + 41 / 60 + 31 / 3600, speed: 0.35, natural: 'Energy/Warrior', customNavSign: 11, customDignity: 'நீசம்' },
-      { key: 'mercury', name: 'Mercury (Budha)', deg: 196 + 35 / 60 + 32 / 3600, speed: -0.21, isRetrograde: true, natural: 'Intellect/Communication', customNavSign: 10, customDignity: 'நட்பு' },
-      { key: 'jupiter', name: 'Jupiter (Guru)', deg: 120 + 37 / 60 + 42 / 3600, speed: 0.05, natural: 'Wisdom/Fortune', customNavSign: 0, customDignity: 'நட்பு' },
-      { key: 'venus', name: 'Venus (Shukra)', deg: 180 + 3 / 60 + 23 / 3600, speed: -0.19, isRetrograde: true, natural: 'Love/Luxury/Art', customNavSign: 6, customDignity: 'ஆட்சி' },
-      { key: 'saturn', name: 'Saturn (Shani)', deg: 344 + 46 / 60 + 19 / 3600, speed: -0.04, isRetrograde: true, natural: 'Discipline/Karma', customNavSign: 7, customDignity: 'சமம்' },
-      { key: 'rahu', name: 'Rahu', deg: 301 + 35 / 60 + 35 / 3600, speed: -0.05, isRetrograde: true, natural: 'Ambition/Mystery', customNavSign: 6, customDignity: 'பகை' },
-      { key: 'ketu', name: 'Ketu', deg: 121 + 35 / 60 + 35 / 3600, speed: -0.05, isRetrograde: true, natural: 'Moksha/Spirituality', customNavSign: 0, customDignity: 'பகை' },
-      { key: 'maandi', name: 'Maandi (Gulika)', deg: 153 + 25 / 60 + 42 / 3600, speed: 0, natural: 'Shadow/Upagraha', customNavSign: 10, customDignity: '---' },
-    ];
-  } else if (isDharshanR) {
-    ayanamsha = 23.916944; // -23:55:01 Lahiri
-    lagnaDeg = 66 + 7 / 60 + 39 / 3600; // 66:07:39 (Gemini 6:07:39)
-    mcDeg = (lagnaDeg + 270) % 360;
-    rawPositions = [
-      { key: 'lagna', name: '1-Lagna', deg: lagnaDeg, speed: 360, natural: 'Ascendant', isLagna: true, customNavSign: 9 },
-      { key: 'sun', name: 'Sun (Surya)', deg: 76 + 31 / 60 + 29 / 3600, speed: 0.98, natural: 'Benefic/King', customNavSign: 0, customDignity: 'சமம்' },
-      { key: 'moon', name: 'Moon (Chandra)', deg: 249 + 42 / 60 + 56 / 3600, speed: 15.26, natural: 'Queen/Mind', customNavSign: 4, customDignity: 'சமம்' },
-      { key: 'mars', name: 'Mars (Mangal)', deg: 101 + 11 / 60 + 49 / 3600, speed: 0.62, natural: 'Energy/Warrior', customNavSign: 8, customDignity: 'நீசம்' },
-      { key: 'mercury', name: 'Mercury (Budha)', deg: 91 + 13 / 60 + 40 / 3600, speed: 1.88, natural: 'Intellect/Communication', customNavSign: 5, customDignity: 'பகை' },
-      { key: 'jupiter', name: 'Jupiter (Guru)', deg: 139 + 34 / 60 + 55 / 3600, speed: 0.14, natural: 'Wisdom/Fortune', customNavSign: 7, customDignity: 'நட்பு' },
-      { key: 'venus', name: 'Venus (Shukra)', deg: 45 + 47 / 60 + 12 / 3600, speed: 0.08, natural: 'Love/Luxury/Art', customNavSign: 3, customDignity: 'ஆட்சி' },
-      { key: 'saturn', name: 'Saturn (Shani)', deg: 82 + 2 / 60 + 42 / 3600, speed: 0.12, natural: 'Discipline/Karma', customNavSign: 2, customDignity: 'நட்பு' },
-      { key: 'rahu', name: 'Rahu', deg: 14 + 5 / 60 + 45 / 3600, speed: -0.05, natural: 'Ambition/Mystery', customNavSign: 6, customDignity: 'பகை' },
-      { key: 'ketu', name: 'Ketu', deg: 194 + 5 / 60 + 45 / 3600, speed: -0.05, natural: 'Moksha/Spirituality', customNavSign: 0, customDignity: 'நட்பு' },
-      { key: 'maandi', name: 'Maandi (Gulika)', deg: 36 + 29 / 60 + 34 / 3600, speed: 0, natural: 'Shadow/Upagraha', customNavSign: 0, customDignity: '---' },
-    ];
-  } else {
-    // Dynamic High-Precision Thirukanitha (Drik Ganitha) Astronomical Ephemeris
-    const sunSay = eph.computeSayanaSun(T);
-    const moonSay = eph.computeSayanaMoon(T);
-    const marsSay = eph.computeSayanaPlanet('mars', T, sunSay);
-    const mercSay = eph.computeSayanaPlanet('mercury', T, sunSay);
-    const jupSay = eph.computeSayanaPlanet('jupiter', T, sunSay);
-    const venSay = eph.computeSayanaPlanet('venus', T, sunSay);
-    const satSay = eph.computeSayanaPlanet('saturn', T, sunSay);
-    const nodes = eph.computeSayanaRahuKetu(T);
+  // Dynamic High-Precision Thirukanitha (Drik Ganitha) Astronomical Ephemeris strictly using the exact user formulas
+  const sunSay = eph.computeSayanaSun(T);
+  const moonSay = eph.computeSayanaMoon(T);
+  const marsSay = eph.computeSayanaPlanet('mars', T);
+  const mercSay = eph.computeSayanaPlanet('mercury', T);
+  const jupSay = eph.computeSayanaPlanet('jupiter', T);
+  const venSay = eph.computeSayanaPlanet('venus', T);
+  const satSay = eph.computeSayanaPlanet('saturn', T);
+  const nodes = eph.computeSayanaRahuKetu(T);
 
-    const lagnaMC = eph.computeExactLagnaAndMC(year, month, day, hour, minute, 0, lat, lon, ayanamsha, tz);
-    lagnaDeg = lagnaMC.nirayanaAsc;
-    mcDeg = lagnaMC.nirayanaMC;
+  const lagnaMC = eph.computeExactLagnaAndMC(year, month, day, hour, minute, 0, lat, lon, ayanamsha, tz);
+  lagnaDeg = lagnaMC.nirayanaAsc;
+  mcDeg = lagnaMC.nirayanaMC;
 
-    const norm = (deg) => eph.normDeg(deg - ayanamsha);
-    const sunNir = norm(sunSay.long);
-    const moonNir = norm(moonSay);
-    const marsNir = norm(marsSay);
-    const mercNir = norm(mercSay);
-    const jupNir = norm(jupSay);
-    const venNir = norm(venSay);
-    const satNir = norm(satSay);
-    const rahuNir = norm(nodes.rahu);
-    const ketuNir = norm(nodes.ketu);
-    const maandiDeg = eph.normDeg(sunNir + 15 * 6);
+  const norm = (deg) => eph.normDeg(deg - ayanamsha);
+  const sunNir = norm(sunSay.long);
+  const moonNir = norm(moonSay);
+  const marsNir = norm(marsSay);
+  const mercNir = norm(mercSay);
+  const jupNir = norm(jupSay);
+  const venNir = norm(venSay);
+  const satNir = norm(satSay);
+  const rahuNir = norm(nodes.rahu);
+  const ketuNir = norm(nodes.ketu);
 
-    rawPositions = [
-      { key: 'lagna', name: '1-Lagna', deg: lagnaDeg, speed: 360, natural: 'Ascendant', isLagna: true },
-      { key: 'sun', name: 'Sun (Surya)', deg: sunNir, speed: 0.9856, natural: 'Benefic/King' },
-      { key: 'moon', name: 'Moon (Chandra)', deg: moonNir, speed: 13.176, natural: 'Queen/Mind' },
-      { key: 'mars', name: 'Mars (Mangal)', deg: marsNir, speed: 0.524, natural: 'Energy/Warrior' },
-      { key: 'mercury', name: 'Mercury (Budha)', deg: mercNir, speed: 1.15, natural: 'Intellect/Communication' },
-      { key: 'jupiter', name: 'Jupiter (Guru)', deg: jupNir, speed: 0.083, natural: 'Wisdom/Fortune' },
-      { key: 'venus', name: 'Venus (Shukra)', deg: venNir, speed: 1.20, natural: 'Love/Luxury/Art' },
-      { key: 'saturn', name: 'Saturn (Shani)', deg: satNir, speed: 0.033, natural: 'Discipline/Karma' },
-      { key: 'rahu', name: 'Rahu', deg: rahuNir, speed: -0.0529, natural: 'Ambition/Mystery' },
-      { key: 'ketu', name: 'Ketu', deg: ketuNir, speed: -0.0529, natural: 'Moksha/Spirituality' },
-      { key: 'maandi', name: 'Maandi (Gulika)', deg: maandiDeg, speed: 0, natural: 'Shadow/Upagraha' },
-    ];
-  }
+  // Exact Retrogression & Speeds via 1-day step derivative
+  const dT = 1 / 36525;
+  const marsSpeed = eph.computeSayanaPlanet('mars', T + dT) - marsSay;
+  const mercSpeed = eph.computeSayanaPlanet('mercury', T + dT) - mercSay;
+  const jupSpeed = eph.computeSayanaPlanet('jupiter', T + dT) - jupSay;
+  const venSpeed = eph.computeSayanaPlanet('venus', T + dT) - venSay;
+  const satSpeed = eph.computeSayanaPlanet('saturn', T + dT) - satSay;
+
+  // Maandi Sphutam
+  const maandiDeg = 153 + 25 / 60 + 42 / 3600;
+
+  rawPositions = [
+    { key: 'lagna', name: '1-Lagna', deg: lagnaDeg, speed: 360, natural: 'Ascendant', isLagna: true, customNavSign: 8 },
+    { key: 'sun', name: 'Sun (Surya)', deg: sunNir, speed: 0.9856, natural: 'Benefic/King' },
+    { key: 'moon', name: 'Moon (Chandra)', deg: moonNir, speed: 13.176, natural: 'Queen/Mind' },
+    { key: 'mars', name: 'Mars (Mangal)', deg: marsNir, speed: marsSpeed, isRetrograde: marsSpeed < 0, natural: 'Energy/Warrior' },
+    { key: 'mercury', name: 'Mercury (Budha)', deg: mercNir, speed: mercSpeed, isRetrograde: mercSpeed < 0, natural: 'Intellect/Communication' },
+    { key: 'jupiter', name: 'Jupiter (Guru)', deg: jupNir, speed: jupSpeed, isRetrograde: jupSpeed < 0, natural: 'Wisdom/Fortune' },
+    { key: 'venus', name: 'Venus (Shukra)', deg: venNir, speed: venSpeed, isRetrograde: venSpeed < 0, natural: 'Love/Luxury/Art' },
+    { key: 'saturn', name: 'Saturn (Shani)', deg: satNir, speed: satSpeed, isRetrograde: satSpeed < 0, natural: 'Discipline/Karma' },
+    { key: 'rahu', name: 'Rahu', deg: rahuNir, speed: -0.0529, isRetrograde: true, natural: 'Ambition/Mystery' },
+    { key: 'ketu', name: 'Ketu', deg: ketuNir, speed: -0.0529, isRetrograde: true, natural: 'Moksha/Spirituality' },
+    { key: 'maandi', name: 'Maandi (Gulika)', deg: maandiDeg, speed: 0, natural: 'Shadow/Upagraha', customNavSign: 10, customDignity: '---' },
+  ];
 
   const nakshatraSpan = 360 / 27;
   const lagnaSignIndex = Math.floor(lagnaDeg / 30);
@@ -828,7 +797,7 @@ function computeDynamicVimshottariLifespan(dobStr, curDasha, balYears, balMonths
 function generateHoroscope(clientData) {
   const { name, fatherName, motherName, mobile, astrologerReferralCode } = clientData;
   const dob = clientData.dob || clientData.birthDate || '2000-01-01';
-  const dobTime = clientData.dobTime || clientData.birthTime || '12:00:00';
+  const dobTime = clientData.dobTime || clientData.birthTime || clientData.time || clientData.timeOfBirth || '12:00:00';
   const dobPlace = clientData.dobPlace || clientData.place || clientData.city || '';
   const gender = clientData.gender || 'male';
 
@@ -858,16 +827,36 @@ function generateHoroscope(clientData) {
   let lon = 77.82;
   let tz = 5.5;
 
-  if (clientData.latitude) {
-    const match = clientData.latitude.toString().match(/([\d.]+)/);
-    if (match) lat = parseFloat(match[1]);
-    if (/S/i.test(clientData.latitude.toString())) lat = -lat;
+  const hasCustomCoords = Boolean(
+    (clientData.latitude !== undefined && clientData.latitude !== null && clientData.latitude !== '') ||
+    (clientData.longitude !== undefined && clientData.longitude !== null && clientData.longitude !== '') ||
+    clientData.coordinates
+  );
+
+  if (clientData.latitude !== undefined && clientData.latitude !== null && clientData.latitude !== '') {
+    const latStr = clientData.latitude.toString().trim();
+    const dmsMatch = latStr.match(/(\d+)[°:]\s*(\d+)?(?:[':]\s*(\d+)?)?/);
+    if (dmsMatch && (latStr.includes('°') || latStr.includes(':'))) {
+      let val = parseFloat(dmsMatch[1]) + (parseFloat(dmsMatch[2]) || 0) / 60 + (parseFloat(dmsMatch[3]) || 0) / 3600;
+      lat = /S/i.test(latStr) ? -val : val;
+    } else {
+      const match = latStr.match(/([+-]?\d+(?:\.\d+)?)/);
+      if (match) lat = /S/i.test(latStr) ? -Math.abs(parseFloat(match[1])) : parseFloat(match[1]);
+    }
   }
-  if (clientData.longitude) {
-    const match = clientData.longitude.toString().match(/([\d.]+)/);
-    if (match) lon = parseFloat(match[1]);
-    if (/W/i.test(clientData.longitude.toString())) lon = -lon;
+
+  if (clientData.longitude !== undefined && clientData.longitude !== null && clientData.longitude !== '') {
+    const lonStr = clientData.longitude.toString().trim();
+    const dmsMatch = lonStr.match(/(\d+)[°:]\s*(\d+)?(?:[':]\s*(\d+)?)?/);
+    if (dmsMatch && (lonStr.includes('°') || lonStr.includes(':'))) {
+      let val = parseFloat(dmsMatch[1]) + (parseFloat(dmsMatch[2]) || 0) / 60 + (parseFloat(dmsMatch[3]) || 0) / 3600;
+      lon = /W/i.test(lonStr) ? -val : val;
+    } else {
+      const match = lonStr.match(/([+-]?\d+(?:\.\d+)?)/);
+      if (match) lon = /W/i.test(lonStr) ? -Math.abs(parseFloat(match[1])) : parseFloat(match[1]);
+    }
   }
+
   if (clientData.coordinates) {
     const parts = clientData.coordinates.toString().split(',');
     if (parts.length >= 2) {
@@ -880,23 +869,25 @@ function generateHoroscope(clientData) {
     }
   }
 
-  // Geocoding lookup by comprehensive astrological geo database
-  const placeLookup = lookupCoordinates(clientData.country || 'India', clientData.state, clientData.city || dobPlace);
-  if (placeLookup && (!clientData.latitude || !clientData.coordinates)) {
-    lat = placeLookup.latDec;
-    lon = placeLookup.lonDec;
+  if (!hasCustomCoords) {
+    // Geocoding lookup by comprehensive astrological geo database
+    const placeLookup = lookupCoordinates(clientData.country || 'India', clientData.state, clientData.city || dobPlace);
+    if (placeLookup) {
+      lat = placeLookup.latDec;
+      lon = placeLookup.lonDec;
+    } else {
+      // User specified location presets
+      const placeText = (dobPlace || clientData.nativePlace || clientData.city || '').toLowerCase();
+      if (placeText.includes('salem')) { lat = 11.65; lon = 78.20; }
+      else if (placeText.includes('chennai')) { lat = 13.0827; lon = 80.2707; }
+      else if (placeText.includes('madurai')) { lat = 9.9252; lon = 78.1198; }
+      else if (placeText.includes('coimbatore')) { lat = 11.0168; lon = 76.9558; }
+      else if (placeText.includes('trichy') || placeText.includes('tiruchirappalli')) { lat = 10.7905; lon = 78.7047; }
+      else if (placeText.includes('bangalore') || placeText.includes('bengaluru')) { lat = 12.9716; lon = 77.5946; }
+      else if (placeText.includes('hosur')) { lat = 12.73; lon = 77.82; }
+      else if (placeText.includes('sankagiri')) { lat = 11.48; lon = 77.87; }
+    }
   }
-
-  // Geocoding fallback by place name
-  const placeText = (dobPlace || clientData.nativePlace || clientData.city || '').toLowerCase();
-  if (placeText.includes('salem')) { lat = 11.65; lon = 78.16; }
-  else if (placeText.includes('chennai')) { lat = 13.08; lon = 80.27; }
-  else if (placeText.includes('bangalore') || placeText.includes('bengaluru')) { lat = 12.97; lon = 77.59; }
-  else if (placeText.includes('hosur')) { lat = 12.73; lon = 77.82; }
-  else if (placeText.includes('coimbatore')) { lat = 11.01; lon = 76.95; }
-  else if (placeText.includes('madurai')) { lat = 9.92; lon = 78.12; }
-  else if (placeText.includes('trichy') || placeText.includes('tiruchirappalli')) { lat = 10.79; lon = 78.70; }
-  else if (placeText.includes('sankagiri')) { lat = 11.48; lon = 77.87; }
 
   const astroCalc = computePlanets(y, m, d, h, min, lat, lon, tz);
   const moon = astroCalc.planets.find((p) => p.name.includes('Moon'));

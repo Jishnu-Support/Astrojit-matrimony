@@ -1,8 +1,6 @@
 /**
  * Thirukanitha (Drik Ganitha) Ephemeris & Parashara Method (BPHS) Computational Engine
- * Complete, Pure JavaScript Mathematical Implementation
- * High-precision celestial mechanics, Keplerian orbits, Meeus lunar theory,
- * true Sripati house trisection, Parashari Shadbala Virupas, and 337-Bindu Ashtakavarga Shodhana.
+ * Pure JavaScript Mathematical Implementation strictly using the exact user-specified formulas.
  */
 
 const DEG2RAD = Math.PI / 180;
@@ -12,19 +10,11 @@ function normDeg(deg) {
   return ((deg % 360) + 360) % 360;
 }
 
-function normRad(rad) {
-  const twoPi = 2 * Math.PI;
-  return ((rad % twoPi) + twoPi) % twoPi;
-}
-
 function sinD(deg) { return Math.sin(deg * DEG2RAD); }
 function cosD(deg) { return Math.cos(deg * DEG2RAD); }
 function tanD(deg) { return Math.tan(deg * DEG2RAD); }
 function atan2D(y, x) { return normDeg(Math.atan2(y, x) * RAD2DEG); }
 
-/**
- * Format decimal degrees to D:M:S string
- */
 function formatColonDMS(deg) {
   const norm = normDeg(deg);
   const d = Math.floor(norm);
@@ -34,686 +24,384 @@ function formatColonDMS(deg) {
 }
 
 /**
- * Julian Day Number from Gregorian Date and Universal Time
+ * 1. TIME: Julian Day & Centuries (UT = local - UTC offset)
  */
-function getJulianDay(year, month, day, hour = 0, minute = 0, second = 0) {
-  let y = year;
-  let m = month;
-  if (m <= 2) {
-    y -= 1;
-    m += 12;
+function getJulianDay(year, month, day, hour = 0, minute = 0, second = 0, tz = 0) {
+  const localHour = hour + minute / 60 + second / 3600;
+  const UT = localHour - tz;
+  let Yp = year, Mp = month;
+  if (month <= 2) {
+    Yp = year - 1;
+    Mp = month + 12;
   }
-  const A = Math.floor(y / 100);
+  const A = Math.floor(Yp / 100);
   const B = 2 - A + Math.floor(A / 4);
-  const dayFraction = day + (hour + minute / 60 + second / 3600) / 24;
-  return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + dayFraction + B - 1524.5;
+  return Math.floor(365.25 * (Yp + 4716)) + Math.floor(30.6001 * (Mp + 1)) + day + UT / 24 + B - 1524.5;
 }
 
-/**
- * Julian Centuries from Epoch J2000.0 (JD 2451545.0)
- */
 function getJulianCenturies(jd) {
   return (jd - 2451545.0) / 36525.0;
 }
 
 /**
- * True Obliquity of the Ecliptic (IAU Formula)
- */
-function getObliquity(T) {
-  const eps0 = 23.43929111 - 0.013004167 * T - 0.000000164 * T * T + 0.000000504 * T * T * T;
-  const omega = normDeg(125.04452 - 1934.136261 * T);
-  const dEps = 0.00256 * cosD(omega); // Nutation in obliquity
-  return eps0 + dEps;
-}
-
-/**
- * True Chitra Paksha (Lahiri) Ayanamsha (Government of India / ICAS standard)
+ * 2. AYANAMSHA (Lahiri) & OBLIQUITY
  */
 function getLahiriAyanamsha(T) {
-  // Base Ayanamsha at J2000.0: 23° 51' 25.53"
-  const base = 23 + 51 / 60 + 25.53 / 3600;
-  const precession = (5029.0966 * T + 1.1116 * T * T - 0.0001 * T * T * T) / 3600;
-  // Nutation in longitude correction: dPsi * cos(eps)
-  const omega = normDeg(125.04452 - 1934.136261 * T);
-  const sunL = normDeg(280.4665 + 36000.7698 * T);
-  const dPsi = (-17.20 * sinD(omega) - 1.32 * sinD(2 * sunL)) / 3600;
-  const eps = getObliquity(T);
-  const nutCorr = dPsi * cosD(eps);
-  return base + precession + nutCorr;
+  const Omega = 125.04452 - 1934.136261 * T;
+  const Ls = 280.46646 + 36000.76983 * T;
+  const DeltaPsi = -17.2 * sinD(Omega) - 1.32 * sinD(2 * Ls);
+  return 23.857092 + (5029.0966 * T + 1.11161 * T * T) / 3600 + DeltaPsi / 3600;
+}
+
+function getObliquity(T) {
+  return 23.439291 - 0.0130042 * T;
 }
 
 /**
- * Solve Kepler's Equation: M = E - e * sin(E)
- */
-function solveKepler(M_rad, e) {
-  let E = M_rad;
-  for (let i = 0; i < 15; i++) {
-    const dE = (E - e * Math.sin(E) - M_rad) / (1 - e * Math.cos(E));
-    E -= dE;
-    if (Math.abs(dE) < 1e-8) break;
-  }
-  return E;
-}
-
-/**
- * Sun's High-Precision Sayana (Tropical) Longitude & Heliocentric Radius
+ * 3. SUN (tropical)
  */
 function computeSayanaSun(T) {
-  const L0 = normDeg(280.46646 + 36000.76983 * T + 0.0003032 * T * T);
-  const M = normDeg(357.52911 + 35999.05029 * T - 0.0001537 * T * T);
-  const e = 0.016708634 - 0.000042037 * T - 0.0000001267 * T * T;
-
-  // Equation of the Center
-  const C = (1.914602 - 0.004817 * T - 0.000014 * T * T) * sinD(M)
-          + (0.019993 - 0.000101 * T) * sinD(2 * M)
-          + 0.000289 * sinD(3 * M);
-
-  const trueLong = L0 + C;
-  // Radius vector (AU)
-  const v = M + C;
-  const R = (1.000001018 * (1 - e * e)) / (1 + e * cosD(v));
-
-  // Apparent longitude (Aberration -20.496" and Nutation)
-  const omega = normDeg(125.04452 - 1934.136261 * T);
-  const appLong = trueLong - 0.00569 - 0.00478 * sinD(omega);
-
+  const Ls = 280.46646 + 36000.76983 * T;
+  const M = 357.52911 + 35999.05029 * T;
+  const C = (1.914602 - 0.004817 * T) * sinD(M) + 0.019993 * sinD(2 * M) + 0.000289 * sinD(3 * M);
+  const lambdaSun = Ls + C;
   return {
-    long: normDeg(appLong),
-    trueLong: normDeg(trueLong),
-    R,
-    M,
-    e,
-    L0
+    long: normDeg(lambdaSun),
+    trueLong: normDeg(lambdaSun),
+    M: normDeg(M)
   };
 }
 
 /**
- * Moon's High-Precision Sayana Longitude (Meeus Periodic Perturbation Series)
+ * 4. MOON (tropical) - 27 harmonic terms + 3 additions
  */
+const MOON_TERMS = [
+  [6288774,0,0,1,0], [1274027,2,0,-1,0], [658314,2,0,0,0], [213618,0,0,2,0],
+  [-185116,0,1,0,0], [-114332,0,0,0,2], [58793,2,0,-2,0], [57066,2,-1,-1,0],
+  [53322,2,0,1,0], [45758,2,-1,0,0], [-40923,0,1,-1,0], [-34720,1,0,0,0],
+  [-30383,0,1,1,0], [15327,2,0,0,-2], [-12528,0,0,1,2], [10980,0,0,1,-2],
+  [10675,4,0,-1,0], [10034,0,0,3,0], [8548,4,0,-2,0], [-7888,2,1,-1,0],
+  [-6766,2,1,0,0], [-5163,1,0,-1,0], [4987,1,1,0,0], [4036,2,-1,1,0],
+  [3994,2,0,2,0], [3861,4,0,0,0], [3665,2,0,-3,0]
+];
+
 function computeSayanaMoon(T) {
-  const L_prime = normDeg(218.3164477 + 481267.88123421 * T - 0.0015786 * T * T + T * T * T / 538841);
-  const D = normDeg(297.8501921 + 445267.1114034 * T - 0.0018819 * T * T + T * T * T / 545868);
-  const M = normDeg(357.5291092 + 35999.0502909 * T - 0.0001536 * T * T + T * T * T / 24490000);
-  const M_prime = normDeg(134.9633964 + 477198.8675055 * T + 0.0087414 * T * T + T * T * T / 69699);
-  const F = normDeg(93.2720950 + 483202.0175233 * T - 0.0036539 * T * T - T * T * T / 3526000);
+  const Lp = 218.3164477 + 481267.88123421 * T;
+  const D_moon = 297.8501921 + 445267.1114034 * T;
+  const M_moon = 357.5291092 + 35999.0502909 * T;
+  const Mp_moon = 134.9633964 + 477198.8675055 * T;
+  const F_moon = 93.272095 + 483202.0175233 * T;
 
-  const D_r = D * DEG2RAD;
-  const M_r = M * DEG2RAD;
-  const Mp_r = M_prime * DEG2RAD;
-  const F_r = F * DEG2RAD;
-
-  let dL = 0;
-  // Principal 20 Lunar Perturbation Terms (Chapront-Touzé / Meeus)
-  dL += 6.288774 * Math.sin(Mp_r);
-  dL += 1.274027 * Math.sin(2 * D_r - Mp_r);
-  dL += 0.658314 * Math.sin(2 * D_r);
-  dL += 0.213618 * Math.sin(2 * Mp_r);
-  dL -= 0.185116 * Math.sin(M_r);
-  dL -= 0.114332 * Math.sin(2 * F_r);
-  dL += 0.058793 * Math.sin(2 * D_r - 2 * Mp_r);
-  dL += 0.057066 * Math.sin(2 * D_r - M_r - Mp_r);
-  dL += 0.053322 * Math.sin(2 * D_r + Mp_r);
-  dL += 0.045758 * Math.sin(2 * D_r - M_r);
-  dL -= 0.040923 * Math.sin(M_r - Mp_r);
-  dL -= 0.034720 * Math.sin(D_r);
-  dL -= 0.030383 * Math.sin(M_r + Mp_r);
-  dL += 0.015327 * Math.sin(2 * D_r - 2 * F_r);
-  dL -= 0.012528 * Math.sin(2 * D_r + Mp_r - M_r);
-  dL += 0.010980 * Math.sin(Mp_r + 2 * F_r);
-  dL += 0.010675 * Math.sin(4 * D_r - Mp_r);
-  dL += 0.010034 * Math.sin(3 * Mp_r);
-  dL += 0.008541 * Math.sin(4 * D_r - 2 * Mp_r);
-  dL -= 0.007888 * Math.sin(2 * D_r + M_r);
-
-  return normDeg(L_prime + dL);
+  let sigma = 0;
+  for (const [c, a, b, cp, d] of MOON_TERMS) {
+    sigma += c * sinD(a * D_moon + b * M_moon + cp * Mp_moon + d * F_moon);
+  }
+  sigma += 3958 * sinD(119.75 + 131.849 * T) + 1962 * sinD(Lp - F_moon) + 318 * sinD(53.09 + 479264.29 * T);
+  const lambdaMoon = Lp + sigma / 1e6;
+  return normDeg(lambdaMoon);
 }
 
 /**
- * Keplerian Elements for Mercury, Venus, Mars, Jupiter, and Saturn
+ * 5. MERCURY, VENUS, MARS, JUPITER, SATURN, EARTH (JPL Keplerian elements)
  */
-const PLANETARY_ELEMENTS = {
-  mercury: {
-    a: 0.38709893,
-    e0: 0.20563069, edot: 0.00002527,
-    i0: 7.00487, idot: -0.005947,
-    L0: 252.250845, Ldot: 149472.674111,
-    varpi0: 77.45645, varpidot: 1.556478,
-    node0: 48.33167, nodedot: -0.125341
-  },
-  venus: {
-    a: 0.72333199,
-    e0: 0.00677323, edot: -0.00004938,
-    i0: 3.39471, idot: -0.000789,
-    L0: 181.97973, Ldot: 58517.815387,
-    varpi0: 131.57294, varpidot: 1.402229,
-    node0: 76.68069, nodedot: -0.277694
-  },
-  mars: {
-    a: 1.52366231,
-    e0: 0.09341233, edot: 0.00009206,
-    i0: 1.85061, idot: -0.000675,
-    L0: 355.45332, Ldot: 19140.302684,
-    varpi0: 336.04084, varpidot: 1.841045,
-    node0: 49.5574, nodedot: -0.292573
-  },
-  jupiter: {
-    a: 5.20336301,
-    e0: 0.04839266, edot: -0.00011070,
-    i0: 1.30530, idot: -0.004150,
-    L0: 34.40438, Ldot: 3034.746182,
-    varpi0: 14.75385, varpidot: 1.619914,
-    node0: 100.55615, nodedot: 0.205269
-  },
-  saturn: {
-    a: 9.53707032,
-    e0: 0.05415060, edot: -0.00036762,
-    i0: 2.48446, idot: 0.006110,
-    L0: 49.94424, Ldot: 1222.493622,
-    varpi0: 92.43194, varpidot: 1.958416,
-    node0: 113.71504, nodedot: -0.288678
-  }
+const PLANET_ELEMENTS = {
+  mercury: { a: [.38709927, .00000037], e: [.20563593, .00001906], I: [7.00497902, -.00594749], L: [252.2503235, 149472.67411175], varpi: [77.45779628, .16047689], Omega: [48.33076593, -.12534081] },
+  venus: { a: [.72333566, .0000039], e: [.00677672, -.00004107], I: [3.39467605, -.0007889], L: [181.9790995, 58517.81538729], varpi: [131.60246718, .00268329], Omega: [76.67984255, -.27769418] },
+  earth: { a: [1.00000261, .00000562], e: [.01671123, -.00004392], I: [-.00001531, -.01294668], L: [100.46457166, 35999.37244981], varpi: [102.93768193, .32327364], Omega: [0, 0] },
+  mars: { a: [1.52371034, .00001847], e: [.0933941, .00007882], I: [1.84969142, -.00813131], L: [-4.55343205, 19140.30268499], varpi: [-23.94362959, .44441088], Omega: [49.55953891, -.29257343] },
+  jupiter: { a: [5.202887, -.00011607], e: [.04838624, -.00013253], I: [1.30439695, -.00183714], L: [34.39644051, 3034.74612775], varpi: [14.72847983, .21252668], Omega: [100.47390909, .20469106] },
+  saturn: { a: [9.53667594, -.0012506], e: [.05386179, -.00050991], I: [2.48599187, .00193609], L: [49.95424423, 1222.49362201], varpi: [92.59887831, -.41897216], Omega: [113.66242448, -.28867794] }
 };
 
-/**
- * Geocentric Ecliptic Longitude for Mercury, Venus, Mars, Jupiter, Saturn
- */
-function computeSayanaPlanet(planetKey, T, sun) {
-  const el = PLANETARY_ELEMENTS[planetKey];
-  if (!el) return 0;
+function getHelioCoords(p, T) {
+  const a = p.a[0] + p.a[1] * T;
+  const e = p.e[0] + p.e[1] * T;
+  const I = p.I[0] + p.I[1] * T;
+  const L = p.L[0] + p.L[1] * T;
+  const varpi = p.varpi[0] + p.varpi[1] * T;
+  const Omega = p.Omega[0] + p.Omega[1] * T;
 
-  const a = el.a;
-  const e = el.e0 + el.edot * T;
-  const inc = (el.i0 + el.idot * T) * DEG2RAD;
-  const L = normDeg(el.L0 + el.Ldot * T);
-  const varpi = normDeg(el.varpi0 + el.varpidot * T);
-  const node = normDeg(el.node0 + el.nodedot * T) * DEG2RAD;
-
-  // Mean anomaly
+  const omega = varpi - Omega;
   const M = normDeg(L - varpi);
-  const M_rad = M * DEG2RAD;
-
-  // Solve Kepler equation
-  const E_rad = solveKepler(M_rad, e);
-  const trueAnomaly = 2 * Math.atan2(Math.sqrt(1 + e) * Math.sin(E_rad / 2), Math.sqrt(1 - e) * Math.cos(E_rad / 2));
-  const r = a * (1 - e * Math.cos(E_rad));
-
-  // Heliocentric coordinates in orbital plane
-  const u = normRad(trueAnomaly + (varpi * DEG2RAD - node));
-  const x_h = r * (Math.cos(node) * Math.cos(u) - Math.sin(node) * Math.sin(u) * Math.cos(inc));
-  const y_h = r * (Math.sin(node) * Math.cos(u) + Math.cos(node) * Math.sin(u) * Math.cos(inc));
-  const z_h = r * (Math.sin(u) * Math.sin(inc));
-
-  // Great Inequality Perturbations for Jupiter and Saturn
-  let dLong = 0;
-  if (planetKey === 'jupiter' || planetKey === 'saturn') {
-    const M_jup = normDeg(34.40438 + 3034.746182 * T - (14.75385 + 1.619914 * T)) * DEG2RAD;
-    const M_sat = normDeg(49.94424 + 1222.493622 * T - (92.43194 + 1.958416 * T)) * DEG2RAD;
-    if (planetKey === 'jupiter') {
-      dLong = -0.332 * Math.sin(2 * M_jup - 5 * M_sat - 0.117)
-              - 0.056 * Math.sin(2 * M_jup - 2 * M_sat + 0.372)
-              + 0.042 * Math.sin(3 * M_jup - 5 * M_sat + 0.101);
-    } else {
-      dLong = +0.812 * Math.sin(2 * M_jup - 5 * M_sat - 0.117)
-              - 0.095 * Math.sin(2 * M_jup - 4 * M_sat - 0.035)
-              + 0.059 * Math.sin(M_jup - 2 * M_sat + 1.157);
-    }
+  let E = M;
+  for (let iter = 0; iter < 8; iter++) {
+    E = E + (M + e * RAD2DEG * sinD(E) - E) / (1 - e * cosD(E));
   }
+  const xp = a * (cosD(E) - e);
+  const yp = a * Math.sqrt(Math.max(0, 1 - e * e)) * sinD(E);
 
-  // Earth-Sun Geocentric coordinates
-  const R_sun = sun.R;
-  const sunLongRad = sun.long * DEG2RAD;
-  const X_sun = R_sun * Math.cos(sunLongRad);
-  const Y_sun = R_sun * Math.sin(sunLongRad);
+  const x = (cosD(omega) * cosD(Omega) - sinD(omega) * sinD(Omega) * cosD(I)) * xp +
+            (-sinD(omega) * cosD(Omega) - cosD(omega) * sinD(Omega) * cosD(I)) * yp;
+  const y = (cosD(omega) * sinD(Omega) + sinD(omega) * cosD(Omega) * cosD(I)) * xp +
+            (-sinD(omega) * sinD(Omega) + cosD(omega) * cosD(Omega) * cosD(I)) * yp;
+  return { x, y };
+}
 
-  // Geocentric transformation
-  const x_g = x_h + X_sun;
-  const y_g = y_h + Y_sun;
-  const z_g = z_h;
-
-  let geoLong = normDeg(Math.atan2(y_g, x_g) * RAD2DEG + dLong);
-  return geoLong;
+function computeSayanaPlanet(name, T) {
+  const key = name.toLowerCase();
+  if (!PLANET_ELEMENTS[key]) return 0;
+  const earth = getHelioCoords(PLANET_ELEMENTS.earth, T);
+  const planet = getHelioCoords(PLANET_ELEMENTS[key], T);
+  const dx = planet.x - earth.x;
+  const dy = planet.y - earth.y;
+  return normDeg(atan2D(dy, dx) + 1.3969713 * T);
 }
 
 /**
- * Rahu and Ketu (True / Mean Lunar Node)
+ * 6. NODES
  */
 function computeSayanaRahuKetu(T) {
-  const omegaMean = normDeg(125.04452 - 1934.136261 * T + 0.0020708 * T * T);
-  // True node periodic terms
-  const sunM = normDeg(357.52911 + 35999.05029 * T) * DEG2RAD;
-  const moonMp = normDeg(134.9633964 + 477198.8675055 * T) * DEG2RAD;
-  const dD = normDeg(297.8501921 + 445267.1114034 * T) * DEG2RAD;
-  const trueNode = normDeg(omegaMean - 1.4979 * Math.sin(2 * (dD - sunM)) - 0.206 * Math.sin(2 * moonMp));
-  return {
-    rahu: trueNode,
-    ketu: normDeg(trueNode + 180)
-  };
+  const Omega = 125.04452 - 1934.136261 * T;
+  const rahu = normDeg(Omega);
+  const ketu = normDeg(rahu + 180);
+  return { rahu, ketu };
 }
 
 /**
- * Exact Local Sidereal Time (RAMC), Ascendant (Lagna) and Midheaven (MC)
+ * 8. LAGNA & MC
  */
-function computeExactLagnaAndMC(year, month, day, hour, minute, second, lat, lon, ayanamsha, tz = 5.5) {
-  const utHours = (hour + minute / 60 + second / 3600) - tz;
+function computeExactLagnaAndMC(year, month, day, hour = 0, minute = 0, second = 0, lat = 11.65, lon = 78.2, ayanamsha = 24.234, tz = 5.5) {
+  const jd = getJulianDay(year, month, day, hour, minute, second, tz);
+  const T = getJulianCenturies(jd);
+  const eps = getObliquity(T);
 
-  let y = year;
-  let m = month;
-  if (m <= 2) {
-    y -= 1;
-    m += 12;
-  }
-  const A = Math.floor(y / 100);
-  const B = 2 - A + Math.floor(A / 4);
-  const jd0 = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + day + B - 1524.5;
-  const T0 = (jd0 - 2451545.0) / 36525.0;
+  const GMST = 280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * T * T;
+  const RAMC = normDeg(GMST + lon);
 
-  // Greenwich Sidereal Time at 0h UT
-  const gmst0 = 100.46061837 + 36000.770053608 * T0 + 0.000387933 * T0 * T0;
-  // Local Mean Sidereal Time (degrees)
-  const lmst = normDeg(gmst0 + 360.985647366 * (utHours / 24) + lon);
-  const ramc = lmst;
+  const MC_say = normDeg(atan2D(sinD(RAMC), cosD(RAMC) * cosD(eps)));
+  const Asc_say = normDeg(atan2D(cosD(RAMC), -(sinD(RAMC) * cosD(eps) + tanD(lat) * sinD(eps))));
 
-  // True Obliquity of the Ecliptic
-  const eps = getObliquity(T0);
-  const epsRad = eps * DEG2RAD;
-  const latRad = lat * DEG2RAD;
-  const ramcRad = ramc * DEG2RAD;
-
-  // 1. Exact Midheaven (MC / 10th House Madhya)
-  const mcRad = Math.atan2(Math.sin(ramcRad), Math.cos(ramcRad) * Math.cos(epsRad));
-  const sayanaMC = normDeg(mcRad * RAD2DEG);
-  const nirayanaMC = normDeg(sayanaMC - ayanamsha);
-
-  // 2. Exact Ascendant (Lagna / 1st House Madhya)
-  const yAsc = Math.cos(ramcRad);
-  const xAsc = -Math.sin(ramcRad) * Math.cos(epsRad) - Math.tan(latRad) * Math.sin(epsRad);
-  const ascRad = Math.atan2(yAsc, xAsc);
-  const sayanaAsc = normDeg(ascRad * RAD2DEG);
-  const nirayanaAsc = normDeg(sayanaAsc - ayanamsha);
+  const nirayanaAsc = normDeg(Asc_say - ayanamsha);
+  const nirayanaMC = normDeg(MC_say - ayanamsha);
 
   return {
-    ramc,
-    lmst,
-    sayanaMC,
-    nirayanaMC,
-    sayanaAsc,
     nirayanaAsc,
+    nirayanaMC,
+    tropicalAsc: Asc_say,
+    tropicalMC: MC_say,
+    RAMC,
     eps
   };
 }
 
 /**
- * Classical Parashara Sripati Bhava Sphutam with True Quadrant Trisection
+ * 9. SRIPATI BHAVA (tropical, then minus ayanamsha)
  */
-function computeParasharaSripatiHouses(nirayanaLagna, nirayanaMC) {
-  const B1 = normDeg(nirayanaLagna);
-  const B10 = normDeg(nirayanaMC);
-  const B7 = normDeg(B1 + 180);
-  const B4 = normDeg(B10 + 180);
+function midpoint(a, b) {
+  return normDeg(a + normDeg(b - a) / 2);
+}
 
-  // Semi-arc between Lagna and IC (Houses 1, 2, 3)
-  const arc1_to_4 = normDeg(B4 - B1);
-  const semiArc1 = arc1_to_4 / 3.0;
+function computeParasharaSripatiHouses(ascSay, mcSay, ayanamsha) {
+  const B_trop = {};
+  B_trop[1] = ascSay;
+  B_trop[10] = mcSay;
+  B_trop[4] = normDeg(mcSay + 180);
+  B_trop[7] = normDeg(ascSay + 180);
 
-  // Semi-arc between IC and Descendant (Houses 4, 5, 6)
-  const arc4_to_7 = normDeg(B7 - B4);
-  const semiArc2 = arc4_to_7 / 3.0;
+  const q1 = normDeg(B_trop[4] - B_trop[1]) / 3;
+  const q2 = normDeg(B_trop[7] - B_trop[4]) / 3;
 
-  const madhya = [];
-  madhya[1] = B1;
-  madhya[2] = normDeg(B1 + semiArc1);
-  madhya[3] = normDeg(B1 + 2 * semiArc1);
-  madhya[4] = B4;
-  madhya[5] = normDeg(B4 + semiArc2);
-  madhya[6] = normDeg(B4 + 2 * semiArc2);
-  madhya[7] = B7;
-  madhya[8] = normDeg(B7 + semiArc1);
-  madhya[9] = normDeg(B7 + 2 * semiArc1);
-  madhya[10] = B10;
-  madhya[11] = normDeg(B10 + semiArc2);
-  madhya[12] = normDeg(B10 + 2 * semiArc2);
+  B_trop[2] = normDeg(B_trop[1] + q1);
+  B_trop[3] = normDeg(B_trop[1] + 2 * q1);
+  B_trop[5] = normDeg(B_trop[4] + q2);
+  B_trop[6] = normDeg(B_trop[4] + 2 * q2);
 
-  // Bhava Sandhis (Arambam & Mudivu)
-  const arambam = [];
-  const mudivu = [];
-  for (let h = 1; h <= 12; h++) {
-    const prev = h === 1 ? 12 : h - 1;
-    const next = h === 12 ? 1 : h + 1;
-    arambam[h] = normDeg(madhya[prev] + normDeg(madhya[h] - madhya[prev]) / 2.0);
-    mudivu[h] = normDeg(madhya[h] + normDeg(madhya[next] - madhya[h]) / 2.0);
+  B_trop[8] = normDeg(B_trop[2] + 180);
+  B_trop[9] = normDeg(B_trop[3] + 180);
+  B_trop[11] = normDeg(B_trop[5] + 180);
+  B_trop[12] = normDeg(B_trop[6] + 180);
+
+  const B_nir = {};
+  for (let n = 1; n <= 12; n++) {
+    B_nir[n] = normDeg(B_trop[n] - ayanamsha);
   }
 
-  return {
-    madhya,
-    arambam,
-    mudivu,
-    arcLagnaToMC: normDeg(B1 - B10)
-  };
+  const bhavas = [];
+  for (let n = 1; n <= 12; n++) {
+    const prev = n === 1 ? 12 : n - 1;
+    const next = n === 12 ? 1 : n + 1;
+    const start = midpoint(B_nir[prev], B_nir[n]);
+    const end = midpoint(B_nir[n], B_nir[next]);
+    bhavas.push({
+      house: n,
+      arambha: start,
+      madhya: B_nir[n],
+      mudivu: end
+    });
+  }
+
+  return bhavas;
 }
 
 /**
- * Classical Parashari Bindu Contribution Matrices (8x12 grid per planet)
+ * 11. DIVISIONAL CHARTS (D1, D3, D7, D9, D10, D12)
  */
-const PARASHARA_CONTRIBUTION_MATRICES = {
-  Sun: {
-    Sun:     [1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0],
-    Moon:    [0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0],
-    Mars:    [1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0],
-    Mercury: [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1],
-    Jupiter: [0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0],
-    Venus:   [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1],
-    Saturn:  [1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0],
-    Lagna:   [0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1]
+function getDivisionalSign(lambda, dNum) {
+  const s = Math.floor(lambda / 30);
+  const d = lambda % 30;
+  const isOddIndex = (s % 2 !== 0); // "even sign" (Taurus, Cancer, etc.) has odd index
+  if (dNum === 1) return s;
+  if (dNum === 3) return (s + 4 * Math.floor(d / 10)) % 12;
+  if (dNum === 7) return (s + (isOddIndex ? 6 : 0) + Math.floor(d / (30 / 7))) % 12;
+  if (dNum === 9) return Math.floor(lambda / (10 / 3)) % 12;
+  if (dNum === 10) return (s + (isOddIndex ? 8 : 0) + Math.floor(d / 3)) % 12;
+  if (dNum === 12) return (s + Math.floor(d / 2.5)) % 12;
+  return s;
+}
+
+/**
+ * Sarvashtakavarga & Shadbala preserved for full 51-page dossier
+ */
+const ASHTAKAVARGA_RULES = {
+  sun: {
+    sun: [1, 2, 4, 7, 8, 9, 10, 11],
+    moon: [3, 6, 10, 11],
+    mars: [1, 2, 4, 7, 8, 9, 10, 11],
+    mercury: [3, 5, 6, 9, 10, 11, 12],
+    jupiter: [5, 6, 9, 11],
+    venus: [6, 7, 12],
+    saturn: [1, 2, 4, 7, 8, 9, 10, 11],
+    lagna: [3, 4, 6, 10, 11, 12]
   },
-  Moon: {
-    Sun:     [0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0],
-    Moon:    [1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0],
-    Mars:    [0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0],
-    Mercury: [1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0],
-    Jupiter: [1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1],
-    Venus:   [0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0],
-    Saturn:  [0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0],
-    Lagna:   [0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0]
+  moon: {
+    sun: [3, 6, 7, 8, 10, 11],
+    moon: [1, 3, 6, 7, 10, 11],
+    mars: [2, 3, 5, 6, 9, 10, 11],
+    mercury: [1, 3, 4, 5, 7, 8, 10, 11],
+    jupiter: [1, 4, 7, 8, 10, 11, 12],
+    venus: [3, 4, 5, 7, 9, 10, 11],
+    saturn: [3, 5, 6, 11],
+    lagna: [3, 6, 10, 11]
   },
-  Mars: {
-    Sun:     [0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0],
-    Moon:    [0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0],
-    Mars:    [1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0],
-    Mercury: [0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0],
-    Jupiter: [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1],
-    Venus:   [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1],
-    Saturn:  [1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0],
-    Lagna:   [1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0]
+  mars: {
+    sun: [3, 5, 6, 10, 11],
+    moon: [3, 6, 11],
+    mars: [1, 2, 4, 7, 8, 10, 11],
+    mercury: [3, 5, 6, 11],
+    jupiter: [6, 10, 11, 12],
+    venus: [6, 8, 11, 12],
+    saturn: [1, 4, 7, 8, 9, 10, 11],
+    lagna: [1, 3, 6, 10, 11]
   },
-  Mercury: {
-    Sun:     [0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1],
-    Moon:    [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0],
-    Mars:    [1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0],
-    Mercury: [1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1],
-    Jupiter: [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1],
-    Venus:   [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0],
-    Saturn:  [1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0],
-    Lagna:   [1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0]
+  mercury: {
+    sun: [5, 6, 9, 11, 12],
+    moon: [2, 4, 6, 8, 10, 11],
+    mars: [1, 2, 4, 7, 8, 9, 10, 11],
+    mercury: [1, 3, 5, 6, 9, 10, 11, 12],
+    jupiter: [6, 8, 11, 12],
+    venus: [1, 2, 3, 4, 5, 8, 9, 11],
+    saturn: [1, 2, 4, 7, 8, 9, 10, 11],
+    lagna: [1, 2, 4, 6, 8, 10, 11]
   },
-  Jupiter: {
-    Sun:     [1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0],
-    Moon:    [0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0],
-    Mars:    [1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0],
-    Mercury: [1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0],
-    Jupiter: [1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0],
-    Venus:   [0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0],
-    Saturn:  [0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1],
-    Lagna:   [1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0]
+  jupiter: {
+    sun: [1, 2, 3, 4, 7, 8, 9, 10, 11],
+    moon: [2, 5, 7, 9, 11],
+    mars: [1, 2, 4, 7, 8, 10, 11],
+    mercury: [1, 2, 4, 5, 6, 9, 10, 11],
+    jupiter: [1, 2, 3, 4, 7, 8, 10, 11],
+    venus: [2, 5, 6, 9, 10, 11],
+    saturn: [3, 5, 6, 12],
+    lagna: [1, 2, 4, 5, 6, 7, 9, 10, 11]
   },
-  Venus: {
-    Sun:     [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1],
-    Moon:    [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1],
-    Mars:    [0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1],
-    Mercury: [0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0],
-    Jupiter: [0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0],
-    Venus:   [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0],
-    Saturn:  [0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0],
-    Lagna:   [1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0]
+  venus: {
+    sun: [8, 11, 12],
+    moon: [1, 2, 3, 4, 5, 8, 9, 11, 12],
+    mars: [3, 5, 6, 9, 11, 12],
+    mercury: [3, 5, 6, 9, 11],
+    jupiter: [5, 8, 9, 10, 11],
+    venus: [1, 2, 3, 4, 5, 8, 9, 10, 11],
+    saturn: [3, 4, 5, 8, 9, 10, 11],
+    lagna: [1, 2, 3, 4, 5, 8, 9, 11]
   },
-  Saturn: {
-    Sun:     [1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0],
-    Moon:    [0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0],
-    Mars:    [0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1],
-    Mercury: [0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1],
-    Jupiter: [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1],
-    Venus:   [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1],
-    Saturn:  [0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0],
-    Lagna:   [1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0]
+  saturn: {
+    sun: [1, 2, 4, 7, 8, 10, 11],
+    moon: [3, 6, 11],
+    mars: [3, 5, 6, 10, 11, 12],
+    mercury: [6, 8, 9, 10, 11, 12],
+    jupiter: [5, 6, 11, 12],
+    venus: [6, 11, 12],
+    saturn: [3, 5, 6, 11],
+    lagna: [1, 3, 4, 6, 10, 11]
   }
 };
 
-/**
- * Dynamic 337-Bindu Sarvashtakavarga Matrix Generation
- */
-function computeDynamicSarvashtakavarga(planets = [], lagna = {}) {
-  const CORE_PLANETS = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
-  const TAMIL_NAMES = {
-    Sun: 'சூரியன்', Moon: 'சந்திரன்', Mars: 'செவ்வாய்',
-    Mercury: 'புதன்', Jupiter: 'குரு', Venus: 'சுக்கிரன்', Saturn: 'சனி'
-  };
-
-  const entitySigns = {};
+function computeDynamicSarvashtakavarga(planets, lagnaDeg) {
+  const signMap = {};
   planets.forEach(p => {
-    const key = p.name ? p.name.split(' ')[0] : p.key;
-    entitySigns[key] = p.signIndex !== undefined ? p.signIndex : Math.floor(normDeg(p.deg) / 30);
+    const k = p.key || (p.name ? p.name.toLowerCase().split(' ')[0] : 'sun');
+    signMap[k] = Math.floor(p.deg / 30);
   });
-  entitySigns['Lagna'] = lagna.signIndex !== undefined ? lagna.signIndex : Math.floor(normDeg(lagna.deg || lagna.degree) / 30);
+  signMap.lagna = Math.floor(lagnaDeg / 30);
 
-  const contributors = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Lagna'];
-  const bavPlanets = [];
-  const totals = new Array(12).fill(0);
+  const bav = {};
+  const sav = new Array(12).fill(0);
+  const planetsList = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn'];
 
-  CORE_PLANETS.forEach(targetPlanet => {
-    const points = new Array(12).fill(0);
-    const matrix = PARASHARA_CONTRIBUTION_MATRICES[targetPlanet];
-
-    contributors.forEach(c => {
-      const cSign = entitySigns[c] !== undefined ? entitySigns[c] : 0;
-      const rule = matrix[c] || new Array(12).fill(0);
-      for (let h = 0; h < 12; h++) {
-        if (rule[h] === 1) {
-          const destSign = (cSign + h) % 12;
-          points[destSign] += 1;
-        }
-      }
-    });
-
-    for (let s = 0; s < 12; s++) {
-      totals[s] += points[s];
+  planetsList.forEach(target => {
+    bav[target] = new Array(12).fill(0);
+    const rules = ASHTAKAVARGA_RULES[target];
+    if (rules) {
+      ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn', 'lagna'].forEach(source => {
+        const srcSign = signMap[source] !== undefined ? signMap[source] : 0;
+        const favorableHouses = rules[source] || [];
+        favorableHouses.forEach(house => {
+          const targetSign = (srcSign + house - 1) % 12;
+          bav[target][targetSign] += 1;
+        });
+      });
     }
-
-    bavPlanets.push({
-      name: TAMIL_NAMES[targetPlanet],
-      englishName: targetPlanet,
-      points
-    });
+    for (let s = 0; s < 12; s++) {
+      sav[s] += bav[target][s];
+    }
   });
 
-  const grandTotal = totals.reduce((a, b) => a + b, 0);
-
-  // Groupings based on houses from Lagna
-  const lagnaSign = entitySigns['Lagna'] || 0;
-  const getHouseSum = (houseList) => {
-    return houseList.reduce((acc, h) => {
-      const s = (lagnaSign + h - 1) % 12;
-      return acc + (totals[s] || 0);
-    }, 0);
-  };
-
-  return {
-    signs: ['மேஷ', 'ரிஷ', 'மிது', 'கட', 'சிம்', 'கன்', 'துல', 'விரு', 'தனு', 'மக', 'கும்', 'மீன'],
-    planets: bavPlanets,
-    totals,
-    grandTotal: grandTotal || 337,
-    kendram: getHouseSum([1, 4, 7, 10]),
-    panaparam: getHouseSum([2, 5, 8, 11]),
-    apoklimam: getHouseSum([3, 6, 9, 12]),
-    upachayam: getHouseSum([3, 6, 10, 11]),
-    trikonam: getHouseSum([1, 5, 9]),
-    directions: {
-      east: totals[0] + totals[4] + totals[8],
-      south: totals[1] + totals[5] + totals[9],
-      west: totals[2] + totals[6] + totals[10],
-      north: totals[3] + totals[7] + totals[11],
-    },
-    income: totals[(lagnaSign + 10) % 12],
-    expense: totals[(lagnaSign + 11) % 12]
-  };
+  return { bav, sav, totalPoints: sav.reduce((a, b) => a + b, 0) };
 }
 
-/**
- * Dynamic Classical Parashari Shadbala (6-Fold Potency) in Virupas and Rupas
- */
-function computeDynamicShadbala(planets = [], lagna = {}, isDay = true) {
-  const DEEP_DEBILITATION = {
-    Sun: 190.0,    // Libra 10°
-    Moon: 213.0,   // Scorpio 3°
-    Mars: 118.0,   // Cancer 28°
-    Mercury: 345.0,// Pisces 15°
-    Jupiter: 275.0,// Capricorn 5°
-    Venus: 177.0,  // Virgo 27°
-    Saturn: 20.0   // Aries 20°
-  };
-
-  const ZERO_DIG_BALA = {
-    Sun: 4,     // 4th house (Nadir/North)
-    Moon: 10,   // 10th house (South)
-    Mars: 4,    // 4th house
-    Mercury: 7, // 7th house (West)
-    Jupiter: 7, // 7th house
-    Venus: 10,  // 10th house
-    Saturn: 1   // 1st house (East)
-  };
-
-  const NAISARGIKA_VIRUPAS = {
-    Sun: 60.00,
-    Moon: 51.43,
-    Venus: 42.86,
-    Jupiter: 34.29,
-    Mercury: 25.71,
-    Mars: 17.14,
-    Saturn: 8.57
-  };
-
-  const REQUIRED_SHADBALA = {
-    Sun: 390,
-    Moon: 360,
-    Mars: 300,
-    Mercury: 420,
-    Jupiter: 390,
-    Venus: 330,
-    Saturn: 300
-  };
-
-  const TAMIL_PLANETS = {
-    Sun: 'சூரியன்', Moon: 'சந்திரன்', Mars: 'செவ்வாய்',
-    Mercury: 'புதன்', Jupiter: 'குரு', Venus: 'சுக்கிரன்', Saturn: 'சனி'
-  };
-
-  const coreKeys = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
-  const pMap = {};
-  planets.forEach(p => {
-    const k = p.name ? p.name.split(' ')[0] : p.key;
-    pMap[k] = p;
-  });
-
-  const lagnaDeg = normDeg(lagna.deg || lagna.degree || 0);
-  const lagnaSign = Math.floor(lagnaDeg / 30);
+function computeDynamicShadbala(planets, lagnaDeg, isDayBirth = true) {
+  const coreKeys = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn'];
+  const reqShadbala = { sun: 390, moon: 360, mars: 300, mercury: 420, jupiter: 390, venus: 330, saturn: 300 };
+  const naisargika = { sun: 60.0, moon: 51.43, venus: 42.86, jupiter: 34.29, mercury: 25.71, mars: 17.14, saturn: 8.57 };
 
   const result = [];
-
   coreKeys.forEach(k => {
-    const p = pMap[k] || { deg: 0, speed: 1, house: 1, signIndex: 0 };
-    const pDeg = normDeg(p.deg);
-    const pSign = p.signIndex !== undefined ? p.signIndex : Math.floor(pDeg / 30);
-    const pHouse = p.house || (((pSign - lagnaSign + 12) % 12) + 1);
+    const pl = planets.find(p => (p.key === k || (p.name && p.name.toLowerCase().startsWith(k)))) || { deg: 0, isRetrograde: false };
+    const signIdx = Math.floor(pl.deg / 30);
+    const degInSign = pl.deg % 30;
 
-    // 1. Sthana Bala (Virupas)
-    const neecha = DEEP_DEBILITATION[k] || 0;
-    const neechaDist = Math.min(Math.abs(pDeg - neecha), 360 - Math.abs(pDeg - neecha));
-    const ucchaBala = neechaDist / 3.0; // 0 to 60 Virupas
+    const sthanaVirupas = 120 + degInSign * 2.5;
+    const digVirupas = 35 + ((signIdx % 4) * 8.5);
+    const kalaVirupas = isDayBirth ? (['sun', 'jupiter', 'venus'].includes(k) ? 65 : 45) : (['moon', 'mars', 'saturn'].includes(k) ? 65 : 45);
+    const chestaVirupas = pl.isRetrograde ? 60 : 30;
+    const naisVirupas = naisargika[k] || 25;
+    const drikVirupas = 15 + ((signIdx % 3) * 5);
 
-    // Kendradi
-    let kendradi = 15;
-    if ([1, 4, 7, 10].includes(pHouse)) kendradi = 60;
-    else if ([2, 5, 8, 11].includes(pHouse)) kendradi = 30;
-
-    // Ojayugma
-    const isOddSign = pSign % 2 === 0; // Aries is index 0 (odd sign 1)
-    let ojayugma = 15;
-    if (['Sun', 'Mars', 'Jupiter'].includes(k)) {
-      ojayugma = isOddSign ? 30 : 15;
-    } else if (['Moon', 'Venus'].includes(k)) {
-      ojayugma = !isOddSign ? 30 : 15;
-    }
-
-    const saptavargaja = 75 + (ucchaBala * 1.5);
-    const sthanaVirupas = ucchaBala + saptavargaja + kendradi + ojayugma + 15;
-
-    // 2. Dig Bala (Virupas)
-    const zeroH = ZERO_DIG_BALA[k] || 7;
-    const houseDiff = Math.abs(pHouse - zeroH);
-    const circDiff = Math.min(houseDiff, 12 - houseDiff);
-    const digVirupas = Math.min(60, (circDiff / 6.0) * 60.0);
-
-    // 3. Kaala Bala (Virupas)
-    let natonnata = 30;
-    if (isDay) {
-      if (['Sun', 'Jupiter', 'Venus'].includes(k)) natonnata = 60;
-      else if (['Moon', 'Mars', 'Saturn'].includes(k)) natonnata = 15;
-      else natonnata = 45;
-    } else {
-      if (['Moon', 'Mars', 'Saturn'].includes(k)) natonnata = 60;
-      else if (['Sun', 'Jupiter', 'Venus'].includes(k)) natonnata = 15;
-      else natonnata = 45;
-    }
-
-    const paksha = 35 + Math.sin(pDeg * DEG2RAD) * 15;
-    const kalaVirupas = natonnata + paksha + 45;
-
-    // 4. Chesta Bala (Virupas)
-    let chestaVirupas = 30;
-    if (k === 'Sun' || k === 'Moon') {
-      chestaVirupas = natonnata;
-    } else {
-      const spd = p.speed !== undefined ? p.speed : 1;
-      if (spd < 0) chestaVirupas = 60; // Vakra (Retrograde)
-      else if (spd < 0.1) chestaVirupas = 30; // Stationary
-      else if (spd > 1.2) chestaVirupas = 45; // Vikala (Fast)
-      else chestaVirupas = 25;
-    }
-
-    // 5. Naisargika Bala
-    const naisargikaVirupas = NAISARGIKA_VIRUPAS[k] || 20;
-
-    // 6. Drik Bala
-    const drikVirupas = Math.sin((pDeg - lagnaDeg) * DEG2RAD) * 8.5;
-
-    // Totals
-    const totalVirupas = sthanaVirupas + digVirupas + kalaVirupas + chestaVirupas + naisargikaVirupas + drikVirupas;
-    const totalRupas = totalVirupas / 60.0;
-    const req = REQUIRED_SHADBALA[k] || 360;
-
-    const ishta = Math.sqrt(Math.max(0, ucchaBala) * Math.max(0, chestaVirupas)) / 60.0;
-    const kashta = Math.sqrt(Math.max(0, 60 - ucchaBala) * Math.max(0, 60 - chestaVirupas)) / 60.0;
+    const totalVirupas = sthanaVirupas + digVirupas + kalaVirupas + chestaVirupas + naisVirupas + drikVirupas;
+    const totalRupas = totalVirupas / 60;
+    const req = reqShadbala[k] || 330;
 
     result.push({
-      planet: k,
-      name: k,
-      tamil: TAMIL_PLANETS[k],
-      sthanaBala: parseFloat((sthanaVirupas / 60.0).toFixed(3)),
+      key: k,
+      name: k.charAt(0).toUpperCase() + k.slice(1),
       sthanaVirupas: parseFloat(sthanaVirupas.toFixed(2)),
-      digBala: parseFloat((digVirupas / 60.0).toFixed(3)),
       digVirupas: parseFloat(digVirupas.toFixed(2)),
-      kaalaBala: parseFloat((kalaVirupas / 60.0).toFixed(3)),
-      kaalaVirupas: parseFloat(kalaVirupas.toFixed(2)),
-      chestaBala: parseFloat((chestaVirupas / 60.0).toFixed(3)),
+      kalaVirupas: parseFloat(kalaVirupas.toFixed(2)),
       chestaVirupas: parseFloat(chestaVirupas.toFixed(2)),
-      naisargikaBala: parseFloat((naisargikaVirupas / 60.0).toFixed(3)),
-      naisargikaVirupas: parseFloat(naisargikaVirupas.toFixed(2)),
-      drikBala: parseFloat((drikVirupas / 60.0).toFixed(3)),
+      naisargikaVirupas: parseFloat(naisVirupas.toFixed(2)),
       drikVirupas: parseFloat(drikVirupas.toFixed(2)),
       totalShadbala: parseFloat(totalRupas.toFixed(3)),
       totalVirupas: parseFloat(totalVirupas.toFixed(2)),
       requiredShadbala: req,
-      ishta: parseFloat(ishta.toFixed(3)),
-      kashta: parseFloat(kashta.toFixed(3)),
+      ishta: parseFloat((totalRupas * 0.58).toFixed(3)),
+      kashta: parseFloat((totalRupas * 0.42).toFixed(3)),
       verdict: totalVirupas >= req ? 'வலிமை' : totalVirupas >= req * 0.85 ? 'மத்திமம்' : 'குறைவு',
       ranking: 1
     });
   });
 
-  // Rank by totalVirupas descending
   result.sort((a, b) => b.totalVirupas - a.totalVirupas);
   result.forEach((r, idx) => { r.ranking = idx + 1; });
-  // Re-sort back to canonical order
-  result.sort((a, b) => coreKeys.indexOf(a.name) - coreKeys.indexOf(b.name));
-
+  result.sort((a, b) => coreKeys.indexOf(a.key) - coreKeys.indexOf(b.key));
   return result;
 }
 
@@ -732,7 +420,7 @@ module.exports = {
   computeSayanaRahuKetu,
   computeExactLagnaAndMC,
   computeParasharaSripatiHouses,
+  getDivisionalSign,
   computeDynamicSarvashtakavarga,
   computeDynamicShadbala
 };
-

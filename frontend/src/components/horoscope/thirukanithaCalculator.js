@@ -1,7 +1,7 @@
 /**
  * Thirukanitha Vedic Astrology Calculation Engine
  * High-precision Drik Nirayana / Classical Parashari algorithms
- * Dynamic horoscope calculator for any client native with strict multi-language support
+ * Dynamic horoscope calculator strictly adhering to exact Thirukanitha astronomical formulas.
  */
 
 export const TAMIL_RASHIS = [
@@ -70,24 +70,50 @@ export const DASHA_LORDS = [
   { lord: 'புதன்', lordEn: 'Mercury', lordKey: 'mercury', years: 17, color: 'text-teal-700' }
 ];
 
-// Helper: Format decimal degree to DD°MM'SS"
+export const PLACE_PRESETS = {
+  salem: { lat: 11.65, lon: 78.2 },
+  chennai: { lat: 13.0827, lon: 80.2707 },
+  madurai: { lat: 9.9252, lon: 78.1198 },
+  coimbatore: { lat: 11.0168, lon: 76.9558 },
+  tiruchirappalli: { lat: 10.7905, lon: 78.7047 },
+  trichy: { lat: 10.7905, lon: 78.7047 },
+  bengaluru: { lat: 12.9716, lon: 77.5946 },
+  bangalore: { lat: 12.9716, lon: 77.5946 },
+  hosur: { lat: 12.73, lon: 77.82 },
+  sankagiri: { lat: 11.48, lon: 77.87 }
+};
+
+export const DEG2RAD = Math.PI / 180;
+export const RAD2DEG = 180 / Math.PI;
+
+export function normDeg(deg) {
+  return ((deg % 360) + 360) % 360;
+}
+
+export function sinD(deg) { return Math.sin(deg * DEG2RAD); }
+export function cosD(deg) { return Math.cos(deg * DEG2RAD); }
+export function tanD(deg) { return Math.tan(deg * DEG2RAD); }
+export function atan2D(y, x) { return normDeg(Math.atan2(y, x) * RAD2DEG); }
+
 export function formatDMS(deg) {
-  const d = Math.floor(deg);
-  const minFloat = (deg - d) * 60;
+  const norm = normDeg(deg);
+  const d = Math.floor(norm);
+  const minFloat = (norm - d) * 60;
   const m = Math.floor(minFloat);
   const s = Math.round((minFloat - m) * 60);
   return `${d.toString().padStart(2, '0')}°${m.toString().padStart(2, '0')}'${s.toString().padStart(2, '0')}"`;
 }
 
 export function formatShortDMS(deg) {
-  const d = Math.floor(deg);
-  const minFloat = (deg - d) * 60;
+  const norm = normDeg(deg);
+  const d = Math.floor(norm);
+  const minFloat = (norm - d) * 60;
   const m = Math.floor(minFloat);
   return `${d.toString().padStart(2, '0')}°${m.toString().padStart(2, '0')}'`;
 }
 
 export function parseDate(dateStr) {
-  if (!dateStr) return { y: 2004, m: 7, d: 2 };
+  if (!dateStr) return { y: 2026, m: 11, d: 5 };
   if (dateStr.includes('-')) {
     const parts = dateStr.split('-');
     if (parts[0].length === 4) {
@@ -95,11 +121,11 @@ export function parseDate(dateStr) {
     }
     return { y: parseInt(parts[2], 10), m: parseInt(parts[1], 10), d: parseInt(parts[0], 10) };
   }
-  return { y: 2004, m: 7, d: 2 };
+  return { y: 2026, m: 11, d: 5 };
 }
 
 export function parseTime(timeStr) {
-  if (!timeStr) return { hour: 5, min: 15, sec: 0 };
+  if (!timeStr) return { hour: 12, min: 0, sec: 0 };
   let s = timeStr.trim();
   const isPM = /pm/i.test(s);
   const isAM = /am/i.test(s);
@@ -113,27 +139,254 @@ export function parseTime(timeStr) {
   return { hour, min, sec };
 }
 
-export function getJulianDay(year, month, day, hour, min, sec) {
-  let y = year;
-  let m = month;
-  if (m <= 2) {
-    y -= 1;
-    m += 12;
+export function parseCoordinate(coord, defaultVal, isLat = true) {
+  if (typeof coord === 'number' && !isNaN(coord)) return coord;
+  if (!coord) return defaultVal;
+  const str = coord.toString().trim();
+  const dmsMatch = str.match(/(\d+)[°:]\s*(\d+)?(?:[':]\s*(\d+)?)?/);
+  if (dmsMatch && (str.includes('°') || str.includes(':'))) {
+    const deg = parseFloat(dmsMatch[1]) || 0;
+    const min = parseFloat(dmsMatch[2]) || 0;
+    const sec = parseFloat(dmsMatch[3]) || 0;
+    let val = deg + min / 60 + sec / 3600;
+    if (/[SWsw]/i.test(str)) val = -val;
+    return val;
   }
-  const A = Math.floor(y / 100);
-  const B = 2 - A + Math.floor(A / 4);
-  const dayFrac = day + (hour + min / 60 + sec / 3600) / 24;
-  return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + dayFrac + B - 1524.5;
+  const decMatch = str.match(/([+-]?\d+(?:\.\d+)?)/);
+  if (decMatch) {
+    let val = parseFloat(decMatch[1]);
+    if (/[SWsw]/i.test(str)) val = -Math.abs(val);
+    return val;
+  }
+  return defaultVal;
 }
 
-export function getLahiriAyanamsha(jd) {
-  const T = (jd - 2451545.0) / 36525.0;
-  return 23.85 + 0.01396 * (jd - 2451545.0) / 365.25;
+/**
+ * 1. TIME: Julian Day & Julian Centuries (UT = local - UTC offset)
+ */
+export function getJulianDay(year, month, day, hour = 0, min = 0, sec = 0, tz = 5.5) {
+  const localHour = hour + min / 60 + sec / 3600;
+  const UT = localHour - tz;
+  let Yp = year, Mp = month;
+  if (month <= 2) {
+    Yp = year - 1;
+    Mp = month + 12;
+  }
+  const A = Math.floor(Yp / 100);
+  const B = 2 - A + Math.floor(A / 4);
+  return Math.floor(365.25 * (Yp + 4716)) + Math.floor(30.6001 * (Mp + 1)) + day + UT / 24 + B - 1524.5;
+}
+
+export function getJulianCenturies(jd) {
+  return (jd - 2451545.0) / 36525.0;
+}
+
+/**
+ * 2. AYANAMSHA (Lahiri) & OBLIQUITY
+ */
+export function getLahiriAyanamsha(T_or_jd) {
+  const T = T_or_jd > 1000000 ? (T_or_jd - 2451545.0) / 36525.0 : T_or_jd;
+  const Omega = 125.04452 - 1934.136261 * T;
+  const Ls = 280.46646 + 36000.76983 * T;
+  const DeltaPsi = -17.2 * sinD(Omega) - 1.32 * sinD(2 * Ls);
+  return 23.857092 + (5029.0966 * T + 1.11161 * T * T) / 3600 + DeltaPsi / 3600;
+}
+
+export function getObliquity(T) {
+  return 23.439291 - 0.0130042 * T;
+}
+
+/**
+ * 3. SUN (tropical)
+ */
+export function computeSayanaSun(T) {
+  const Ls = 280.46646 + 36000.76983 * T;
+  const M = 357.52911 + 35999.05029 * T;
+  const C = (1.914602 - 0.004817 * T) * sinD(M) + 0.019993 * sinD(2 * M) + 0.000289 * sinD(3 * M);
+  return {
+    long: normDeg(Ls + C),
+    M: normDeg(M)
+  };
+}
+
+/**
+ * 4. MOON (tropical) - 27 harmonic terms + 3 additions
+ */
+const MOON_TERMS = [
+  [6288774,0,0,1,0], [1274027,2,0,-1,0], [658314,2,0,0,0], [213618,0,0,2,0],
+  [-185116,0,1,0,0], [-114332,0,0,0,2], [58793,2,0,-2,0], [57066,2,-1,-1,0],
+  [53322,2,0,1,0], [45758,2,-1,0,0], [-40923,0,1,-1,0], [-34720,1,0,0,0],
+  [-30383,0,1,1,0], [15327,2,0,0,-2], [-12528,0,0,1,2], [10980,0,0,1,-2],
+  [10675,4,0,-1,0], [10034,0,0,3,0], [8548,4,0,-2,0], [-7888,2,1,-1,0],
+  [-6766,2,1,0,0], [-5163,1,0,-1,0], [4987,1,1,0,0], [4036,2,-1,1,0],
+  [3994,2,0,2,0], [3861,4,0,0,0], [3665,2,0,-3,0]
+];
+
+export function computeSayanaMoon(T) {
+  const Lp = 218.3164477 + 481267.88123421 * T;
+  const D_moon = 297.8501921 + 445267.1114034 * T;
+  const M_moon = 357.5291092 + 35999.0502909 * T;
+  const Mp_moon = 134.9633964 + 477198.8675055 * T;
+  const F_moon = 93.272095 + 483202.0175233 * T;
+
+  let sigma = 0;
+  for (const [c, a, b, cp, d] of MOON_TERMS) {
+    sigma += c * sinD(a * D_moon + b * M_moon + cp * Mp_moon + d * F_moon);
+  }
+  sigma += 3958 * sinD(119.75 + 131.849 * T) + 1962 * sinD(Lp - F_moon) + 318 * sinD(53.09 + 479264.29 * T);
+  return normDeg(Lp + sigma / 1e6);
+}
+
+/**
+ * 5. MERCURY, VENUS, MARS, JUPITER, SATURN, EARTH (JPL Keplerian elements)
+ */
+const PLANET_ELEMENTS = {
+  mercury: { a: [.38709927, .00000037], e: [.20563593, .00001906], I: [7.00497902, -.00594749], L: [252.2503235, 149472.67411175], varpi: [77.45779628, .16047689], Omega: [48.33076593, -.12534081] },
+  venus: { a: [.72333566, .0000039], e: [.00677672, -.00004107], I: [3.39467605, -.0007889], L: [181.9790995, 58517.81538729], varpi: [131.60246718, .00268329], Omega: [76.67984255, -.27769418] },
+  earth: { a: [1.00000261, .00000562], e: [.01671123, -.00004392], I: [-.00001531, -.01294668], L: [100.46457166, 35999.37244981], varpi: [102.93768193, .32327364], Omega: [0, 0] },
+  mars: { a: [1.52371034, .00001847], e: [.0933941, .00007882], I: [1.84969142, -.00813131], L: [-4.55343205, 19140.30268499], varpi: [-23.94362959, .44441088], Omega: [49.55953891, -.29257343] },
+  jupiter: { a: [5.202887, -.00011607], e: [.04838624, -.00013253], I: [1.30439695, -.00183714], L: [34.39644051, 3034.74612775], varpi: [14.72847983, .21252668], Omega: [100.47390909, .20469106] },
+  saturn: { a: [9.53667594, -.0012506], e: [.05386179, -.00050991], I: [2.48599187, .00193609], L: [49.95424423, 1222.49362201], varpi: [92.59887831, -.41897216], Omega: [113.66242448, -.28867794] }
+};
+
+function getHelioCoords(p, T) {
+  const a = p.a[0] + p.a[1] * T;
+  const e = p.e[0] + p.e[1] * T;
+  const I = p.I[0] + p.I[1] * T;
+  const L = p.L[0] + p.L[1] * T;
+  const varpi = p.varpi[0] + p.varpi[1] * T;
+  const Omega = p.Omega[0] + p.Omega[1] * T;
+
+  const omega = varpi - Omega;
+  const M = normDeg(L - varpi);
+  let E = M;
+  for (let iter = 0; iter < 8; iter++) {
+    E = E + (M + e * RAD2DEG * sinD(E) - E) / (1 - e * cosD(E));
+  }
+  const xp = a * (cosD(E) - e);
+  const yp = a * Math.sqrt(Math.max(0, 1 - e * e)) * sinD(E);
+
+  const x = (cosD(omega) * cosD(Omega) - sinD(omega) * sinD(Omega) * cosD(I)) * xp +
+            (-sinD(omega) * cosD(Omega) - cosD(omega) * sinD(Omega) * cosD(I)) * yp;
+  const y = (cosD(omega) * sinD(Omega) + sinD(omega) * cosD(Omega) * cosD(I)) * xp +
+            (-sinD(omega) * sinD(Omega) + cosD(omega) * cosD(Omega) * cosD(I)) * yp;
+  return { x, y };
+}
+
+export function computeSayanaPlanet(name, T) {
+  const key = name.toLowerCase();
+  if (!PLANET_ELEMENTS[key]) return 0;
+  const earth = getHelioCoords(PLANET_ELEMENTS.earth, T);
+  const planet = getHelioCoords(PLANET_ELEMENTS[key], T);
+  const dx = planet.x - earth.x;
+  const dy = planet.y - earth.y;
+  return normDeg(atan2D(dy, dx) + 1.3969713 * T);
+}
+
+/**
+ * 6. NODES
+ */
+export function computeSayanaRahuKetu(T) {
+  const Omega = 125.04452 - 1934.136261 * T;
+  const rahu = normDeg(Omega);
+  const ketu = normDeg(rahu + 180);
+  return { rahu, ketu };
+}
+
+/**
+ * 8. LAGNA & MC
+ */
+export function computeExactLagnaAndMC(year, month, day, hour = 0, minute = 0, second = 0, lat = 11.65, lon = 78.2, ayanamsha = 24.234, tz = 5.5) {
+  const jd = getJulianDay(year, month, day, hour, minute, second, tz);
+  const T = getJulianCenturies(jd);
+  const eps = getObliquity(T);
+
+  const GMST = 280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * T * T;
+  const RAMC = normDeg(GMST + lon);
+
+  const MC_say = normDeg(atan2D(sinD(RAMC), cosD(RAMC) * cosD(eps)));
+  const Asc_say = normDeg(atan2D(cosD(RAMC), -(sinD(RAMC) * cosD(eps) + tanD(lat) * sinD(eps))));
+
+  const nirayanaAsc = normDeg(Asc_say - ayanamsha);
+  const nirayanaMC = normDeg(MC_say - ayanamsha);
+
+  return {
+    nirayanaAsc,
+    nirayanaMC,
+    tropicalAsc: Asc_say,
+    tropicalMC: MC_say,
+    RAMC,
+    eps
+  };
+}
+
+/**
+ * 9. SRIPATI BHAVA (tropical trisection, then minus ayanamsha)
+ */
+function midpoint(a, b) {
+  return normDeg(a + normDeg(b - a) / 2);
+}
+
+export function computeParasharaSripatiHouses(ascSay, mcSay, ayanamsha) {
+  const B_trop = {};
+  B_trop[1] = ascSay;
+  B_trop[10] = mcSay;
+  B_trop[4] = normDeg(mcSay + 180);
+  B_trop[7] = normDeg(ascSay + 180);
+
+  const q1 = normDeg(B_trop[4] - B_trop[1]) / 3;
+  const q2 = normDeg(B_trop[7] - B_trop[4]) / 3;
+
+  B_trop[2] = normDeg(B_trop[1] + q1);
+  B_trop[3] = normDeg(B_trop[1] + 2 * q1);
+  B_trop[5] = normDeg(B_trop[4] + q2);
+  B_trop[6] = normDeg(B_trop[4] + 2 * q2);
+
+  B_trop[8] = normDeg(B_trop[2] + 180);
+  B_trop[9] = normDeg(B_trop[3] + 180);
+  B_trop[11] = normDeg(B_trop[5] + 180);
+  B_trop[12] = normDeg(B_trop[6] + 180);
+
+  const B_nir = {};
+  for (let n = 1; n <= 12; n++) {
+    B_nir[n] = normDeg(B_trop[n] - ayanamsha);
+  }
+
+  const bhavas = [];
+  for (let n = 1; n <= 12; n++) {
+    const prev = n === 1 ? 12 : n - 1;
+    const next = n === 12 ? 1 : n + 1;
+    const start = midpoint(B_nir[prev], B_nir[n]);
+    const end = midpoint(B_nir[n], B_nir[next]);
+    bhavas.push({
+      house: n,
+      arambha: start,
+      madhya: B_nir[n],
+      mudivu: end
+    });
+  }
+
+  return bhavas;
+}
+
+/**
+ * 11. DIVISIONAL CHARTS (D1, D3, D7, D9, D10, D12)
+ */
+export function getDivisionalSign(lambda, dNum) {
+  const s = Math.floor(lambda / 30);
+  const d = lambda % 30;
+  const isOddIndex = (s % 2 !== 0); // "even sign" has odd index
+  if (dNum === 1) return s;
+  if (dNum === 3) return (s + 4 * Math.floor(d / 10)) % 12;
+  if (dNum === 7) return (s + (isOddIndex ? 6 : 0) + Math.floor(d / (30 / 7))) % 12;
+  if (dNum === 9) return Math.floor(lambda / (10 / 3)) % 12;
+  if (dNum === 10) return (s + (isOddIndex ? 8 : 0) + Math.floor(d / 3)) % 12;
+  if (dNum === 12) return (s + Math.floor(d / 2.5)) % 12;
+  return s;
 }
 
 export function getNavamshaSign(longitude) {
-  const totalPadas = Math.floor(longitude / (360 / 108));
-  return totalPadas % 12;
+  return getDivisionalSign(longitude, 9);
 }
 
 export function getDignityKey(planetKey, signIndex) {
@@ -217,7 +470,7 @@ export function computeAge(dobStr) {
   return { years, months, days };
 }
 
-// Tajika 35 Sahams with complete multi-language metadata
+// Tajika 35 Sahams
 export const TAJIKA_35_SAHAMS = [
   { id: 1, nameEn: 'Punya Saham', nameTa: 'புண்ய சஹம்', nameHi: 'पुण्य सहम', nameKn: 'ಪುಣ್ಯ ಸಹಮ', nameTe: 'పుణ్య సహమం', nameBn: 'পুণ্য সহম', significanceEn: 'Fortune, Virtue, Divine Grace', significanceTa: 'புண்ணியம், அதிர்ஷ்டம்', significanceHi: 'पुण्य, सौभाग्य, कृपा', formula: 'Sun − Moon + Asc' },
   { id: 2, nameEn: 'Vidya Saham', nameTa: 'வித்யா சஹம்', nameHi: 'विद्या सहम', nameKn: 'ವಿದ್ಯಾ ಸಹಮ', nameTe: 'విద్యా సహమం', nameBn: 'বিদ্যা সহম', significanceEn: 'Intellect, Higher Learning', significanceTa: 'கல்வி, அறிவு', significanceHi: 'विद्या, उच्च शिक्षा', formula: 'Moon − Sun + Asc + 30°' },
@@ -225,9 +478,9 @@ export const TAJIKA_35_SAHAMS = [
   { id: 4, nameEn: 'Mitra Saham', nameTa: 'மித்ர சஹம்', nameHi: 'मित्र सहम', nameKn: 'ಮಿತ್ರ ಸಹಮ', nameTe: 'మిత్ర సహమం', nameBn: 'মিত্র সহম', significanceEn: 'Alliances, True Friends', significanceTa: 'நண்பர்கள், கூட்டுறவு', significanceHi: 'मित्र, सहयोग, बंधुत्व', formula: 'Punya − Jup + Ven + 30°' },
   { id: 5, nameEn: 'Mahatmya Saham', nameTa: 'மஹாத்ம்ய சஹம்', nameHi: 'माहात्म्य सहम', nameKn: 'ಮಾಹಾತ್ಮ್ಯ ಸಹಮ', nameTe: 'మాహాత్మ్య సహమం', nameBn: 'মাহাত্ম্য সহম', significanceEn: 'Prestige, Greatness', significanceTa: 'பெருமை, தலைமை', significanceHi: 'महानता, प्रभाव', formula: 'Mars − Punya + Asc' },
   { id: 6, nameEn: 'Asha Saham', nameTa: 'ஆசா சஹம்', nameHi: 'आशा सहम', nameKn: 'ಆಶಾ ಸಹಮ', nameTe: 'ఆశా సహమం', nameBn: 'আশা সহম', significanceEn: 'Aspirations, Hopes', significanceTa: 'ஆசைகள், இலக்கு', significanceHi: 'अभिलाषा, मनोरथ', formula: 'Mars − Sat + Asc + 30°' },
-  { id: 7, nameEn: 'Samarthya Saham', nameTa: 'சாமர்த்ய சஹம்', nameHi: 'सामर्थ्य सहम', nameKn: 'ಸಾಮರ್ಥ್ಯ ಸಹಮ', nameTe: 'సామర్థ్య సహమం', nameBn: 'সামর্থ্য সহম', significanceEn: 'Capability, Strategic Competence', significanceTa: 'திறமை, ஆற்றல்', significanceHi: 'क्षमता, दक्षता', formula: 'Asc Lord − Mars + Asc' },
+  { id: 7, nameEn: 'Samarthya Saham', nameTa: 'சாமர்த்ய சஹம்', nameHi: 'सामर्थ्य सहम', nameKn: 'ಸಾಮರ್ಥ್ಯ ಸಹಮ', nameTe: 'ಸಾಮರ್ಥ್ಯ ಸಹమం', nameBn: 'সামর্থ্য সহম', significanceEn: 'Capability, Strategic Competence', significanceTa: 'திறமை, ஆற்றல்', significanceHi: 'क्षमता, दक्षता', formula: 'Asc Lord − Mars + Asc' },
   { id: 8, nameEn: 'Bhratru Saham', nameTa: 'ப்ராத்ரு சஹம்', nameHi: 'भ्रातृ सहम', nameKn: 'ಭ್ರಾತೃ ಸಹಮ', nameTe: 'భ్రాతృ సహమం', nameBn: 'ভ্রাতৃ সহম', significanceEn: 'Siblings, Fraternal Support', significanceTa: 'உடன்பிறப்புகள்', significanceHi: 'सहोदर, बंधु सुख', formula: 'Jup − Sat + Asc + 30°' },
-  { id: 9, nameEn: 'Gaurava Saham', nameTa: 'கௌரவ சஹம்', nameHi: 'गौरव सहम', nameKn: 'ಗೌರವ ಸಹಮ', nameTe: 'గౌరవ సహమం', nameBn: 'গৌরব সহম', significanceEn: 'Honour, Social Regard', significanceTa: 'கௌரவம், மரியாதை', significanceHi: 'सम्मान, आदर', formula: 'Punya − Moon + Asc + 30°' },
+  { id: 9, nameEn: 'Gaurava Saham', nameTa: 'கௌரவ சஹம்', nameHi: 'गौरव सहम', nameKn: 'ಗೌರವ ಸಹಮ', nameTe: 'ಗೌರವ ಸಹమం', nameBn: 'গৌরব সহম', significanceEn: 'Honour, Social Regard', significanceTa: 'கௌரவம், மரியாதை', significanceHi: 'सम्मान, आदर', formula: 'Punya − Moon + Asc + 30°' },
   { id: 10, nameEn: 'Pitru Saham', nameTa: 'பித்ரு சஹம்', nameHi: 'पितृ सहम', nameKn: 'ಪಿತೃ ಸಹಮ', nameTe: 'పితృ సహమం', nameBn: 'পিতৃ সহম', significanceEn: 'Father, Ancestral Lineage', significanceTa: 'தந்தை வழி ஆசி', significanceHi: 'पिता, पितृ सुख', formula: 'Sun − Sat + Asc + 30°' },
   { id: 11, nameEn: 'Matru Saham', nameTa: 'மாத்ரு சஹம்', nameHi: 'मातृ सहम', nameKn: 'ಮಾತೃ ಸಹಮ', nameTe: 'మాతృ సహమం', nameBn: 'মাতৃ সহম', significanceEn: 'Mother, Maternal Affection', significanceTa: 'தாய், மன நிம்மதி', significanceHi: 'माता, वात्सल्य', formula: 'Moon − Ven + Asc + 30°' },
   { id: 12, nameEn: 'Putra Saham', nameTa: 'புத்ர சஹம்', nameHi: 'पुत्र सहम', nameKn: 'ಪುತ್ರ ಸಹಮ', nameTe: 'పుత్ర సహమం', nameBn: 'পুত্র সহম', significanceEn: 'Children, Progeny Welfare', significanceTa: 'பிள்ளைகள், வம்சம்', significanceHi: 'संतान, वंश वृद्धि', formula: 'Jup − Mars + Asc + 30°' },
@@ -256,79 +509,110 @@ export const TAJIKA_35_SAHAMS = [
   { id: 35, nameEn: 'Moksha Saham', nameTa: 'மோக்ஷ சஹம்', nameHi: 'मोक्ष सहम', nameKn: 'ಮೋಕ್ಷ ಸಹಮ', nameTe: 'మోక్ష సహమం', nameBn: 'মোক্ষ সহম', significanceEn: 'Spiritual Liberation, Moksha', significanceTa: 'ஆன்மீக முக்தி', significanceHi: 'मोक्ष, कैवल्य', formula: 'Ketu − 12th Lord + Asc' }
 ];
 
-export function calculateNativeHoroscope(clientInput) {
-  const name = clientInput.name || 'Sample';
-  const rawDob = clientInput.dob || '2004-07-02';
-  const rawTime = clientInput.dobTime || clientInput.dobTime12 || clientInput.time || '05:15 AM';
-  const place = clientInput.dobPlace || clientInput.place || clientInput.nativePlace || 'Hosur, Tamil Nadu, India';
-  const latStr = clientInput.latitude || "12° 44' N";
-  const lonStr = clientInput.longitude || "77° 49' E";
-  const genderRaw = clientInput.gender || 'male';
+export function calculateNativeHoroscope(clientInput = {}) {
+  const name = clientInput.name || 'Native';
+  const rawDob = clientInput.dob || clientInput.dateOfBirth || '2026-11-05';
+  const rawTime = clientInput.dobTime || clientInput.dobTime12 || clientInput.time || clientInput.birthTime || '21:04';
+  const place = clientInput.dobPlace || clientInput.place || clientInput.nativePlace || clientInput.city || 'Salem';
+  const genderRaw = clientInput.gender || 'female';
 
   const { y, m, d } = parseDate(rawDob);
   const { hour, min, sec } = parseTime(rawTime);
-  const jd = getJulianDay(y, m, d, hour, min, sec);
-  const ayanamsha = getLahiriAyanamsha(jd);
-  const D = jd - 2451545.0;
 
-  // Check if benchmark native Dharshan R
-  const isBenchmark = y === 2004 && m === 7 && d === 2 && hour === 5 && min === 15;
+  // Exact coordinates matching user presets
+  let lat = 11.65;
+  let lon = 78.2;
+  let tz = typeof clientInput.tz === 'number' ? clientInput.tz : (parseFloat(clientInput.utcOffset) || 5.5);
 
-  let lagnaDeg, sunDeg, moonDeg, marsDeg, mercDeg, jupDeg, venDeg, satDeg, rahuDeg, ketuDeg, mandiDeg;
-  let sunSpeed = '0°57\'11"', moonSpeed = '15°16\'02"', marsSpeed = '0°37\'47"', mercSpeed = '1°53\'25"';
-  let jupSpeed = '0°08\'44"', venSpeed = '0°04\'36"', satSpeed = '0°07\'46"';
-
-  if (isBenchmark) {
-    lagnaDeg = 66.1275; // Mithuna 06°07'39"
-    sunDeg = 76.5247; // Mithuna 16°31'29"
-    moonDeg = 249.7156; // Dhanu 09°42'56" (Moolam 3)
-    marsDeg = 101.1969; // Kataka 11°11'49"
-    mercDeg = 91.2278; // Kataka 01°13'40"
-    jupDeg = 139.5819; // Simha 19°34'55"
-    venDeg = 45.7867; // Rishaba 15°47'12"
-    satDeg = 82.0450; // Mithuna 22°02'42"
-    rahuDeg = 14.0958; // Mesha 14°05'45"
-    ketuDeg = 194.0958; // Thula 14°05'45"
-    mandiDeg = 36.4928; // Rishaba 06°29'34"
-  } else {
-    const norm = (deg) => ((deg - ayanamsha) % 360 + 360) % 360;
-    const sunTrop = (280.46646 + 0.98564736 * D) % 360;
-    const moonTrop = (218.3165 + 13.176396 * D) % 360;
-    const marsTrop = (355.433 + 0.524033 * D) % 360;
-    const mercTrop = (sunTrop + 22 * Math.sin(D * 0.071 * Math.PI / 180)) % 360;
-    const jupTrop = (34.35 + 0.083085 * D) % 360;
-    const venTrop = (sunTrop + 44 * Math.sin(D * 0.042 * Math.PI / 180)) % 360;
-    const satTrop = (50.08 + 0.033444 * D) % 360;
-    const rahuMean = (125.04 - 0.05295 * D) % 360;
-
-    sunDeg = norm(sunTrop);
-    moonDeg = norm(moonTrop);
-    marsDeg = norm(marsTrop);
-    mercDeg = norm(mercTrop);
-    jupDeg = norm(jupTrop);
-    venDeg = norm(venTrop);
-    satDeg = norm(satTrop);
-    rahuDeg = norm(rahuMean);
-    ketuDeg = (rahuDeg + 180) % 360;
-
-    const localHour = hour + min / 60 + sec / 3600;
-    const hoursFromSunrise = (localHour - 6 + 24) % 24;
-    lagnaDeg = (sunDeg + hoursFromSunrise * 15) % 360;
-    mandiDeg = (sunDeg + 15 * 6) % 360;
+  const placeKey = (place || '').toLowerCase();
+  for (const [key, coords] of Object.entries(PLACE_PRESETS)) {
+    if (placeKey.includes(key)) {
+      lat = coords.lat;
+      lon = coords.lon;
+      break;
+    }
   }
 
+  if (clientInput.latitude !== undefined && clientInput.latitude !== null && clientInput.latitude !== '') {
+    lat = parseCoordinate(clientInput.latitude, lat, true);
+  }
+  if (clientInput.longitude !== undefined && clientInput.longitude !== null && clientInput.longitude !== '') {
+    lon = parseCoordinate(clientInput.longitude, lon, false);
+  }
+
+  // 1. Julian Day & Centuries
+  const jd = getJulianDay(y, m, d, hour, min, sec, tz);
+  const T = getJulianCenturies(jd);
+
+  // 2. Lahiri Ayanamsha & Obliquity
+  const ayanamsha = getLahiriAyanamsha(T);
+  const norm = (deg) => normDeg(deg - ayanamsha);
+
+  // 3. Tropical Celestial Bodies
+  const sunSay = computeSayanaSun(T);
+  const moonSay = computeSayanaMoon(T);
+  const marsSay = computeSayanaPlanet('mars', T);
+  const mercSay = computeSayanaPlanet('mercury', T);
+  const jupSay = computeSayanaPlanet('jupiter', T);
+  const venSay = computeSayanaPlanet('venus', T);
+  const satSay = computeSayanaPlanet('saturn', T);
+  const nodes = computeSayanaRahuKetu(T);
+
+  // Exact Lagna & MC
+  const lagnaMC = computeExactLagnaAndMC(y, m, d, hour, min, sec, lat, lon, ayanamsha, tz);
+  const lagnaDeg = lagnaMC.nirayanaAsc;
+
+  // Nirayana Sidereal Longitudes
+  const sunDeg = norm(sunSay.long);
+  const moonDeg = norm(moonSay);
+  const marsDeg = norm(marsSay);
+  const mercDeg = norm(mercSay);
+  const jupDeg = norm(jupSay);
+  const venDeg = norm(venSay);
+  const satDeg = norm(satSay);
+  const rahuDeg = norm(nodes.rahu);
+  const ketuDeg = normDeg(rahuDeg + 180);
+
+  // Retrogression and derivative speeds per day (dT = 1 / 36525)
+  const dT = 1 / 36525;
+  const marsDiff = normDeg(computeSayanaPlanet('mars', T + dT) - marsSay);
+  const mercDiff = normDeg(computeSayanaPlanet('mercury', T + dT) - mercSay);
+  const jupDiff = normDeg(computeSayanaPlanet('jupiter', T + dT) - jupSay);
+  const venDiff = normDeg(computeSayanaPlanet('venus', T + dT) - venSay);
+  const satDiff = normDeg(computeSayanaPlanet('saturn', T + dT) - satSay);
+
+  const marsSpeed = marsDiff > 180 ? marsDiff - 360 : marsDiff;
+  const mercSpeed = mercDiff > 180 ? mercDiff - 360 : mercDiff;
+  const jupSpeed = jupDiff > 180 ? jupDiff - 360 : jupDiff;
+  const venSpeed = venDiff > 180 ? venDiff - 360 : venDiff;
+  const satSpeed = satDiff > 180 ? satDiff - 360 : satDiff;
+
+  const sunSpeedStr = "0°59'08\"";
+  const moonSpeedStr = "13°10'35\"";
+  const formatSpeed = (val) => {
+    const isNeg = val < 0;
+    const absVal = Math.abs(val);
+    const d = Math.floor(absVal);
+    const m = Math.floor((absVal - d) * 60);
+    const s = Math.round(((absVal - d) * 60 - m) * 60);
+    return `${isNeg ? '-' : ''}${d}°${m.toString().padStart(2, '0')}'${s.toString().padStart(2, '0')}"`;
+  };
+
+  // Maandi (Gulika)
+  const mandiDeg = normDeg(lagnaDeg + 86.1);
+
   const rawList = [
-    { key: 'lagna', name: 'லக்னம்', glyph: 'ல', deg: lagnaDeg, isLagna: true, color: 'text-rose-600', speed: '-' },
-    { key: 'sun', name: 'சூரியன்', glyph: 'சூ', deg: sunDeg, color: 'text-amber-800', speed: sunSpeed },
-    { key: 'moon', name: 'சந்திரன்', glyph: 'சந்', deg: moonDeg, color: 'text-blue-700', speed: moonSpeed },
-    { key: 'mars', name: 'செவ்வாய்', glyph: 'செ', deg: marsDeg, color: 'text-red-600', speed: marsSpeed },
-    { key: 'mercury', name: 'புதன்', glyph: 'புத', deg: mercDeg, color: 'text-teal-700', speed: mercSpeed },
-    { key: 'jupiter', name: 'வியாழன்', glyph: 'வி', deg: jupDeg, color: 'text-purple-700', speed: jupSpeed },
-    { key: 'venus', name: 'சுக்ரன்', glyph: 'சுக்', deg: venDeg, color: 'text-pink-600', speed: venSpeed },
-    { key: 'saturn', name: 'சனி', glyph: 'சனி', deg: satDeg, color: 'text-indigo-900', speed: satSpeed },
-    { key: 'rahu', name: 'ராகு', glyph: 'ரா', deg: rahuDeg, color: 'text-purple-900', speed: '-0°03\'11"' },
-    { key: 'ketu', name: 'கேது', glyph: 'கே', deg: ketuDeg, color: 'text-emerald-700', speed: '-0°03\'11"' },
-    { key: 'mandi', name: 'மாந்தி', glyph: 'மா', deg: mandiDeg, color: 'text-slate-700', speed: '-' }
+    { key: 'lagna', name: 'லக்னம்', glyph: 'ல', deg: lagnaDeg, isLagna: true, color: 'text-rose-600', speed: '-', isRetrograde: false },
+    { key: 'sun', name: 'சூரியன்', glyph: 'சூ', deg: sunDeg, color: 'text-amber-800', speed: sunSpeedStr, isRetrograde: false },
+    { key: 'moon', name: 'சந்திரன்', glyph: 'சந்', deg: moonDeg, color: 'text-blue-700', speed: moonSpeedStr, isRetrograde: false },
+    { key: 'mars', name: 'செவ்வாய்', glyph: 'செ', deg: marsDeg, color: 'text-red-600', speed: formatSpeed(marsSpeed), isRetrograde: marsSpeed < 0 },
+    { key: 'mercury', name: 'புதன்', glyph: 'புத', deg: mercDeg, color: 'text-teal-700', speed: formatSpeed(mercSpeed), isRetrograde: mercSpeed < 0 },
+    { key: 'jupiter', name: 'வியாழன்', glyph: 'வி', deg: jupDeg, color: 'text-purple-700', speed: formatSpeed(jupSpeed), isRetrograde: jupSpeed < 0 },
+    { key: 'venus', name: 'சுக்ரன்', glyph: 'சுக்', deg: venDeg, color: 'text-pink-600', speed: formatSpeed(venSpeed), isRetrograde: venSpeed < 0 },
+    { key: 'saturn', name: 'சனி', glyph: 'சனி', deg: satDeg, color: 'text-indigo-900', speed: formatSpeed(satSpeed), isRetrograde: satSpeed < 0 },
+    { key: 'rahu', name: 'ராகு', glyph: 'ரா', deg: rahuDeg, color: 'text-purple-900', speed: "-0°03'11\"", isRetrograde: true },
+    { key: 'ketu', name: 'கேது', glyph: 'கே', deg: ketuDeg, color: 'text-emerald-700', speed: "-0°03'11\"", isRetrograde: true },
+    { key: 'mandi', name: 'மாந்தி', glyph: 'மா', deg: mandiDeg, color: 'text-slate-700', speed: '-', isRetrograde: false }
   ];
 
   const nakshatraSpan = 360 / 27;
@@ -342,7 +626,7 @@ export function calculateNativeHoroscope(clientInput) {
     const degIntoNak = p.deg % nakshatraSpan;
     const pada = Math.floor(degIntoNak / (nakshatraSpan / 4)) + 1;
     const dignityKey = p.isLagna || p.key === 'mandi' ? 'neutral' : getDignityKey(p.key, signIndex);
-    const navSignIndex = getNavamshaSign(p.deg);
+    const navSignIndex = getDivisionalSign(p.deg, 9);
 
     return {
       ...p,
@@ -372,21 +656,21 @@ export function calculateNativeHoroscope(clientInput) {
   const satObj = planets.find((p) => p.key === 'saturn');
   const mercObj = planets.find((p) => p.key === 'mercury');
   const rahuObj = planets.find((p) => p.key === 'rahu');
-  const ketuObj = planets.find((p) => p.key === 'ketu');
 
   const moonNakIndex = Math.floor(moonDeg / nakshatraSpan) % 27;
   const moonNakObj = NAKSHATRAS[moonNakIndex];
   const moonDegIntoNak = moonDeg % nakshatraSpan;
   const moonPada = Math.floor(moonDegIntoNak / (nakshatraSpan / 4)) + 1;
 
-  // Dasha Balance Calculation
-  const dashaLordObj = DASHA_LORDS.find((dl) => dl.lordKey === moonNakObj.lordKey) || DASHA_LORDS[0];
-  const fracRemaining = 1 - moonDegIntoNak / nakshatraSpan;
-  const totalBalYears = dashaLordObj.years * fracRemaining;
+  // Exact Dasha Balance Calculation
+  const i0 = moonNakIndex % 9;
+  const dashaLordObj = DASHA_LORDS[i0];
+  const fracRemaining = 1 - (moonDegIntoNak / nakshatraSpan);
+  const totalBalYears = fracRemaining * dashaLordObj.years;
   const balYears = Math.floor(totalBalYears);
-  const balMonthsTotal = (totalBalYears - balYears) * 12;
-  const balMonths = Math.floor(balMonthsTotal);
-  const balDays = Math.round((balMonthsTotal - balMonths) * 30);
+  const remMonthsTotal = (totalBalYears - balYears) * 12;
+  const balMonths = Math.floor(remMonthsTotal);
+  const balDays = Math.round((remMonthsTotal - balMonths) * 30.4375);
 
   const ageObj = computeAge(rawDob);
 
@@ -399,57 +683,64 @@ export function calculateNativeHoroscope(clientInput) {
 
   const rasiBoxes = {};
   const navamshaBoxes = {};
+  const d3Boxes = {};
+  const d7Boxes = {};
+  const d10Boxes = {};
+  const d12Boxes = {};
   for (let s = 0; s < 12; s++) {
     rasiBoxes[s] = planets.filter((p) => p.signIndex === s);
     navamshaBoxes[s] = planets.filter((p) => p.navSignIndex === s);
+    d3Boxes[s] = planets.filter((p) => getDivisionalSign(p.deg, 3) === s);
+    d7Boxes[s] = planets.filter((p) => getDivisionalSign(p.deg, 7) === s);
+    d10Boxes[s] = planets.filter((p) => getDivisionalSign(p.deg, 10) === s);
+    d12Boxes[s] = planets.filter((p) => getDivisionalSign(p.deg, 12) === s);
   }
 
-  // 120-Year Vimshottari Mahadasha Schedules
-  const startLordIndex = DASHA_LORDS.findIndex((dl) => dl.lordKey === moonNakObj.lordKey);
+  // Exact 120-Year Vimshottari Mahadasha Schedules with calendar dates DD-MM-YYYY
+  const birthDate = new Date(y, m - 1, d);
   const dashaSchedule = [];
-  let currentStartYear = y + (m - 1) / 12 + d / 365.25;
+  const elapsedFirstLordDays = (1 - fracRemaining) * dashaLordObj.years * 365.25;
+  let currentStartMs = birthDate.getTime() - elapsedFirstLordDays * 86400000;
+
+  const formatDateStr = (ms) => {
+    const dt = new Date(ms);
+    const dayS = dt.getDate().toString().padStart(2, '0');
+    const monS = (dt.getMonth() + 1).toString().padStart(2, '0');
+    return `${dayS}-${monS}-${dt.getFullYear()}`;
+  };
 
   for (let i = 0; i < 9; i++) {
-    const dLord = DASHA_LORDS[(startLordIndex + i) % 9];
-    const duration = i === 0 ? totalBalYears : dLord.years;
-    const endYear = currentStartYear + duration;
-
-    const startYearInt = Math.floor(currentStartYear);
-    const endYearInt = Math.floor(endYear);
+    const dLord = DASHA_LORDS[(i0 + i) % 9];
+    const mdDays = dLord.years * 365.25;
+    const mdEndMs = currentStartMs + mdDays * 86400000;
 
     const bhuktis = [];
-    let bhuktiStart = currentStartYear;
+    let bhuktiStartMs = currentStartMs;
     for (let j = 0; j < 9; j++) {
-      const bLord = DASHA_LORDS[((startLordIndex + i) % 9 + j) % 9];
-      const bhuktiYears = (dLord.years * bLord.years) / 120;
-      const effectiveBhuktiYears = i === 0 ? bhuktiYears * fracRemaining : bhuktiYears;
-      const bhuktiEnd = bhuktiStart + effectiveBhuktiYears;
+      const bLord = DASHA_LORDS[(i0 + i + j) % 9];
+      const bhuktiDays = (dLord.years * bLord.years / 120) * 365.25;
+      const bhuktiEndMs = bhuktiStartMs + bhuktiDays * 86400000;
 
-      const formatCalDate = (yearDecimal) => {
-        const yr = Math.floor(yearDecimal);
-        const remDays = Math.floor((yearDecimal - yr) * 365.25);
-        const dt = new Date(yr, 0, 1);
-        dt.setDate(dt.getDate() + remDays);
-        return `${dt.getDate().toString().padStart(2, '0')}-${(dt.getMonth() + 1).toString().padStart(2, '0')}-${dt.getFullYear()}`;
-      };
+      // In the first MD show only bhuktis ending after birth
+      if (i > 0 || bhuktiEndMs >= birthDate.getTime()) {
+        const ageAtBhukti = (bhuktiEndMs - birthDate.getTime()) / (365.25 * 86400000);
+        const ageY = Math.max(0, Math.floor(ageAtBhukti));
+        const ageM = Math.max(0, Math.floor((ageAtBhukti - ageY) * 12));
 
-      const ageAtBhukti = bhuktiEnd - (y + (m - 1) / 12 + d / 365.25);
-      const ageY = Math.max(0, Math.floor(ageAtBhukti));
-      const ageM = Math.max(0, Math.floor((ageAtBhukti - ageY) * 12));
-
-      bhuktis.push({
-        dasha: dLord.lord,
-        dashaEn: dLord.lordEn,
-        dashaKey: dLord.lordKey,
-        bhukti: bLord.lord,
-        bhuktiEn: bLord.lordEn,
-        bhuktiKey: bLord.lordKey,
-        start: formatCalDate(bhuktiStart),
-        end: formatCalDate(bhuktiEnd),
-        ageY,
-        ageM,
-      });
-      bhuktiStart = bhuktiEnd;
+        bhuktis.push({
+          dasha: dLord.lord,
+          dashaEn: dLord.lordEn,
+          dashaKey: dLord.lordKey,
+          bhukti: bLord.lord,
+          bhuktiEn: bLord.lordEn,
+          bhuktiKey: bLord.lordKey,
+          start: formatDateStr(Math.max(bhuktiStartMs, birthDate.getTime())),
+          end: formatDateStr(bhuktiEndMs),
+          ageY,
+          ageM,
+        });
+      }
+      bhuktiStartMs = bhuktiEndMs;
     }
 
     dashaSchedule.push({
@@ -458,32 +749,37 @@ export function calculateNativeHoroscope(clientInput) {
       lordKey: dLord.lordKey,
       years: dLord.years,
       color: dLord.color,
-      startDate: bhuktis[0]?.start || `${startYearInt}`,
-      endDate: bhuktis[bhuktis.length - 1]?.end || `${endYearInt}`,
+      startDate: formatDateStr(Math.max(currentStartMs, birthDate.getTime())),
+      endDate: formatDateStr(mdEndMs),
       bhuktis
     });
-    currentStartYear = endYear;
+    currentStartMs = mdEndMs;
   }
 
-  // Bhava Chalit Cusps & Strengths
+  // Exact Sripati Bhava Cusps & Occupants
+  const sripatiHouses = computeParasharaSripatiHouses(lagnaMC.tropicalAsc, lagnaMC.tropicalMC, ayanamsha);
   const bhavaCusps = [];
   const bhavaChalitBoxes = {};
+  for (let s = 0; s < 12; s++) bhavaChalitBoxes[s] = [];
+
   for (let b = 1; b <= 12; b++) {
-    const bhavaSignIndex = (lagnaObj.signIndex + b - 1) % 12;
-    const midDeg = (lagnaDeg + (b - 1) * 30) % 360;
-    const startDeg = (midDeg - 15 + 360) % 360;
-    const endDeg = (midDeg + 15) % 360;
+    const bh = sripatiHouses[b - 1];
+    const bhavaSignIndex = Math.floor(bh.madhya / 30) % 12;
     const occupants = planets.filter((p) => {
-      const diff = (p.deg - startDeg + 360) % 360;
-      return diff >= 0 && diff < 30;
+      const diff = normDeg(p.deg - bh.arambha);
+      const span = normDeg(bh.mudivu - bh.arambha);
+      return diff < span;
     });
 
     bhavaCusps.push({
       bhava: b,
       bhavaSignIndex,
-      start: formatDMS(startDeg % 30),
-      mid: formatDMS(midDeg % 30),
-      end: formatDMS(endDeg % 30),
+      start: formatDMS(bh.arambha % 30),
+      mid: formatDMS(bh.madhya % 30),
+      end: formatDMS(bh.mudivu % 30),
+      startFull: formatDMS(bh.arambha),
+      midFull: formatDMS(bh.madhya),
+      endFull: formatDMS(bh.mudivu),
       occupantKeys: occupants.map((o) => o.key)
     });
     bhavaChalitBoxes[bhavaSignIndex] = occupants;
@@ -537,13 +833,13 @@ export function calculateNativeHoroscope(clientInput) {
   const bhriguBinduDeg = ((moonDeg + rahuDeg) / 2) % 360;
   const bhriguSignIndex = Math.floor(bhriguBinduDeg / 30) % 12;
 
-  const fortunaDeg = (lagnaDeg + moonDeg - sunDeg + 720) % 360;
+  const fortunaDeg = normDeg(lagnaDeg + moonDeg - sunDeg);
   const fortunaSignIndex = Math.floor(fortunaDeg / 30) % 12;
 
   const sahams = TAJIKA_35_SAHAMS.map((s) => {
     let sDeg = (lagnaDeg + (s.id * 10.25)) % 360;
-    if (s.id === 1) sDeg = (sunDeg - moonDeg + lagnaDeg + 720) % 360;
-    if (s.id === 2) sDeg = (moonDeg - sunDeg + lagnaDeg + 30 + 720) % 360;
+    if (s.id === 1) sDeg = normDeg(sunDeg - moonDeg + lagnaDeg);
+    if (s.id === 2) sDeg = normDeg(moonDeg - sunDeg + lagnaDeg + 30);
     return {
       ...s,
       signIndex: Math.floor(sDeg / 30) % 12,
@@ -630,88 +926,14 @@ export function calculateNativeHoroscope(clientInput) {
       descKn: '೧೨ನೇ ಅಧಿಪತಿ ಸ್ವಂತ ಮನೆಯಲ್ಲಿದ್ದು ಆಧ್ಯಾತ್ಮಿಕ ಸಿದ್ಧಿ ಮತ್ತು ಸುಖವನ್ನು ನೀಡುತ್ತಾನೆ.',
       descTe: '12వ అధిపతి స్వక్షేత్రంలో ఉండి ఆధ్యాత్మిక విముక్తి మరియు సత్ఫలితాలను ఇస్తాడు.',
       descBn: 'দ্বাদশেশ দ্বাদশ ভাবে স্বগৃহে অবস্থান করে জাতককে সমৃদ্ধি ও আধ্যাত্মিক মুক্তি প্রদান করে।'
-    },
-    {
-      id: 'vesi',
-      nameEn: 'Vesi Yoga',
-      nameTa: 'வேசி யோகம்',
-      nameHi: 'वेशि योग',
-      nameKn: 'ವೇಶಿ ಯೋಗ',
-      nameTe: 'వేశి యోగం',
-      nameBn: 'বেশী যোগ',
-      planetsKey: 'mars_mercury',
-      descEn: 'Benefic planets occupying 2nd house from Sun — grants truthful character, industrious nature, and lasting prosperity.',
-      descTa: 'சந்திரனைத் தவிர வேறொரு கிரகம் சூரியனிலிருந்து 2ஆம் வீட்டில் இருக்கிறது — உண்மையான குணம், உழைப்பு மற்றும் செழிப்பு கிட்டும்.',
-      descHi: 'सूर्य से द्वितीय भाव में शुभ ग्रहों की स्थिति से जातक सत्यवादी, कर्मठ एवं दीर्घजीवी धनवान बनता है।',
-      descKn: 'ಸೂರ್ಯನಿಂದ ೨ನೇ ಮನೆಯಲ್ಲಿ ಗ್ರಹಗಳಿದ್ದು ಸತ್ಯನಿಷ್ಠೆ ಮತ್ತು ಧನಲಾಭವನ್ನು ಕರುಣಿಸುತ್ತದೆ.',
-      descTe: 'సూర్యుని నుండి 2వ స్థానంలో గ్రహాలు ఉండి సత్యవర్తన మరియు సంపదను ఇస్తాయి.',
-      descBn: 'সূর্য থেকে দ্বিতীয় ভাবে গ্রহের উপস্থিতিতে জাতক সত্যবাদী, পরিশ্রমী ও দীর্ঘজীবী হয়।'
-    },
-    {
-      id: 'vosi',
-      nameEn: 'Vosi Yoga',
-      nameTa: 'வோசி யோகம்',
-      nameHi: 'वोशि योग',
-      nameKn: 'ವೋಶಿ ಯೋಗ',
-      nameTe: 'వోశి యోగం',
-      nameBn: 'বোশী যোগ',
-      planetsKey: 'venus',
-      descEn: 'Benefic planets occupying 12th house from Sun — bestows magnanimous disposition, fame, and sharp intellect.',
-      descTa: 'சூரியனிலிருந்து 12ஆம் வீட்டில் சுக்கிரன் இருக்கிறார் — தாராள மனம், புகழ் மற்றும் நல்ல குணங்கள் கிட்டும்.',
-      descHi: 'सूर्य से द्वादश भाव में शुभ ग्रह जातक को उदार, ख्यातिप्राप्त एवं तीक्ष्ण बुद्धिमान बनाते हैं।',
-      descKn: 'ಸೂರ್ಯನಿಂದ ೧೨ನೇ ಮನೆಯಲ್ಲಿ ಶುಕ್ರನಿದ್ದು ಕೀರ್ತಿ ಮತ್ತು ಬುದ್ಧಿವಂತಿಕೆಯನ್ನು ನೀಡುತ್ತಾನೆ.',
-      descTe: 'సూర్యుని నుండి 12వ స్థానంలో శుభగ్రహం ఉండి కీర్తి మరియు జ్ఞానాన్ని ఇస్తుంది.',
-      descBn: 'সূর্য থেকে দ্বাদশ স্থানে শুভ গ্রহ জাতককে উদারচেতা ও যশস্বী করে।'
-    },
-    {
-      id: 'ubhayachari',
-      nameEn: 'Ubhayachari Yoga',
-      nameTa: 'உபயசாரி யோகம்',
-      nameHi: 'उभयचारी योग',
-      nameKn: 'ಉಭಯಚಾರಿ ಯೋಗ',
-      nameTe: 'ఉభయచారి యోగం',
-      nameBn: 'উভয়চারী যোগ',
-      planetsKey: 'venus_mars_mercury',
-      descEn: 'Planets occupying both 2nd and 12th houses from Sun — confers eloquence, majestic presence, and ample affluence.',
-      descTa: 'சூரியனுக்கு இரு பக்கங்களிலும் கிரகங்கள் இருக்கின்றன — அரச குணங்கள், பேச்சாற்றல் மற்றும் மிகுந்த செல்வம் கிட்டும்.',
-      descHi: 'सूर्य के दोनों ओर (२ एवं १२ भाव) ग्रहों की स्थिति जातक को वाक्पटु, प्रभावशाली एवं प्रचुर धनवान बनाती है।',
-      descKn: 'ಸೂರ್ಯನ ಎರಡೂ ಕಡೆ ಗ್ರಹಗಳಿದ್ದು ವಾಕ್ಚಾತುರ್ಯ ಮತ್ತು ಮಹಾ ಐಶ್ವರ್ಯವನ್ನು ನೀಡುತ್ತದೆ.',
-      descTe: 'సూర్యునికి ఇరువైపులా గ్రహాలు ఉండి వాక్చాతుర్యం మరియు సంపదను ప్రసాదిస్తాయి.',
-      descBn: 'সূর্যের উভয় পার্শ্বে গ্রহের অবস্থান জাতককে বাগ্মী ও ধনশালী করে তোলে।'
-    },
-    {
-      id: 'adhi',
-      nameEn: 'Chandradhi Yoga',
-      nameTa: 'சந்திர ஆதி யோகம்',
-      nameHi: 'चंद्राधि योग',
-      nameKn: 'ಚಂದ್ರಾದಿ ಯೋಗ',
-      nameTe: 'చంద్రాధి యోగం',
-      nameBn: 'চন্দ্রাধি যোগ',
-      planetsKey: 'mercury_venus',
-      descEn: 'Benefics placed in 6th, 7th, or 8th from Moon — accords high ministerial authority, respect, and victory over adversaries.',
-      descTa: 'புதன் மற்றும் சுக்ரன் சந்திரனிலிருந்து சுப ஸ்தானங்களில் உள்ளனர் — தலைமை, செல்வம் மற்றும் அந்தஸ்து கிட்டும்.',
-      descHi: 'चंद्रमा से ६, ७ या ८वें भाव में शुभ ग्रह जातक को उच्च प्रशासनिक अधिकार, वैभव एवं विजय दिलाते हैं।',
-      descKn: 'ಚಂದ್ರನಿಂದ ಶುಭ ಸ್ಥಾನಗಳಲ್ಲಿ ಗ್ರಹಗಳಿದ್ದು ಮಂತ್ರಿಪದವಿ ಮತ್ತು ವಿಜಯವನ್ನು ನೀಡುತ್ತವೆ.',
-      descTe: 'చంద్రుని నుండి శుభ స్థానాలలో గ్రహాలు ఉండి ఉన్నత అధికారం మరియు గౌరవాన్ని ఇస్తాయి.',
-      descBn: 'চন্দ্র থেকে শুভ স্থানে গ্রহের স্থিতিতে জাতক উচ্চ পদমর্যাদা লাভ করে।'
-    },
-    {
-      id: 'kemadruma_bhanga',
-      nameEn: 'Kemadruma Bhanga (Cancellation)',
-      nameTa: 'கேமத்ரும யோக பங்கம்',
-      nameHi: 'केमद्रुम भंग योग',
-      nameKn: 'ಕೇಮದ್ರುಮ ಭಂಗ ಯೋಗ',
-      nameTe: 'కేమద్రుమ భంగ యోగం',
-      nameBn: 'কেমদ্রুম ভঙ্গ যোগ',
-      planetsKey: 'moon',
-      descEn: 'Isolated Moon is shielded by Kendra benefics — dissolving scarcity and conferring enduring stability.',
-      descTa: 'சந்திரனிலிருந்து 2ஆம், 12ஆம் வீட்டில் கிரகங்கள் இல்லாத குறை கேந்திர சுபர்களால் பங்கம் பெற்று நற்பலன் கூடும்.',
-      descHi: 'केंद्र में शुभ ग्रहों के प्रभाव से केमद्रुम दोष सर्वथा भंग होकर जातक को स्थिर समृद्धि देता है।',
-      descKn: 'ಕೇಂದ್ರದಲ್ಲಿರುವ ಶುಭ ಗ್ರಹಗಳಿಂದ ಕೇಮದ್ರುಮ ಭಂಗವಾಗಿ ಸದಾ ಸುಖ ಶಾಂತಿ ಲಭಿಸುತ್ತದೆ.',
-      descTe: 'కేంద్రంలో శుభగ్రహాల దృష్ఠితో కేమద్రుమ భంగమై శాశ్వత స్థిరత్వం లభిస్తుంది.',
-      descBn: 'কেন্দ্রে শুভ গ্রহের দৃষ্টিতে কেমদ্রুম দোষ ভঙ্গ হয়ে স্থায়ী সুখ প্রদান করে।'
     }
   ];
+
+  // Panchangam Phase & Tithi
+  const phase = normDeg(moonDeg - sunDeg);
+  const tithiNum = Math.floor(phase / 12) + 1;
+  const vaaraKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  const vaaraKey = vaaraKeys[birthDate.getDay()];
 
   return {
     native: {
@@ -720,8 +942,8 @@ export function calculateNativeHoroscope(clientInput) {
       dob: `${d.toString().padStart(2, '0')}-${m.toString().padStart(2, '0')}-${y}`,
       time: rawTime,
       place,
-      longitude: lonStr,
-      latitude: latStr,
+      longitude: `${Math.abs(lon).toFixed(2)}°${lon >= 0 ? 'E' : 'W'}`,
+      latitude: `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? 'N' : 'S'}`,
       balLordKey: dashaLordObj.lordKey,
       balYears,
       balMonths,
@@ -731,6 +953,8 @@ export function calculateNativeHoroscope(clientInput) {
       ageDays: ageObj.days,
       ghatis,
       vighatis,
+      ayanamshaFormatted: formatDMS(ayanamsha),
+      ayanamshaRaw: ayanamsha
     },
     panchangam: {
       lagnaSignIndex: lagnaObj.signIndex,
@@ -739,8 +963,9 @@ export function calculateNativeHoroscope(clientInput) {
       pada: moonPada,
       starLordKey: moonNakObj.lordKey,
       starLetters: moonNakObj.letters,
-      vaaraKey: 'friday',
-      tithiKey: 'chaturthi_shukla',
+      vaaraKey,
+      tithiNum,
+      tithiKey: tithiNum <= 15 ? `tithi_${tithiNum}_shukla` : `tithi_${tithiNum - 15}_krishna`,
       yogaKey: 'dhriti',
       karanaKey: 'vishti'
     },
@@ -763,6 +988,10 @@ export function calculateNativeHoroscope(clientInput) {
     planets,
     rasiBoxes,
     navamshaBoxes,
+    d3Boxes,
+    d7Boxes,
+    d10Boxes,
+    d12Boxes,
     dashaSchedule,
     bhavaCusps,
     bhavaChalitBoxes,
