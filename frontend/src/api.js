@@ -48,11 +48,9 @@ export const API = {
   changePassword: (data) => apiRequest('/user/change-password', 'POST', data),
   updateUserSettings: (settings) => apiRequest('/user/settings', 'PUT', { settings }),
 
-  // Panchangam & Horoscope
+  // Daily Panchangam
   getPanchangam: (date) => apiRequest(date ? `/panchangam?date=${date}` : '/panchangam', 'GET'),
-  getClientHoroscope: (mobile) => apiRequest(mobile ? `/client/horoscope?mobile=${mobile}` : '/client/horoscope', 'GET'),
-  getClientHoroscopeByMobile: (mobile) => apiRequest(`/client/horoscope-by-mobile/${mobile}`, 'GET'),
-  generateAstrologerHoroscope: (data) => apiRequest('/astrologer/generate-horoscope', 'POST', data),
+  getClientProfileByMobile: (mobile) => apiRequest(`/client/profile-by-mobile/${mobile}`, 'GET'),
   registerClientByAstrologer: (data) => apiRequest('/astrologer/register-client', 'POST', data),
   getClientReceipt: (clientId) => apiRequest(`/astrologer/client-receipt/${clientId}`, 'GET'),
 

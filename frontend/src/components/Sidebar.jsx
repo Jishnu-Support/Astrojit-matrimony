@@ -45,11 +45,10 @@ export default function Sidebar({
         ];
       case 'astrologer':
         return [
-          { id: 'horoscope', label: tr('Horoscope', 'ஜாதகம்'), icon: Sparkles },
-          { id: 'search', label: tr('Client Search & Kundli', 'வாடிக்கையாளர் ஜாதகத் தேடல்'), icon: Search },
+          { id: 'appointments', label: tr('Consultations & Slots', 'ஆலோசனை முன்பதிவுகள்'), icon: Clock },
+          { id: 'search', label: tr('Client Search', 'வாடிக்கையாளர் தேடல்'), icon: Search },
           { id: 'matchmaking', label: tr('Matchmaking Requests', 'பொருத்த ஆய்வுக் கோரிக்கைகள்'), icon: HeartHandshake, badge: 'Active' },
           { id: 'referred', label: tr('Referred Clients', 'பரிந்துரைக்கப்பட்டோர்'), icon: Users },
-          { id: 'appointments', label: tr('Consultations & Slots', 'ஆலோசனை முன்பதிவுகள்'), icon: Clock },
         ];
       case 'vendor':
         return [
@@ -60,7 +59,6 @@ export default function Sidebar({
       default:
         return [
           { id: 'panchangam', label: tr('Daily Panchangam', 'தினசரி பஞ்சாங்கம்'), icon: Calendar, badge: 'Live' },
-          { id: 'horoscope', label: tr('Horoscope', 'ஜாதகம்'), icon: Sparkles },
           { id: 'matchmaking', label: tr('Marriage Compatibility', 'திருமணப் பொருத்தம்'), icon: HeartHandshake },
           { id: 'matrimony', label: tr('Vedic Matrimony Portal', 'வைதீக மேட்ரிமோனி'), icon: Heart, badge: 'NEW', isMatrimonyPage: true },
           { id: 'shop', label: tr('Puja & Spiritual Shop', 'பூஜைப் பொருட்கள் அங்காடி'), icon: ShoppingBag },

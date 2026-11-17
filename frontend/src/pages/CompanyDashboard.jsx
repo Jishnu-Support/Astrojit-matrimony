@@ -6,7 +6,6 @@ import {
 } from 'lucide-react';
 import { API } from '../api';
 import { useLang } from '../i18n';
-import OnePageHoroscope from '../components/OnePageHoroscope';
 
 export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
   const { lang, t } = useLang();
@@ -29,9 +28,9 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
   const [loading, setLoading] = useState(true);
 
   const [selectedClientMobile, setSelectedClientMobile] = useState(null);
-  const [clientHoroscope, setClientHoroscope] = useState(null);
+  const [clientProfile, setClientProfile] = useState(null);
   const [clientNotes, setClientNotes] = useState([]);
-  const [loadingHoroscope, setLoadingHoroscope] = useState(false);
+  const [loadingClient, setLoadingClient] = useState(false);
 
   // Pure Unilingual helper
   const tr = (en, ta, kn, hi, te, bn) => {
@@ -121,15 +120,15 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
 
   const handleInspectClient = async (mobile) => {
     setSelectedClientMobile(mobile);
-    setLoadingHoroscope(true);
+    setLoadingClient(true);
     try {
-      const data = await API.getClientHoroscopeByMobile(mobile);
-      setClientHoroscope(data);
+      const data = await API.getClientProfileByMobile(mobile);
+      setClientProfile(data.client || data);
       setClientNotes(data.consultationHistory || []);
     } catch (err) {
-      alert('Failed to load horoscope: ' + err.message);
+      alert('Failed to load client details: ' + err.message);
     } finally {
-      setLoadingHoroscope(false);
+      setLoadingClient(false);
     }
   };
 
@@ -339,27 +338,86 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
           {activeTab === 'clients' && (
             <div className="space-y-4">
               {selectedClientMobile ? (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
                     <span className="text-xs text-slate-700">
-                      Company Inspection: <strong className="text-amber-800">{clientHoroscope?.client?.name} ({selectedClientMobile})</strong>
+                      Company Inspection: <strong className="text-amber-800">{clientProfile?.name} ({selectedClientMobile})</strong>
                     </span>
                     <button
-                      onClick={() => setSelectedClientMobile(null)}
+                      onClick={() => {
+                        setSelectedClientMobile(null);
+                        setClientProfile(null);
+                      }}
                       className="text-xs font-bold text-rose-700 hover:underline cursor-pointer"
                     >
                       ← Back to clients list
                     </button>
                   </div>
 
-                  {loadingHoroscope ? (
-                    <div className="p-8 text-center text-slate-400 text-xs">Loading chart...</div>
+                  {loadingClient ? (
+                    <div className="p-8 text-center text-slate-400 text-xs">Loading client details...</div>
                   ) : (
-                    <OnePageHoroscope
-                      horoscope={clientHoroscope}
-                      clientNotes={clientNotes}
-                      isAstrologer={false}
-                    />
+                    <div className="space-y-4">
+                      {/* Client Details Summary */}
+                      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+                        <h4 className="font-bold text-slate-900 text-sm mb-3 border-b border-slate-100 pb-2">
+                          Client Profile Summary
+                        </h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                          <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                            <span className="text-slate-500 block text-[10px] uppercase font-bold">Full Name</span>
+                            <span className="font-bold text-slate-900 text-sm">{clientProfile?.name || '—'}</span>
+                          </div>
+                          <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                            <span className="text-slate-500 block text-[10px] uppercase font-bold">Mobile</span>
+                            <span className="font-bold text-slate-900 font-mono">{clientProfile?.mobile || selectedClientMobile}</span>
+                          </div>
+                          <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                            <span className="text-slate-500 block text-[10px] uppercase font-bold">Gender</span>
+                            <span className="font-bold text-slate-900 capitalize">{clientProfile?.gender || '—'}</span>
+                          </div>
+                          <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                            <span className="text-slate-500 block text-[10px] uppercase font-bold">Birth Date & Time</span>
+                            <span className="font-bold text-slate-900">{clientProfile?.dob} ({clientProfile?.dobTime})</span>
+                          </div>
+                          <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                            <span className="text-slate-500 block text-[10px] uppercase font-bold">Birth Place</span>
+                            <span className="font-bold text-slate-900">{clientProfile?.dobPlace || '—'}</span>
+                          </div>
+                          <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                            <span className="text-slate-500 block text-[10px] uppercase font-bold">Nakshatra / Rasi</span>
+                            <span className="font-bold text-slate-900">{clientProfile?.nakshatra || '—'} / {clientProfile?.rasi || '—'}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Consultation History */}
+                      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-3">
+                        <h4 className="font-bold text-slate-900 text-sm border-b border-slate-100 pb-2">
+                          Consultation History ({clientNotes.length})
+                        </h4>
+                        {clientNotes.length === 0 ? (
+                          <p className="text-slate-400 text-xs italic">No consultation notes recorded for this client.</p>
+                        ) : (
+                          <div className="space-y-3">
+                            {clientNotes.map((note, idx) => (
+                              <div key={idx} className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
+                                <div className="flex justify-between items-center text-slate-500 text-[10px]">
+                                  <span>Astrologer: <strong>{note.astrologerName || 'Astrologer'}</strong></span>
+                                  <span>{note.date || 'Recent'}</span>
+                                </div>
+                                <p className="text-slate-800 font-medium whitespace-pre-line">{note.notes}</p>
+                                {note.remediesSuggested && (
+                                  <p className="text-amber-900 pt-1 border-t border-slate-200">
+                                    <strong>Remedies:</strong> {note.remediesSuggested}
+                                  </p>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   )}
                 </div>
               ) : (
@@ -405,7 +463,7 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
                                 onClick={() => handleInspectClient(c.mobile)}
                                 className="bg-amber-50 hover:bg-amber-500 hover:text-slate-950 text-amber-800 border border-amber-300 text-xs px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer"
                               >
-                                View Kundli
+                                Inspect Profile
                               </button>
                             </td>
                           </tr>

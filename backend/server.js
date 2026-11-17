@@ -10,7 +10,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const { readDb, writeDb } = require('./db');
-const { generateHoroscope, getDailyPanchangam, calculateKundliMatch, calculateTamilPoruthams, evaluateChevvaiDosha } = require('./astroEngine');
+const { getDailyPanchangam, calculateKundliMatch, calculateTamilPoruthams, evaluateChevvaiDosha } = require('./astroEngine');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -651,30 +651,7 @@ app.get('/api/panchangam', (req, res) => {
   }
 });
 
-app.get('/api/client/horoscope', authenticate, (req, res) => {
-  try {
-    const db = readDb();
-    let client = null;
-
-    if (req.user.role === 'client') {
-      client = db.clients.find((c) => c.mobile === req.user.mobile);
-    } else if (req.query.mobile) {
-      client = db.clients.find((c) => c.mobile === req.query.mobile);
-    }
-
-    if (!client) {
-      return res.status(404).json({ error: 'Client profile not found to generate horoscope.' });
-    }
-
-    const horoscope = generateHoroscope(client);
-    return res.json(horoscope);
-  } catch (error) {
-    console.error('Horoscope generation error:', error);
-    return res.status(500).json({ error: 'Failed to generate horoscope' });
-  }
-});
-
-app.get('/api/client/horoscope-by-mobile/:mobile', authenticate, (req, res) => {
+app.get('/api/client/profile-by-mobile/:mobile', authenticate, (req, res) => {
   try {
     const db = readDb();
     const client = db.clients.find((c) => c.mobile === req.params.mobile.trim());
@@ -683,83 +660,19 @@ app.get('/api/client/horoscope-by-mobile/:mobile', authenticate, (req, res) => {
       return res.status(404).json({ error: 'Client with this mobile number does not exist.' });
     }
 
-    const horoscope = generateHoroscope(client);
     const clientConsultations = db.consultations.filter(
       (c) => c.clientMobile === req.params.mobile.trim()
     );
 
     return res.json({
-      ...horoscope,
+      client,
       consultationHistory: clientConsultations,
     });
   } catch (error) {
-    console.error('Fetch horoscope by mobile error:', error);
-    return res.status(500).json({ error: 'Failed to fetch horoscope' });
+    console.error('Fetch client by mobile error:', error);
+    return res.status(500).json({ error: 'Failed to fetch client profile' });
   }
 });
-
-// Astrologer Dedicated Endpoint to Generate Custom or Client Horoscope (supports both authenticated astrologers and guest calculation)
-const handleGenerateHoroscope = (req, res) => {
-  try {
-    const {
-      fatherName = 'Sample father',
-      motherName = 'Sample Mother',
-      nativePlace = 'Bangalore (Karnataka)',
-      mobile = '9876543210',
-      country = 'India',
-      state = 'Karnataka',
-      city = 'Bangalore',
-      latitude = '',
-      longitude = '',
-      coordinates = '',
-      dobTime12 = '',
-      starBasis = 'moon',
-    } = req.body;
-
-    const name = req.body.name || req.body.nativeName || 'Sample';
-    const dob = req.body.dob || req.body.birthDate || req.body.date || '2026-10-30';
-    const dobTime = req.body.dobTime || req.body.birthTime || req.body.time || '10:55';
-    const dobPlace = req.body.dobPlace || req.body.place || req.body.city || 'Bangalore (Karnataka)';
-    const gender = req.body.gender || 'male';
-
-    const clientData = {
-      name,
-      fatherName,
-      motherName,
-      nativePlace: nativePlace || dobPlace,
-      dob,
-      dobTime,
-      dobPlace: dobPlace || (city ? `${city} (${state}, ${country})` : nativePlace),
-      mobile,
-      gender,
-      country,
-      state,
-      city,
-      latitude,
-      longitude,
-      coordinates: coordinates || (latitude && longitude ? `${latitude} , ${longitude}` : ''),
-      dobTime12,
-      starBasis,
-      astrologerReferralCode: req.user?.referralCode || 'ASTROJIT-OFFICIAL',
-    };
-
-    const horoscope = generateHoroscope(clientData);
-    return res.json(horoscope);
-  } catch (error) {
-    console.error('Generate custom astrologer horoscope error:', error);
-    return res.status(500).json({ error: 'Failed to compute astrological horoscope' });
-  }
-};
-
-app.post('/api/astrologer/generate-horoscope', (req, res) => {
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    return authenticate(req, res, () => handleGenerateHoroscope(req, res));
-  }
-  return handleGenerateHoroscope(req, res);
-});
-app.post('/api/public/generate-horoscope', handleGenerateHoroscope);
-app.post('/api/calculate', handleGenerateHoroscope);
 
 // Register a new client account directly by astrologer + generate credentials + receipt
 app.post('/api/astrologer/register-client', authenticate, (req, res) => {
@@ -865,9 +778,6 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
 
     writeDb(db);
 
-    // Compute complete Vedic Horoscope immediately
-    const horoscope = generateHoroscope(client);
-
     // Build complete registration acknowledgement receipt
     const receipt = {
       receiptNumber: 'REC-' + Date.now().toString().slice(-6),
@@ -954,7 +864,6 @@ app.get('/api/astrologer/client-receipt/:clientId', authenticate, (req, res) => 
       return res.status(404).json({ error: 'Client not found' });
     }
 
-    const horoscope = generateHoroscope(client);
     const receipt = {
       receiptNumber: 'REC-' + (client.clientCode ? client.clientCode.replace('CLI-', '') : Date.now().toString().slice(-6)),
       clientCode: client.clientCode || ('CLI-' + Math.floor(100000 + Math.random() * 900000)),
@@ -1948,29 +1857,6 @@ app.get('/api/matrimony/autofill-sources', (req, res) => {
 
     let clientData = null;
     if (client) {
-      let horoDetails = null;
-      if (client.dob && client.dobTime && client.dobPlace) {
-        try {
-          const h = generateHoroscope({
-            name: client.name,
-            dob: client.dob,
-            dobTime: client.dobTime,
-            dobPlace: client.dobPlace,
-          });
-          const mars = evaluateChevvaiDosha(h, 'male');
-          horoDetails = {
-            nakshatra: h.astrologicalDetails.nakshatra,
-            rasi: h.astrologicalDetails.moonSign,
-            lagna: h.astrologicalDetails.ascendant,
-            pada: h.astrologicalDetails.pada || 1,
-            chevvaiDosha: mars.hasDosha ? 'Chevvai Dosham Present' : (mars.isCancelled ? 'Dosham Cancelled (நிவர்த்தி)' : 'No Chevvai Dosha'),
-            currentDasa: h.astrologicalDetails.currentDasa || '',
-          };
-        } catch (err) {
-          console.error('Client horoscope compute error:', err.message);
-        }
-      }
-
       clientData = {
         id: client.id,
         name: client.name,
@@ -1983,40 +1869,16 @@ app.get('/api/matrimony/autofill-sources', (req, res) => {
         motherName: client.motherName || '',
         mobile: client.mobile,
         email: client.email || `${client.name.toLowerCase().replace(/\s+/g, '')}@example.com`,
-        horoscope: horoDetails,
+        horoscope: null,
       };
     }
 
     // Process Family Members
-    const familyMembers = (db.familyMembers || []).map(fm => {
-      let fmHoro = null;
-      if (fm.dob && fm.dobTime && fm.dobPlace) {
-        try {
-          const h = generateHoroscope({
-            name: fm.name,
-            dob: fm.dob,
-            dobTime: fm.dobTime,
-            dobPlace: fm.dobPlace,
-          });
-          const isBoy = (fm.gender || '').toLowerCase().includes('groom') || (fm.gender || '').toLowerCase().includes('male');
-          const mars = evaluateChevvaiDosha(h, isBoy ? 'male' : 'female');
-          fmHoro = {
-            nakshatra: h.astrologicalDetails.nakshatra,
-            rasi: h.astrologicalDetails.moonSign,
-            lagna: h.astrologicalDetails.ascendant,
-            pada: h.astrologicalDetails.pada || 1,
-            chevvaiDosha: mars.hasDosha ? 'Chevvai Dosham Present' : (mars.isCancelled ? 'Dosham Cancelled (நிவர்த்தி)' : 'No Chevvai Dosha'),
-          };
-        } catch (err) {
-          console.error('FM horoscope compute error:', err.message);
-        }
-      }
-      return {
-        ...fm,
-        age: fm.age || calculateMatrimonyAge(fm.dob),
-        horoscope: fmHoro,
-      };
-    });
+    const familyMembers = (db.familyMembers || []).map(fm => ({
+      ...fm,
+      age: fm.age || calculateMatrimonyAge(fm.dob),
+      horoscope: null,
+    }));
 
     res.json({
       client: clientData,
@@ -2220,33 +2082,12 @@ app.post('/api/matrimony/register-profile', (req, res) => {
     // 2. Auto-compute age
     const age = calculateMatrimonyAge(body.dob) || parseInt(body.age) || 25;
 
-    // 3. Auto-calculate horoscope if not provided or incomplete
-    let star = body.starNakshatra;
-    let rasi = body.rasiMoonSign;
-    let lagna = body.lagnamAscendant;
+    // 3. Religious / Astrological details
+    let star = body.starNakshatra || '';
+    let rasi = body.rasiMoonSign || '';
+    let lagna = body.lagnamAscendant || '';
     let pada = body.padam || 1;
-    let manglik = body.manglikDosha;
-
-    if ((!star || !rasi) && body.dob && body.birthTime && body.birthPlace) {
-      try {
-        const horo = generateHoroscope({
-          name: body.name,
-          dob: body.dob,
-          dobTime: body.birthTime,
-          dobPlace: body.birthPlace,
-        });
-        star = star || horo.astrologicalDetails.nakshatra;
-        rasi = rasi || horo.astrologicalDetails.moonSign;
-        lagna = lagna || horo.astrologicalDetails.ascendant;
-        pada = pada || horo.astrologicalDetails.pada;
-        if (!manglik) {
-          const mars = evaluateChevvaiDosha(horo, body.gender.toLowerCase().includes('groom') ? 'male' : 'female');
-          manglik = mars.hasDosha ? 'Chevvai Dosham Present' : (mars.isCancelled ? 'Dosham Cancelled (நிவர்த்தி)' : 'No Chevvai Dosha');
-        }
-      } catch (err) {
-        console.warn('Auto horoscope computation skipped:', err.message);
-      }
-    }
+    let manglik = body.manglikDosha || 'No Dosha';
 
     const newProfile = {
       id: 'mat-' + uuidv4().substring(0, 8),
@@ -2491,13 +2332,11 @@ app.post('/api/matrimony/check-compatibility', (req, res) => {
     const kundliMatch = calculateKundliMatch(boyBirth, girlBirth);
 
     // 2. 10 Tamil Poruthams
-    const boyHoro = generateHoroscope(boyBirth);
-    const girlHoro = generateHoroscope(girlBirth);
-    const tamilMatch = calculateTamilPoruthams(boyHoro, girlHoro);
+    const tamilMatch = calculateTamilPoruthams(boyBirth, girlBirth);
 
     // 3. Chevvai Dosha
-    const boyDosha = evaluateChevvaiDosha(boyHoro, 'male');
-    const girlDosha = evaluateChevvaiDosha(girlHoro, 'female');
+    const boyDosha = evaluateChevvaiDosha(boy, 'male');
+    const girlDosha = evaluateChevvaiDosha(girl, 'female');
 
     let doshaVerdict = 'Compatible';
     let doshaVerdictTamil = 'பொருத்தமானது';

@@ -22,8 +22,7 @@ import Logo from './Logo';
 
 export default function ClientRegistrationReceiptModal({
   receipt,
-  onClose,
-  onOpenDossier
+  onClose
 }) {
   const [copied, setCopied] = useState(false);
   const [copiedPass, setCopiedPass] = useState(false);
@@ -391,7 +390,7 @@ Client Code: ${clientCode}`;
               </div>
 
               <p className="text-[11px] print:text-[10px] text-slate-600 italic font-serif">
-                * Note: The client can log in anytime to view daily horoscope, thirukanitha panchangam, dosha remedies, and certified dossier. For security, please advise the native to update their password upon first login.
+                * Note: The client can log in anytime to access panchangam, matchmaking, spiritual shop, and consultation history. For security, please advise the native to update their password upon first login.
               </p>
             </div>
 
@@ -441,21 +440,9 @@ Client Code: ${clientCode}`;
           </div>
 
           <div className="flex items-center gap-2">
-            {onOpenDossier && (
-              <button
-                onClick={() => {
-                  onClose();
-                  onOpenDossier();
-                }}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>Open Full Horoscope Dossier</span>
-              </button>
-            )}
             <button
               onClick={onClose}
-              className="px-3 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition-all cursor-pointer"
+              className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition-all cursor-pointer"
             >
               Close
             </button>

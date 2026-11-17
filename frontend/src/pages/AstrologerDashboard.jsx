@@ -33,24 +33,10 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../i18n';
 import { API } from '../api';
-import OnePageHoroscope from '../components/OnePageHoroscope';
-import FullHoroscopeDossier from '../components/FullHoroscopeDossier';
 import ClientRegistrationReceiptModal from '../components/ClientRegistrationReceiptModal';
-import BirthCoordinatesPicker from '../components/BirthCoordinatesPicker';
 import KundliMatchmaking from '../components/KundliMatchmaking';
 import TamilPoruthamCard from '../components/TamilPoruthamCard';
-import DetailedHoroscopeScreen from '../components/horoscope/DetailedHoroscopeScreen';
 import { MATCH_I18N } from '../matchmakingI18n';
-
-const DOSSIER_FORMAT_OPTIONS = [
-  { id: '1page', labelKey: 'fmt1Page', defaultLabel: '1 Page', pages: 1, icon: '📄', tag: 'Brief' },
-  { id: '7page', labelKey: 'fmt7Page', defaultLabel: '7 Pages', pages: 7, icon: '📑', tag: 'Compact' },
-  { id: '18page', labelKey: 'fmt18Page', defaultLabel: '18 Pages', pages: 18, icon: '📗', tag: 'Standard' },
-  { id: '21page', labelKey: 'fmt21Page', defaultLabel: '21 Pages', pages: 21, icon: '📘', tag: 'Vedic' },
-  { id: '25page', labelKey: 'fmt25Page', defaultLabel: '25 Pages', pages: 25, icon: '📙', tag: 'Detailed' },
-  { id: '33page', labelKey: 'fmt33Page', defaultLabel: '33 Pages', pages: 33, icon: '📕', tag: 'Shodashavarga' },
-  { id: '51page', labelKey: 'fmt51Page', defaultLabel: '51 Pages', pages: 51, icon: '👑', tag: 'Encyclopedia' },
-];
 
 export default function AstrologerDashboard({ activeTab: propTab, onTabChange }) {
   const { user } = useAuth();
@@ -65,54 +51,16 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedClientMobile, setSelectedClientMobile] = useState(null);
-  const [clientHoroscope, setClientHoroscope] = useState(null);
+  const [clientProfile, setClientProfile] = useState(null);
   const [clientNotes, setClientNotes] = useState([]);
-  const [loadingHoroscope, setLoadingHoroscope] = useState(false);
+  const [loadingClient, setLoadingClient] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [referredData, setReferredData] = useState({ totalReferred: 0, clients: [] });
 
   const [isOnline, setIsOnline] = useState(true);
   const [ratePerMinute, setRatePerMinute] = useState(25);
   const [availableSlots, setAvailableSlots] = useState(['10:00 AM', '11:30 AM', '04:00 PM', '06:30 PM']);
-
-  // Horoscope Dedicated Tab State
-  const [horoFormat, setHoroFormat] = useState('1page'); // '1page' or '21page'
-  const [horoInputMode, setHoroInputMode] = useState('custom'); // 'custom' or 'referred'
-  const [activeHoroscope, setActiveHoroscope] = useState(null);
-  const [generatingHoro, setGeneratingHoro] = useState(false);
-  const [customHoroForm, setCustomHoroForm] = useState({
-    name: 'Sample',
-    fatherName: 'Sample father',
-    motherName: 'Sample Mother',
-    country: 'India',
-    state: 'Tamil Nadu',
-    city: 'Hosur',
-    latitude: "12° 44' N",
-    longitude: "77° 49' E",
-    coordinates: "12° 44' N , 77° 49' E",
-    nativePlace: 'Hosur (Tamil Nadu, India)',
-    dob: '2026-10-30',
-    dobTime: '10:55:00',
-    dobTime12: '10:55:00 AM',
-    dobPlace: 'Hosur (Tamil Nadu, India)',
-    gender: 'male',
-    mobile: '',
-    email: '',
-    gotra: 'Vishwamitra',
-    initialPassword: 'Astro@' + Math.floor(100 + Math.random() * 900),
-    starBasis: 'moon',
-    autoRegisterClient: false,
-  });
   const [selectedReceiptForModal, setSelectedReceiptForModal] = useState(null);
-  const [isRegisteringClient, setIsRegisteringClient] = useState(false);
-  const [horoViewMode, setHoroViewMode] = useState('print'); // 'print' or 'screen'
-  const [showHoroForm, setShowHoroForm] = useState(true);
-
-  useEffect(() => {
-    if (activeTab === 'thirukanitha' || activeTab === 'quickpredictions') {
-      setHoroViewMode('screen');
-    }
-  }, [activeTab]);
 
   // Matchmaking Requests State for Astrologer
   const [matchRequests, setMatchRequests] = useState([]);
@@ -280,7 +228,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
 
     setIsSearching(true);
     setSelectedClientMobile(null);
-    setClientHoroscope(null);
+    setClientProfile(null);
     try {
       const res = await API.searchClients(searchQuery);
       setSearchResults(res.clients || []);
@@ -293,15 +241,15 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
 
   const handleSelectClient = async (mobile) => {
     setSelectedClientMobile(mobile);
-    setLoadingHoroscope(true);
+    setLoadingClient(true);
     try {
-      const data = await API.getClientHoroscopeByMobile(mobile);
-      setClientHoroscope(data);
+      const data = await API.getClientProfileByMobile(mobile);
+      setClientProfile(data.client || data);
       setClientNotes(data.consultationHistory || []);
     } catch (err) {
-      alert('Failed to load client horoscope: ' + err.message);
+      alert('Failed to load client details: ' + err.message);
     } finally {
-      setLoadingHoroscope(false);
+      setLoadingClient(false);
     }
   };
 
@@ -344,80 +292,6 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
       }
     } catch (err) {
       alert('Failed to load client receipt: ' + err.message);
-    }
-  };
-
-  const handleGenerateCustomHoroscope = async (e) => {
-    if (e) e.preventDefault();
-    setGeneratingHoro(true);
-    try {
-      const shouldRegister = customHoroForm.autoRegisterClient || horoInputMode === 'register';
-      if (shouldRegister) {
-        if (!customHoroForm.mobile || customHoroForm.mobile.trim().length < 10) {
-          alert('Client Mobile Number (at least 10 digits) is required to register an account and generate official login credentials.');
-          setGeneratingHoro(false);
-          return;
-        }
-        setIsRegisteringClient(true);
-        const res = await API.registerClientByAstrologer(customHoroForm);
-        const horo = res.horoscope;
-        if (horo) {
-          horo.gender = customHoroForm.gender || horo.gender || 'male';
-          if (horo.client) horo.client.gender = customHoroForm.gender || horo.client.gender || 'male';
-        }
-        setActiveHoroscope(horo);
-        setSelectedReceiptForModal(res.receipt);
-        // Refresh referred clients list so the new client appears immediately
-        const refRes = await API.getReferredClients();
-        setReferredData(refRes);
-      } else {
-        const data = await API.generateAstrologerHoroscope(customHoroForm);
-        if (data) {
-          data.gender = customHoroForm.gender || data.gender || 'male';
-          if (data.client) data.client.gender = customHoroForm.gender || data.client.gender || 'male';
-        }
-        setActiveHoroscope(data);
-      }
-    } catch (err) {
-      alert('Error: ' + err.message);
-    } finally {
-      setGeneratingHoro(false);
-      setIsRegisteringClient(false);
-    }
-  };
-
-  const handleSelectReferredClientForHoro = async (client) => {
-    setGeneratingHoro(true);
-    try {
-      const data = await API.getClientHoroscopeByMobile(client.mobile);
-      setActiveHoroscope(data);
-      setCustomHoroForm({
-        name: client.name || '',
-        fatherName: client.fatherName || 'Father',
-        motherName: client.motherName || 'Mother',
-        country: client.country || 'India',
-        state: client.state || 'Tamil Nadu',
-        city: client.city || 'Hosur',
-        latitude: client.latitude || "12° 44' N",
-        longitude: client.longitude || "77° 49' E",
-        coordinates: client.coordinates || "12° 44' N , 77° 49' E",
-        nativePlace: client.nativePlace || client.dobPlace || 'Hosur (Tamil Nadu, India)',
-        dob: client.dob || '2026-10-30',
-        dobTime: client.dobTime || '10:55:00',
-        dobTime12: client.dobTime12 || client.dobTime || '10:55:00 AM',
-        dobPlace: client.dobPlace || 'Hosur (Tamil Nadu, India)',
-        gender: client.gender || 'male',
-        mobile: client.mobile || '',
-        email: client.email || '',
-        gotra: client.gotra || '',
-        starBasis: client.starBasis || 'moon',
-        initialPassword: 'Astro@' + Math.floor(100 + Math.random() * 900),
-        autoRegisterClient: false,
-      });
-    } catch (err) {
-      alert('Failed to load client horoscope: ' + err.message);
-    } finally {
-      setGeneratingHoro(false);
     }
   };
 
@@ -517,22 +391,6 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                 {pendingAptCount}
               </span>
             )}
-          </button>
-          <button
-            onClick={() => {
-              setActiveTab('horoscope');
-              if (!activeHoroscope) {
-                handleGenerateCustomHoroscope();
-              }
-            }}
-            className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-              activeTab === 'horoscope' || activeTab === 'thirukanitha' || activeTab === 'quickpredictions'
-                ? 'bg-indigo-600 text-white shadow-xs'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>{lang === 'ta' ? 'ஜாதகம்' : 'Horoscope'}</span>
           </button>
           <button
             onClick={() => setActiveTab('search')}
@@ -888,528 +746,6 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
         </div>
       )}
 
-      {/* TAB: Dedicated Horoscope Generation & Dossier (Unified Module) */}
-      {(activeTab === 'horoscope' || activeTab === 'thirukanitha' || activeTab === 'quickpredictions') && (
-        <div className="space-y-4 sm:space-y-6">
-          {/* Header & Options Strip */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
-              <div>
-                <h3 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-indigo-600" />
-                  <span>{lang === 'ta' ? 'ஜாதக கணிப்பு & திருக்கணித ஆய்வு' : 'Vedic Horoscope & Thirukanitha Ephemeris'}</span>
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  {lang === 'ta'
-                    ? 'பிறப்பு விவரங்களை உள்ளிட்டு ஜாதக அச்சு காட்சி மற்றும் விரிவான திரை காட்சி இரண்டையும் ஒரே தொகுதியில் பார்க்கலாம்.'
-                    : 'Enter birth details to synthesize authentic horoscope. Toggle seamlessly between Print View and Screen View.'}
-                </p>
-              </div>
-
-              {/* View Switcher: Print View vs Screen View */}
-              <div className="flex flex-wrap items-center gap-2 self-stretch sm:self-auto justify-end">
-                <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
-                  <button
-                    type="button"
-                    onClick={() => setHoroViewMode('print')}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
-                      horoViewMode === 'print'
-                        ? 'bg-indigo-600 text-white shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                    }`}
-                  >
-                    <Printer className="w-3.5 h-3.5" />
-                    <span>{lang === 'ta' ? 'ஜாதக அச்சு காட்சி' : 'Horoscope Print View'}</span>
-                    <span className="text-[10px] font-normal opacity-85">(Kundli Dossier)</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setHoroViewMode('screen')}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
-                      horoViewMode === 'screen'
-                        ? 'bg-emerald-600 text-white shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                    }`}
-                  >
-                    <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
-                    <span>{lang === 'ta' ? 'விரிவான திரை காட்சி' : 'Horoscope Screen View'}</span>
-                    <span className="text-[10px] font-normal opacity-85">(Detailed)</span>
-                    <span className="bg-emerald-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded uppercase">PRO</span>
-                  </button>
-                </div>
-
-                {/* If in Print View, show format pills */}
-                {horoViewMode === 'print' && (
-                  <div className="flex flex-wrap items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
-                    {DOSSIER_FORMAT_OPTIONS.map((fmt) => (
-                      <button
-                        key={fmt.id}
-                        type="button"
-                        onClick={() => setHoroFormat(fmt.id)}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                          horoFormat === fmt.id
-                            ? 'bg-white text-indigo-950 shadow-xs border border-slate-300'
-                            : 'text-slate-600 hover:text-slate-950'
-                        }`}
-                      >
-                        <span>{fmt.icon} {t(fmt.labelKey, fmt.defaultLabel)}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {/* Toggle Details Form Expand/Collapse */}
-                <button
-                  type="button"
-                  onClick={() => setShowHoroForm(!showHoroForm)}
-                  className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 flex items-center gap-1.5 cursor-pointer transition-all"
-                >
-                  <Edit3 className="w-3.5 h-3.5 text-indigo-600" />
-                  <span>
-                    {showHoroForm
-                      ? (lang === 'ta' ? 'படிவத்தை மறைக்க' : 'Hide Details Form')
-                      : (lang === 'ta' ? 'விவரங்களை மாற்ற / திருத்த' : 'Edit / Change Birth Details')}
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            {/* Input Selection Tabs & Details Form */}
-            {showHoroForm && (
-              <div className="space-y-3 pt-2 border-t border-slate-100">
-                <div className="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setHoroInputMode('custom');
-                  setCustomHoroForm(prev => ({ ...prev, autoRegisterClient: false }));
-                }}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  horoInputMode === 'custom'
-                    ? 'bg-indigo-50 text-indigo-800 border border-indigo-300 shadow-2xs font-black'
-                    : 'text-slate-600 hover:bg-slate-100'
-                }`}
-              >
-                <span>{t('manualCoordsTab')}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setHoroInputMode('register');
-                  setCustomHoroForm(prev => ({
-                    ...prev,
-                    autoRegisterClient: true,
-                    name: prev.name === 'Sample' ? '' : prev.name,
-                    fatherName: prev.fatherName === 'Sample father' ? '' : prev.fatherName,
-                    motherName: prev.motherName === 'Sample Mother' ? '' : prev.motherName,
-                    nativePlace: prev.nativePlace === 'Bangalore (Karnataka)' ? '' : prev.nativePlace,
-                    dobPlace: prev.dobPlace === 'Bangalore (Karnataka)' ? '' : prev.dobPlace,
-                    initialPassword: prev.initialPassword || ('Astro@' + Math.floor(100 + Math.random() * 900)),
-                  }));
-                }}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  horoInputMode === 'register'
-                    ? 'bg-amber-100 text-amber-950 border border-amber-400 shadow-2xs font-black'
-                    : 'text-slate-600 hover:bg-slate-100'
-                }`}
-              >
-                <span>{t('registerClientTab') || '➕ Register & Save New Client'}</span>
-                <span className="text-[9px] bg-amber-600 text-white font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider">
-                  Receipt
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setHoroInputMode('referred')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  horoInputMode === 'referred'
-                    ? 'bg-indigo-50 text-indigo-800 border border-indigo-300 shadow-2xs font-black'
-                    : 'text-slate-600 hover:bg-slate-100'
-                }`}
-              >
-                <span>{t('selectReferredTab')} ({referredData.clients.length})</span>
-              </button>
-            </div>
-
-            {/* Mode A & Mode C: Custom Quick Coordinates or Full Client Registration */}
-            {(horoInputMode === 'custom' || horoInputMode === 'register') && (
-              <form onSubmit={handleGenerateCustomHoroscope} className="space-y-3 pt-2 text-xs">
-                {horoInputMode === 'register' && (
-                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <div className="flex items-start gap-2.5">
-                      <span className="p-2 bg-amber-500 text-white rounded-xl shadow-xs shrink-0 mt-0.5">
-                        <UserCheck className="w-4 h-4" />
-                      </span>
-                      <div>
-                        <h4 className="font-black text-slate-950 text-sm">
-                          Direct Client Account Registration & Official Receipt Generation
-                        </h4>
-                        <p className="text-[11px] text-amber-950/80">
-                          Register client account with login credentials, auto-link to referral code <strong className="font-mono text-indigo-700 font-bold">{referredData.referralCode || 'PANDIT101'}</strong>, compute certified Janma Kundli, and generate official printable Acknowledgement Receipt.
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-mono font-bold bg-white px-2.5 py-1 rounded-lg border border-amber-300 text-amber-900 shrink-0">
-                      Auto Client Code: CLI-NEW
-                    </span>
-                  </div>
-                )}
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">
-                      {t('nativeNameLabel')} <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={customHoroForm.name}
-                      onChange={(e) => setCustomHoroForm({ ...customHoroForm, name: e.target.value })}
-                      placeholder="e.g. Aarav Kumar Sharma"
-                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
-                    />
-                  </div>
-
-                  {/* Mobile Number is mandatory for registration */}
-                  {(horoInputMode === 'register' || customHoroForm.autoRegisterClient) ? (
-                    <div>
-                      <label className="font-bold text-amber-950 block mb-1 flex items-center justify-between">
-                        <span>Mobile (Login ID) <span className="text-red-500">*</span></span>
-                        <span className="text-[10px] text-amber-700 font-normal">Username</span>
-                      </label>
-                      <input
-                        type="tel"
-                        required
-                        value={customHoroForm.mobile}
-                        onChange={(e) => setCustomHoroForm({ ...customHoroForm, mobile: e.target.value.replace(/[^0-9]/g, '') })}
-                        placeholder="e.g. 9123456789"
-                        className="w-full bg-amber-50/50 border-2 border-amber-300 rounded-xl px-3 py-2 font-mono font-bold text-slate-900 focus:outline-none focus:border-amber-600"
-                      />
-                    </div>
-                  ) : (
-                    <div>
-                      <label className="font-bold text-slate-700 block mb-1">{t('fatherNameLabel')}</label>
-                      <input
-                        type="text"
-                        value={customHoroForm.fatherName}
-                        onChange={(e) => setCustomHoroForm({ ...customHoroForm, fatherName: e.target.value })}
-                        placeholder="e.g. Vikram Sharma"
-                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
-                      />
-                    </div>
-                  )}
-
-                  {/* Password / Access PIN field in registration mode */}
-                  {(horoInputMode === 'register' || customHoroForm.autoRegisterClient) ? (
-                    <div>
-                      <label className="font-bold text-amber-950 block mb-1 flex items-center justify-between">
-                        <span>Initial Password / PIN <span className="text-red-500">*</span></span>
-                        <button
-                          type="button"
-                          onClick={() => setCustomHoroForm({ ...customHoroForm, initialPassword: 'Astro@' + Math.floor(100 + Math.random() * 900) })}
-                          className="text-[10px] text-indigo-700 hover:underline cursor-pointer flex items-center gap-0.5"
-                        >
-                          <RefreshCw className="w-2.5 h-2.5" />
-                          <span>Generate</span>
-                        </button>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={customHoroForm.initialPassword}
-                        onChange={(e) => setCustomHoroForm({ ...customHoroForm, initialPassword: e.target.value })}
-                        placeholder="e.g. Astro@123"
-                        className="w-full bg-amber-50/50 border-2 border-amber-300 rounded-xl px-3 py-2 font-mono font-bold text-emerald-800 focus:outline-none focus:border-amber-600"
-                      />
-                    </div>
-                  ) : (
-                    <div>
-                      <label className="font-bold text-slate-700 block mb-1">{t('motherNameLabel')}</label>
-                      <input
-                        type="text"
-                        value={customHoroForm.motherName}
-                        onChange={(e) => setCustomHoroForm({ ...customHoroForm, motherName: e.target.value })}
-                        placeholder="e.g. Sunita Sharma"
-                        className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
-                      />
-                    </div>
-                  )}
-
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">{t('genderLabel')}</label>
-                    <select
-                      value={customHoroForm.gender}
-                      onChange={(e) => setCustomHoroForm({ ...customHoroForm, gender: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500 cursor-pointer"
-                    >
-                      <option value="male">Male (ஆண் / पुरुष)</option>
-                      <option value="female">Female (பெண் / महिला)</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">
-                      {t('dobLabel')} <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="date"
-                      required
-                      value={customHoroForm.dob}
-                      onChange={(e) => setCustomHoroForm({ ...customHoroForm, dob: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500 font-mono font-bold"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="font-bold text-slate-700 block mb-1">{t('nativePlaceLabel')}</label>
-                    <input
-                      type="text"
-                      value={customHoroForm.nativePlace}
-                      onChange={(e) => setCustomHoroForm({ ...customHoroForm, nativePlace: e.target.value })}
-                      placeholder="e.g. Hosur, Tamil Nadu"
-                      className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="font-bold text-slate-800 block mb-1 flex items-center justify-between">
-                      <span>Rasi Calculation Star <span className="text-red-500">*</span></span>
-                      <span className="text-[10px] text-amber-700 font-bold uppercase">Star Basis</span>
-                    </label>
-                    <select
-                      value={customHoroForm.starBasis || 'moon'}
-                      onChange={(e) => setCustomHoroForm({ ...customHoroForm, starBasis: e.target.value })}
-                      className="w-full bg-amber-50/80 border-2 border-amber-300 rounded-xl px-3 py-2 text-slate-950 font-bold focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs text-xs sm:text-sm"
-                    >
-                      <option value="moon">🌙 Moon Star (Chandra Nakshatra - Janma Rasi)</option>
-                      <option value="sun">☀️ Sun Star (Surya Nakshatra - Surya Rasi)</option>
-                    </select>
-                  </div>
-
-                  {/* 12-Hour Time Picker & Cascading Country -> State -> City Coordinates Selector */}
-                  <div className="col-span-1 sm:col-span-2 md:col-span-4">
-                    <BirthCoordinatesPicker
-                      country={customHoroForm.country || 'India'}
-                      state={customHoroForm.state || 'Tamil Nadu'}
-                      city={customHoroForm.city || 'Hosur'}
-                      latitude={customHoroForm.latitude || "12° 44' N"}
-                      longitude={customHoroForm.longitude || "77° 49' E"}
-                      dobTime={customHoroForm.dobTime || '10:55:00'}
-                      dobTime12={customHoroForm.dobTime12 || '10:55:00 AM'}
-                      onChange={(coords) => setCustomHoroForm(prev => ({ ...prev, ...coords }))}
-                    />
-                  </div>
-
-                  {(horoInputMode === 'register' || customHoroForm.autoRegisterClient) && (
-                    <>
-                      <div>
-                        <label className="font-bold text-slate-700 block mb-1">{t('fatherNameLabel')}</label>
-                        <input
-                          type="text"
-                          value={customHoroForm.fatherName}
-                          onChange={(e) => setCustomHoroForm({ ...customHoroForm, fatherName: e.target.value })}
-                          placeholder="e.g. Vikram Sharma"
-                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="font-bold text-slate-700 block mb-1">{t('motherNameLabel')}</label>
-                        <input
-                          type="text"
-                          value={customHoroForm.motherName}
-                          onChange={(e) => setCustomHoroForm({ ...customHoroForm, motherName: e.target.value })}
-                          placeholder="e.g. Sunita Sharma"
-                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="font-bold text-slate-700 block mb-1">Email (Optional)</label>
-                        <input
-                          type="email"
-                          value={customHoroForm.email}
-                          onChange={(e) => setCustomHoroForm({ ...customHoroForm, email: e.target.value })}
-                          placeholder="e.g. client@example.com"
-                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500 font-mono"
-                        />
-                      </div>
-                      <div>
-                        <label className="font-bold text-slate-700 block mb-1">Gotra (Lineage)</label>
-                        <input
-                          type="text"
-                          value={customHoroForm.gotra}
-                          onChange={(e) => setCustomHoroForm({ ...customHoroForm, gotra: e.target.value })}
-                          placeholder="e.g. Vishwamitra / Kashyapa"
-                          className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
-                        />
-                      </div>
-                    </>
-                  )}
-                </div>
-
-                {/* In Custom mode: Checkbox to toggle account registration */}
-                {horoInputMode === 'custom' && (
-                  <div className="flex items-center gap-2 pt-1">
-                    <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-800 hover:text-amber-900">
-                      <input
-                        type="checkbox"
-                        checked={customHoroForm.autoRegisterClient}
-                        onChange={(e) => setCustomHoroForm({ ...customHoroForm, autoRegisterClient: e.target.checked })}
-                        className="w-4 h-4 text-amber-600 rounded-sm border-slate-300 focus:ring-amber-500 cursor-pointer"
-                      />
-                      <span>Register client account & create login credentials (Save to My Clients & issue official receipt)</span>
-                    </label>
-                  </div>
-                )}
-
-                {/* Submit Buttons */}
-                <div className="pt-2 flex flex-col sm:flex-row justify-end gap-2.5">
-                  <button
-                    type="submit"
-                    disabled={generatingHoro}
-                    className={`px-6 py-2.5 rounded-xl font-black text-xs shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 ${
-                      (horoInputMode === 'register' || customHoroForm.autoRegisterClient)
-                        ? 'bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800 hover:from-amber-700 hover:to-amber-900 text-white active:scale-98'
-                        : 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                    }`}
-                  >
-                    {generatingHoro ? <Sparkles className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                    <span>
-                      {(horoInputMode === 'register' || customHoroForm.autoRegisterClient)
-                        ? '💾 Register Client, Generate Dossier & Issue Official Receipt'
-                        : t('generateHoroBtn')}
-                    </span>
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {/* Mode B: Referred Clients Selector */}
-            {horoInputMode === 'referred' && (
-              <div className="pt-2">
-                {referredData.clients.length === 0 ? (
-                  <div className="text-center py-6 text-slate-400 text-xs bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                    {t('noReferredClientsHoroNotice')}
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-                    {referredData.clients.map((cl) => (
-                      <div
-                        key={cl.id}
-                        onClick={() => handleSelectReferredClientForHoro(cl)}
-                        className="bg-slate-50 hover:bg-indigo-50/50 border border-slate-200 hover:border-indigo-400 p-3 rounded-xl transition-all cursor-pointer flex justify-between items-center group"
-                      >
-                        <div>
-                          <p className="font-bold text-slate-900 text-xs group-hover:text-indigo-700 transition-colors">
-                            {cl.name}
-                          </p>
-                          <p className="text-[10px] text-slate-500 mt-0.5">
-                            {t('born')}: {cl.dob} ({cl.dobTime}) • {cl.dobPlace}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleViewClientReceipt(cl.id);
-                            }}
-                            className="text-[11px] font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 px-2 py-0.5 rounded-lg transition-all shadow-2xs"
-                            title="View Registration Receipt & Login Credentials"
-                          >
-                            🧾 Receipt
-                          </button>
-                          <span className="text-[11px] font-bold text-indigo-600 bg-white border border-slate-200 group-hover:border-indigo-400 px-2 py-0.5 rounded-lg">
-                            {t('generateArrow')}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Horoscope Display: Render either Print View (Dossier / 1-Page) or Screen View (Detailed Thirukanitha) */}
-      {generatingHoro ? (
-        <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-xs">
-          <Sparkles className="w-8 h-8 text-amber-500 mx-auto animate-spin mb-3" />
-          <p className="text-slate-600 text-sm font-semibold">{t('synthesizingEphemeris')}</p>
-        </div>
-      ) : (
-        <div>
-          {horoViewMode === 'print' ? (
-            activeHoroscope ? (
-              horoFormat === '1page' ? (
-                <OnePageHoroscope
-                  horoscope={{
-                    ...activeHoroscope,
-                    gender: activeHoroscope?.client?.gender || activeHoroscope?.gender || customHoroForm.gender || 'male',
-                    client: {
-                      ...activeHoroscope?.client,
-                      gender: activeHoroscope?.client?.gender || activeHoroscope?.gender || customHoroForm.gender || 'male',
-                    }
-                  }}
-                  clientNotes={clientNotes}
-                  onAddNote={handleAddNote}
-                  isAstrologer={true}
-                />
-              ) : (
-                <FullHoroscopeDossier
-                  horoscope={{
-                    ...activeHoroscope,
-                    gender: activeHoroscope?.client?.gender || activeHoroscope?.gender || customHoroForm.gender || 'male',
-                    client: {
-                      ...activeHoroscope?.client,
-                      gender: activeHoroscope?.client?.gender || activeHoroscope?.gender || customHoroForm.gender || 'male',
-                    }
-                  }}
-                  dossierPages={
-                    horoFormat === '7page' ? 7 :
-                    horoFormat === '18page' ? 18 :
-                    horoFormat === '25page' ? 25 :
-                    horoFormat === '33page' ? 33 :
-                    horoFormat === '51page' ? 51 : 21
-                  }
-                  clientNotes={clientNotes}
-                  onAddNote={handleAddNote}
-                  isAstrologer={true}
-                />
-              )
-            ) : (
-              <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 text-slate-500">
-                <p className="text-sm font-bold">
-                  {lang === 'ta' ? 'பிறப்பு விவரங்களை உள்ளிட்டு "ஜாதகம் கணிக்க" கிளிக் செய்யவும்.' : 'Please enter birth details above and click "Generate Horoscope".'}
-                </p>
-              </div>
-            )
-          ) : (
-            <DetailedHoroscopeScreen
-              client={{
-                name: customHoroForm.name || activeHoroscope?.name,
-                fatherName: customHoroForm.fatherName || activeHoroscope?.fatherName,
-                motherName: customHoroForm.motherName || activeHoroscope?.motherName,
-                gender: customHoroForm.gender || activeHoroscope?.gender || 'male',
-                dob: customHoroForm.dob || activeHoroscope?.dob,
-                dobTime: customHoroForm.dobTime || activeHoroscope?.dobTime,
-                dobPlace: customHoroForm.dobPlace || activeHoroscope?.pob || customHoroForm.nativePlace,
-                latitude: customHoroForm.latitude || "12° 44' N",
-                longitude: customHoroForm.longitude || "77° 49' E",
-                starBasis: customHoroForm.starBasis || 'moon'
-              }}
-              isEmbedded={true}
-            />
-          )}
-        </div>
-      )}
-    </div>
-  )}
-
       {/* TAB 1: Search for Client by Mobile Number & View Horoscope */}
       {activeTab === 'search' && (
         <div className="space-y-4 sm:space-y-6">
@@ -1510,12 +846,12 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
             <div className="space-y-4">
               <div className="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
                 <span className="text-xs text-slate-700">
-                  {t('viewingKundliFor')} <strong className="text-amber-800">{clientHoroscope?.client?.name} ({selectedClientMobile})</strong>
+                  Viewing Details For <strong className="text-amber-800">{clientProfile?.name} ({selectedClientMobile})</strong>
                 </span>
                 <button
                   onClick={() => {
                     setSelectedClientMobile(null);
-                    setClientHoroscope(null);
+                    setClientProfile(null);
                   }}
                   className="text-xs font-bold text-indigo-700 hover:underline cursor-pointer"
                 >
@@ -1523,53 +859,120 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                 </button>
               </div>
 
-              {loadingHoroscope ? (
+              {loadingClient ? (
                 <div className="p-10 text-center bg-white rounded-2xl border border-slate-200">
                   <Sparkles className="w-8 h-8 text-amber-500 mx-auto animate-spin mb-3" />
-                  <p className="text-slate-500 text-xs">{t('computingBirthChart')}</p>
+                  <p className="text-slate-500 text-xs">Loading client profile...</p>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {/* Format Toggle for Searched Client */}
-                  <div className="flex flex-wrap items-center gap-1 bg-white border border-slate-200 p-1.5 rounded-xl w-fit shadow-2xs">
-                    {DOSSIER_FORMAT_OPTIONS.map((fmt) => (
-                      <button
-                        key={fmt.id}
-                        type="button"
-                        onClick={() => setHoroFormat(fmt.id)}
-                        className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                          horoFormat === fmt.id
-                            ? 'bg-indigo-600 text-white shadow-xs'
-                            : 'text-slate-600 hover:text-slate-900'
-                        }`}
-                      >
-                        <span>{fmt.icon} {t(fmt.labelKey, fmt.defaultLabel)}</span>
-                      </button>
-                    ))}
+                  {/* Client Details Summary Card */}
+                  <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+                    <h4 className="font-bold text-slate-900 text-sm mb-3 flex items-center gap-2 border-b border-slate-100 pb-2">
+                      <User className="w-4 h-4 text-indigo-600" />
+                      Client Profile & Birth Details
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Full Name</span>
+                        <span className="font-bold text-slate-900 text-sm">{clientProfile?.name || '—'}</span>
+                      </div>
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Mobile</span>
+                        <span className="font-bold text-slate-900 font-mono">{clientProfile?.mobile || selectedClientMobile}</span>
+                      </div>
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Gender</span>
+                        <span className="font-bold text-slate-900 capitalize">{clientProfile?.gender || '—'}</span>
+                      </div>
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Date of Birth & Time</span>
+                        <span className="font-bold text-slate-900">{clientProfile?.dob} ({clientProfile?.dobTime})</span>
+                      </div>
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Place of Birth</span>
+                        <span className="font-bold text-slate-900">{clientProfile?.dobPlace || '—'}</span>
+                      </div>
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Nakshatra / Rasi</span>
+                        <span className="font-bold text-slate-900">{clientProfile?.nakshatra || '—'} / {clientProfile?.rasi || '—'}</span>
+                      </div>
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Father's Name</span>
+                        <span className="font-bold text-slate-900">{clientProfile?.fatherName || '—'}</span>
+                      </div>
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Mother's Name</span>
+                        <span className="font-bold text-slate-900">{clientProfile?.motherName || '—'}</span>
+                      </div>
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Gotra</span>
+                        <span className="font-bold text-slate-900">{clientProfile?.gotra || '—'}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  {horoFormat === '1page' ? (
-                    <OnePageHoroscope
-                      horoscope={clientHoroscope}
-                      clientNotes={clientNotes}
-                      onAddNote={handleAddNote}
-                      isAstrologer={true}
-                    />
-                  ) : (
-                    <FullHoroscopeDossier
-                      horoscope={clientHoroscope}
-                      dossierPages={
-                        horoFormat === '7page' ? 7 :
-                        horoFormat === '18page' ? 18 :
-                        horoFormat === '25page' ? 25 :
-                        horoFormat === '33page' ? 33 :
-                        horoFormat === '51page' ? 51 : 21
-                      }
-                      clientNotes={clientNotes}
-                      onAddNote={handleAddNote}
-                      isAstrologer={true}
-                    />
-                  )}
+                  {/* Consultation Notes Section */}
+                  <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4">
+                    <h4 className="font-bold text-slate-900 text-sm flex items-center gap-2 border-b border-slate-100 pb-2">
+                      <FileText className="w-4 h-4 text-indigo-600" />
+                      Consultation History & Astrologer Notes
+                    </h4>
+
+                    {/* Add note form */}
+                    <form onSubmit={handleAddNote} className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
+                      <div>
+                        <label className="font-bold text-slate-900 block mb-1">Add Consultation Note</label>
+                        <textarea
+                          name="notes"
+                          rows={3}
+                          required
+                          placeholder="Record client questions, observations, life events, recommendations..."
+                          className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-indigo-500 leading-relaxed font-medium"
+                        />
+                      </div>
+                      <div>
+                        <label className="font-bold text-slate-900 block mb-1">Prescribed Remedies / Pariharam</label>
+                        <textarea
+                          name="remediesSuggested"
+                          rows={2}
+                          placeholder="Recommended pujas, mantras, gemstones, temple visits..."
+                          className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-indigo-500 leading-relaxed"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Save Consultation Note</span>
+                      </button>
+                    </form>
+
+                    {/* Notes List */}
+                    {clientNotes.length === 0 ? (
+                      <div className="text-center py-6 text-slate-400 text-xs bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                        No previous consultation notes recorded for this client.
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {clientNotes.map((note, idx) => (
+                          <div key={idx} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1.5">
+                            <div className="flex justify-between items-center text-slate-500 text-[10px]">
+                              <span>Astrologer: <strong>{note.astrologerName || 'Astrologer'}</strong></span>
+                              <span>{note.date || 'Recent'}</span>
+                            </div>
+                            <p className="text-slate-800 leading-relaxed whitespace-pre-line font-medium">{note.notes}</p>
+                            {note.remediesSuggested && (
+                              <div className="pt-1.5 border-t border-slate-200 text-amber-900">
+                                <strong>Remedies:</strong> {note.remediesSuggested}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -1957,7 +1360,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                             }}
                             className="bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer"
                           >
-                            {t('btnViewKundli')}
+                            {lang === 'ta' ? 'விவரங்களைப் பார்க்க' : 'View Details'}
                           </button>
                         </div>
                       </td>
@@ -1975,10 +1378,6 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
         <ClientRegistrationReceiptModal
           receipt={selectedReceiptForModal}
           onClose={() => setSelectedReceiptForModal(null)}
-          onOpenDossier={() => {
-            setSelectedReceiptForModal(null);
-            setActiveTab('horoscope');
-          }}
         />
       )}
     </div>

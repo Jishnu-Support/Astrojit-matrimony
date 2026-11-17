@@ -4,10 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { useLang } from '../i18n';
 import { API } from '../api';
 import DailyPanchangam from '../components/DailyPanchangam';
-import OnePageHoroscope from '../components/OnePageHoroscope';
 import KundliMatchmaking from '../components/KundliMatchmaking';
 import SlotBookingModal from '../components/SlotBookingModal';
-import DetailedHoroscopeScreen from '../components/horoscope/DetailedHoroscopeScreen';
 
 export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
   const { user } = useAuth();
@@ -18,13 +16,10 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
     setInternalTab(tab);
     if (onTabChange) onTabChange(tab);
   };
-  const [horoscope, setHoroscope] = useState(null);
-  const [loadingHoroscope, setLoadingHoroscope] = useState(false);
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [appointments, setAppointments] = useState([]);
   const [showBookingModal, setShowBookingModal] = useState(false);
-  const [horoViewMode, setHoroViewMode] = useState('print'); // 'print' or 'screen'
 
   const fetchAppointments = async () => {
     try {
@@ -37,18 +32,6 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
 
   useEffect(() => {
     async function loadData() {
-      if (activeTab === 'horoscope' && !horoscope) {
-        setLoadingHoroscope(true);
-        try {
-          const data = await API.getClientHoroscope();
-          setHoroscope(data);
-        } catch (err) {
-          console.error('Error fetching client horoscope:', err);
-        } finally {
-          setLoadingHoroscope(false);
-        }
-      }
-
       if (activeTab === 'marketplace' && products.length === 0) {
         setLoadingProducts(true);
         try {
@@ -355,17 +338,6 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
             <span>{t('dailyPanchangam')}</span>
           </button>
           <button
-            onClick={() => setActiveTab('horoscope')}
-            className={`shrink-0 px-3 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-              activeTab === 'horoscope' || activeTab === 'thirukanitha' || activeTab === 'quickpredictions'
-                ? 'bg-slate-950 text-white shadow-xs'
-                : 'bg-white/40 text-slate-900 hover:bg-white/60'
-            }`}
-          >
-            <span>✨</span>
-            <span>{lang === 'ta' ? 'ஜாதகம்' : 'Horoscope'}</span>
-          </button>
-          <button
             onClick={() => setActiveTab('matchmaking')}
             className={`shrink-0 px-3 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'matchmaking'
@@ -404,50 +376,7 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
       {/* Tab 1: Daily Panchangam */}
       {activeTab === 'panchangam' && <DailyPanchangam />}
 
-      {/* Tab 2: Unified Horoscope Module (Print View & Screen View) */}
-      {(activeTab === 'horoscope' || activeTab === 'thirukanitha' || activeTab === 'quickpredictions') && (
-        <div className="space-y-4">
-          {/* Dual-View Switcher Bar */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-2.5 sm:p-3 shadow-xs flex items-center justify-between gap-3">
-            <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl">
-              <button
-                type="button"
-                onClick={() => setHoroViewMode('print')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  horoViewMode === 'print'
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                }`}
-              >
-                <span>📜</span>
-                <span>{lang === 'ta' ? 'ஜாதக அச்சு காட்சி' : 'Horoscope Print View'}</span>
-                <span className="text-[10px] font-normal opacity-80">(1-Page / Dossier)</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setHoroViewMode('screen')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  horoViewMode === 'screen'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                }`}
-              >
-                <span>✨</span>
-                <span>{lang === 'ta' ? 'விரிவான திரை காட்சி' : 'Horoscope Screen View'}</span>
-                <span className="bg-emerald-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded uppercase">PRO</span>
-              </button>
-            </div>
-          </div>
-
-          {horoViewMode === 'print' ? (
-            <OnePageHoroscope horoscope={horoscope} isAstrologer={false} />
-          ) : (
-            <DetailedHoroscopeScreen client={user} isEmbedded={true} />
-          )}
-        </div>
-      )}
-
-      {/* Tab 3: Kundli Matchmaking */}
+      {/* Tab 2: Kundli Matchmaking */}
       {activeTab === 'matchmaking' && <KundliMatchmaking />}
 
       {/* Tab 4: Marketplace */}

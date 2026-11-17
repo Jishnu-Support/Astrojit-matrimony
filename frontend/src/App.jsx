@@ -24,14 +24,11 @@ function AppContent() {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   const [activeModule, setActiveModule] = useState(() => {
-    if (window.location.hash.includes('thirukanitha') || window.location.hash.includes('horoscope') || window.location.hash.includes('quickpredictions')) return 'horoscope';
     return 'panchangam';
   });
 
   useEffect(() => {
-    if (window.location.hash.includes('thirukanitha') || window.location.hash.includes('horoscope') || window.location.hash.includes('quickpredictions')) {
-      setActiveModule('horoscope');
-    } else if (role === 'company') setActiveModule('overview');
+    if (role === 'company') setActiveModule('overview');
     else if (role === 'astrologer') setActiveModule('appointments');
     else if (role === 'vendor') setActiveModule('catalog');
     else setActiveModule('panchangam');
@@ -45,9 +42,6 @@ function AppContent() {
     const handleHashChange = () => {
       if (window.location.hash.includes('matrimony')) {
         setCurrentView('matrimony');
-      } else if (window.location.hash.includes('thirukanitha') || window.location.hash.includes('horoscope') || window.location.hash.includes('quickpredictions')) {
-        setCurrentView('astrology');
-        setActiveModule('horoscope');
       } else {
         setCurrentView('astrology');
       }
