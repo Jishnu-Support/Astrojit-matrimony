@@ -109,6 +109,17 @@ const SIGN_LABELS_MAP = {
 export default function HoroscopePagerView({ initialBirthData, onClose }) {
   const [lang, setLang] = useState('ta'); // 'ta' or 'en'
   const isTa = lang === 'ta';
+  const [theme, setTheme] = useState('light'); // 'light' or 'dark'
+  const isDark = theme === 'dark';
+
+  // Ensure documentElement reflects light theme by default
+  React.useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDark]);
 
   // Selected Country / State / City state for hierarchical picker
   const [selectedCountry, setSelectedCountry] = useState(initialBirthData?.country || 'India');
@@ -467,7 +478,7 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
   };
 
   return (
-    <div className="min-h-screen bg-stone-100 dark:bg-stone-950 p-2 sm:p-5 font-serif text-stone-900 dark:text-stone-100">
+    <div className={`min-h-screen ${isDark ? 'dark bg-[#181412] text-stone-100' : 'bg-[#FAF6EF] text-stone-900'} p-2 sm:p-5 font-serif transition-colors duration-200`}>
       <div className="max-w-5xl mx-auto space-y-4">
         {/* TOP CONTROL BAR (Screen Only - Hidden on Print) */}
         <div className="bg-white dark:bg-stone-900 border border-amber-900/15 dark:border-stone-800 rounded-2xl p-3 sm:p-4 shadow-xs flex flex-wrap items-center justify-between gap-3 no-print">
