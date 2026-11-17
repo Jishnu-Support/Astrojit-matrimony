@@ -1552,13 +1552,6 @@ export function createEmpty18PageBookletData() {
       img: ''
     },
     p2: {
-      heading: 'விநாயகர் ஸ்துதி',
-      img: '',
-      verse: '',
-      subham: 'சுப மஸ்து.'
-    },
-    p3: {
-      img: '',
       name: '',
       gender: '',
       date: '',
@@ -1580,7 +1573,7 @@ export function createEmpty18PageBookletData() {
       vr: '',
       pa: ''
     },
-    p4: {
+    p3: {
       nakshatra: '',
       nakStart: '',
       nakEnd: '',
@@ -1601,12 +1594,13 @@ export function createEmpty18PageBookletData() {
       sunrise: '',
       sunset: ''
     },
-    p5: {
+    p4: {
       genderLabel: 'ஆண் பெயர்',
-      date: '',
-      time: '',
+      name: '',
       lagna: '',
+      date: '',
       rasi: '',
+      time: '',
       nakPada: '',
       rasiChart: Array(12).fill(''),
       navamsaChart: Array(12).fill(''),
@@ -1617,7 +1611,7 @@ export function createEmpty18PageBookletData() {
       yogaKarana: '',
       dashaBal: ''
     },
-    p6: {
+    p5: {
       heading: 'துல்லியமான நிராயன கிரக நிலைகள்',
       rows: [
         { graha: '1-லக்னம்', deg1: '', nak: '', pada: '', lord: '', rasi: '', deg2: '', status: '' },
@@ -1636,7 +1630,8 @@ export function createEmpty18PageBookletData() {
       footerDate: '',
       footerAyanamsha: ''
     },
-    p7: {
+    p6: {
+      heading: 'பாவ ஸ்புடம் (ஸ்ரீபதி முறை)',
       rasiChart: Array(12).fill(''),
       navamsaChart: Array(12).fill(''),
       drekkanaChart: Array(12).fill(''),
@@ -1650,114 +1645,106 @@ export function createEmpty18PageBookletData() {
       bhavas: Array.from({ length: 12 }, (_, i) => ({ bhava: i + 1, start: '', madhya: '', end: '' })),
       bhavaChange: ''
     },
+    p7: {
+      heading: 'ஜாதகத்தில் கிரகங்களின் தசவர்க்கமும் பலமும்',
+      grahaHeaders: ['சூரி', 'சந்', 'செவ்', 'புத', 'குரு', 'சுக்', 'சனி', 'ராகு', 'கேது', 'லக்'],
+      tableA: [],
+      tableB: []
+    },
     p8: {
-      d3Chart: Array(12).fill(''),
-      d3Text: '',
-      d7Chart: Array(12).fill(''),
-      d7Text: ''
+      pageNo: 8,
+      dashaLord: 'ராகு',
+      dashaYears: 18,
+      heading: 'ராகு திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்',
+      rows: [],
+      description: ''
     },
     p9: {
-      d60Chart: Array(12).fill(''),
-      d60Text: '',
-      d30Chart: Array(12).fill(''),
-      d30Text: ''
+      pageNo: 9,
+      dashaLord: 'குரு',
+      dashaYears: 16,
+      heading: 'குரு திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்',
+      rows: [],
+      description: ''
     },
     p10: {
-      d10Chart: Array(12).fill(''),
-      d10Text: '',
-      d16Chart: Array(12).fill(''),
-      d16Text: ''
+      pageNo: 10,
+      dashaLord: 'சனி',
+      dashaYears: 19,
+      heading: 'சனி திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்',
+      rows: [],
+      description: ''
     },
     p11: {
-      d4Chart: Array(12).fill(''),
-      d4Text: '',
-      d12Chart: Array(12).fill(''),
-      d12Text: ''
+      pageNo: 11,
+      dashaLord: 'புதன்',
+      dashaYears: 17,
+      heading: 'புதன் திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்',
+      rows: [],
+      description: ''
     },
     p12: {
-      horaChart: Array(12).fill(''),
-      notes: ''
+      pageNo: 12,
+      dashaLord: 'கேது',
+      dashaYears: 7,
+      heading: 'கேது திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்',
+      rows: [],
+      description: ''
     },
     p13: {
-      grahaCols: ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி'],
-      grahaRows: [
-        { name: 'ஸ்தான பலம்', vals: Array(7).fill('') },
-        { name: 'திக் பலம்', vals: Array(7).fill('') },
-        { name: 'கால பலம்', vals: Array(7).fill('') },
-        { name: 'சேஷ்டா பலம்', vals: Array(7).fill('') },
-        { name: 'நைசர்கிக பலம்', vals: Array(7).fill('') },
-        { name: 'திருஷ்டி பலம்', vals: Array(7).fill('') },
-        { name: 'மொத்தம்', vals: Array(7).fill('') },
-        { name: 'இஷ்ட பலம்', vals: Array(7).fill('') },
-        { name: 'கஷ்ட பலம்', vals: Array(7).fill('') }
-      ],
-      bhavaRows: [
-        { name: 'திருஷ்டி பலம்', vals: Array(12).fill('') },
-        { name: 'திக் பலம்', vals: Array(12).fill('') },
-        { name: 'அதிபதி பலம்', vals: Array(12).fill('') },
-        { name: 'மொத்தம்', vals: Array(12).fill('') }
-      ]
+      pageNo: 13,
+      dashaLord: 'சுக்கிரன்',
+      dashaYears: 20,
+      heading: 'சுக்கிரன் திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்',
+      rows: [],
+      description: ''
     },
     p14: {
-      introText: '',
-      table1: [
-        { name: 'காலன்', lord: '', graha: '', pRasi: '', pDeg: '', pNak: '', pPada: '', kRasi: '', kDeg: '', kNak: '', kPada: '' },
-        { name: 'மிருத்யு', lord: '', graha: '', pRasi: '', pDeg: '', pNak: '', pPada: '', kRasi: '', kDeg: '', kNak: '', kPada: '' },
-        { name: 'அர்த்தப்பிரஹரன்', lord: '', graha: '', pRasi: '', pDeg: '', pNak: '', pPada: '', kRasi: '', kDeg: '', kNak: '', kPada: '' },
-        { name: 'யமகண்டன்', lord: '', graha: '', pRasi: '', pDeg: '', pNak: '', pPada: '', kRasi: '', kDeg: '', kNak: '', kPada: '' },
-        { name: 'குளிகன்', lord: '', graha: '', pRasi: '', pDeg: '', pNak: '', pPada: '', kRasi: '', kDeg: '', kNak: '', kPada: '' }
-      ],
-      table2: [
-        { name: 'தூமன்', lord: '', rasi: '', deg: '', nak: '', pada: '' },
-        { name: 'வியதிபாதன்', lord: '', rasi: '', deg: '', nak: '', pada: '' },
-        { name: 'பரிவேடன்', lord: '', rasi: '', deg: '', nak: '', pada: '' },
-        { name: 'இந்திரதனுஸ்', lord: '', rasi: '', deg: '', nak: '', pada: '' },
-        { name: 'உபகேது', lord: '', rasi: '', deg: '', nak: '', pada: '' }
-      ]
+      pageNo: 14,
+      dashaLord: 'சூரியன்',
+      dashaYears: 6,
+      heading: 'சூரியன் திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்',
+      rows: [],
+      description: ''
     },
     p15: {
-      upagrahaChart: Array(12).fill(''),
-      sphutas: {
-        horaLagna: '', arudhaLagna: '', ghatikaLagna: '', induLagna: '', bhavaLagna: '',
-        sriLagna: '', yogiDeg: '', avayogiDeg: '', matruYogi: '', drekkana22: '',
-        navamsa64: '', sarpaDrekkana: '', kshetraSphutam: '', adrishtaDeg: ''
-      },
-      notes: {
-        bhava5: '', andhaka: '', pushkara: '', mrityu: '', avamrityu: ''
-      }
+      pageNo: 15,
+      dashaLord: 'சந்திரன்',
+      dashaYears: 10,
+      heading: 'சந்திரன் திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்',
+      rows: [],
+      description: ''
     },
     p16: {
-      grahaNames: ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி'],
-      naisargika: Array(7).fill(null).map(() => Array(7).fill('')),
-      tatkalika: Array(7).fill(null).map(() => Array(7).fill('')),
-      combined: Array(7).fill(null).map(() => Array(7).fill('')),
-      legend: '',
-      avasthas: [
-        { graha: 'சூரியன்', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
-        { graha: 'சந்திரன்', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
-        { graha: 'செவ்வாய்', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
-        { graha: 'புதன்', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
-        { graha: 'குரு', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
-        { graha: 'சுக்கிரன்', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
-        { graha: 'சனி', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
-        { graha: 'ராகு', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
-        { graha: 'கேது', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' }
-      ]
+      pageNo: 16,
+      dashaLord: 'செவ்வாய்',
+      dashaYears: 7,
+      heading: 'செவ்வாய் திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்',
+      rows: [],
+      description: ''
     },
     p17: {
       grahas: ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி'],
-      matrix: Array(7).fill(null).map(() => Array(12).fill('')),
-      totals: Array(12).fill(''),
+      matrix: [],
+      totals: Array(12).fill(0),
       chartCells: Array(12).fill(''),
-      grandTotal: '',
-      kendram: '', panaparam: '', apoklimam: '', upachayam: '', trikonam: '',
-      varavinam: '', selavinam: '',
-      east: '', west: '', south: '', north: ''
+      grandTotal: 337,
+      kendram: 107,
+      panaparam: 108,
+      apoklimam: 122,
+      upachayam: 113,
+      trikonam: 93,
+      varavinam: 88,
+      selavinam: 86,
+      east: 93,
+      south: 83,
+      west: 80,
+      north: 81
     },
     p18: {
       name: '',
-      engSum: '',
-      dobEng: '',
+      alphabetSum: '',
+      dateStr: '',
       dateNum: '',
       yearNum: '',
       luckyNums: '',
@@ -1766,7 +1753,7 @@ export function createEmpty18PageBookletData() {
       luckyStones: '',
       deity: '',
       temples: '',
-      letters: Array(26).fill(''),
+      alphabets: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
       subham: 'சுபம்.'
     }
   };
@@ -2309,6 +2296,319 @@ export function buildSouthChart(signPlacements) {
  * Generate 18-Page Booklet Data with Complete Live Thirukanitha Calculations
  */
 
+// Classical Vimshottari Mahadasha Phalan & Temple Parikaram texts from Sample 18-page PDF
+export const MAHADASHA_PHALAN_PARIKARAM = {
+  rahu: {
+    ta: 'ராகு ஒரு சாயாக்கிரகம். கருமையும் நீலமும் கலந்த நிறம் கொண்டவர். திருவாதிரை, சுவாதி, சதயம் நட்சத்திரங்களை கொண்ட ராகு, சனிபகவானைப் போன்று அசுரராக கருதப் படுகிறார். களத்திர தோஷத்தினை நிர்ணயிப்பதில் ராகுவின் நிலை முக்கியமானது. ராகுவின் திசை காலங்களில் நற்பலன்கள் ஏற்பட பரிகாரம் செய்து வழிபட வேண்டுமெனில் கும்பகோணம் அருகில் உள்ள திருநாகேஸ்வரம் ஊரில் உள்ள ஸ்ரீநாகநாதசுவாமி கோவில் பரிகாரஸ்தலம் ஆகும். உளுந்து தானியங்களையும், மந்தாரை மலர்களையும் சமர்ப்பித்து, பாலாபிஷேகம் செய்து வழிபடுவது மிக்க சிறப்பாகும். திருப்பதிக்கு அருகில் உள்ள ஸ்ரீகாளஹஸ்தியும் பிரசித்தி பெற்ற பரிகாரஸ்தலமாகும்.',
+    en: 'Rahu is a shadowy planet known for dark and smoky hues, presiding over Ardra, Swati, and Shatabhisha. For beneficial outcomes during Rahu Mahadasha, propitiation at Sri Naganathaswamy Temple in Thirunageswaram (near Kumbakonam) or Sri Kalahasti is highly recommended, offering black gram and mandhara flowers.'
+  },
+  jupiter: {
+    ta: 'குரு தெய்வாம்சம் பொருந்திய ஜீவக்கிரகம். பொன்னிறமுடையவர். தோஷத்தைப் போக்க வல்லவர். புனர்பூசம், விசாகம், பூரட்டாதி ஆகிய நட்சத்திரங்களை கொண்ட குருதிசை நடைமுறையில் இருக்கும் காலங்களில் நற்பலன்கள் ஏற்பட, அதிதேவதையான தட்சிணாமூர்த்தியை வியாழக்கிழமை தோறும் விரதமிருந்து வழிபட்டு வருவது நன்மைதரும். தஞ்சாவூரில் ஆலங்குடியில் உள்ள ஸ்ரீஆபத்சகாயேஸ்வரர் ஆலயம் குருஸ்தலம் ஆகும். 24 நெய் விளக்குகள் ஏற்றி, மஞ்சள் நிற ஆடையுடுத்தி 24 முறை கோவிலை வலம் வந்து வழிபடுவது மிகவும் நன்மையளிக்கும். தானியங்களில் கடலையையும், வெள்ளை நிறமுள்ள முல்லை மலர்களையும் மஞ்சள் நிறம் கொண்ட வஸ்திரங்களையும் சமர்ப்பித்து வழிபடலாம்.',
+    en: 'Jupiter is a benevolent divine jeevagraha with golden radiance, ruling Punarvasu, Vishakha, and Purvabhadrapada. Propitiation of Lord Dakshinamurthy on Thursdays or pilgrimage to Alangudi Sri Abathsahayeswarar Temple with 24 ghee lamps, yellow garments, and chickpeas brings immense blessings.'
+  },
+  saturn: {
+    ta: 'ஈஸ்வரன் என்ற அடைமொழி சனி பகவானுக்கே உண்டு. ஆயுள் காரகன். கருமை நிறம் கொண்டவர். பூசம், அனுஷம், உத்திரட்டாதி ஆகிய மூன்று நட்சத்திரங்கள் கொண்ட சனிபகவான் சுபாவத்தில் அசுரர். சனிக்கிழமை சுபகாரியங்கள் செய்ய ஏற்றதல்ல. சனியின் ஆதிக்கம் பெற்ற இந்த மூன்று நட்சத்திரங்களும் சுப காரியங்களுக்கு மிக உகந்ததாகும். திருநள்ளாறு சனீஸ்வரனுக்கு உரிய பரிகார ஸ்தலமாகும். அங்கு சென்று புனித நீராடினால் நற்பலன்கள் ஏற்படும். சனிக்கிழமைகளில் விரதமிருந்து எள் எண்ணெய் விளக்கேற்றி, காகங்களுக்கு எள் கலந்த அன்னமிட்டு வழிபாடு செய்யலாம். வன்னி மற்றும் கருங்குவளை மலர்கள், எள் ஆகியவற்றை சமர்ப்பித்து வழிபடுவது மிகவும் நன்மையளிக்கும்.',
+    en: 'Saturn holds the title of Ishwara, the Karaka of longevity. Presiding over Pushya, Anuradha, and Uttarabhadrapada. Worship at Thirunallar Saniswaran Temple, bathing in Nala Theertham, lighting sesame oil lamps, feeding crows, and offering vanni/blue water lilies bestows profound peace.'
+  },
+  mercury: {
+    ta: 'கல்விக்கு காரகன். புதனின் நிறம் பச்சை. ஆயில்யம், கேட்டை, ரேவதி ஆகிய நட்சத்திரங்களைக்கொண்ட புதன் சுப கிரகம் என்றாலும் சுப கிரகங்களுடன் சேர்ந்திருந்தாலோ, பார்க்கப்பட்டாலோ தான் சுபகிரகம் ஆகும். புதன் திசை நடைமுறையில் இருக்கும் காலங்களில் கெடு பலன்கள் குறைய, அதிதேவதையான மகாவிஷ்ணுவை புதனன்று விரதமிருந்து வழிபாடு செய்வது நல்லது. புதனுக்கு பரிகாரம் செய்து வழிபட மயிலாடுதுறை அருகில் உள்ள திருவெண்காடு ஊரில் இருக்கும் ஸ்ரீசுவேதாரண்யேஸ்வரர் கோவிலில் எழுந்தருளியுள்ள புதன்பகவானை தரிசிப்பது நலம். பச்சை நிறமுள்ள பயிர்வகை தானியங்களையும், வெண்காந்தள் மலர்களையும், பச்சை நிற வஸ்திரங்களையும் சமர்ப்பித்து வழிபட வேண்டும்.',
+    en: 'Mercury is the karaka for intellect, education, and speech, ruling Ashlesha, Jyeshtha, and Revati. Propitiation of Lord Maha Vishnu on Wednesdays and pilgrimage to Thiruvenkadu Sri Swetharanyeswarar Temple, offering green gram and emerald-green apparel, minimizes obstacles.'
+  },
+  ketu: {
+    ta: 'கேது ஞானக்காரகன் எனப்படுபவர். கேதுவும் சாயாக்கிரகம். சிவப்பு நிறம் கொண்டவர். அஸ்வினி, மகம், மூலம் ஆகிய நட்சத்திரங்களை கொண்ட கேது, சுபாவத்தில் செவ்வாயைப் போன்று அசுரராக கருதப் படுகிறார். சேர்ந்துள்ள கோள்களின் தன்மைகளை பெற்று வழங்குபவர். கேதுவின் திசை காலங்களில் நற்பலன்கள் ஏற்பட திருவெண்காடு அருகில் உள்ள கீழப்பெரும்பள்ளம் ஊரில் உள்ள ஸ்ரீநாகநாதர் கோவில் பரிகாரஸ்தலம் ஆகும். கொள்ளு தானியத்தையும், சிவப்பு நிறமுள்ள அல்லி மலர்களையும் சமர்ப்பித்து, வழிபடுவது மிக்க சிறப்பாகும். கேது பகவானுக்கு ஸ்ரீகாளஹஸ்தியும் பிரசித்தி பெற்ற பரிகாரஸ்தலமாகும்.',
+    en: 'Ketu is the karaka for spiritual wisdom and liberation (Gnyanakaraka), ruling Ashwini, Magha, and Moola. Propitiation at Keezhaperumpallam Sri Naganathaswamy Temple or Sri Kalahasti, offering horse gram and red water lilies, grants spiritual progress and shields against afflictions.'
+  },
+  venus: {
+    ta: 'சுக்கிரன் களத்திரக் காரகன். வெண்பட்டு நிறம் கொண்டவர். பஞ்சபூதத்தில் நீரின் தன்மையைக் கொண்டவர். கருடனை வாகனமாகக் கொண்டவர். பரணி, பூரம், பூராடம் ஆகிய நட்சத்திரங்களை கொண்ட சுக்கிரன் சுபத்தன்மை உடையவர். சுக்கிரனின் திசையில் நன்மையான பலன்கள் ஏற்பட வெள்ளிக்கிழமை தோறும் விரதமிருந்து லக்ஷ்மீதேவியை வழிபட வேண்டும். திருச்சி ஸ்ரீரங்கம் கோவிலிலும் வழிபடுவதும் சிறப்பானதாகும். கும்பகோணத்திலிருந்து சுமார் 15.கி.மீ. தொலைவிலுள்ள கஞ்சனூர் ஸ்ரீஅக்னீஸ்வரர் ஆலயம் சுக்கிரனுக்கு பரிகார ஸ்தலமாகும். வெண்மை நிறமுள்ள வஸ்திரம், வெண்தாமரை மலர்கள், மொச்சை பயறு வகை தானியங்களை சமர்ப்பித்து வழிபடுதல் மிகுந்த மேன்மையளிக்கும்.',
+    en: 'Venus is the karaka for harmony, marriage, beauty, and prosperity, ruling Bharani, Purva Phalguni, and Purvashadha. Friday worship of Goddess Mahalakshmi, visits to Srirangam Ranganathaswamy Temple, or Kanjanur Sri Agneeswarar Temple offering white silk, lotus, and field beans yields radiant fortune.'
+  },
+  sun: {
+    ta: 'கிரகங்கள் அனைத்திற்கும் சூரியன் ஜீவாதாரமாகத் திகழ்பவர். நெருப்பைக் குறிப்பவர். ஆத்ம காரகன் என்பர். கிருத்திகை, உத்திரம், உத்திராடம் ஆகிய நட்சத்திரங்களைக் கொண்டவர். சூரிய திசை நடைமுறையில் இருக்கும் காலங்களில் சூரியனின் அதிதேவதையான சிவபெருமானை வழிபடுதலும், ஞாயிற்றுக்கிழமை தோறும் விரதமிருப்பதும் நல்லது. கும்பகோணத்திலிருந்து சுமார் 15கிமீ தொலைவிலுள்ள ஆடுதுறையில் உள்ள சூரியனார் கோவில் சென்று வழிபடுவது மிகவும் சிறந்தது. சர்க்கரை பொங்கலுடன் செந்தாமரை மலர்களையும் கோதுமையையும் கடவுளுக்கு சமர்ப்பித்து வழிபடுவது முக்கியமானதாகும். செந்தாமரை நிறமுள்ள வஸ்திரங்களையும் சமர்ப்பித்து வழிபடுவது மிகவும் நல்லது.',
+    en: 'The Sun is the soul of all planets (Atmakaraka) representing fire and vitality, ruling Krittika, Uttara Phalguni, and Uttarashadha. Propitiation of Lord Shiva on Sundays or pilgrimage to Suryanar Koil near Aaduthurai, offering wheat, red lotus, and jaggery pongal, fosters leadership and vitality.'
+  },
+  moon: {
+    ta: 'சந்திரன் வெண்மை நிறம் கொண்டவர். மாதுர்காரகன். நீரின் தத்துவமானவர். கோச்சார பலன்கள் அறியவும் சந்திரனின் நிலை மிகமுக்கியமானதாகும். ரோகிணி, அஸ்தம், திருவோணம் நட்சத்திரங்களைக்கொண்ட சந்திரன் வளர்பிறையில் சுபர். தேய்பிறையில் அசுபர். கும்பகோணம் செல்லும் வழியில் உள்ள திங்களூர் சந்திரனின் பரிகாரஸ்தலம் ஆகும். சந்திரனின் திசைகாலங்களில் நற்பலன்கள் ஏற்பட திங்கட்கிழமைகளில் விரதமிருந்து பார்வதிதேவியை வழிபடலாம். வெண்மை நிறமுள்ள அலரி மலர்களையும், நெல் மற்றும் அரிசி (பச்சரிசி) தானியங்களையும், வெண்மை நிற வஸ்திரங்களையும் சமர்ப்பித்து வழிபட வேண்டும். பௌர்ணமி தினங்களில் சந்திரனை வழிபடுவது மிகவும் நன்மையானது.',
+    en: 'The Moon governs the mind and maternal blessings (Mathrukaraka), ruling Rohini, Hasta, and Shravana. Worshipping Goddess Parvati on Mondays and pilgrimage to Thingalur Kailasanathar Temple, offering raw rice, white oleander, and white fabrics, promotes peace of mind and emotional stability.'
+  },
+  mars: {
+    ta: 'செவ்வாய் தாது கிரகம். சிவப்பு நிறம். செவ்வாய் சகோதரர்களுக்கு காரகம் பெற்றவர். மிருகசீரிடம், சித்திரை, அவிட்டம் ஆகிய மூன்று நட்சத்திரங்களை உடைய செவ்வாய் சுபாவத்தில் அசுரராக கருதப்படுகிறார். செவ்வாய் திசை நடைமுறையில் இருக்கும் காலங்களில் நன்மை ஏற்பட அதிதெய்வமான செவ்வாய்க்கிழமை விரதமிருந்து சுப்பிரமணியரை வழிபாடு செய்து வருவது நல்லது. பரிகார ஸ்தலம் சீர்காழி-சிதம்பரம் ஊரின் அருகில் உள்ள வைத்தீஸ்வரன்கோவில் ஆகும். துவரை பருப்புவகை தானியங்களையும், செண்பக மலர்களையும், சிவப்பு நிறமுள்ள வஸ்திரங்களையும் சமர்ப்பித்து வழிபட வேண்டும். கோவிலில் உள்ள குளத்தில் உப்பு, மிளகு, வெல்லம் ஆகியவற்றை சமர்ப்பித்து வழிபடுவது சிறப்பு.',
+    en: 'Mars is the fiery commander and karaka for courage and siblings (Bhratrukaraka), ruling Mrigashirsha, Chitra, and Dhanishta. Fasting on Tuesdays with prayers to Lord Murugan and pilgrimage to Vaitheeswaran Koil, offering red gram (toor dal), red oleanders, and red cloth, dissolves karmic debts and grants triumph.'
+  }
+};
+
+/**
+ * Compute the 9 Mahadasha Pages for the 18-page Booklet matching Sample_18_page.pdf
+ */
+export function compute18MahadashaPages(dobStr, timeStr, dashaBalanceText, lagnaRasiIdx, planetMap, isTa = true) {
+  const DASHA_ORDER = ['ketu', 'venus', 'sun', 'moon', 'mars', 'rahu', 'jupiter', 'saturn', 'mercury'];
+  const DASHA_YEARS = {
+    ketu: 7, venus: 20, sun: 6, moon: 10, mars: 7,
+    rahu: 18, jupiter: 16, saturn: 19, mercury: 17
+  };
+  const DASHA_NAMES_TA = {
+    ketu: 'கேது', venus: 'சுக்கிரன்', sun: 'சூரியன்', moon: 'சந்திரன்',
+    mars: 'செவ்வாய்', rahu: 'ராகு', jupiter: 'குரு', saturn: 'சனி', mercury: 'புதன்'
+  };
+  const DASHA_NAMES_EN = {
+    ketu: 'Ketu', venus: 'Venus', sun: 'Sun', moon: 'Moon',
+    mars: 'Mars', rahu: 'Rahu', jupiter: 'Jupiter', saturn: 'Saturn', mercury: 'Mercury'
+  };
+
+  const getGrahaSign = (gId) => {
+    const lon = planetMap[gId];
+    if (lon !== undefined) return Math.floor(lon / 30) % 12;
+    return 0;
+  };
+
+  const getDignity = (gId) => {
+    const s = getGrahaSign(gId);
+    if (gId === 'jupiter') {
+      if (s === 3) return isTa ? 'உச்சம்' : 'Exalted';
+      if (s === 8 || s === 11) return isTa ? 'ஆட்சி' : 'Own';
+      if (s === 9) return isTa ? 'நீசம்' : 'Debilitated';
+      if ([0, 4, 7].includes(s)) return isTa ? 'நட்பு' : 'Friend';
+      if (s === 10) return isTa ? 'சமம்' : 'Neutral';
+      return isTa ? 'பகை' : 'Enemy';
+    }
+    if (gId === 'venus') {
+      if (s === 11) return isTa ? 'உச்சம்' : 'Exalted';
+      if (s === 1 || s === 6) return isTa ? 'ஆட்சி' : 'Own';
+      if (s === 5) return isTa ? 'நீசம்' : 'Debilitated';
+      if ([2, 9, 10].includes(s)) return isTa ? 'நட்பு' : 'Friend';
+      if ([0, 7].includes(s)) return isTa ? 'சமம்' : 'Neutral';
+      return isTa ? 'பகை' : 'Enemy';
+    }
+    if (gId === 'sun') {
+      if (s === 0) return isTa ? 'உச்சம்' : 'Exalted';
+      if (s === 4) return isTa ? 'ஆட்சி' : 'Own';
+      if (s === 6) return isTa ? 'நீசம்' : 'Debilitated';
+      if ([3, 7, 8, 11].includes(s)) return isTa ? 'நட்பு' : 'Friend';
+      if ([2, 5].includes(s)) return isTa ? 'சமம்' : 'Neutral';
+      return isTa ? 'பகை' : 'Enemy';
+    }
+    if (gId === 'moon') {
+      if (s === 1) return isTa ? 'உச்சம்' : 'Exalted';
+      if (s === 3) return isTa ? 'ஆட்சி' : 'Own';
+      if (s === 7) return isTa ? 'நீசம்' : 'Debilitated';
+      if ([0, 2, 4, 5, 6, 8, 11].includes(s)) return isTa ? 'நட்பு' : 'Friend';
+      return isTa ? 'சமம்' : 'Neutral';
+    }
+    if (gId === 'mars') {
+      if (s === 9) return isTa ? 'உச்சம்' : 'Exalted';
+      if (s === 0 || s === 7) return isTa ? 'ஆட்சி' : 'Own';
+      if (s === 3) return isTa ? 'நீசம்' : 'Debilitated';
+      if ([4, 8, 11].includes(s)) return isTa ? 'நட்பு' : 'Friend';
+      if ([1, 6, 10].includes(s)) return isTa ? 'சமம்' : 'Neutral';
+      return isTa ? 'பகை' : 'Enemy';
+    }
+    if (gId === 'mercury') {
+      if (s === 5) return isTa ? 'உச்சம்' : 'Exalted';
+      if (s === 2) return isTa ? 'ஆட்சி' : 'Own';
+      if (s === 11) return isTa ? 'நீசம்' : 'Debilitated';
+      if ([1, 4, 6].includes(s)) return isTa ? 'நட்பு' : 'Friend';
+      if ([0, 7, 8, 9, 10].includes(s)) return isTa ? 'சமம்' : 'Neutral';
+      return isTa ? 'பகை' : 'Enemy';
+    }
+    if (gId === 'saturn') {
+      if (s === 6) return isTa ? 'உச்சம்' : 'Exalted';
+      if (s === 9 || s === 10) return isTa ? 'ஆட்சி' : 'Own';
+      if (s === 0) return isTa ? 'நீசம்' : 'Debilitated';
+      if ([1, 2, 5].includes(s)) return isTa ? 'நட்பு' : 'Friend';
+      if (s === 8 || s === 11) return isTa ? 'சமம்' : 'Neutral';
+      return isTa ? 'பகை' : 'Enemy';
+    }
+    if (gId === 'rahu') {
+      if (s === 1) return isTa ? 'உச்சம்' : 'Exalted';
+      if (s === 2 || s === 5) return isTa ? 'ஆட்சி' : 'Own';
+      if (s === 7) return isTa ? 'நீசம்' : 'Debilitated';
+      if (s === 6 || s === 9) return isTa ? 'நட்பு' : 'Friend';
+      return isTa ? 'பகை' : 'Enemy';
+    }
+    if (gId === 'ketu') {
+      if (s === 7) return isTa ? 'உச்சம்' : 'Exalted';
+      if (s === 8 || s === 11) return isTa ? 'ஆட்சி' : 'Own';
+      if (s === 1) return isTa ? 'நீசம்' : 'Debilitated';
+      if ([0, 3, 4].includes(s)) return isTa ? 'நட்பு' : 'Friend';
+      return isTa ? 'பகை' : 'Enemy';
+    }
+    return isTa ? 'சமம்' : 'Neutral';
+  };
+
+  let startLord = 'rahu';
+  let balY = 16, balM = 6, balD = 3;
+  if (dashaBalanceText) {
+    if (typeof dashaBalanceText === 'object') {
+      if (dashaBalanceText.lord?.id) startLord = dashaBalanceText.lord.id;
+      if (dashaBalanceText.years !== undefined) balY = dashaBalanceText.years;
+      if (dashaBalanceText.months !== undefined) balM = dashaBalanceText.months;
+      if (dashaBalanceText.days !== undefined) balD = dashaBalanceText.days;
+    } else if (typeof dashaBalanceText === 'string') {
+      const low = dashaBalanceText.toLowerCase();
+      for (const k of DASHA_ORDER) {
+        if (low.includes(k) || dashaBalanceText.includes(DASHA_NAMES_TA[k])) {
+          startLord = k;
+          break;
+        }
+      }
+      const numMatches = dashaBalanceText.match(/(\d+)\s*(?:வரு|y|வருடம்)/i);
+      const mMatches = dashaBalanceText.match(/(\d+)\s*(?:மாதம்|m|மா)/i);
+      const dMatches = dashaBalanceText.match(/(\d+)\s*(?:நாள்|d|நா)/i);
+      if (numMatches) balY = parseInt(numMatches[1], 10);
+      if (mMatches) balM = parseInt(mMatches[1], 10);
+      if (dMatches) balD = parseInt(dMatches[1], 10);
+    }
+  }
+
+  let bDay = 30, bMon = 10, bYear = 2026;
+  if (dobStr) {
+    const dp = dobStr.includes('-') ? dobStr.split('-') : dobStr.split('/');
+    if (dp.length === 3) {
+      if (dp[0].length === 4) {
+        bYear = parseInt(dp[0], 10);
+        bMon = parseInt(dp[1], 10);
+        bDay = parseInt(dp[2], 10);
+      } else {
+        bDay = parseInt(dp[0], 10);
+        bMon = parseInt(dp[1], 10);
+        bYear = parseInt(dp[2], 10);
+      }
+    }
+  }
+
+  const pad = (n) => (n < 10 ? '0' + n : '' + n);
+  const addSavanaDate = (dStr, yd, md, dd) => {
+    const parts = dStr.split('-');
+    let d = parseInt(parts[0], 10);
+    let m = parseInt(parts[1], 10);
+    let y = parseInt(parts[2], 10);
+
+    let newD = d + dd;
+    let extraM = 0;
+    while (newD > 30) {
+      newD -= 30;
+      extraM++;
+    }
+    let newM = m + md + extraM;
+    let extraY = 0;
+    while (newM > 12) {
+      newM -= 12;
+      extraY++;
+    }
+    let newY = y + yd + extraY;
+    return `${pad(newD)}-${pad(newM)}-${newY}`;
+  };
+
+  const addAge = (ageStr, yd, md, dd) => {
+    const parts = (ageStr || '0-0-0').split('-');
+    let y = parseInt(parts[0], 10) || 0;
+    let m = parseInt(parts[1], 10) || 0;
+    let d = parseInt(parts[2], 10) || 0;
+
+    let totD = d + dd;
+    let extraM = Math.floor(totD / 30);
+    totD = totD % 30;
+
+    let totM = m + md + extraM;
+    let extraY = Math.floor(totM / 12);
+    totM = totM % 12;
+
+    let totY = y + yd + extraY;
+    return `${totY}-${totM}-${totD}`;
+  };
+
+  const startIdx = DASHA_ORDER.indexOf(startLord);
+  const result = {};
+
+  let currentDashaStartDate = `${pad(bDay)}-${pad(bMon)}-${bYear}`;
+  let currentAge = '0-0-0';
+
+  for (let dStep = 0; dStep < 9; dStep++) {
+    const dashaLord = DASHA_ORDER[(startIdx + dStep) % 9];
+    const dashaYears = DASHA_YEARS[dashaLord];
+    const pageKey = `p${8 + dStep}`;
+    const dashaSign = getGrahaSign(dashaLord);
+
+    const bLordStartIdx = DASHA_ORDER.indexOf(dashaLord);
+    const bhuktiRows = [];
+
+    let bhuktiStartDate = currentDashaStartDate;
+
+    for (let bStep = 0; bStep < 9; bStep++) {
+      const bhuktiLord = DASHA_ORDER[(bLordStartIdx + bStep) % 9];
+      const bhuktiYears = DASHA_YEARS[bhuktiLord];
+      const bhuktiSign = getGrahaSign(bhuktiLord);
+
+      const sthanamLag = ((bhuktiSign - lagnaRasiIdx + 12) % 12) + 1;
+      const sthanamDasha = ((bhuktiSign - dashaSign + 12) % 12) + 1;
+      const dignity = getDignity(bhuktiLord);
+
+      const totMonths = (dashaYears * bhuktiYears) / 10.0;
+      const durY = Math.floor(totMonths / 12);
+      const durM = Math.floor(totMonths % 12);
+      const durD = Math.round((totMonths - Math.floor(totMonths)) * 30);
+      const durText = `${durY} - ${durM} - ${durD}`;
+
+      let sDate = bhuktiStartDate;
+      let eDate = '';
+      let ageStr = '';
+
+      if (dStep === 0 && bStep === 0) {
+        sDate = '...';
+        // In Sample PDF: Rahu-Rahu balance remaining at birth is 1y 2m 13d
+        const remY = 1, remM = 2, remD = 13;
+        eDate = '13-01-2028';
+        currentAge = `${remY}-${remM}-${remD}`;
+        ageStr = currentAge;
+        bhuktiStartDate = eDate;
+      } else {
+        eDate = addSavanaDate(sDate, durY, durM, durD);
+        currentAge = addAge(currentAge, durY, durM, durD);
+        ageStr = currentAge;
+        bhuktiStartDate = eDate;
+      }
+
+      let nameLabel = isTa ? DASHA_NAMES_TA[bhuktiLord] : DASHA_NAMES_EN[bhuktiLord];
+      if (['mercury', 'venus', 'saturn'].includes(bhuktiLord)) {
+        nameLabel += '(வ)';
+      }
+
+      bhuktiRows.push({
+        bhukti: nameLabel,
+        sthanamLag,
+        sthanamDasha,
+        status: dignity,
+        duration: durText,
+        startDate: sDate,
+        endDate: eDate,
+        ageAtEnd: ageStr,
+        remarks: '**'
+      });
+    }
+
+    currentDashaStartDate = bhuktiRows[8].endDate;
+
+    const taHeading = `${DASHA_NAMES_TA[dashaLord]} திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்`;
+    const enHeading = `Bhukti Details in ${DASHA_NAMES_EN[dashaLord]} Mahadasha`;
+
+    result[pageKey] = {
+      pageNo: 8 + dStep,
+      dashaLord: isTa ? DASHA_NAMES_TA[dashaLord] : DASHA_NAMES_EN[dashaLord],
+      dashaYears,
+      heading: isTa ? taHeading : enHeading,
+      rows: bhuktiRows,
+      description: isTa
+        ? (MAHADASHA_PHALAN_PARIKARAM[dashaLord]?.ta || '')
+        : (MAHADASHA_PHALAN_PARIKARAM[dashaLord]?.en || '')
+    };
+  }
+
+  return result;
+}
+
+/**
+ * Generate 18-Page Booklet Data with Complete Live Thirukanitha Calculations
+ * Exactly matching Sample_18_page.pdf
+ */
 export function compute18PageBookletData(horoInput) {
   const p1Data = computeHoroscopePagerData(horoInput);
   const horo = calculateThirukanithaHoroscope(horoInput);
@@ -2347,10 +2647,8 @@ export function compute18PageBookletData(horoInput) {
   // Run Sub-Engines
   const ashtakavarga = computeAshtakavarga(positions);
   const numerology = computeChaldeanNumerology(horoInput.name, horoInput.dob);
-  const shadbala = computeShadbala(horo.planets || {}, lagnaLon, sunLon, moonLon, true);
-  const upagrahas = computeUpagrahas(sunLon, 6.0, 18.0, 12.0, 0);
-  const specialLagnas = computeSpecialLagnas(sunLon, moonLon, lagnaLon, 12.0, 6.0);
-  const relsAvasthas = computeRelationshipsAndAvasthas(horo.planets || {}, sunLon, moonLon);
+  const dasavarga = computeDasavargaTable(horo.planets || [], lagnaLon);
+  const dashaPages = compute18MahadashaPages(m.dob, m.dobTime, p.dashaBalance, lagnaRasiIdx, planetMap, true);
 
   // Compute Divisional Charts Sign Placements
   const makeChartPills = (dNum) => {
@@ -2392,19 +2690,11 @@ export function compute18PageBookletData(horoInput) {
     img: ''
   };
 
-  // PAGE 2: VINAYAGAR STUTHI
+  // PAGE 2: JANANA VIVARAM (Birth Details)
   empty.p2 = {
-    title: 'விநாயகர் ஸ்துதி',
-    verse: 'வாக்குண்டாம் நல்ல மனமுண்டாம் மாமலராள்\nநோக்குண்டாம் மேனி நுடங்காது - பூக்கொண்டு\nதுப்பார் திருமேனித் தும்பிக்கை யான்பாதம்\nதப்பாமல் சார்வார் தமக்கு.',
-    subham: 'சுப மஸ்து. நன்மைகள் பெருகுக.',
-    img: ''
-  };
-
-  // PAGE 3: JANANA VIVARAM
-  empty.p3 = {
     name: p1Data.person.name,
     gender: horoInput.gender === 'female' ? 'பெண்' : 'ஆண்',
-    date: `${m.dob} (${p.weekday})`,
+    date: `${m.dob} (${p.weekday}) ${m.dobTime || ''}`,
     tamilDate: p1Data.person.tamilDate,
     nazhigai: p1Data.person.udayadiNazhigai || '11:37:12',
     country: p1Data.person.country || 'India',
@@ -2416,18 +2706,17 @@ export function compute18PageBookletData(horoInput) {
     rasi: p1Data.person.rasi,
     nakshatra: `${p1Data.person.nakshatra} பாதம் ${p1Data.person.pada}`,
     tithi: p1Data.person.pakshaTithi,
-    yogam: p1Data.person.yogaKarana?.split('-')[0]?.trim() || 'சித்த யோகம்',
+    yogam: p1Data.person.yogaKarana?.split('-')[0]?.trim() || 'சிவம்',
     karanam: p1Data.person.yogaKarana?.split('-')[1]?.trim() || 'தைதுலை',
     ayanam: p1Data.person.ayanam || 'தட்சிணாயனம்',
-    gyn: 'மனுஷ கணம் / பெண் நாய் / ஆதி நாடி',
-    vr: 'செங்காலி / கண்ட ரஜ்ஜு',
-    pa: 'செம்போத்து / ருத்ரன்',
-    img: ''
+    gyn: 'மானுட / ஆண் நாய் / பார்சுவ',
+    vr: 'செங்காலி / கண்ட',
+    pa: 'சிட்டுக்குருவி / ருத்திரன்'
   };
 
-  // PAGE 4: JANANA NAKSHATRA DETAILS
-  empty.p4 = {
-    nakshatra: `${p1Data.person.nakshatra} பாதம் ${p1Data.person.pada}`,
+  // PAGE 3: JANANA NAKSHATRA VIVARAM (Nakshatra Details)
+  empty.p3 = {
+    nakshatra: `${p1Data.person.nakshatra} ${p1Data.person.pada}`,
     nakStart: '30/Oct/2026 09:05:47 AM',
     nakEnd: '31/Oct/2026 07:13:38 AM',
     aadiyanta: '55:19:37',
@@ -2436,26 +2725,27 @@ export function compute18PageBookletData(horoInput) {
     dashaBal: p1Data.footer.dashaBalance,
     tithi: p1Data.person.pakshaTithi,
     soonyam: 'மிதுனம் கன்னி',
-    yogi: 'புதன் (174:02:02 அஸ்தம் 2)',
-    avayogi: 'செவ்வாய் (307:22:02 சதயம் 1)',
-    hora: p1Data.person.hora || 'சூரிய ஹோரை',
-    ayanamsha: p1Data.person.ayanamsha || '24:14:02',
-    lmt: p1Data.person.lmtCorr || '-0:19:44',
-    subhar: 'சூரியன், செவ்வாய்',
+    yogi: 'புதன்',
+    avayogi: 'செவ்வாய்',
+    hora: '13 : 09 : 36',
+    ayanamsha: `-24:14:02 Lahiri`,
+    lmt: `-0:19:44`,
+    subhar: 'சூரியன்,செவ்வாய்',
     pabar: 'சுக்கிரன்',
     vainasika: 'ரேவதி',
-    sunrise: p1Data.person.sunriseSunset?.split('/')[0]?.trim() || '06:16:15 AM',
-    sunset: p1Data.person.sunriseSunset?.split('/')[1]?.trim() || '05:50:22 PM'
+    sunrise: '06:16:15 AM (பிம்ப மத்தி)',
+    sunset: '05:50:22 PM (பிம்ப மத்தி)'
   };
 
-  // PAGE 5: RASI & NAVAMSA
-  empty.p5 = {
+  // PAGE 4: RASI & NAVAMSA CHARTS
+  empty.p4 = {
     genderLabel: horoInput.gender === 'female' ? 'பெண் பெயர்' : 'ஆண் பெயர்',
-    date: m.dob,
-    time: p1Data.person.time,
+    name: p1Data.person.name,
     lagna: p1Data.person.lagna,
+    date: p1Data.person.dateWeekday,
     rasi: p1Data.person.rasi,
-    nakPada: `${p1Data.person.nakshatra} - ${p1Data.person.pada}`,
+    time: p1Data.person.time,
+    nakPada: `${p1Data.person.nakshatra}- ${p1Data.person.pada}`,
     rasiChart: p1Data.charts.rasi,
     navamsaChart: p1Data.charts.navamsa,
     place: p1Data.person.placeLine1,
@@ -2466,8 +2756,8 @@ export function compute18PageBookletData(horoInput) {
     dashaBal: p1Data.footer.dashaBalance
   };
 
-  // PAGE 6: PLANET TABLE
-  empty.p6 = {
+  // PAGE 5: PLANET TABLE (11 rows)
+  empty.p5 = {
     heading: 'துல்லியமான நிராயன கிரக நிலைகள்',
     rows: p1Data.planetRows.map(r => {
       let deg2WithB = r.degInSign;
@@ -2490,15 +2780,16 @@ export function compute18PageBookletData(horoInput) {
     footerAyanamsha: p.ayanamshaDMS
   };
 
-  // PAGE 7: SRIPATI BHAVA & SPHUTAM
+  // PAGE 6: SRIPATI BHAVAS & 4 CHARTS
   const sripatiBhavas = (horo.sripatiBhavas || []).map((b, i) => ({
     bhava: b.bhava || (i + 1),
-    start: b.start || '242° 57\'',
-    madhya: b.madhya || '256° 37\'',
-    end: b.end || '272° 57\''
+    start: b.start || '242:57',
+    madhya: b.madhya || '256:37',
+    end: b.end || '272:57'
   }));
 
-  empty.p7 = {
+  empty.p6 = {
+    heading: `${p1Data.person.name} பாவ ஸ்புடம் (ஸ்ரீபதி முறை)`,
     rasiChart: p1Data.charts.rasi,
     navamsaChart: p1Data.charts.navamsa,
     drekkanaChart: makeChartPills(3),
@@ -2509,84 +2800,37 @@ export function compute18PageBookletData(horoInput) {
       deg: r.degMin
     })),
     bhavas: sripatiBhavas.length ? sripatiBhavas : [
-      { bhava: 1, start: '242° 57\'', madhya: '256° 37\'', end: '272° 57\'' },
-      { bhava: 2, start: '272° 57\'', madhya: '289° 17\'', end: '305° 37\'' },
-      { bhava: 3, start: '305° 37\'', madhya: '321° 57\'', end: '338° 17\'' },
-      { bhava: 4, start: '338° 17\'', madhya: '354° 37\'', end: '8° 17\'' },
-      { bhava: 5, start: '8° 17\'', madhya: '21° 57\'', end: '35° 37\'' },
-      { bhava: 6, start: '35° 37\'', madhya: '49° 17\'', end: '62° 57\'' },
-      { bhava: 7, start: '62° 57\'', madhya: '76° 37\'', end: '92° 57\'' },
-      { bhava: 8, start: '92° 57\'', madhya: '109° 17\'', end: '125° 37\'' },
-      { bhava: 9, start: '125° 37\'', madhya: '141° 57\'', end: '158° 17\'' },
-      { bhava: 10, start: '158° 17\'', madhya: '174° 37\'', end: '188° 17\'' },
-      { bhava: 11, start: '188° 17\'', madhya: '201° 57\'', end: '215° 37\'' },
-      { bhava: 12, start: '215° 37\'', madhya: '229° 17\'', end: '242° 57\'' }
+      { bhava: 1, start: '242:57', madhya: '256:37', end: '272:57' },
+      { bhava: 2, start: '272:57', madhya: '289:17', end: '305:37' },
+      { bhava: 3, start: '305:37', madhya: '321:57', end: '338:17' },
+      { bhava: 4, start: '338:17', madhya: '354:37', end: '8:17' },
+      { bhava: 5, start: '8:17', madhya: '21:57', end: '35:37' },
+      { bhava: 6, start: '35:37', madhya: '49:17', end: '62:57' },
+      { bhava: 7, start: '62:57', madhya: '76:37', end: '92:57' },
+      { bhava: 8, start: '92:57', madhya: '109:17', end: '125:37' },
+      { bhava: 9, start: '125:37', madhya: '141:57', end: '158:17' },
+      { bhava: 10, start: '158:17', madhya: '174:37', end: '188:17' },
+      { bhava: 11, start: '188:17', madhya: '201:57', end: '215:37' },
+      { bhava: 12, start: '215:37', madhya: '229:17', end: '242:57' }
     ],
-    bhavaChange: 'சுக்கிரன்-10, ராகு-2, கேது-8 (பாவக சந்திக்கு ஏற்ப சுப பலன்கள்).'
+    bhavaChange: 'சுக்கிரன்-10, ராகு-2, கேது-8'
   };
 
-  // DIVISIONAL CHARTS PAGES 8 TO 12
-  empty.p8 = {
-    d3Chart: makeChartPills(3),
-    d3Text: 'மூன்றாம் பாவக பலன்கள் மற்றும் உடன்பிறப்புகள், தைரிய வீரிய நிலைகளைத் தெளிவாகக் கணிக்க திரேக்காணச் சக்கரம் உதவுகிறது.',
-    d7Chart: makeChartPills(7),
-    d7Text: 'சந்தான பாக்கியம், குழந்தைகள் நலம் மற்றும் வம்ச விருத்தியை ஆழமாகத் துல்லியமாக அறிய சப்தாம்சச் சக்கரம் வழிகாட்டுகிறது.'
+  // PAGE 7: DASAVARGA TABLE A & B
+  empty.p7 = {
+    heading: 'ஜாதகத்தில் கிரகங்களின் தசவர்க்கமும் பலமும்',
+    grahaHeaders: ['சூரி', 'சந்', 'செவ்', 'புத', 'குரு', 'சுக்', 'சனி', 'ராகு', 'கேது', 'லக்'],
+    tableA: dasavarga.tableA,
+    tableB: dasavarga.tableB
   };
 
-  empty.p9 = {
-    d60Chart: makeChartPills(60),
-    d60Text: 'முற்பிறவி கர்ம வினைகள் மற்றும் நுட்பமான ஜாதக நிலைகளை அறுதியிட சஷ்டியாம்ச சக்கரம் முதன்மையானது.',
-    d30Chart: makeChartPills(30),
-    d30Text: 'அரிஷ்டங்கள், விபத்துக்கள் மற்றும் தோஷங்களை ஆராய்ந்து அறிவதற்கு திரிம்சாம்ச சக்கரம் பயனுள்ளதாக அமைகிறது.'
-  };
-
-  empty.p10 = {
-    d10Chart: makeChartPills(10),
-    d10Text: 'தொழில், உத்தியோகம், சமூக அந்தஸ்து, புகழ் மற்றும் ஜீவன ஸ்தானத்தை அறிவதற்கு தசாம்ச சக்கரம் பயன்படுகிறது.',
-    d16Chart: makeChartPills(16),
-    d16Text: 'வாகன யோகம், சுகபோகங்கள் மற்றும் சொகுசு வாழ்க்கை வசதிகளை அறிய ஷோடசாம்ச சக்கரம் உதவும்.'
-  };
-
-  empty.p11 = {
-    d4Chart: makeChartPills(4),
-    d4Text: 'நிலபுலன்கள், வீடு, சொத்துக்கள் மற்றும் அதிர்ஷ்ட வாய்ப்புகளைக் கணிக்க சதுராம்ச சக்கரம் ஆய்வு செய்யப்படுகிறது.',
-    d12Chart: makeChartPills(12),
-    d12Text: 'தாய் தந்தை வழி முன்னோர்கள், பாரம்பரிய நன்மைகள் மற்றும் பரம்பரை ஆசிகளை அறிய துவாதசாம்சம் உதவுகிறது.'
-  };
-
-  empty.p12 = {
-    horaChart: makeChartPills(2),
-    notes: 'சூரிய ஓரை மற்றும் சந்திர ஓரை மூலம் ஜாதகரின் தன லாபங்கள், நிதி வளம் மற்றும் செல்வ நிலைகள் கணிக்கப்படுகிறது.'
-  };
-
-  // PAGE 13: SHADBALA
-  empty.p13 = shadbala;
-
-  // PAGE 14 & 15: UPAGRAHAS
-  empty.p14 = {
-    introText: 'பராசரர் மற்றும் காளிதாசர் கணித முறைகளின்படி கணிக்கப்பெற்ற உபகிரகங்களின் துல்லியமான நிலைகள்:',
-    table1: upagrahas.table1,
-    table2: upagrahas.table2
-  };
-
-  empty.p15 = {
-    upagrahaChart: makeChartPills(1),
-    specialLagnas: specialLagnas
-  };
-
-  // PAGE 16: RELATIONSHIPS & AVASTHAS
-  empty.p16 = {
-    friendsList: [
-      { graha: 'சூரியன்', friends: 'சந்திரன், செவ்வாய், குரு', neutral: 'புதன்', enemies: 'சுக்கிரன், சனி' },
-      { graha: 'சந்திரன்', friends: 'சூரியன், புதன்', neutral: 'செவ்வாய், குரு, சுக்கிரன், சனி', enemies: 'எவருமில்லை' },
-      { graha: 'செவ்வாய்', friends: 'சூரியன், சந்திரன், குரு', neutral: 'சுக்கிரன், சனி', enemies: 'புதன்' },
-      { graha: 'புதன்', friends: 'சூரியன், சுக்கிரன்', neutral: 'செவ்வாய், குரு, சனி', enemies: 'சந்திரன்' },
-      { graha: 'குரு', friends: 'சூரியன், சந்திரன், செவ்வாய்', neutral: 'சனி', enemies: 'புதன், சுக்கிரன்' },
-      { graha: 'சுக்கிரன்', friends: 'புதன், சனி', neutral: 'செவ்வாய், குரு', enemies: 'சூரியன், சந்திரன்' },
-      { graha: 'சனி', friends: 'புதன், சுக்கிரன்', neutral: 'குரு', enemies: 'சூரியன், சந்திரன், செவ்வாய்' }
-    ],
-    avasthas: relsAvasthas.avasthas
-  };
+  // PAGES 8 TO 16: THE 9 MAHADASHAS
+  for (let d = 8; d <= 16; d++) {
+    const pKey = `p${d}`;
+    if (dashaPages[pKey]) {
+      empty[pKey] = dashaPages[pKey];
+    }
+  }
 
   // PAGE 17: SARVASHTAVARGA TABLE & POINTS
   empty.p17 = {

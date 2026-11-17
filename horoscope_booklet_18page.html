@@ -843,30 +843,24 @@
   <script>
     /* PAGE DEFINITIONS: 18 CORE + EXTENDED OPTIONAL SECTIONS */
     const PAGE_DEFS = [
-      { id: 'p1', core: true, titleTa: '1. அட்டைப் பக்கம்', titleEn: '1. Cover Page' },
-      { id: 'p2', core: true, titleTa: '2. விநாயகர் ஸ்துதி', titleEn: '2. Vinayagar Stuthi' },
-      { id: 'p3', core: true, titleTa: '3. ஜனன விவரம்', titleEn: '3. Birth Details' },
-      { id: 'p4', core: true, titleTa: '4. ஜனன நட்சத்திர விவரம்', titleEn: '4. Nakshatra Details' },
-      { id: 'p5', core: true, titleTa: '5. ராசி & நவாம்சம்', titleEn: '5. Rasi & Navamsa Charts' },
-      { id: 'p6', core: true, titleTa: '6. நிராயன கிரக நிலைகள்', titleEn: '6. Planet Table' },
-      { id: 'p7', core: true, titleTa: '7. ஸ்ரீபதி பாவகம் & ஸ்புடம்', titleEn: '7. Bhava Charts & Sripati' },
-      { id: 'p8', core: true, titleTa: '8. திரேக்காணம் & சப்தாம்சம் (D3, D7)', titleEn: '8. Divisional D3 & D7' },
-      { id: 'p9', core: true, titleTa: '9. சஷ்டியாம்சம் & திரிம்சாம்சம் (D60, D30)', titleEn: '9. Divisional D60 & D30' },
-      { id: 'p10', core: true, titleTa: '10. தசாம்சம் & ஷோடசாம்சம் (D10, D16)', titleEn: '10. Divisional D10 & D16' },
-      { id: 'p11', core: true, titleTa: '11. சதுராம்சம் & துவாதசாம்சம் (D4, D12)', titleEn: '11. Divisional D4 & D12' },
-      { id: 'p12', core: true, titleTa: '12. ஓரை சக்கரம் (D2)', titleEn: '12. Hora Chart (D2)' },
-      { id: 'p13', core: true, titleTa: '13. ஷட்பல ஆய்வு', titleEn: '13. Shadbala Analysis' },
-      { id: 'p14', core: true, titleTa: '14. உபகிரகங்கள் (குளிகாதி & தூமாதி)', titleEn: '14. Upagrahas (Gulikaadi & Dhumadi)' },
-      { id: 'p15', core: true, titleTa: '15. உபகிரக சக்கரம் & லக்ன பாகைகள்', titleEn: '15. Upagraha Chart & Lagna Degrees' },
-      { id: 'p16', core: true, titleTa: '16. கிரக உறவுகள் & அவஸ்தைகள்', titleEn: '16. Relationships & Avasthas' },
-      { id: 'p17', core: true, titleTa: '17. சர்வாஷ்டவர்க்க பரல்கள்', titleEn: '17. Sarvashtavarga Table' },
-      { id: 'p18', core: true, titleTa: '18. எண் கணிதம் (நியூமராலஜி)', titleEn: '18. Numerology' },
-      // Optional Pages:
-      { id: 'opt_aspects', core: false, titleTa: 'கிரக & பாவக பார்வை கோணங்கள்', titleEn: 'Graha & Bhava Aspects' },
-      { id: 'opt_dasavarga', core: false, titleTa: 'தசவர்க்கமும் பலமும்', titleEn: 'Dasavarga Strength' },
-      { id: 'opt_pakshi', core: false, titleTa: 'பஞ்ச பட்சி விவரம்', titleEn: 'Pancha Pakshi' },
-      { id: 'opt_dashas', core: false, titleTa: 'தசா புக்தி விரிவான பக்கங்கள்', titleEn: '9 Mahadasha Detailed Pages' },
-      { id: 'opt_dasha_matrix', core: false, titleTa: 'திசை-புக்தி முடிவு அட்டவணை', titleEn: 'Dasha End Dates Matrix' }
+      { id: 'p1', core: true, titleTa: '1. முகப்பு அட்டை', titleEn: '1. Cover Page' },
+      { id: 'p2', core: true, titleTa: '2. ஜனன விவரம்', titleEn: '2. Birth Details' },
+      { id: 'p3', core: true, titleTa: '3. ஜனன நட்சத்திர விவரம்', titleEn: '3. Nakshatra Details' },
+      { id: 'p4', core: true, titleTa: '4. ராசி & நவாம்சக் கட்டங்கள்', titleEn: '4. Rasi & Navamsa Charts' },
+      { id: 'p5', core: true, titleTa: '5. நிராயன கிரக நிலைகள்', titleEn: '5. Planet Table' },
+      { id: 'p6', core: true, titleTa: '6. பாவ ஸ்புடம் (ஸ்ரீபதி முறை) & கட்டங்கள்', titleEn: '6. Sripati Bhavas & 4 Charts' },
+      { id: 'p7', core: true, titleTa: '7. தசவர்க்க அட்டவணை & பலம்', titleEn: '7. Dasavarga Table' },
+      { id: 'p8', core: true, titleTa: '8. ராகு திசை - புக்திகள் & பரிகாரம்', titleEn: '8. 1st Mahadasha' },
+      { id: 'p9', core: true, titleTa: '9. குரு திசை - புக்திகள் & பரிகாரம்', titleEn: '9. 2nd Mahadasha' },
+      { id: 'p10', core: true, titleTa: '10. சனி திசை - புக்திகள் & பரிகாரம்', titleEn: '10. 3rd Mahadasha' },
+      { id: 'p11', core: true, titleTa: '11. புதன் திசை - புக்திகள் & பரிகாரம்', titleEn: '11. 4th Mahadasha' },
+      { id: 'p12', core: true, titleTa: '12. கேது திசை - புக்திகள் & பரிகாரம்', titleEn: '12. 5th Mahadasha' },
+      { id: 'p13', core: true, titleTa: '13. சுக்கிரன் திசை - புக்திகள் & பரிகாரம்', titleEn: '13. 6th Mahadasha' },
+      { id: 'p14', core: true, titleTa: '14. சூரியன் திசை - புக்திகள் & பரிகாரம்', titleEn: '14. 7th Mahadasha' },
+      { id: 'p15', core: true, titleTa: '15. சந்திரன் திசை - புக்திகள் & பரிகாரம்', titleEn: '15. 8th Mahadasha' },
+      { id: 'p16', core: true, titleTa: '16. செவ்வாய் திசை - புக்திகள் & பரிகாரம்', titleEn: '16. 9th Mahadasha' },
+      { id: 'p17', core: true, titleTa: '17. சர்வாஷ்டவர்க்கப் பரல்கள்', titleEn: '17. Sarvashtavarga Table' },
+      { id: 'p18', core: true, titleTa: '18. எண் கணிதம் (நியூமராலஜி)', titleEn: '18. Numerology' }
     ];
 
     /* ENABLED PAGES STATE: CORE PAGES ENABLED BY DEFAULT */
@@ -911,13 +905,6 @@
           img: ''
         },
         p2: {
-          heading: 'விநாயகர் ஸ்துதி',
-          img: '',
-          verse: '',
-          subham: 'சுப மஸ்து.'
-        },
-        p3: {
-          img: '',
           name: '',
           gender: '',
           date: '',
@@ -939,7 +926,7 @@
           vr: '',
           pa: ''
         },
-        p4: {
+        p3: {
           nakshatra: '',
           nakStart: '',
           nakEnd: '',
@@ -960,12 +947,13 @@
           sunrise: '',
           sunset: ''
         },
-        p5: {
+        p4: {
           genderLabel: 'ஆண் பெயர்',
-          date: '',
-          time: '',
+          name: '',
           lagna: '',
+          date: '',
           rasi: '',
+          time: '',
           nakPada: '',
           rasiChart: Array(12).fill(''),
           navamsaChart: Array(12).fill(''),
@@ -976,7 +964,7 @@
           yogaKarana: '',
           dashaBal: ''
         },
-        p6: {
+        p5: {
           heading: 'துல்லியமான நிராயன கிரக நிலைகள்',
           rows: [
             { graha: '1-லக்னம்', deg1: '', nak: '', pada: '', lord: '', rasi: '', deg2: '', status: '' },
@@ -995,7 +983,8 @@
           footerDate: '',
           footerAyanamsha: ''
         },
-        p7: {
+        p6: {
+          heading: 'பாவ ஸ்புடம் (ஸ்ரீபதி முறை)',
           rasiChart: Array(12).fill(''),
           navamsaChart: Array(12).fill(''),
           drekkanaChart: Array(12).fill(''),
@@ -1009,114 +998,43 @@
           bhavas: Array.from({ length: 12 }, (_, i) => ({ bhava: i + 1, start: '', madhya: '', end: '' })),
           bhavaChange: ''
         },
-        p8: {
-          d3Chart: Array(12).fill(''),
-          d3Text: '',
-          d7Chart: Array(12).fill(''),
-          d7Text: ''
+        p7: {
+          heading: 'ஜாதகத்தில் கிரகங்களின் தசவர்க்கமும் பலமும்',
+          grahaHeaders: ['சூரி', 'சந்', 'செவ்', 'புத', 'குரு', 'சுக்', 'சனி', 'ராகு', 'கேது', 'லக்'],
+          tableA: [],
+          tableB: []
         },
-        p9: {
-          d60Chart: Array(12).fill(''),
-          d60Text: '',
-          d30Chart: Array(12).fill(''),
-          d30Text: ''
-        },
-        p10: {
-          d10Chart: Array(12).fill(''),
-          d10Text: '',
-          d16Chart: Array(12).fill(''),
-          d16Text: ''
-        },
-        p11: {
-          d4Chart: Array(12).fill(''),
-          d4Text: '',
-          d12Chart: Array(12).fill(''),
-          d12Text: ''
-        },
-        p12: {
-          horaChart: Array(12).fill(''),
-          notes: ''
-        },
-        p13: {
-          grahaCols: ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி'],
-          grahaRows: [
-            { name: 'ஸ்தான பலம்', vals: Array(7).fill('') },
-            { name: 'திக் பலம்', vals: Array(7).fill('') },
-            { name: 'கால பலம்', vals: Array(7).fill('') },
-            { name: 'சேஷ்டா பலம்', vals: Array(7).fill('') },
-            { name: 'நைசர்கிக பலம்', vals: Array(7).fill('') },
-            { name: 'திருஷ்டி பலம்', vals: Array(7).fill('') },
-            { name: 'மொத்தம்', vals: Array(7).fill('') },
-            { name: 'இஷ்ட பலம்', vals: Array(7).fill('') },
-            { name: 'கஷ்ட பலம்', vals: Array(7).fill('') }
-          ],
-          bhavaRows: [
-            { name: 'திருஷ்டி பலம்', vals: Array(12).fill('') },
-            { name: 'திக் பலம்', vals: Array(12).fill('') },
-            { name: 'அதிபதி பலம்', vals: Array(12).fill('') },
-            { name: 'மொத்தம்', vals: Array(12).fill('') }
-          ]
-        },
-        p14: {
-          introText: '',
-          table1: [
-            { name: 'காலன்', lord: '', graha: '', pRasi: '', pDeg: '', pNak: '', pPada: '', kRasi: '', kDeg: '', kNak: '', kPada: '' },
-            { name: 'மிருத்யு', lord: '', graha: '', pRasi: '', pDeg: '', pNak: '', pPada: '', kRasi: '', kDeg: '', kNak: '', kPada: '' },
-            { name: 'அர்த்தப்பிரஹரன்', lord: '', graha: '', pRasi: '', pDeg: '', pNak: '', pPada: '', kRasi: '', kDeg: '', kNak: '', kPada: '' },
-            { name: 'யமகண்டன்', lord: '', graha: '', pRasi: '', pDeg: '', pNak: '', pPada: '', kRasi: '', kDeg: '', kNak: '', kPada: '' },
-            { name: 'குளிகன்', lord: '', graha: '', pRasi: '', pDeg: '', pNak: '', pPada: '', kRasi: '', kDeg: '', kNak: '', kPada: '' }
-          ],
-          table2: [
-            { name: 'தூமன்', lord: '', rasi: '', deg: '', nak: '', pada: '' },
-            { name: 'வியதிபாதன்', lord: '', rasi: '', deg: '', nak: '', pada: '' },
-            { name: 'பரிவேடன்', lord: '', rasi: '', deg: '', nak: '', pada: '' },
-            { name: 'இந்திரதனுஸ்', lord: '', rasi: '', deg: '', nak: '', pada: '' },
-            { name: 'உபகேது', lord: '', rasi: '', deg: '', nak: '', pada: '' }
-          ]
-        },
-        p15: {
-          upagrahaChart: Array(12).fill(''),
-          sphutas: {
-            horaLagna: '', arudhaLagna: '', ghatikaLagna: '', induLagna: '', bhavaLagna: '',
-            sriLagna: '', yogiDeg: '', avayogiDeg: '', matruYogi: '', drekkana22: '',
-            navamsa64: '', sarpaDrekkana: '', kshetraSphutam: '', adrishtaDeg: ''
-          },
-          notes: {
-            bhava5: '', andhaka: '', pushkara: '', mrityu: '', avamrityu: ''
-          }
-        },
-        p16: {
-          grahaNames: ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி'],
-          naisargika: Array(7).fill(null).map(() => Array(7).fill('')),
-          tatkalika: Array(7).fill(null).map(() => Array(7).fill('')),
-          combined: Array(7).fill(null).map(() => Array(7).fill('')),
-          legend: '',
-          avasthas: [
-            { graha: 'சூரியன்', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
-            { graha: 'சந்திரன்', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
-            { graha: 'செவ்வாய்', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
-            { graha: 'புதன்', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
-            { graha: 'குரு', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
-            { graha: 'சுக்கிரன்', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
-            { graha: 'சனி', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
-            { graha: 'ராகு', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
-            { graha: 'கேது', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' }
-          ]
-        },
+        p8: { pageNo: 8, dashaLord: 'ராகு', dashaYears: 18, heading: 'ராகு திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்', rows: [], description: '' },
+        p9: { pageNo: 9, dashaLord: 'குரு', dashaYears: 16, heading: 'குரு திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்', rows: [], description: '' },
+        p10: { pageNo: 10, dashaLord: 'சனி', dashaYears: 19, heading: 'சனி திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்', rows: [], description: '' },
+        p11: { pageNo: 11, dashaLord: 'புதன்', dashaYears: 17, heading: 'புதன் திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்', rows: [], description: '' },
+        p12: { pageNo: 12, dashaLord: 'கேது', dashaYears: 7, heading: 'கேது திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்', rows: [], description: '' },
+        p13: { pageNo: 13, dashaLord: 'சுக்கிரன்', dashaYears: 20, heading: 'சுக்கிரன் திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்', rows: [], description: '' },
+        p14: { pageNo: 14, dashaLord: 'சூரியன்', dashaYears: 6, heading: 'சூரியன் திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்', rows: [], description: '' },
+        p15: { pageNo: 15, dashaLord: 'சந்திரன்', dashaYears: 10, heading: 'சந்திரன் திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்', rows: [], description: '' },
+        p16: { pageNo: 16, dashaLord: 'செவ்வாய்', dashaYears: 7, heading: 'செவ்வாய் திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்', rows: [], description: '' },
         p17: {
           grahas: ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி'],
-          matrix: Array(7).fill(null).map(() => Array(12).fill('')),
-          totals: Array(12).fill(''),
+          matrix: [],
+          totals: Array(12).fill(0),
           chartCells: Array(12).fill(''),
-          grandTotal: '',
-          kendram: '', panaparam: '', apoklimam: '', upachayam: '', trikonam: '',
-          varavinam: '', selavinam: '',
-          east: '', west: '', south: '', north: ''
+          grandTotal: 337,
+          kendram: 107,
+          panaparam: 108,
+          apoklimam: 122,
+          upachayam: 113,
+          trikonam: 93,
+          varavinam: 88,
+          selavinam: 86,
+          east: 93,
+          south: 83,
+          west: 80,
+          north: 81
         },
         p18: {
           name: '',
-          engSum: '',
-          dobEng: '',
+          alphabetSum: '',
+          dateStr: '',
           dateNum: '',
           yearNum: '',
           luckyNums: '',
@@ -1125,39 +1043,8 @@
           luckyStones: '',
           deity: '',
           temples: '',
-          letters: Array(26).fill(''),
+          alphabets: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
           subham: 'சுபம்.'
-        },
-        opt_aspects: {
-          grahaLongitudes: Array(9).fill(''),
-          grahaMatrix: Array(9).fill(null).map(() => Array(9).fill('')),
-          footnote: '',
-          bhavaMadhya: Array(12).fill(''),
-          bhavaMatrix: Array(12).fill(null).map(() => Array(9).fill(''))
-        },
-        opt_dasavarga: {
-          tableA: Array.from({ length: 12 }, () => Array(13).fill('')),
-          tableB: Array.from({ length: 10 }, () => Array(10).fill(''))
-        },
-        opt_pakshi: {
-          img: '',
-          text1: '',
-          text2: ''
-        },
-        opt_dashas: Array.from({ length: 9 }, (_, dIdx) => ({
-          lord: '',
-          rows: Array.from({ length: 9 }, () => ({
-            bhukti: '', sthanamLak: '', sthanamDasha: '', status: '',
-            kalamYMD: '', start: '', end: '', ageYMD: '', palan: ''
-          })),
-          img: '',
-          desc: ''
-        })),
-        opt_dasha_matrix: {
-          name: '',
-          iruppuText: '',
-          matrix: Array(9).fill(null).map(() => Array(8).fill('')),
-          underlined: {}
         }
       };
     }
@@ -1383,27 +1270,7 @@
 
     /* PAGE 2: VINAYAGAR STUTHI */
     function renderPage2Html() {
-      const d = BOOKLET_DATA.p2;
-      const isTa = currentLang === 'ta';
-      const lines = (d.verse || '').split('\n').filter(Boolean);
-      return `
-        <div class="stuthi-container">
-          <div class="stuthi-title">${isTa ? 'விநாயகர் ஸ்துதி' : 'VINAYAGAR STUTHI'}</div>
-          <div class="stuthi-img-slot">
-            ${d.img ? `<img src="${d.img}" alt="Vinayagar">` : (isTa ? 'விநாயகர் படம்' : 'Vinayagar Image')}
-          </div>
-          <div class="stuthi-verse">
-            ${lines.length > 0 ? lines.join('<br>') : ''}
-          </div>
-          <div class="stuthi-subham">${d.subham || (isTa ? 'சுப மஸ்து.' : 'Subha Masthu.')}</div>
-        </div>
-        <div class="page-bottom-rule"><span>.</span></div>
-      `;
-    }
-
-    /* PAGE 3: JANANA VIVARAM */
-    function renderPage3Html() {
-      const d = BOOKLET_DATA.p3;
+      const d = BOOKLET_DATA.p2 || {};
       const isTa = currentLang === 'ta';
       return `
         <div>
@@ -1439,29 +1306,28 @@
       `;
     }
 
-    /* PAGE 4: JANANA NAKSHATRA DETAILS */
-    function renderPage4Html() {
-      const d = BOOKLET_DATA.p4;
+    function renderPage3Html() {
+      const d = BOOKLET_DATA.p3 || {};
       const isTa = currentLang === 'ta';
       return `
         <div>
-          <div class="page-title">${isTa ? 'ஜனன விவரம்' : 'JANANA VIVARAM'}</div>
+          <div class="page-title">${isTa ? 'ஜனன விவரம் (நட்சத்திர விவரம்)' : 'JANANA NAKSHATRA DETAILS'}</div>
           <div class="title-rule"></div>
           <div class="nakshatra-grid">
             <div><b>${isTa ? 'ஜனன நட்சத்திரம்' : 'Birth Nakshatra'}:</b> ${d.nakshatra || ''}</div>
             <div><b>${isTa ? 'நட்சத்திர ஆரம்ப நேரம்' : 'Nakshatra Start'}:</b> ${d.nakStart || ''}</div>
             <div><b>${isTa ? 'நட்சத்திர முடிவு நேரம்' : 'Nakshatra End'}:</b> ${d.nakEnd || ''}</div>
-            <div><b>${isTa ? 'ஆதியந்த பரம நாழிகை' : 'Aadiyanta Nazhigai'}:</b> ${d.aadiyanta || ''}</div>
-            <div><b>${isTa ? 'கர்ப்பசெல் நாழிகை' : 'Garbhasel Nazhigai'}:</b> ${d.garbha || ''}</div>
-            <div><b>${isTa ? 'நின்ற இருப்பு நாழிகை' : 'Iruppu Nazhigai'}:</b> ${d.iruppu || ''}</div>
-            <div style="grid-column: span 2;"><b>${isTa ? 'திசை இருப்பு' : 'Dasha Balance'}:</b> ${d.dashaBal || ''}</div>
+            <div><b>${isTa ? 'ஆதியந்த பரம நாழிகை' : 'Aadiyanta Nazhigai'}:</b> <span class="font-mono">${d.aadiyanta || ''}</span></div>
+            <div><b>${isTa ? 'கர்ப்பசெல் நாழிகை' : 'Garbhasel Nazhigai'}:</b> <span class="font-mono">${d.garbha || ''}</span></div>
+            <div><b>${isTa ? 'நின்ற இருப்பு நாழிகை' : 'Iruppu Nazhigai'}:</b> <span class="font-mono">${d.iruppu || ''}</span></div>
+            <div style="grid-column: span 2;"><b>${isTa ? 'திசை இருப்பு' : 'Dasha Balance'}:</b> <span style="font-weight:bold;">${d.dashaBal || ''}</span></div>
             <div><b>${isTa ? 'ஜனன திதி' : 'Birth Tithi'}:</b> ${d.tithi || ''}</div>
             <div><b>${isTa ? 'திதி சூன்ய ராசி' : 'Tithi Soonyam'}:</b> ${d.soonyam || ''}</div>
             <div><b>${isTa ? 'யோகி' : 'Yogi'}:</b> ${d.yogi || ''}</div>
             <div><b>${isTa ? 'அவயோகி' : 'Avayogi'}:</b> ${d.avayogi || ''}</div>
             <div><b>${isTa ? 'நட்சத்திர ஹோரை' : 'Hora'}:</b> ${d.hora || ''}</div>
             <div><b>${isTa ? 'அயனாம்சம்' : 'Ayanamsha'}:</b> <span class="font-mono">${d.ayanamsha || ''}</span></div>
-            <div><b>${isTa ? 'சுதேச நேரத்திருத்தம்' : 'LMT Correction'}:</b> ${d.lmt || ''}</div>
+            <div><b>${isTa ? 'சுதேச நேரத்திருத்தம்' : 'LMT Correction'}:</b> <span class="font-mono">${d.lmt || ''}</span></div>
             <div><b>${isTa ? 'லக்ன சுபர்' : 'Lagna Benefics'}:</b> ${d.subhar || ''}</div>
             <div><b>${isTa ? 'லக்ன பாபர்' : 'Lagna Malefics'}:</b> ${d.pabar || ''}</div>
             <div><b>${isTa ? 'வைநாசிகத் தாரை' : 'Vainasika Tara'}:</b> ${d.vainasika || ''}</div>
@@ -1473,75 +1339,70 @@
       `;
     }
 
-    /* PAGE 5: RASI & NAVAMSA CHARTS */
-    function renderPage5Html() {
-      const d = BOOKLET_DATA.p5;
+    function renderPage4Html() {
+      const d = BOOKLET_DATA.p4 || {};
       const isTa = currentLang === 'ta';
       return `
         <div>
           <div class="charts-top-meta">
-            <div><b>${d.genderLabel || ''}</b> | ${d.date || ''} ${d.time || ''}</div>
-            <div><b>${isTa ? 'லக்னம்' : 'Lagna'}:</b> ${d.lagna || ''} | <b>${isTa ? 'ராசி' : 'Rasi'}:</b> ${d.rasi || ''} | <b>${isTa ? 'நட்சத்திரம்' : 'Nakshatra'}:</b> ${d.nakPada || ''}</div>
+            <div><b>${d.genderLabel || ''}:</b> ${d.name || ''} | <b>${isTa ? 'லக்னம்' : 'Lagna'}:</b> ${d.lagna || ''}</div>
+            <div><b>${isTa ? 'தேதி' : 'Date'}:</b> ${d.date || ''} | <b>${isTa ? 'ராசி' : 'Rasi'}:</b> ${d.rasi || ''}</div>
+            <div><b>${isTa ? 'நேரம்' : 'Time'}:</b> ${d.time || ''} | <b>${isTa ? 'நட்சத்திரம்' : 'Nak'}:</b> ${d.nakPada || ''}</div>
           </div>
           <div class="charts-pair-row">
             <div class="chart-box-wrap">
-              ${renderSouthChartHtml(isTa ? 'ராசி' : 'RASI', d.rasiChart)}
+              ${renderSouthChartHtml(isTa ? 'ராசி' : 'RASI', d.rasiChart || [])}
             </div>
             <div class="chart-box-wrap">
-              ${renderSouthChartHtml(isTa ? 'நவாம்சம்' : 'NAVAMSA', d.navamsaChart)}
+              ${renderSouthChartHtml(isTa ? 'நவாம்சம்' : 'NAVAMSA', d.navamsaChart || [])}
             </div>
           </div>
-          <div style="display: flex; justify-content: space-between; font-size: 7.5pt; margin-top: 3px;">
-            <div><b>${isTa ? 'இடம்' : 'Place'}:</b> ${d.place || ''} <span style="font-size: 6.8pt; color: #555;">(${d.coords || ''})</span> | <b>${isTa ? 'தமிழ் தேதி' : 'Tamil Date'}:</b> ${d.tamilDate || ''}</div>
-            <div><b>${d.pakshaTithi || ''}</b> | <b>${d.yogaKarana || ''}</b> | <b>${isTa ? 'திசை இருப்பு' : 'Dasha'}:</b> ${d.dashaBal || ''}</div>
+          <div style="display:flex; justify-content:space-between; font-size:7.2pt; margin-top:4px; color:#555;">
+            <div><b>${isTa ? 'இடம்' : 'Place'}:</b> ${d.place || ''} (${d.coords || ''}) | <b>${isTa ? 'தமிழ் தேதி' : 'Tamil Date'}:</b> ${d.tamilDate || ''}</div>
+            <div><b>${d.pakshaTithi || ''}</b> | <b>${isTa ? 'திசை' : 'Dasha'}:</b> ${d.dashaBal || ''}</div>
           </div>
         </div>
         <div class="page-bottom-rule"><span>.</span></div>
       `;
     }
 
-    /* PAGE 6: PLANET TABLE */
-    function renderPage6Html() {
-      const d = BOOKLET_DATA.p6;
+    function renderPage5Html() {
+      const d = BOOKLET_DATA.p5 || {};
       const isTa = currentLang === 'ta';
-      let tableRows = '';
-      (d.rows || []).forEach(r => {
-        tableRows += `
-          <tr>
-            <td><b>${r.graha}</b></td>
-            <td class="font-mono">${r.deg1 || ''}</td>
-            <td>${r.nak || ''}</td>
-            <td class="text-center">${r.pada || ''}</td>
-            <td>${r.lord || ''}</td>
-            <td>${r.rasi || ''}</td>
-            <td class="font-mono">${r.deg2 || ''}</td>
-            <td class="text-center">${r.status || ''}</td>
-          </tr>
-        `;
-      });
-
+      const rows = d.rows || [];
       return `
         <div>
-          <div class="page-title">${d.heading || (isTa ? 'துல்லியமான நிராயன கிரக நிலைகள்' : 'NIRAYANA PLANETARY POSITIONS')}</div>
+          <div class="page-title">${d.heading || (isTa ? 'துல்லியமான நிராயன கிரக நிலைகள்' : 'PLANETARY POSITIONS')}</div>
           <div class="title-rule"></div>
-          <table class="data-table">
+          <table class="data-table" style="font-size:7.5pt; width:100%;">
             <thead>
               <tr>
                 <th>${isTa ? 'கிரகம்' : 'Planet'}</th>
                 <th>${isTa ? 'பாகை-கலை' : 'Deg-Min'}</th>
                 <th>${isTa ? 'நட்சத்திரம்' : 'Nakshatra'}</th>
-                <th class="text-center">${isTa ? 'பாதம்' : 'Pada'}</th>
+                <th style="text-align:center;">${isTa ? 'பாதம்' : 'Pada'}</th>
                 <th>${isTa ? 'நட்-அதிபதி' : 'Star Lord'}</th>
                 <th>${isTa ? 'ராசி' : 'Rasi'}</th>
                 <th>${isTa ? 'பாகை-கலை' : 'Deg-Min'}</th>
-                <th class="text-center">${isTa ? 'நிலை' : 'Status'}</th>
+                <th style="text-align:center;">${isTa ? 'நிலை' : 'Status'}</th>
               </tr>
             </thead>
             <tbody>
-              ${tableRows}
+              ${rows.map(r => `
+                <tr>
+                  <td><b>${r.graha}</b></td>
+                  <td class="font-mono">${r.deg1 || ''}</td>
+                  <td>${r.nak || ''}</td>
+                  <td style="text-align:center;">${r.pada || ''}</td>
+                  <td>${r.lord || ''}</td>
+                  <td>${r.rasi || ''}</td>
+                  <td class="font-mono">${r.deg2 || ''}</td>
+                  <td style="text-align:center;">${r.status || ''}</td>
+                </tr>
+              `).join('')}
             </tbody>
           </table>
-          <div style="display: flex; justify-content: space-between; font-size: 7.5pt; margin-top: 4px;">
+          <div style="display:flex; justify-content:space-between; font-size:7.5pt; margin-top:8px;">
             <span><b>${isTa ? 'பெயர்' : 'Name'}:</b> ${d.footerName || ''}</span>
             <span><b>${isTa ? 'தேதி' : 'Date'}:</b> ${d.footerDate || ''}</span>
             <span><b>${isTa ? 'அயனாம்சம்' : 'Ayanamsha'}:</b> <span class="font-mono">${d.footerAyanamsha || ''}</span></span>
@@ -1551,412 +1412,201 @@
       `;
     }
 
-    /* PAGE 7: BHAVA CHARTS AND SRIPATI SPHUTAM */
+    function renderPage6Html() {
+      const d = BOOKLET_DATA.p6 || {};
+      const isTa = currentLang === 'ta';
+      return `
+        <div>
+          <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:4px; margin-bottom:4px;">
+            <div style="display:flex; flex-direction:column; align-items:center;">
+              ${renderSouthChartHtml(isTa ? 'ராசி' : 'RASI', d.rasiChart || [], 'mini-south-chart')}
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center;">
+              ${renderSouthChartHtml(isTa ? 'நவாம்சம்' : 'NAVAMSA', d.navamsaChart || [], 'mini-south-chart')}
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center;">
+              ${renderSouthChartHtml(isTa ? '3-திரேக்காணம்' : 'D3-DREKKANA', d.drekkanaChart || [], 'mini-south-chart')}
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center;">
+              ${renderSouthChartHtml(isTa ? 'ஸ்ரீபதி-பாவகம்' : 'SRIPATI', d.sripatiChart || [], 'mini-south-chart')}
+            </div>
+          </div>
+
+          <div style="font-size:8.5pt; font-weight:bold; margin-bottom:4px;">
+            ${d.heading || (isTa ? 'பாவ ஸ்புடம் (ஸ்ரீபதி முறை)' : 'BHAVA SPHUTAM (SRIPATI)')}
+          </div>
+
+          <div style="display:flex; gap:8px; font-size:7pt;">
+            <table class="data-table" style="width:40%;">
+              <thead>
+                <tr>
+                  <th>${isTa ? 'கிரகம்' : 'Graha'}</th>
+                  <th style="text-align:right;" class="font-mono">${isTa ? 'பாகை' : 'Degrees'}</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${(d.grahasSphutam || []).map(g => `
+                  <tr>
+                    <td><b>${g.graha}</b></td>
+                    <td style="text-align:right;" class="font-mono">${g.deg || ''}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+
+            <table class="data-table" style="width:60%;">
+              <thead>
+                <tr>
+                  <th style="text-align:center;">${isTa ? 'பாவம்' : 'Bhava'}</th>
+                  <th style="text-align:center;" class="font-mono">${isTa ? 'ஆரம்பம்' : 'Start'}</th>
+                  <th style="text-align:center;" class="font-mono">${isTa ? 'மத்தி' : 'Madhya'}</th>
+                  <th style="text-align:center;" class="font-mono">${isTa ? 'முடிவு' : 'End'}</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${(d.bhavas || []).map(b => `
+                  <tr>
+                    <td style="text-align:center; font-weight:bold;">${b.bhava}</td>
+                    <td style="text-align:center;" class="font-mono">${b.start || ''}</td>
+                    <td style="text-align:center; font-weight:bold;" class="font-mono">${b.madhya || ''}</td>
+                    <td style="text-align:center;" class="font-mono">${b.end || ''}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+
+          ${d.bhavaChange ? `
+            <div style="font-size:7.2pt; font-weight:bold; margin-top:6px; background:#fafafa; border:1px solid #ddd; padding:4px; border-radius:4px;">
+              <b>${isTa ? 'ஜாதகத்தில் பாவக மாற்றம்' : 'Bhava Transitions'}:</b> ${d.bhavaChange}
+            </div>
+          ` : ''}
+        </div>
+        <div class="page-bottom-rule"><span>.</span></div>
+      `;
+    }
+
     function renderPage7Html() {
-      const d = BOOKLET_DATA.p7;
+      const d = BOOKLET_DATA.p7 || {};
       const isTa = currentLang === 'ta';
-
-      let grahasHtml = '';
-      (d.grahasSphutam || []).forEach(g => {
-        grahasHtml += `<tr><td><b>${g.graha}</b></td><td class="font-mono">${g.deg || ''}</td></tr>`;
-      });
-
-      let bhavasHtml = '';
-      (d.bhavas || []).forEach(b => {
-        bhavasHtml += `<tr><td class="text-center">${b.bhava}</td><td class="font-mono">${b.start || ''}</td><td class="font-mono">${b.madhya || ''}</td><td class="font-mono">${b.end || ''}</td></tr>`;
-      });
-
+      const headers = d.grahaHeaders || ['சூரி','சந்','செவ்','புத','குரு','சுக்','சனி','ராகு','கேது','லக்'];
       return `
-        <div>
-          <!-- ROW 1: 3 MINI CHARTS -->
-          <div style="display: flex; justify-content: space-between; gap: 4px; margin-bottom: 4px;">
-            ${renderSouthChartHtml(isTa ? 'ராசி' : 'RASI', d.rasiChart, 'mini-south-chart')}
-            ${renderSouthChartHtml(isTa ? 'நவாம்சம்' : 'NAVAMSA', d.navamsaChart, 'mini-south-chart')}
-            ${renderSouthChartHtml(isTa ? '3-திரேக்காணம்' : 'D3-DREKKANA', d.drekkanaChart, 'mini-south-chart')}
+        <div style="display:flex; flex-direction:column; justify-content:space-between; height:100%;">
+          <div>
+            <div class="page-title">${d.heading || (isTa ? 'ஜாதகத்தில் கிரகங்களின் தசவர்க்கமும் பலமும்' : 'DASAVARGA AND PLANETARY STRENGTH')}</div>
+            <div class="title-rule"></div>
+
+            <table class="data-table" style="font-size:7pt; width:100%; text-align:center; margin-bottom:6px; border-collapse:collapse;">
+              <thead>
+                <tr style="background:#f5f5f5;">
+                  <th style="width:16%; text-align:left; border:1px solid #000; padding:2px;">${isTa ? 'வர்க்கம்' : 'Varga'}</th>
+                  ${headers.map(h => `<th style="border:1px solid #000; padding:2px;">${h}</th>`).join('')}
+                  <th style="background:#e6f4ea; color:#137333; border:1px solid #000; padding:2px;">${isTa ? 'சுப' : 'Subha'}</th>
+                  <th style="background:#fce8e6; color:#c5221f; border:1px solid #000; padding:2px;">${isTa ? 'அசுப' : 'Asubha'}</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${(d.tableA || []).map((row, rIdx) => {
+                  const isTotal = rIdx >= 10;
+                  return `
+                    <tr style="${isTotal ? 'font-weight:bold; background:#f0f0f0;' : ''}">
+                      <td style="text-align:left; font-weight:bold; border:1px solid #000; padding:2px;">${row.varga}</td>
+                      ${(row.planets || []).map(pVal => `<td style="border:1px solid #000; padding:2px;">${pVal}</td>`).join('')}
+                      <td style="font-weight:bold; color:#137333; border:1px solid #000; padding:2px;">${row.subha}</td>
+                      <td style="font-weight:bold; color:#c5221f; border:1px solid #000; padding:2px;">${row.asubha}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+
+            <table class="data-table" style="font-size:7pt; width:100%; text-align:center; border-collapse:collapse;">
+              <thead>
+                <tr style="background:#f5f5f5;">
+                  <th style="width:16%; text-align:left; border:1px solid #000; padding:2px;">${isTa ? 'வர்க்கம்' : 'Varga'}</th>
+                  ${headers.map(h => `<th style="border:1px solid #000; padding:2px;">${h}</th>`).join('')}
+                </tr>
+              </thead>
+              <tbody>
+                ${(d.tableB || []).map(row => `
+                  <tr>
+                    <td style="text-align:left; font-weight:bold; border:1px solid #000; padding:2px;">${row.varga}</td>
+                    ${(row.planets || []).map(pVal => `<td style="border:1px solid #000; padding:2px;">${pVal}</td>`).join('')}
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
           </div>
-          <!-- ROW 2: SRIPATI BHAVA CHART + SPHUTAM TABLE -->
-          <div style="display: flex; gap: 8px; align-items: flex-start; margin-top: 4px;">
-            <div style="width: 56mm;">
-              ${renderSouthChartHtml(isTa ? 'ஸ்ரீபதி-பாவகம்' : 'SRIPATI BHAVA', d.sripatiChart, 'mini-south-chart')}
-            </div>
-            <div style="flex: 1;">
-              <div style="font-size: 8.5pt; font-weight: 800; margin-bottom: 2px;">${isTa ? 'பாவ ஸ்புடம் (ஸ்ரீபதி முறை)' : 'BHAVA SPHUTAM (SRIPATI)'}</div>
-              <div style="display: flex; gap: 6px;">
-                <!-- BLOCK 1: GRAHAS -->
-                <table class="data-table" style="width: 42%;">
-                  <thead>
-                    <tr><th>${d.personName || (isTa ? 'கிரகம்' : 'Planet')}</th><th>${isTa ? 'பாகை' : 'Deg'}</th></tr>
-                  </thead>
-                  <tbody>${grahasHtml}</tbody>
-                </table>
-                <!-- BLOCK 2: BHAVAS -->
-                <table class="data-table" style="width: 58%;">
-                  <thead>
-                    <tr><th class="text-center">${isTa ? 'பாவம்' : 'Bhava'}</th><th>${isTa ? 'ஆரம்பம்' : 'Start'}</th><th>${isTa ? 'மத்தி' : 'Madhya'}</th><th>${isTa ? 'முடிவு' : 'End'}</th></tr>
-                  </thead>
-                  <tbody>${bhavasHtml}</tbody>
-                </table>
+        </div>
+        <div class="page-bottom-rule"><span>.</span></div>
+      `;
+    }
+
+    function renderMahadashaPageHtml(pageId) {
+      const d = BOOKLET_DATA[pageId] || {};
+      const isTa = currentLang === 'ta';
+      const rows = d.rows || [];
+      return `
+        <div style="display:flex; flex-direction:column; justify-content:space-between; height:100%;">
+          <div>
+            <div class="page-title">${d.heading || (isTa ? `${d.dashaLord || ''} திசையில் நடைபெறும் புக்திகளுக்கான விவரங்கள்` : `BHUKTI DETAILS IN ${d.dashaLord || ''} DASHA`)}</div>
+            <div class="title-rule"></div>
+
+            <table class="data-table" style="font-size:7.2pt; width:100%; border-collapse:collapse; margin-bottom:6px;">
+              <thead>
+                <tr style="background:#f5f5f5;">
+                  <th rowspan="2" style="border:1px solid #000; padding:2px; text-align:left;">${isTa ? 'புக்தி' : 'Bhukti'}</th>
+                  <th colspan="2" style="border:1px solid #000; padding:2px; text-align:center;">${isTa ? 'ஸ்தானம்' : 'House'}</th>
+                  <th rowspan="2" style="border:1px solid #000; padding:2px; text-align:center;">${isTa ? 'நிலை' : 'State'}</th>
+                  <th rowspan="2" style="border:1px solid #000; padding:2px; text-align:center;">${isTa ? 'காலம் (வரு-மா-நா)' : 'Period (Y-M-D)'}</th>
+                  <th rowspan="2" style="border:1px solid #000; padding:2px; text-align:center;">${isTa ? 'ஆரம்பம் தேதி' : 'Start Date'}</th>
+                  <th rowspan="2" style="border:1px solid #000; padding:2px; text-align:center;">${isTa ? 'முடிவு தேதி' : 'End Date'}</th>
+                  <th rowspan="2" style="border:1px solid #000; padding:2px; text-align:center;">${isTa ? 'வயது (வரு-மா-நா)' : 'Age (Y-M-D)'}</th>
+                  <th rowspan="2" style="border:1px solid #000; padding:2px; text-align:center;">${isTa ? 'பலன்கள்' : 'Remarks'}</th>
+                </tr>
+                <tr style="background:#fafafa;">
+                  <th style="border:1px solid #000; padding:1px; text-align:center; font-size:6.5pt;">${isTa ? 'லக்' : 'Lag'}</th>
+                  <th style="border:1px solid #000; padding:1px; text-align:center; font-size:6.5pt;">${isTa ? 'தசா' : 'Dasa'}</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows.map(r => `
+                  <tr>
+                    <td style="border:1px solid #000; padding:2px; text-align:left; font-weight:bold;">${r.bhukti}</td>
+                    <td style="border:1px solid #000; padding:2px; text-align:center;" class="font-mono">${r.sthanamLag}</td>
+                    <td style="border:1px solid #000; padding:2px; text-align:center;" class="font-mono">${r.sthanamDasha}</td>
+                    <td style="border:1px solid #000; padding:2px; text-align:center;">${r.status}</td>
+                    <td style="border:1px solid #000; padding:2px; text-align:center;" class="font-mono">${r.duration}</td>
+                    <td style="border:1px solid #000; padding:2px; text-align:center;" class="font-mono">${r.startDate}</td>
+                    <td style="border:1px solid #000; padding:2px; text-align:center; font-weight:bold;" class="font-mono">${r.endDate}</td>
+                    <td style="border:1px solid #000; padding:2px; text-align:center;" class="font-mono">${r.ageAtEnd}</td>
+                    <td style="border:1px solid #000; padding:2px; text-align:center;">${r.remarks || '**'}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+
+            ${d.description ? `
+              <div style="font-size:7.5pt; line-height:1.5; text-align:justify; margin-top:6px;">
+                ${d.description}
               </div>
-            </div>
-          </div>
-          <div style="font-size: 7.5pt; margin-top: 3px;"><b>${isTa ? 'ஜாதகத்தில் பாவக மாற்றம்' : 'Bhava Shift'} :</b> ${d.bhavaChange || ''}</div>
-        </div>
-        <div class="page-bottom-rule"><span>.</span></div>
-      `;
-    }
-
-    /* PAGE 8: DIVISIONAL CHARTS (a) - D3 & D7 */
-    function renderPage8Html() {
-      const d = BOOKLET_DATA.p8;
-      const isTa = currentLang === 'ta';
-      return `
-        <div>
-          <div class="charts-pair-row">
-            <div class="chart-box-wrap">
-              ${renderSouthChartHtml(isTa ? '3-திரேக்காணம்' : 'D3-DREKKANA', d.d3Chart)}
-              <div style="font-size: 7.2pt; margin-top: 3px; line-height: 1.25;">${d.d3Text || ''}</div>
-            </div>
-            <div class="chart-box-wrap">
-              ${renderSouthChartHtml(isTa ? '7-சப்தாம்சம்' : 'D7-SAPTAMSA', d.d7Chart)}
-              <div style="font-size: 7.2pt; margin-top: 3px; line-height: 1.25;">${d.d7Text || ''}</div>
-            </div>
+            ` : ''}
           </div>
         </div>
         <div class="page-bottom-rule"><span>.</span></div>
       `;
     }
 
-    /* PAGE 9: DIVISIONAL CHARTS (b) - D60 & D30 */
-    function renderPage9Html() {
-      const d = BOOKLET_DATA.p9;
-      const isTa = currentLang === 'ta';
-      return `
-        <div>
-          <div class="charts-pair-row">
-            <div class="chart-box-wrap">
-              ${renderSouthChartHtml(isTa ? '60-சஷ்டியாம்சம்' : 'D60-SHASHTIAMSA', d.d60Chart)}
-              <div style="font-size: 7.2pt; margin-top: 3px; line-height: 1.25;">${d.d60Text || ''}</div>
-            </div>
-            <div class="chart-box-wrap">
-              ${renderSouthChartHtml(isTa ? '30-திரிம்சாம்சம்' : 'D30-TRIMSAMSA', d.d30Chart)}
-              <div style="font-size: 7.2pt; margin-top: 3px; line-height: 1.25;">${d.d30Text || ''}</div>
-            </div>
-          </div>
-        </div>
-        <div class="page-bottom-rule"><span>.</span></div>
-      `;
-    }
+    function renderPage8Html() { return renderMahadashaPageHtml('p8'); }
+    function renderPage9Html() { return renderMahadashaPageHtml('p9'); }
+    function renderPage10Html() { return renderMahadashaPageHtml('p10'); }
+    function renderPage11Html() { return renderMahadashaPageHtml('p11'); }
+    function renderPage12Html() { return renderMahadashaPageHtml('p12'); }
+    function renderPage13Html() { return renderMahadashaPageHtml('p13'); }
+    function renderPage14Html() { return renderMahadashaPageHtml('p14'); }
+    function renderPage15Html() { return renderMahadashaPageHtml('p15'); }
+    function renderPage16Html() { return renderMahadashaPageHtml('p16'); }
 
-    /* PAGE 10: DIVISIONAL CHARTS (c) - D10 & D16 */
-    function renderPage10Html() {
-      const d = BOOKLET_DATA.p10;
-      const isTa = currentLang === 'ta';
-      return `
-        <div>
-          <div class="charts-pair-row">
-            <div class="chart-box-wrap">
-              ${renderSouthChartHtml(isTa ? '10-தசாம்சம்' : 'D10-DASAMSA', d.d10Chart)}
-              <div style="font-size: 7.2pt; margin-top: 3px; line-height: 1.25;">${d.d10Text || ''}</div>
-            </div>
-            <div class="chart-box-wrap">
-              ${renderSouthChartHtml(isTa ? '16-ஷோடசாம்சம்' : 'D16-SHODASAMSA', d.d16Chart)}
-              <div style="font-size: 7.2pt; margin-top: 3px; line-height: 1.25;">${d.d16Text || ''}</div>
-            </div>
-          </div>
-        </div>
-        <div class="page-bottom-rule"><span>.</span></div>
-      `;
-    }
-
-    /* PAGE 11: DIVISIONAL CHARTS (d) - D4 & D12 */
-    function renderPage11Html() {
-      const d = BOOKLET_DATA.p11;
-      const isTa = currentLang === 'ta';
-      return `
-        <div>
-          <div class="charts-pair-row">
-            <div class="chart-box-wrap">
-              ${renderSouthChartHtml(isTa ? '4-சதுராம்சம்' : 'D4-CHATURTHAMSA', d.d4Chart)}
-              <div style="font-size: 7.2pt; margin-top: 3px; line-height: 1.25;">${d.d4Text || ''}</div>
-            </div>
-            <div class="chart-box-wrap">
-              ${renderSouthChartHtml(isTa ? '12-துவாதசாம்சம்' : 'D12-DWADASAMSA', d.d12Chart)}
-              <div style="font-size: 7.2pt; margin-top: 3px; line-height: 1.25;">${d.d12Text || ''}</div>
-            </div>
-          </div>
-        </div>
-        <div class="page-bottom-rule"><span>.</span></div>
-      `;
-    }
-
-    /* PAGE 12: HORA CHART (D2) */
-    function renderPage12Html() {
-      const d = BOOKLET_DATA.p12;
-      const isTa = currentLang === 'ta';
-      return `
-        <div>
-          <div style="display: flex; gap: 14px; align-items: flex-start;">
-            <div style="flex: 2; display: flex; justify-content: center;">
-              ${renderSouthChartHtml(isTa ? 'ஓரை' : 'HORA (D2)', d.horaChart)}
-            </div>
-            <div style="flex: 1; font-size: 7.5pt; line-height: 1.35; padding: 4px;">
-              <div style="font-weight: 800; font-size: 8.5pt; margin-bottom: 4px;">${isTa ? 'ஓரை பலன்கள்' : 'Hora Analysis'}</div>
-              <div>${d.notes || ''}</div>
-            </div>
-          </div>
-        </div>
-        <div class="page-bottom-rule"><span>.</span></div>
-      `;
-    }
-
-    /* PAGE 13: SHADBALA */
-    function renderPage13Html() {
-      const d = BOOKLET_DATA.p13;
-      const isTa = currentLang === 'ta';
-
-      let grahaRowsHtml = '';
-      (d.grahaRows || []).forEach(r => {
-        grahaRowsHtml += `<tr><td><b>${r.name}</b></td>`;
-        (r.vals || []).forEach(v => {
-          grahaRowsHtml += `<td class="font-mono text-center">${v}</td>`;
-        });
-        grahaRowsHtml += `</tr>`;
-      });
-
-      let bhavaRowsHtml = '';
-      (d.bhavaRows || []).forEach(r => {
-        bhavaRowsHtml += `<tr><td><b>${r.name}</b></td>`;
-        (r.vals || []).forEach(v => {
-          bhavaRowsHtml += `<td class="font-mono text-center">${v}</td>`;
-        });
-        bhavaRowsHtml += `</tr>`;
-      });
-
-      return `
-        <div>
-          <div class="page-title">${isTa ? 'ஜாதகத்தில் ஷட்பலம் ஆய்வு' : 'SHADBALA ANALYSIS'}</div>
-          <div class="title-rule"></div>
-          
-          <div style="font-size: 8pt; font-weight: 800; margin-bottom: 2px;">${isTa ? 'கிரக கணிதம்' : 'Graha Bala'}</div>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>${isTa ? 'பலன்' : 'Bala'}</th>
-                ${d.grahaCols.map(g => `<th class="text-center">${g}</th>`).join('')}
-              </tr>
-            </thead>
-            <tbody>${grahaRowsHtml}</tbody>
-          </table>
-
-          <div style="font-size: 8pt; font-weight: 800; margin: 4px 0 2px 0;">${isTa ? 'பாவக கணிதம்' : 'Bhava Bala'}</div>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>${isTa ? 'பலன்' : 'Bala'}</th>
-                ${Array.from({ length: 12 }, (_, i) => `<th class="text-center">${i + 1}</th>`).join('')}
-              </tr>
-            </thead>
-            <tbody>${bhavaRowsHtml}</tbody>
-          </table>
-        </div>
-        <div class="page-bottom-rule"><span>.</span></div>
-      `;
-    }
-
-    /* PAGE 14: UPAGRAHAS 1 */
-    function renderPage14Html() {
-      const d = BOOKLET_DATA.p14;
-      const isTa = currentLang === 'ta';
-
-      let t1Rows = '';
-      (d.table1 || []).forEach(r => {
-        t1Rows += `
-          <tr>
-            <td><b>${r.name}</b></td>
-            <td>${r.lord || ''}</td>
-            <td>${r.graha || ''}</td>
-            <td>${r.pRasi || ''}</td>
-            <td class="font-mono">${r.pDeg || ''}</td>
-            <td>${r.pNak || ''}</td>
-            <td class="text-center">${r.pPada || ''}</td>
-            <td>${r.kRasi || ''}</td>
-            <td class="font-mono">${r.kDeg || ''}</td>
-            <td>${r.kNak || ''}</td>
-            <td class="text-center">${r.kPada || ''}</td>
-          </tr>
-        `;
-      });
-
-      let t2Rows = '';
-      (d.table2 || []).forEach(r => {
-        t2Rows += `
-          <tr>
-            <td><b>${r.name}</b></td>
-            <td>${r.lord || ''}</td>
-            <td>${r.rasi || ''}</td>
-            <td class="font-mono">${r.deg || ''}</td>
-            <td>${r.nak || ''}</td>
-            <td class="text-center">${r.pada || ''}</td>
-          </tr>
-        `;
-      });
-
-      return `
-        <div>
-          <div class="page-title">${isTa ? 'உபகிரகங்கள் - குளிகாதி ஐவர் விவரங்கள்' : 'UPAGRAHAS - GULIKADI DETAILS'}</div>
-          <div class="title-rule"></div>
-          <div style="font-size: 7.2pt; margin-bottom: 3px;">${d.introText || ''}</div>
-
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th rowspan="2">${isTa ? 'உப கிரகம்' : 'Upagraha'}</th>
-                <th rowspan="2">${isTa ? 'அதிபதி' : 'Lord'}</th>
-                <th rowspan="2">${isTa ? 'கிரகம்' : 'Graha'}</th>
-                <th colspan="4" class="text-center">${isTa ? 'பராசரர் முறை' : 'Parasara'}</th>
-                <th colspan="4" class="text-center">${isTa ? 'காளிதாசர் முறை' : 'Kalidasa'}</th>
-              </tr>
-              <tr>
-                <th>${isTa ? 'ராசி' : 'Rasi'}</th><th>${isTa ? 'பாகை' : 'Deg'}</th><th>${isTa ? 'நட்' : 'Nak'}</th><th>${isTa ? 'பா' : 'P'}</th>
-                <th>${isTa ? 'ராசி' : 'Rasi'}</th><th>${isTa ? 'பாகை' : 'Deg'}</th><th>${isTa ? 'நட்' : 'Nak'}</th><th>${isTa ? 'பா' : 'P'}</th>
-              </tr>
-            </thead>
-            <tbody>${t1Rows}</tbody>
-          </table>
-
-          <div style="font-size: 8pt; font-weight: 800; margin: 4px 0 2px 0;">${isTa ? 'உபகிரகங்கள் - தூமாதி ஐவர் ஸ்புடங்கள்' : 'DHUMADI SPHUTAS'}</div>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>${isTa ? 'உபகிரகம்' : 'Upagraha'}</th>
-                <th>${isTa ? 'அதிபதி' : 'Lord'}</th>
-                <th>${isTa ? 'ராசி' : 'Rasi'}</th>
-                <th>${isTa ? 'பாகை-கலை' : 'Deg-Min'}</th>
-                <th>${isTa ? 'நட்சத்திரம்' : 'Nakshatra'}</th>
-                <th class="text-center">${isTa ? 'பாதம்' : 'Pada'}</th>
-              </tr>
-            </thead>
-            <tbody>${t2Rows}</tbody>
-          </table>
-        </div>
-        <div class="page-bottom-rule"><span>.</span></div>
-      `;
-    }
-
-    /* PAGE 15: UPAGRAHAS 2 & LAGNA DEGREES */
-    function renderPage15Html() {
-      const d = BOOKLET_DATA.p15;
-      const isTa = currentLang === 'ta';
-      const sp = d.sphutas || {};
-      const nt = d.notes || {};
-
-      return `
-        <div>
-          <div class="page-title">${isTa ? 'உப கிரகங்கள் - முக்கிய ஸ்புடங்கள் - லக்ன பாகைகள்' : 'UPAGRAHAS & SPECIAL SPHUTAS'}</div>
-          <div class="title-rule"></div>
-          <div style="display: flex; gap: 10px; align-items: flex-start;">
-            <div style="width: 56mm;">
-              ${renderSouthChartHtml(isTa ? 'உபகிரகம்' : 'UPAGRAHA', d.upagrahaChart, 'mini-south-chart')}
-            </div>
-            <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; column-gap: 8px; row-gap: 1.5px; font-size: 7.2pt;">
-              <div><b>${isTa ? 'ஓரா லக்னம்' : 'Hora Lagna'}:</b> <span class="font-mono">${sp.horaLagna || ''}</span></div>
-              <div><b>${isTa ? 'ஆருட லக்னம்' : 'Arudha Lagna'}:</b> <span class="font-mono">${sp.arudhaLagna || ''}</span></div>
-              <div><b>${isTa ? 'கடிகா லக்னம்' : 'Ghatika Lagna'}:</b> <span class="font-mono">${sp.ghatikaLagna || ''}</span></div>
-              <div><b>${isTa ? 'இந்து லக்னம்' : 'Indu Lagna'}:</b> <span class="font-mono">${sp.induLagna || ''}</span></div>
-              <div><b>${isTa ? 'பாவ லக்னம்' : 'Bhava Lagna'}:</b> <span class="font-mono">${sp.bhavaLagna || ''}</span></div>
-              <div><b>${isTa ? 'ஸ்ரீ லக்னம்' : 'Sri Lagna'}:</b> <span class="font-mono">${sp.sriLagna || ''}</span></div>
-              <div><b>${isTa ? 'யோகி பாகை' : 'Yogi Deg'}:</b> <span class="font-mono">${sp.yogiDeg || ''}</span></div>
-              <div><b>${isTa ? 'அவயோகி பாகை' : 'Avayogi Deg'}:</b> <span class="font-mono">${sp.avayogiDeg || ''}</span></div>
-              <div><b>${isTa ? 'மாற்று யோகி' : 'Matru Yogi'}:</b> ${sp.matruYogi || ''}</div>
-              <div><b>${isTa ? '22-ம் திரேக்காணம்' : '22nd Drekkana'}:</b> ${sp.drekkana22 || ''}</div>
-              <div><b>${isTa ? '64-ம் நவாம்சம்' : '64th Navamsa'}:</b> ${sp.navamsa64 || ''}</div>
-              <div><b>${isTa ? 'சர்ப்ப திரேக்காணம்' : 'Sarpa Drekkana'}:</b> ${sp.sarpaDrekkana || ''}</div>
-              <div><b>${isTa ? 'க்ஷேத்ர ஸ்புடம்' : 'Kshetra Sphutam'}:</b> <span class="font-mono">${sp.kshetraSphutam || ''}</span></div>
-              <div><b>${isTa ? 'அதிர்ஷ்டப்பாகை' : 'Adrishta Deg'}:</b> <span class="font-mono">${sp.adrishtaDeg || ''}</span></div>
-            </div>
-          </div>
-          <div style="font-size: 7.2pt; margin-top: 4px; border-top: 0.5px solid #CCC; padding-top: 3px; display: flex; flex-direction: column; gap: 1px;">
-            <div><b>${isTa ? 'ஐந்தாம் பாவ சுப/அசுப பலன்கள்' : '5th Bhava Effects'}:</b> ${nt.bhava5 || ''}</div>
-            <div><b>${isTa ? 'அந்தகாம்சத்தில் உள்ள கிரகங்கள்' : 'Andhaka Grahas'}:</b> ${nt.andhaka || ''}</div>
-            <div><b>${isTa ? 'புஷ்கராம்சத்தில் உள்ள கிரகங்கள்' : 'Pushkara Grahas'}:</b> ${nt.pushkara || ''}</div>
-            <div><b>${isTa ? 'மிருத்யு பாகையில் உள்ள கிரகங்கள்' : 'Mrityu Grahas'}:</b> ${nt.mrityu || ''}</div>
-            <div><b>${isTa ? 'அவமிருத்து நட்சத்திரத்தில் உள்ள கிரகங்கள்' : 'Avamrityu Grahas'}:</b> ${nt.avamrityu || ''}</div>
-          </div>
-        </div>
-        <div class="page-bottom-rule"><span>.</span></div>
-      `;
-    }
-
-    /* PAGE 16: RELATIONSHIPS AND AVASTHAS */
-    function renderPage16Html() {
-      const d = BOOKLET_DATA.p16;
-      const isTa = currentLang === 'ta';
-
-      function renderMatrix(title, mat) {
-        let html = `<div style="font-size: 7.5pt; font-weight: 800; margin: 2px 0 1px 0;">${title}</div><table class="data-table"><thead><tr><th></th>`;
-        d.grahaNames.forEach(g => { html += `<th class="text-center">${g.slice(0, 3)}</th>`; });
-        html += `</tr></thead><tbody>`;
-        d.grahaNames.forEach((g, r) => {
-          html += `<tr><td><b>${g.slice(0, 3)}</b></td>`;
-          d.grahaNames.forEach((_, c) => {
-            if (r === c) {
-              html += `<td class="text-center font-mono" style="color: #999;">---</td>`;
-            } else {
-              html += `<td class="text-center">${(mat && mat[r] && mat[r][c]) ? mat[r][c] : ''}</td>`;
-            }
-          });
-          html += `</tr>`;
-        });
-        html += `</tbody></table>`;
-        return html;
-      }
-
-      let avasthaRows = '';
-      (d.avasthas || []).forEach(r => {
-        avasthaRows += `
-          <tr>
-            <td><b>${r.graha}</b></td>
-            <td>${r.rasi || ''}</td>
-            <td class="font-mono">${r.deg || ''}</td>
-            <td>${r.avastha || ''}</td>
-            <td class="text-center">${r.status || ''}</td>
-            <td>${r.mandalam || ''}</td>
-            <td>${r.samayam || ''}</td>
-          </tr>
-        `;
-      });
-
-      return `
-        <div>
-          <div class="page-title">${isTa ? 'நைசர்கிக, தற்கால & சத்ரு-மித்ரு நிலைகள்' : 'GRAHA RELATIONSHIPS & AVASTHAS'}</div>
-          <div class="title-rule"></div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <div>${renderMatrix(isTa ? 'நைசர்கிக (நிலையான) நட்பு' : 'Naisargika Friendship', d.naisargika)}</div>
-            <div>${renderMatrix(isTa ? 'தற்கால நட்பு விவரங்கள்' : 'Tatkalika Friendship', d.tatkalika)}</div>
-          </div>
-          <div style="font-size: 6.8pt; color: #666; margin: 2px 0;">${d.legend || ''}</div>
-          
-          <div style="font-size: 7.5pt; font-weight: 800; margin: 3px 0 1px 0;">${isTa ? 'கிரகங்களின் அவஸ்தா - மண்டலம் - தசா சமய நிலைகள்' : 'Avasthas, Mandalam & Dasha Samayam'}</div>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>${isTa ? 'கிரகம்' : 'Graha'}</th>
-                <th>${isTa ? 'ராசி' : 'Rasi'}</th>
-                <th>${isTa ? 'பாகை' : 'Deg'}</th>
-                <th>${isTa ? 'அவஸ்தா' : 'Avastha'}</th>
-                <th class="text-center">${isTa ? 'நிலை' : 'Status'}</th>
-                <th>${isTa ? 'தசா மண்டலம்' : 'Mandalam'}</th>
-                <th>${isTa ? 'தசா சமயம்' : 'Samayam'}</th>
-              </tr>
-            </thead>
-            <tbody>${avasthaRows}</tbody>
-          </table>
-        </div>
-        <div class="page-bottom-rule"><span>.</span></div>
-      `;
-    }
-
-    /* PAGE 17: SARVASHTAVARGA */
     function renderPage17Html() {
       const d = BOOKLET_DATA.p17;
       const isTa = currentLang === 'ta';
