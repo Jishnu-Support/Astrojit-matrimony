@@ -6,6 +6,7 @@ import { API } from '../api';
 import DailyPanchangam from '../components/DailyPanchangam';
 import KundliMatchmaking from '../components/KundliMatchmaking';
 import SlotBookingModal from '../components/SlotBookingModal';
+import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
 
 export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
   const { user } = useAuth();
@@ -338,6 +339,17 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
             <span>{t('dailyPanchangam')}</span>
           </button>
           <button
+            onClick={() => setActiveTab('thirukanitha')}
+            className={`shrink-0 px-3 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'thirukanitha' || activeTab === 'horoscope'
+                ? 'bg-slate-950 text-white shadow-xs'
+                : 'bg-white/40 text-slate-900 hover:bg-white/60'
+            }`}
+          >
+            <span>🪐</span>
+            <span>{lang === 'ta' ? 'திருக்கணித ஜாதகம்' : 'Thirukanitha Horoscope'}</span>
+          </button>
+          <button
             onClick={() => setActiveTab('matchmaking')}
             className={`shrink-0 px-3 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'matchmaking'
@@ -376,7 +388,22 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
       {/* Tab 1: Daily Panchangam */}
       {activeTab === 'panchangam' && <DailyPanchangam />}
 
-      {/* Tab 2: Kundli Matchmaking */}
+      {/* Tab 2: Thirukanitha Horoscope */}
+      {(activeTab === 'thirukanitha' || activeTab === 'horoscope') && (
+        <ThirukanithaHoroscopeView
+          initialData={{
+            name: user?.name || 'Aarav Kumar',
+            dob: user?.dob || '2026-11-05',
+            dobTime: user?.dobTime || '21:04',
+            placeName: user?.dobPlace || 'Salem',
+            lat: 11.65,
+            lon: 78.20,
+            utcOffset: 5.5
+          }}
+        />
+      )}
+
+      {/* Tab 3: Kundli Matchmaking */}
       {activeTab === 'matchmaking' && <KundliMatchmaking />}
 
       {/* Tab 4: Marketplace */}

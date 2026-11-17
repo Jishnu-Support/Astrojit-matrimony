@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { API } from '../api';
 import { useLang } from '../i18n';
+import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
 
 export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
   const { lang, t } = useLang();
@@ -196,6 +197,16 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
             {t('tabAstrologers')} ({astrologers.length})
           </button>
           <button
+            onClick={() => { setActiveTab('thirukanitha'); setSelectedClientMobile(null); }}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              activeTab === 'thirukanitha'
+                ? 'bg-rose-600 text-white shadow-xs'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            }`}
+          >
+            {tr('Thirukanitha Horoscope', 'திருக்கணித ஜாதகம்')}
+          </button>
+          <button
             onClick={() => { setActiveTab('vendors'); setSelectedClientMobile(null); }}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'vendors'
@@ -332,6 +343,11 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
                 )}
               </div>
             </div>
+          )}
+
+          {/* TAB: THIRUKANITHA HOROSCOPE */}
+          {activeTab === 'thirukanitha' && (
+            <ThirukanithaHoroscopeView />
           )}
 
           {/* TAB 2: CLIENTS */}

@@ -36,6 +36,7 @@ import { API } from '../api';
 import ClientRegistrationReceiptModal from '../components/ClientRegistrationReceiptModal';
 import KundliMatchmaking from '../components/KundliMatchmaking';
 import TamilPoruthamCard from '../components/TamilPoruthamCard';
+import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
 import { MATCH_I18N } from '../matchmakingI18n';
 
 export default function AstrologerDashboard({ activeTab: propTab, onTabChange }) {
@@ -393,6 +394,17 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
             )}
           </button>
           <button
+            onClick={() => setActiveTab('thirukanitha')}
+            className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'thirukanitha' || activeTab === 'horoscope'
+                ? 'bg-indigo-600 text-white shadow-xs'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <span>{lang === 'ta' ? 'திருக்கணித ஜாதகம்' : 'Thirukanitha Horoscope'}</span>
+          </button>
+          <button
             onClick={() => setActiveTab('search')}
             className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'search'
@@ -744,6 +756,21 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
             </form>
           </div>
         </div>
+      )}
+
+      {/* TAB: Thirukanitha Vedic Horoscope Generator */}
+      {(activeTab === 'thirukanitha' || activeTab === 'horoscope') && (
+        <ThirukanithaHoroscopeView
+          initialData={{
+            name: 'Sample',
+            dob: '2026-11-05',
+            dobTime: '21:04',
+            placeName: 'Salem',
+            lat: 11.65,
+            lon: 78.20,
+            utcOffset: 5.5
+          }}
+        />
       )}
 
       {/* TAB 1: Search for Client by Mobile Number & View Horoscope */}
