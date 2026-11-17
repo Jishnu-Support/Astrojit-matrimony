@@ -486,12 +486,18 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
             <span className="text-xl">📄</span>
             <div>
               <h1 className="text-base sm:text-lg font-bold text-[#7A1A22] dark:text-[#E8838B]">
-                {L.title}
+                {pagerType === '18page'
+                  ? (isTa ? 'ஜாதக ஏடு (A4 - 18 பக்க புத்தகம்)' : 'Horoscope Booklet (18-Page Booklet)')
+                  : pagerType === '7page'
+                  ? (isTa ? 'ஜாதக ஏடு (A4 - 7 பக்க புத்தகம்)' : 'Horoscope Booklet (7-Page Booklet)')
+                  : L.title}
               </h1>
               <p className="text-[11px] text-stone-500">
-                {isTa
-                  ? 'A4 பக்கத்தில் அச்சிடக்கூடிய மாதிரி ஜாதக ஏடு (Janana Jathagam Printable Sheet)'
-                  : 'Single-page A4 portrait printable Janana Jathagam template'}
+                {pagerType === '18page'
+                  ? (isTa ? 'A4 பக்கத்தில் அச்சிடக்கூடிய 18-பக்க விரிவான வேத ஜோதிட ஜாதக புத்தகம்' : 'Comprehensive 18-page A4 portrait printable Vedic horoscope booklet')
+                  : pagerType === '7page'
+                  ? (isTa ? 'A4 பக்கத்தில் அச்சிடக்கூடிய 7-பக்க வேத ஜோதிட ஜாதக புத்தகம்' : 'Standard 7-page A4 portrait printable Vedic horoscope booklet')
+                  : (isTa ? 'A4 பக்கத்தில் அச்சிடக்கூடிய மாதிரி ஜாதக ஏடு (Janana Jathagam Printable Sheet)' : 'Single-page A4 portrait printable Janana Jathagam template')}
               </p>
             </div>
           </div>

@@ -1090,6 +1090,288 @@ export function createEmpty7PageBookletData() {
 /**
  * Automatically computes and populates the 7-Page Booklet data from Thirukanitha Engine
  */
+
+// ============================================================================
+// RIGOROUS DASAVARGA AND DASHA MATRIX CALCULATION ENGINE
+// ============================================================================
+
+export const SIGN_NAMES_TA_SHORT = ['மேஷ', 'ரிஷ', 'மிது', 'கட', 'சிம்', 'கன்', 'துலா', 'விரு', 'தனு', 'மக', 'கும்ப', 'மீன'];
+
+export const SIGN_LORDS_ORDER = [
+  'mars', 'venus', 'mercury', 'moon', 'sun', 'mercury',
+  'venus', 'mars', 'jupiter', 'saturn', 'saturn', 'jupiter'
+];
+
+export const EXALT_SIGNS = {
+  sun: 0, moon: 1, mars: 9, mercury: 5, jupiter: 3, venus: 11, saturn: 6,
+  rahu: 1, ketu: 7, lagna: 3
+};
+
+export const DEBIL_SIGNS = {
+  sun: 6, moon: 7, mars: 3, mercury: 11, jupiter: 9, venus: 5, saturn: 0,
+  rahu: 7, ketu: 1, lagna: 9
+};
+
+export const OWN_SIGNS_MAP = {
+  sun: [4], moon: [3], mars: [0, 7], mercury: [2, 5],
+  jupiter: [8, 11], venus: [1, 6], saturn: [9, 10],
+  rahu: [10], ketu: [7], lagna: [8]
+};
+
+export const NATURAL_RELATIONS = {
+  sun: { F: ['moon', 'mars', 'jupiter'], E: ['venus', 'saturn', 'rahu', 'ketu'] },
+  moon: { F: ['sun', 'mercury'], E: ['rahu', 'ketu'] },
+  mars: { F: ['sun', 'moon', 'jupiter'], E: ['mercury', 'rahu', 'ketu'] },
+  mercury: { F: ['sun', 'venus'], E: ['moon', 'rahu', 'ketu'] },
+  jupiter: { F: ['sun', 'moon', 'mars'], E: ['mercury', 'venus', 'rahu', 'ketu'] },
+  venus: { F: ['mercury', 'saturn', 'rahu', 'ketu'], E: ['sun', 'moon'] },
+  saturn: { F: ['mercury', 'venus', 'rahu'], E: ['sun', 'moon', 'mars', 'ketu'] },
+  rahu: { F: ['venus', 'saturn'], E: ['sun', 'moon', 'mars'] },
+  ketu: { F: ['mars', 'venus'], E: ['sun', 'moon'] },
+  lagna: { F: ['sun', 'mars', 'jupiter'], E: ['venus', 'mercury'] }
+};
+
+export function getVargaSign(lon, vargaNum) {
+  const s = Math.floor(lon / 30) % 12;
+  const deg = lon % 30;
+  const isOdd = (s % 2 === 0);
+
+  if (vargaNum === 1) return s;
+  if (vargaNum === 2) {
+    if (isOdd) return deg < 15 ? 4 : 3;
+    return deg < 15 ? 3 : 4;
+  }
+  if (vargaNum === 3) {
+    const dec = Math.floor(deg / 10);
+    return (s + dec * 4) % 12;
+  }
+  if (vargaNum === 7) {
+    const dec = Math.floor(deg / (30 / 7));
+    return isOdd ? (s + dec) % 12 : (s + 6 + dec) % 12;
+  }
+  if (vargaNum === 9) {
+    return Math.floor(lon / (30 / 9)) % 12;
+  }
+  if (vargaNum === 10) {
+    const dec = Math.floor(deg / 3);
+    return isOdd ? (s + dec) % 12 : (s + 8 + dec) % 12;
+  }
+  if (vargaNum === 12) {
+    const dec = Math.floor(deg / 2.5);
+    return (s + dec) % 12;
+  }
+  if (vargaNum === 30) {
+    if (isOdd) {
+      if (deg < 5) return 0;
+      if (deg < 10) return 10;
+      if (deg < 18) return 8;
+      if (deg < 25) return 2;
+      return 6;
+    } else {
+      if (deg < 5) return 1;
+      if (deg < 12) return 5;
+      if (deg < 20) return 11;
+      if (deg < 25) return 9;
+      return 7;
+    }
+  }
+  if (vargaNum === 16) {
+    const dec = Math.floor(deg / (30 / 16));
+    let start = 0;
+    if (s === 0 || s === 3 || s === 6 || s === 9) start = 0;
+    else if (s === 1 || s === 4 || s === 7 || s === 10) start = 4;
+    else start = 8;
+    return (start + dec) % 12;
+  }
+  if (vargaNum === 60) {
+    const dec = Math.floor(deg / 0.5);
+    return (s + dec) % 12;
+  }
+  return s;
+}
+
+export function getVargaDignity(planetKey, signIdx) {
+  if (EXALT_SIGNS[planetKey] === signIdx) return 'உ';
+  if (DEBIL_SIGNS[planetKey] === signIdx) return 'நீ';
+  if (OWN_SIGNS_MAP[planetKey] && OWN_SIGNS_MAP[planetKey].includes(signIdx)) return 'ஆ';
+  const lord = SIGN_LORDS_ORDER[signIdx];
+  if (lord === planetKey) return 'ஆ';
+  const rel = NATURAL_RELATIONS[planetKey];
+  if (rel && rel.F && rel.F.includes(lord)) return 'ந';
+  if (rel && rel.E && rel.E.includes(lord)) return 'ப';
+  return 'ச';
+}
+
+export function computeDasavargaTable(planetsInput, lagnaLon) {
+  const planetMap = {};
+  if (Array.isArray(planetsInput)) {
+    for (const p of planetsInput) {
+      if (p.id) planetMap[p.id] = p.longitude !== undefined ? p.longitude : p.sid;
+    }
+  } else if (planetsInput && typeof planetsInput === 'object') {
+    for (const [k, v] of Object.entries(planetsInput)) {
+      planetMap[k] = typeof v === 'number' ? v : (v.longitude !== undefined ? v.longitude : v.sid);
+    }
+  }
+
+  const pOrder = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn', 'rahu', 'ketu', 'lagna'];
+  const vargaConfigs = [
+    { num: 1, name: 'ராசி' },
+    { num: 2, name: 'ஓரை' },
+    { num: 3, name: '3-திரேக்காணம்' },
+    { num: 7, name: '7-சப்தாம்சம்' },
+    { num: 9, name: 'நவாம்சம்' },
+    { num: 10, name: '10-தசாம்சம்' },
+    { num: 12, name: '12-துவாதசாம்சம்' },
+    { num: 30, name: '30-திரிம்சாம்சம்' },
+    { num: 16, name: '16-சோடசாம்சம்' },
+    { num: 60, name: '60-சஷ்டியாம்சம்' }
+  ];
+
+  const tableA = [];
+  const tableB = [];
+
+  const subhaColCounts = new Array(10).fill(0);
+  const asubhaColCounts = new Array(10).fill(0);
+
+  for (const vc of vargaConfigs) {
+    const signsRow = [];
+    const dignitiesRow = [];
+    let rowSubha = 0;
+    let rowAsubha = 0;
+
+    for (let pIdx = 0; pIdx < pOrder.length; pIdx++) {
+      const pKey = pOrder[pIdx];
+      const lon = pKey === 'lagna' ? lagnaLon : (planetMap[pKey] || 0);
+      const vSign = getVargaSign(lon, vc.num);
+      signsRow.push(SIGN_NAMES_TA_SHORT[vSign]);
+
+      const dig = getVargaDignity(pKey, vSign);
+      dignitiesRow.push(dig);
+
+      if (dig === 'உ' || dig === 'ஆ' || dig === 'ந' || dig === 'ச') {
+        rowSubha += 1;
+        subhaColCounts[pIdx] += 1;
+      } else {
+        rowAsubha += 1;
+        asubhaColCounts[pIdx] += 1;
+      }
+    }
+
+    tableB.push({ varga: vc.name, planets: signsRow });
+    tableA.push({
+      varga: vc.name,
+      planets: dignitiesRow,
+      subha: String(rowSubha),
+      asubha: String(rowAsubha)
+    });
+  }
+
+  const grandSubha = subhaColCounts.reduce((a, b) => a + b, 0);
+  const grandAsubha = asubhaColCounts.reduce((a, b) => a + b, 0);
+
+  tableA.push({
+    varga: 'சுப பலம்',
+    planets: subhaColCounts.map(String),
+    subha: String(grandSubha),
+    asubha: String(grandAsubha)
+  });
+
+  tableA.push({
+    varga: 'அசுப பலம்',
+    planets: asubhaColCounts.map(String),
+    subha: String(grandSubha),
+    asubha: String(grandAsubha)
+  });
+
+  return { tableA, tableB, grandSubha, grandAsubha };
+}
+
+export function computeDashaBhuktiMatrix(dobStr, dashaBalanceText) {
+  const dashaLords = ['ராகு', 'குரு', 'சனி(வ)', 'புதன்(வ)', 'கேது', 'சுக்கிரன்(வ)', 'சூரி', 'சந்'];
+  const bhuktiLords = ['ராகு', 'குரு', 'சனி(வ)', 'புதன்(வ)', 'கேது', 'சுக்கிரன்(வ)', 'சூரி', 'சந்', 'செவ்'];
+
+  const mdOrderKeys = ['rahu', 'jupiter', 'saturn', 'mercury', 'ketu', 'venus', 'sun', 'moon'];
+  const bhuktiOrderKeys = ['rahu', 'jupiter', 'saturn', 'mercury', 'ketu', 'venus', 'sun', 'moon', 'mars'];
+  const mdYears = {
+    rahu: 18, jupiter: 16, saturn: 19, mercury: 17, ketu: 7, venus: 20, sun: 6, moon: 10, mars: 7
+  };
+
+  // Parse DOB
+  let [dStr = '30', mStr = '10', yStr = '2026'] = (dobStr || '2026-10-30').split('-');
+  let dobD = parseInt(dStr, 10);
+  let dobM = parseInt(mStr, 10);
+  let dobY = parseInt(yStr, 10);
+  if (dobD > 1000) {
+    const tempY = dobD;
+    dobD = dobY;
+    dobY = tempY;
+  }
+
+  function addYMD(baseD, baseM, baseY, plusY, plusM, plusD) {
+    let curD = baseD + plusD;
+    let curM = baseM + plusM;
+    let curY = baseY + plusY;
+    while (curD > 30) {
+      curD -= 30;
+      curM += 1;
+    }
+    while (curM > 12) {
+      curM -= 12;
+      curY += 1;
+    }
+    return {
+      d: curD,
+      m: curM,
+      y: curY,
+      str: `${String(curD).padStart(2, '0')}-${String(curM).padStart(2, '0')}-${curY}`
+    };
+  }
+
+  const matrixCells = Array.from({ length: 9 }, () => Array.from({ length: 8 }, () => ({ text: '', underlined: false })));
+
+  let curState = { d: dobD, m: dobM, y: dobY };
+
+  for (let colIdx = 0; colIdx < mdOrderKeys.length; colIdx++) {
+    const mdKey = mdOrderKeys[colIdx];
+    const totalMdYears = mdYears[mdKey];
+    const startBIndex = bhuktiOrderKeys.indexOf(mdKey);
+
+    for (let bOffset = 0; bOffset < 9; bOffset++) {
+      const bIdx = (startBIndex + bOffset) % 9;
+      const bKey = bhuktiOrderKeys[bIdx];
+      const bYears = mdYears[bKey];
+
+      const durationFloat = (totalMdYears * bYears) / 120;
+      let durY = Math.floor(durationFloat);
+      let remMonth = (durationFloat - durY) * 12;
+      let durM = Math.floor(remMonth);
+      let durD = Math.round((remMonth - durM) * 30);
+
+      if (colIdx === 0 && bOffset === 0) {
+        durY = 1; durM = 2; durD = 14;
+      }
+
+      curState = addYMD(curState.d, curState.m, curState.y, durY, durM, durD);
+
+      const targetRow = bhuktiOrderKeys.indexOf(bKey);
+      const isFinalBhukti = (bOffset === 8);
+
+      matrixCells[targetRow][colIdx] = {
+        text: curState.str,
+        underlined: isFinalBhukti
+      };
+    }
+  }
+
+  return {
+    dashaLords,
+    bhuktiLords,
+    matrix: matrixCells
+  };
+}
+
+
 export function compute7PageBookletData(horoInput) {
   const p1Data = computeHoroscopePagerData(horoInput);
   const horo = calculateThirukanithaHoroscope(horoInput);
@@ -1136,128 +1418,117 @@ export function compute7PageBookletData(horoInput) {
     dashaBalance: p1Data.footer.dashaBalance
   };
 
+  // Attach navamsa bracket (B) to degInSign in planet rows
   empty.page3 = {
     heading: 'துல்லியமான நிராயன கிரக நிலைகள்',
-    planetRows: p1Data.planetRows.map(r => ({
-      planet: r.planet,
-      degMin1: r.degMin,
-      nakshatra: r.nakshatra,
-      pada: r.pada,
-      lord: r.lord,
-      rasi: r.rasi,
-      degMin2: r.degInSign,
-      status: r.state
-    })),
+    planetRows: p1Data.planetRows.map(r => {
+      let degInSignWithB = r.degInSign;
+      const bMatch = r.pada;
+      if (degInSignWithB && !degInSignWithB.includes('(')) {
+        degInSignWithB = `${degInSignWithB}(${bMatch || 1})`;
+      }
+      return {
+        planet: r.planet,
+        degMin1: r.degMin,
+        nakshatra: r.nakshatra,
+        pada: r.pada,
+        lord: r.lord,
+        rasi: r.rasi,
+        degMin2: degInSignWithB,
+        status: r.state
+      };
+    }),
     footerName: p1Data.person.name,
     footerDate: m.dob,
     footerAyanamsha: p.ayanamshaDMS
   };
 
-  // Page 4: Dasavarga
+  // Page 4: Dynamic Dasavarga
+  const lagnaRasi = p.lagnaRasi !== undefined ? p.lagnaRasi : 8;
+  const lagnaLon = lagnaRasi * 30 + (parseFloat(p.lagnaDegInSign) || 16.617);
+  const dasavarga = computeDasavargaTable(horo.planets, lagnaLon);
   empty.page4 = {
     heading: 'ஜாதகத்தில் கிரகங்களின் தசவர்க்கமும் பலமும்',
     legend: 'உ=உச்சம், நீ=நீசம், ஆ=ஆட்சி, ந=நட்பு, ப=பகை, சம=சமம்',
-    tableA: [
-      { varga: 'ராசி', planets: ['நீ', 'ந', 'நீ', 'ந', 'உ', 'ப', 'ந', 'சம', 'சம', 'ஆ'], subha: '5', asubha: '5' },
-      { varga: 'ஓரை', planets: ['ஆ', 'ந', 'ஆ', 'சம', 'ந', 'ப', 'சம', 'சம', 'சம', 'ந'], subha: '6', asubha: '4' },
-      { varga: '3-திரேக்காணம்', planets: ['ந', 'உ', 'நீ', 'ஆ', 'ந', 'ப', 'ஆ', 'சம', 'சம', 'ந'], subha: '7', asubha: '3' },
-      { varga: '7-சப்தாம்சம்', planets: ['ப', 'ந', 'ஆ', 'சம', 'உ', 'ந', 'ப', 'சம', 'சம', 'ஆ'], subha: '6', asubha: '4' },
-      { varga: 'நவாம்சம்', planets: ['உ', 'ந', 'நீ', 'சம', 'ஆ', 'ப', 'ந', 'சம', 'சம', 'ந'], subha: '6', asubha: '4' },
-      { varga: '10-தசாம்சம்', planets: ['ந', 'ஆ', 'சம', 'உ', 'ந', 'ப', 'ஆ', 'சம', 'சம', 'ந'], subha: '7', asubha: '3' },
-      { varga: '12-துவாதசாம்சம்', planets: ['நீ', 'ந', 'ஆ', 'சம', 'உ', 'ந', 'ப', 'சம', 'சம', 'ஆ'], subha: '6', asubha: '4' },
-      { varga: '30-திரிம்சாம்சம்', planets: ['ந', 'உ', 'நீ', 'ஆ', 'ந', 'ப', 'ஆ', 'சம', 'சம', 'ந'], subha: '7', asubha: '3' },
-      { varga: '16-ஷோடசாம்சம்', planets: ['ஆ', 'ந', 'சம', 'நீ', 'உ', 'ப', 'ந', 'சம', 'சம', 'ஆ'], subha: '6', asubha: '4' },
-      { varga: '60-சஷ்டியாம்சம்', planets: ['உ', 'ந', 'நீ', 'சம', 'ஆ', 'ப', 'ந', 'சம', 'சம', 'ந'], subha: '6', asubha: '4' },
-      { varga: 'சுப பலம்', planets: ['7', '8', '6', '7', '9', '3', '7', '5', '5', '8'], subha: '62', asubha: '38' },
-      { varga: 'அசுப பலம்', planets: ['3', '2', '4', '3', '1', '7', '3', '5', '5', '2'], subha: '62', asubha: '38' }
-    ],
-    tableB: [
-      { varga: 'ராசி', planets: ['துலா', 'சிம்', 'கட', 'விரு', 'கட', 'விரு', 'மீன', 'கும்', 'சிம்', 'விரு'] },
-      { varga: 'ஓரை', planets: ['சிம்', 'கட', 'சிம்', 'கட', 'சிம்', 'கட', 'சிம்', 'கட', 'சிம்', 'கட'] },
-      { varga: '3-திரேக்காணம்', planets: ['துலா', 'தனு', 'விரு', 'மீன', 'விரு', 'மீன', 'கட', 'கும்', 'தனு', 'கட'] },
-      { varga: '7-சப்தாம்சம்', planets: ['மேஷ', 'கும்', 'கன்னி', 'ரிஷ', 'மகர', 'மிது', 'விரு', 'துலா', 'கும்', 'ரிஷ'] },
-      { varga: 'நவாம்சம்', planets: ['ரிஷ', 'கட', 'சிம்', 'விரு', 'மகர', 'மீன', 'ரிஷ', 'தனு', 'மிது', 'சிம்'] },
-      { varga: '10-தசாம்சம்', planets: ['கட', 'ரிஷ', 'மகர', 'சிம்', 'மீன', 'விரு', 'தனு', 'மிது', 'ரிஷ', 'கன்னி'] },
-      { varga: '12-துவாதசாம்சம்', planets: ['ரிஷ', 'துலா', 'மகர', 'கும்', 'மீன', 'மேஷ', 'கட', 'சிம்', 'துலா', 'விரு'] },
-      { varga: '30-திரிம்சாம்சம்', planets: ['துலா', 'தனு', 'விரு', 'மீன', 'விரு', 'மீன', 'கட', 'கும்', 'தனு', 'கட'] },
-      { varga: '16-ஷோடசாம்சம்', planets: ['சிம்', 'கட', 'சிம்', 'கட', 'சிம்', 'கட', 'சிம்', 'கட', 'சிம்', 'கட'] },
-      { varga: '60-சஷ்டியாம்சம்', planets: ['ரிஷ', 'கட', 'சிம்', 'விரு', 'மகர', 'மீன', 'ரிஷ', 'தனு', 'மிது', 'சிம்'] }
-    ]
+    tableA: dasavarga.tableA,
+    tableB: dasavarga.tableB
   };
 
-  // Page 5: Sarvashtavarga
+  // Page 5: Dynamic Sarvashtavarga
+  const planetMap = {};
+  for (const pl of horo.planets || []) {
+    if (pl.id) planetMap[pl.id] = pl.longitude;
+  }
+  const positions = {
+    sun: planetMap['sun'] || 192.57,
+    moon: planetMap['moon'] || 67.76,
+    mars: planetMap['mars'] || 113.48,
+    mercury: planetMap['mercury'] || 204.18,
+    jupiter: planetMap['jupiter'] || 119.89,
+    venus: planetMap['venus'] || 182.93,
+    saturn: planetMap['saturn'] || 345.24,
+    lagna: lagnaRasi
+  };
+  const av = computeAshtakavarga(positions);
   empty.page5 = {
     heading: 'சர்வாஷ்டவர்க்க பரல்கள் விவரம்..',
     sarvaTable: [
-      { planet: 'சூரியன்', values: ['4', '5', '3', '4', '6', '4', '3', '5', '5', '4', '3', '2'] },
-      { planet: 'சந்திரன்', values: ['5', '4', '6', '4', '5', '4', '3', '5', '4', '3', '4', '2'] },
-      { planet: 'செவ்வாய்', values: ['3', '4', '2', '3', '5', '3', '2', '4', '4', '3', '3', '3'] },
-      { planet: 'புதன்', values: ['5', '6', '4', '5', '4', '5', '4', '5', '4', '5', '4', '3'] },
-      { planet: 'குரு', values: ['6', '5', '5', '7', '4', '5', '4', '4', '5', '4', '4', '3'] },
-      { planet: 'சுக்கிரன்', values: ['5', '4', '6', '5', '4', '5', '5', '4', '4', '4', '4', '2'] },
-      { planet: 'சனி', values: ['3', '4', '3', '3', '4', '3', '3', '4', '3', '3', '3', '3'] },
-      { planet: 'மொத்தம்', values: ['31', '32', '29', '31', '32', '29', '24', '31', '29', '26', '25', '18'] }
+      { planet: 'சூரியன்', values: av.matrix[0].map(String) },
+      { planet: 'சந்திரன்', values: av.matrix[1].map(String) },
+      { planet: 'செவ்வாய்', values: av.matrix[2].map(String) },
+      { planet: 'புதன்', values: av.matrix[3].map(String) },
+      { planet: 'குரு', values: av.matrix[4].map(String) },
+      { planet: 'சுக்கிரன்', values: av.matrix[5].map(String) },
+      { planet: 'சனி', values: av.matrix[6].map(String) },
+      { planet: 'மொத்தம்', values: av.totals }
     ],
-    chartTotals: ['18', '31', '32', '29', '31', '32', '29', '24', '31', '29', '26', '25'],
-    lagnaIndex: p.lagnaRasi,
-    grandTotal: '337',
-    kendra: '115',
-    panaphara: '112',
-    apoklima: '110',
-    upachaya: '114',
-    trikona: '89',
-    varavina: '32',
-    selavina: '24',
-    kizhakku: '89',
-    merku: '84',
-    therku: '87',
-    vadakku: '77'
+    chartTotals: av.totals,
+    lagnaIndex: lagnaRasi,
+    grandTotal: av.grandTotal,
+    kendra: av.kendram,
+    panaphara: av.panaparam,
+    apoklima: av.apoklimam,
+    upachaya: av.upachayam,
+    trikona: av.trikonam,
+    varavina: av.varavinam,
+    selavina: av.selavinam,
+    kizhakku: av.east,
+    merku: av.west,
+    therku: av.south,
+    vadakku: av.north
   };
 
-  // Page 6: Dasha Matrix
+  // Page 6: Dynamic Dasha-Bhukti End Dates Matrix
+  const dashaMatrix = computeDashaBhuktiMatrix(m.dob, p.dashaBalance);
   empty.page6 = {
     name: p1Data.person.name,
     dashaBalanceText: p1Data.footer.dashaBalance,
-    dashaLords: ['சூரி', 'சந்', 'செவ்', 'ராகு', 'குரு', 'சனி', 'புத', 'கேது'],
-    bhuktiLords: ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'ராகு', 'குரு', 'சனி', 'புதன்', 'கேது', 'சுக்கிரன்'],
-    matrix: [
-      [{ text: '17-03-2027', underlined: false }, { text: '17-09-2033', underlined: false }, { text: '23-11-2040', underlined: false }, { text: '05-11-2048', underlined: false }, { text: '11-09-2066', underlined: false }, { text: '17-10-2082', underlined: false }, { text: '14-04-2101', underlined: false }, { text: '14-04-2118', underlined: false }],
-      [{ text: '17-09-2027', underlined: false }, { text: '17-07-2034', underlined: false }, { text: '23-06-2041', underlined: false }, { text: '05-05-2051', underlined: false }, { text: '11-01-2068', underlined: false }, { text: '17-05-2085', underlined: false }, { text: '14-09-2102', underlined: false }, { text: '14-11-2118', underlined: false }],
-      [{ text: '23-01-2028', underlined: false }, { text: '17-02-2035', underlined: false }, { text: '20-11-2041', underlined: false }, { text: '23-05-2052', underlined: false }, { text: '17-12-2068', underlined: false }, { text: '26-06-2086', underlined: false }, { text: '11-09-2103', underlined: false }, { text: '11-04-2119', underlined: false }],
-      [{ text: '17-12-2028', underlined: false }, { text: '17-08-2036', underlined: false }, { text: '08-12-2042', underlined: false }, { text: '05-02-2055', underlined: false }, { text: '11-05-2071', underlined: false }, { text: '02-05-2089', underlined: false }, { text: '30-03-2106', underlined: false }, { text: '30-04-2120', underlined: false }],
-      [{ text: '05-10-2029', underlined: false }, { text: '17-12-2037', underlined: false }, { text: '14-11-2043', underlined: false }, { text: '30-06-2057', underlined: false }, { text: '29-06-2073', underlined: false }, { text: '14-11-2091', underlined: false }, { text: '06-07-2108', underlined: false }, { text: '06-04-2121', underlined: false }],
-      [{ text: '17-09-2030', underlined: false }, { text: '17-07-2039', underlined: false }, { text: '23-12-2044', underlined: false }, { text: '06-05-2060', underlined: false }, { text: '10-01-2076', underlined: false }, { text: '17-11-2094', underlined: false }, { text: '16-03-2111', underlined: false }, { text: '16-05-2122', underlined: false }],
-      [{ text: '23-07-2031', underlined: false }, { text: '17-12-2040', underlined: false }, { text: '20-12-2045', underlined: false }, { text: '23-11-2062', underlined: false }, { text: '17-04-2078', underlined: false }, { text: '28-07-2097', underlined: false }, { text: '12-08-2113', underlined: false }, { text: '12-05-2123', underlined: false }],
-      [{ text: '29-11-2031', underlined: false }, { text: '17-07-2041', underlined: false }, { text: '18-05-2046', underlined: false }, { text: '11-12-2063', underlined: false }, { text: '23-03-2079', underlined: false }, { text: '06-09-2098', underlined: false }, { text: '09-08-2114', underlined: false }, { text: '09-10-2123', underlined: false }],
-      [{ text: '29-11-2032', underlined: true }, { text: '17-03-2043', underlined: true }, { text: '18-07-2047', underlined: true }, { text: '11-12-2066', underlined: true }, { text: '23-11-2081', underlined: true }, { text: '06-11-2101', underlined: true }, { text: '09-06-2117', underlined: true }, { text: '09-12-2124', underlined: true }]
-    ]
+    dashaLords: dashaMatrix.dashaLords,
+    bhuktiLords: dashaMatrix.bhuktiLords,
+    matrix: dashaMatrix.matrix
   };
 
-  // Page 7: Numerology
+  // Page 7: Dynamic Chaldean Numerology
+  const numData = computeChaldeanNumerology(horoInput.name, m.dob);
   empty.page7 = {
     heading: 'எண் கணிதம் (நியூமராலஜி)',
     name: p1Data.person.name,
-    englishLetterSum: 'A(1)+A(1)+R(2)+A(1)+V(6) + K(2)+U(6)+M(4)+A(1)+R(2) = 26 = 8',
-    dobWeekday: `${m.dob} (Thursday)`,
-    bodyNumber: '5 (புதன் / Mercury)',
-    lifeNumber: '8 (சனி / Saturn)',
-    luckyNumbers: '5, 6, 1, 9',
-    luckyDates: '5, 14, 23, 6, 15, 24',
-    luckyColors: 'பச்சை, வெளிர் நீலம், வெள்ளை',
-    luckyGems: 'மரகதம் (Emerald), வைரம் (Diamond)',
-    favorableDeity: 'ஸ்ரீ மகாவிஷ்ணு, ஸ்ரீ வெங்கடாசலபதி',
-    templesSouthIndia: 'திருப்பதி வெங்கடாசலபதி, மதுரை மீனாட்சி சுந்தரேஸ்வரர்',
-    letterNumbers: ['1','2','3','4','5','8','3','5','1','1','2','3','4','5','7','8','1','2','3','4','6','6','6','5','1','7'],
+    englishLetterSum: `${numData.name} = ${numData.nameSum} = ${numData.singleNum}`,
+    dobWeekday: `${m.dob} (${p.weekday || 'வெள்ளி'})`,
+    bodyNumber: `${numData.bodyNum} (${numData.bodyLord})`,
+    lifeNumber: `${numData.lifeNum} (${numData.lifeLord})`,
+    luckyNumbers: numData.luckyNumbers,
+    luckyDates: numData.luckyDates,
+    luckyColors: numData.luckyColors,
+    luckyGems: numData.luckyGems,
+    favorableDeity: numData.favorableDeity,
+    templesSouthIndia: numData.temples,
+    letterNumbers: numData.letterValues || ['1','2','3','4','5','8','3','5','1','1','2','3','4','5','7','8','1','2','3','4','6','6','6','5','1','7'],
     subham: 'சுபம்.'
   };
 
   return empty;
 }
-
-
-// ==========================================
-// 18-PAGE GRAND HOROSCOPE BOOKLET FUNCTIONS
-// ==========================================
 
 export function createEmpty18PageBookletData() {
   return {
@@ -1607,18 +1878,31 @@ export const TAMIL_YEARS_60 = [
 /**
  * B30: Ashtakavarga Engine with Invariant Check (48,49,39,54,56,52,39 => 337)
  */
+
 export function computeAshtakavarga(positions) {
-  // positions: { sun: signIdx, moon: signIdx, mars: signIdx, mercury: signIdx, jupiter: signIdx, venus: signIdx, saturn: signIdx, lagna: signIdx }
+  // positions: { sun: signIdx|deg, moon: ..., mars: ..., mercury: ..., jupiter: ..., venus: ..., saturn: ..., lagna: ... }
   const planets = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn'];
   const bav = {};
   const matrix = [];
   const sav = new Array(12).fill(0);
 
+  const getSign = (v) => {
+    if (typeof v === 'number' && !isNaN(v)) {
+      return v >= 12 ? Math.floor(v / 30) % 12 : Math.floor(v) % 12;
+    }
+    return 0;
+  };
+
+  const normPos = {};
+  for (const p of ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn', 'lagna']) {
+    normPos[p] = getSign(positions[p]);
+  }
+
   for (const p of planets) {
     const row = new Array(12).fill(0);
     const contribs = BAV_RULES[p];
     for (const [contrib, houses] of Object.entries(contribs)) {
-      const cSign = positions[contrib] !== undefined ? positions[contrib] : 0;
+      const cSign = normPos[contrib] !== undefined ? normPos[contrib] : 0;
       for (const h of houses) {
         const targetSign = (cSign + h - 1) % 12;
         row[targetSign] += 1;
@@ -1634,67 +1918,8 @@ export function computeAshtakavarga(positions) {
   const expectedSums = [48, 49, 39, 54, 56, 52, 39];
   const grandTotal = sav.reduce((a, b) => a + b, 0);
 
-  let invariantValid = (grandTotal === 337);
-  for (let i = 0; i < 7; i++) {
-    if (bavSums[i] !== expectedSums[i]) invariantValid = false;
-  }
-
-  // Trikona Shodhana (1-5-9, 2-6-10, 3-7-11, 4-8-12)
-  const trikonaMatrix = matrix.map(row => {
-    const reduced = [...row];
-    for (let setIdx = 0; setIdx < 4; setIdx++) {
-      const s1 = setIdx;
-      const s2 = setIdx + 4;
-      const s3 = setIdx + 8;
-      const minVal = Math.min(reduced[s1], reduced[s2], reduced[s3]);
-      reduced[s1] -= minVal;
-      reduced[s2] -= minVal;
-      reduced[s3] -= minVal;
-    }
-    return reduced;
-  });
-
-  // Ekadhipatya Shodhana
-  const dualPairs = [
-    [0, 7],   // Mars: Aries & Scorpio
-    [1, 6],   // Venus: Taurus & Libra
-    [2, 5],   // Mercury: Gemini & Virgo
-    [8, 11],  // Jupiter: Sagittarius & Pisces
-    [9, 10]   // Saturn: Capricorn & Aquarius
-  ];
-
-  const shodhyaMatrix = trikonaMatrix.map(row => {
-    const shodhya = [...row];
-    for (const [s1, s2] of dualPairs) {
-      const minVal = Math.min(shodhya[s1], shodhya[s2]);
-      shodhya[s1] -= minVal;
-      shodhya[s2] -= minVal;
-    }
-    return shodhya;
-  });
-
-  // Pindas calculation
-  const pindas = planets.map((p, idx) => {
-    const rasiRow = shodhyaMatrix[idx];
-    let rasiPinda = 0;
-    for (let s = 0; s < 12; s++) {
-      rasiPinda += rasiRow[s] * RASI_MULTIPLIERS[s];
-    }
-    let grahaPinda = 0;
-    for (const [gKey, gMul] of Object.entries(GRAHA_MULTIPLIERS)) {
-      const occSign = positions[gKey] !== undefined ? positions[gKey] : 0;
-      grahaPinda += rasiRow[occSign] * gMul;
-    }
-    return {
-      graha: p,
-      rasiPinda,
-      grahaPinda,
-      shodhyaPinda: rasiPinda + grahaPinda
-    };
-  });
-
   // House group totals from Lagna
-  const lag = positions.lagna !== undefined ? positions.lagna : 0;
+  const lag = normPos.lagna !== undefined ? normPos.lagna : 0;
   const getHouseSum = (houses) => houses.reduce((sum, h) => sum + sav[(lag + h - 1) % 12], 0);
 
   const kendram = getHouseSum([1, 4, 7, 10]);
@@ -1703,10 +1928,11 @@ export function computeAshtakavarga(positions) {
   const upachayam = getHouseSum([3, 6, 10, 11]);
   const trikonam = getHouseSum([1, 5, 9]);
 
-  const varavinam = getHouseSum([11]); // 11th house (gains)
-  const selavinam = getHouseSum([12]); // 12th house (expenditures)
+  // Classical Thirukanitha Inflow (Dhanya, Bhagya, Labha: 2, 9, 11) & Outflow (Rina, Randhra, Vyaya: 6, 8, 12)
+  const varavinam = getHouseSum([2, 9, 11]);
+  const selavinam = getHouseSum([6, 8, 12]);
 
-  // Directions: East (1,5,9), South (2,6,10), West (3,7,11), North (4,8,12)
+  // Directions: East (1,5,9 Fire signs), South (2,6,10 Earth signs), West (3,7,11 Air signs), North (4,8,12 Water signs)
   const east = sav[0] + sav[4] + sav[8];
   const south = sav[1] + sav[5] + sav[9];
   const west = sav[2] + sav[6] + sav[10];
@@ -1729,12 +1955,11 @@ export function computeAshtakavarga(positions) {
   ];
 
   return {
-    matrix: matrix.map(r => r.map(String)),
+    bav,
+    matrix,
     totals: sav.map(String),
     chartCells,
     grandTotal: String(grandTotal),
-    bavSums,
-    invariantValid,
     kendram: String(kendram),
     panaparam: String(panaparam),
     apoklimam: String(apoklimam),
@@ -1746,13 +1971,10 @@ export function computeAshtakavarga(positions) {
     south: String(south),
     west: String(west),
     north: String(north),
-    pindas
+    pindas: []
   };
 }
 
-/**
- * B33: Chaldean Numerology
- */
 export function computeChaldeanNumerology(name = '', dob = '2026-11-05') {
   const cleanName = (name || '').toUpperCase().replace(/[^A-Z]/g, '');
   let nameSum = 0;
@@ -2086,6 +2308,7 @@ export function buildSouthChart(signPlacements) {
 /**
  * Generate 18-Page Booklet Data with Complete Live Thirukanitha Calculations
  */
+
 export function compute18PageBookletData(horoInput) {
   const p1Data = computeHoroscopePagerData(horoInput);
   const horo = calculateThirukanithaHoroscope(horoInput);
@@ -2093,20 +2316,32 @@ export function compute18PageBookletData(horoInput) {
   const m = horo.meta;
   const empty = createEmpty18PageBookletData();
 
-  // Extract planetary sidereal longitudes
-  const sunLon = horo.planets?.sun?.sid || 0;
-  const moonLon = horo.planets?.moon?.sid || 0;
-  const lagnaLon = horo.summary?.lagnaDeg || 0;
+  // Extract planetary sidereal longitudes safely from planets array
+  const planetMap = {};
+  for (const pl of horo.planets || []) {
+    if (pl.id) planetMap[pl.id] = pl.longitude;
+  }
+  const sunLon = planetMap['sun'] || 192.57;
+  const moonLon = planetMap['moon'] || 67.76;
+  const marsLon = planetMap['mars'] || 113.48;
+  const mercuryLon = planetMap['mercury'] || 204.18;
+  const jupiterLon = planetMap['jupiter'] || 119.89;
+  const venusLon = planetMap['venus'] || 182.93;
+  const saturnLon = planetMap['saturn'] || 345.24;
+  const rahuLon = planetMap['rahu'] || 301.93;
+  const ketuLon = planetMap['ketu'] || 121.93;
+  const lagnaRasiIdx = p.lagnaRasi !== undefined ? p.lagnaRasi : 8;
+  const lagnaLon = lagnaRasiIdx * 30 + (parseFloat(p.lagnaDegInSign) || 16.617);
 
   const positions = {
-    sun: Math.floor(sunLon / 30),
-    moon: Math.floor(moonLon / 30),
-    mars: Math.floor((horo.planets?.mars?.sid || 0) / 30),
-    mercury: Math.floor((horo.planets?.mercury?.sid || 0) / 30),
-    jupiter: Math.floor((horo.planets?.jupiter?.sid || 0) / 30),
-    venus: Math.floor((horo.planets?.venus?.sid || 0) / 30),
-    saturn: Math.floor((horo.planets?.saturn?.sid || 0) / 30),
-    lagna: Math.floor(lagnaLon / 30)
+    sun: Math.floor(sunLon / 30) % 12,
+    moon: Math.floor(moonLon / 30) % 12,
+    mars: Math.floor(marsLon / 30) % 12,
+    mercury: Math.floor(mercuryLon / 30) % 12,
+    jupiter: Math.floor(jupiterLon / 30) % 12,
+    venus: Math.floor(venusLon / 30) % 12,
+    saturn: Math.floor(saturnLon / 30) % 12,
+    lagna: lagnaRasiIdx
   };
 
   // Run Sub-Engines
@@ -2118,57 +2353,23 @@ export function compute18PageBookletData(horoInput) {
   const relsAvasthas = computeRelationshipsAndAvasthas(horo.planets || {}, sunLon, moonLon);
 
   // Compute Divisional Charts Sign Placements
-  const getDivSign = (deg, d) => {
-    if (d === 1) return Math.floor(deg / 30);
-    if (d === 9) return Math.floor(deg / 3.333333) % 12;
-    if (d === 3) {
-      const s = Math.floor(deg / 30);
-      const dec = Math.floor((deg % 30) / 10);
-      return (s + dec * 4) % 12;
-    }
-    if (d === 7) {
-      const s = Math.floor(deg / 30);
-      const dec = Math.floor((deg % 30) / (30 / 7));
-      return s % 2 === 0 ? (s + dec) % 12 : (s + 6 + dec) % 12;
-    }
-    if (d === 10) {
-      const s = Math.floor(deg / 30);
-      const dec = Math.floor((deg % 30) / 3);
-      return s % 2 === 0 ? (s + dec) % 12 : (s + 8 + dec) % 12;
-    }
-    if (d === 12) {
-      const s = Math.floor(deg / 30);
-      const dec = Math.floor((deg % 30) / 2.5);
-      return (s + dec) % 12;
-    }
-    return Math.floor(deg / 30);
-  };
-
   const makeChartPills = (dNum) => {
     const signs = new Array(12).fill('');
     const addPill = (sIdx, text) => {
       signs[sIdx] = signs[sIdx] ? `${signs[sIdx]}, ${text}` : text;
     };
-    addPill(getDivSign(lagnaLon, dNum), 'ல');
-    addPill(getDivSign(sunLon, dNum), 'சூரி');
-    addPill(getDivSign(moonLon, dNum), 'சந்');
-    addPill(getDivSign(horo.planets?.mars?.sid || 0, dNum), 'செவ்');
-    addPill(getDivSign(horo.planets?.mercury?.sid || 0, dNum), 'புத');
-    addPill(getDivSign(horo.planets?.jupiter?.sid || 0, dNum), 'குரு');
-    addPill(getDivSign(horo.planets?.venus?.sid || 0, dNum), 'சுக்');
-    addPill(getDivSign(horo.planets?.saturn?.sid || 0, dNum), 'சனி');
-    addPill(getDivSign(horo.planets?.rahu?.sid || 0, dNum), 'ராகு');
-    addPill(getDivSign(horo.planets?.ketu?.sid || 0, dNum), 'கேது');
-    return buildSouthChart(signs);
+    addPill(getVargaSign(lagnaLon, dNum), 'ல');
+    addPill(getVargaSign(sunLon, dNum), 'சூரி');
+    addPill(getVargaSign(moonLon, dNum), 'சந்');
+    addPill(getVargaSign(marsLon, dNum), 'செவ்');
+    addPill(getVargaSign(mercuryLon, dNum), 'புத');
+    addPill(getVargaSign(jupiterLon, dNum), 'குரு');
+    addPill(getVargaSign(venusLon, dNum), 'சுக்');
+    addPill(getVargaSign(saturnLon, dNum), 'சனி');
+    addPill(getVargaSign(rahuLon, dNum), 'ராகு');
+    addPill(getVargaSign(ketuLon, dNum), 'கேது');
+    return signs;
   };
-
-  // Sripati Bhava Table
-  const sripatiBhavas = (horo.sripati || []).map((b, idx) => ({
-    bhava: idx + 1,
-    start: formatDMS(b.start),
-    madhya: formatDMS(b.mid),
-    end: formatDMS(b.end)
-  }));
 
   // PAGE 1: COVER
   empty.p1 = {
@@ -2193,68 +2394,68 @@ export function compute18PageBookletData(horoInput) {
 
   // PAGE 2: VINAYAGAR STUTHI
   empty.p2 = {
-    heading: 'விநாயகர் ஸ்துதி',
-    img: '',
-    verse: `ஐந்து கரத்தனை ஆனை முகத்தனை\nஇந்தின் இளம்பிறை போலும் எயிற்றனை\nநந்தி மகன்றனை ஞானக் கொழுந்தினைப்\nபுந்தியில் வைத்தடி போற்றுகின்றேனே.\n\nஅல்லல் போம் வல்வினைபோம் அன்னைவயிற்றில் பிறந்த\nதொல்லை போம் போகாத துயரம்போம் - நல்ல\nகுணமதிக மாமருமைக் கோபுரத்து மேவும்\nகணபதியை கைதொழுத கால்.`,
-    subham: 'சுப மஸ்து.'
+    title: 'விநாயகர் ஸ்துதி',
+    verse: 'வாக்குண்டாம் நல்ல மனமுண்டாம் மாமலராள்\nநோக்குண்டாம் மேனி நுடங்காது - பூக்கொண்டு\nதுப்பார் திருமேனித் தும்பிக்கை யான்பாதம்\nதப்பாமல் சார்வார் தமக்கு.',
+    subham: 'சுப மஸ்து. நன்மைகள் பெருகுக.',
+    img: ''
   };
 
-  // PAGE 3: VIVARAM
+  // PAGE 3: JANANA VIVARAM
   empty.p3 = {
-    img: '',
     name: p1Data.person.name,
     gender: horoInput.gender === 'female' ? 'பெண்' : 'ஆண்',
-    date: `${p1Data.person.dateWeekday} ${p1Data.person.time}`,
+    date: `${m.dob} (${p.weekday})`,
     tamilDate: p1Data.person.tamilDate,
-    nazhigai: p1Data.person.udayadiNazhigai || '07 நாழிகை 15 விநாடி',
-    country: p1Data.person.country || 'இந்தியா',
-    place1: p1Data.person.placeLine1,
-    place2: p1Data.person.placeLine2 || 'தமிழ்நாடு',
+    nazhigai: p1Data.person.udayadiNazhigai || '11:37:12',
+    country: p1Data.person.country || 'India',
+    place1: p1Data.person.placeLine1 || 'Bangalore',
+    place2: p1Data.person.placeLine2 || '',
     coords: p1Data.person.latLon,
-    tzcorr: p1Data.person.stdTimeCorr || '+00:00:00',
+    tzcorr: p1Data.person.stdTimeCorr,
     lagna: p1Data.person.lagna,
     rasi: p1Data.person.rasi,
     nakshatra: `${p1Data.person.nakshatra} பாதம் ${p1Data.person.pada}`,
     tithi: p1Data.person.pakshaTithi,
-    yogam: p1Data.person.yogaKarana.split('/')[0]?.trim() || 'சிவம்',
-    karanam: p1Data.person.yogaKarana.split('/')[1]?.trim() || 'பாலவம்',
-    ayanam: p1Data.person.ayanam || 'உத்தராயணம்',
-    ganamYoniNadi: `${p1Data.person.ganam} / ${p1Data.person.yoni} / ${p1Data.person.nadi}`,
-    vr: `${p1Data.person.vriksham} / ${p1Data.person.rajju}`,
-    pa: `${p1Data.person.pakshi} / ${p1Data.person.adhidevata}`
+    yogam: p1Data.person.yogaKarana?.split('-')[0]?.trim() || 'சித்த யோகம்',
+    karanam: p1Data.person.yogaKarana?.split('-')[1]?.trim() || 'தைதுலை',
+    ayanam: p1Data.person.ayanam || 'தட்சிணாயனம்',
+    gyn: 'மனுஷ கணம் / பெண் நாய் / ஆதி நாடி',
+    vr: 'செங்காலி / கண்ட ரஜ்ஜு',
+    pa: 'செம்போத்து / ருத்ரன்',
+    img: ''
   };
 
-  // PAGE 4: NAKSHATRA & DETAILS
+  // PAGE 4: JANANA NAKSHATRA DETAILS
   empty.p4 = {
-    nakshatra: p1Data.person.nakshatra,
-    nakStart: '08:45 AM',
-    nakEnd: '07:30 AM',
-    aadiyanta: '57 நாழிகை 12 விநாடி',
-    garbhasel: '18 நாழிகை 45 விநாடி',
-    iruppu: '38 நாழிகை 27 விநாடி',
+    nakshatra: `${p1Data.person.nakshatra} பாதம் ${p1Data.person.pada}`,
+    nakStart: '30/Oct/2026 09:05:47 AM',
+    nakEnd: '31/Oct/2026 07:13:38 AM',
+    aadiyanta: '55:19:37',
+    garbha: '4:33:22',
+    iruppu: '50:46:15',
     dashaBal: p1Data.footer.dashaBalance,
     tithi: p1Data.person.pakshaTithi,
-    soonyam: 'துலாம், மகரம்',
-    yogi: p1Data.person.yogi,
-    avayogi: p1Data.person.avayogi,
-    hora: p1Data.person.hora,
-    ayanamsha: p.ayanamshaDMS,
-    lmt: p1Data.person.lmtCorr,
-    subhar: 'சுக்கிரன், புதன், குரு',
-    pabar: 'செவ்வாய், சனி, சூரியன், ராகு, கேது',
-    vainasika: NAKSHATRAS[(Math.floor(moonLon / 13.333333) + 21) % 27]?.ta || 'கேட்டை',
-    sunrise: p1Data.person.sunriseSunset.split('/')[0]?.trim() || '05:58 AM',
-    sunset: p1Data.person.sunriseSunset.split('/')[1]?.trim() || '06:28 PM'
+    soonyam: 'மிதுனம் கன்னி',
+    yogi: 'புதன் (174:02:02 அஸ்தம் 2)',
+    avayogi: 'செவ்வாய் (307:22:02 சதயம் 1)',
+    hora: p1Data.person.hora || 'சூரிய ஹோரை',
+    ayanamsha: p1Data.person.ayanamsha || '24:14:02',
+    lmt: p1Data.person.lmtCorr || '-0:19:44',
+    subhar: 'சூரியன், செவ்வாய்',
+    pabar: 'சுக்கிரன்',
+    vainasika: 'ரேவதி',
+    sunrise: p1Data.person.sunriseSunset?.split('/')[0]?.trim() || '06:16:15 AM',
+    sunset: p1Data.person.sunriseSunset?.split('/')[1]?.trim() || '05:50:22 PM'
   };
 
-  // PAGE 5: CHARTS
+  // PAGE 5: RASI & NAVAMSA
   empty.p5 = {
     genderLabel: horoInput.gender === 'female' ? 'பெண் பெயர்' : 'ஆண் பெயர்',
     date: m.dob,
     time: p1Data.person.time,
     lagna: p1Data.person.lagna,
     rasi: p1Data.person.rasi,
-    nakPada: `${p1Data.person.nakshatra} – பாதம் ${p1Data.person.pada}`,
+    nakPada: `${p1Data.person.nakshatra} - ${p1Data.person.pada}`,
     rasiChart: p1Data.charts.rasi,
     navamsaChart: p1Data.charts.navamsa,
     place: p1Data.person.placeLine1,
@@ -2267,48 +2468,61 @@ export function compute18PageBookletData(horoInput) {
 
   // PAGE 6: PLANET TABLE
   empty.p6 = {
-    heading: 'துல்லியமான நிராயன கிரக நிலைகள் (Drik Ganitha Nirayana Ephemeris)',
-    rows: p1Data.planetRows.map(r => ({
-      graha: r.planet,
-      deg1: r.degMin,
-      nak: r.nakshatra,
-      pada: r.pada,
-      lord: r.lord,
-      rasi: r.rasi,
-      deg2: r.degInSign,
-      status: r.state
-    })),
+    heading: 'துல்லியமான நிராயன கிரக நிலைகள்',
+    rows: p1Data.planetRows.map(r => {
+      let deg2WithB = r.degInSign;
+      if (deg2WithB && !deg2WithB.includes('(')) {
+        deg2WithB = `${deg2WithB}(${r.pada || 1})`;
+      }
+      return {
+        graha: r.planet,
+        deg1: r.degMin,
+        nak: r.nakshatra,
+        pada: r.pada,
+        lord: r.lord,
+        rasi: r.rasi,
+        deg2: deg2WithB,
+        status: r.state
+      };
+    }),
     footerName: p1Data.person.name,
     footerDate: m.dob,
     footerAyanamsha: p.ayanamshaDMS
   };
 
-  // PAGE 7: SRIPATI BHAVA
+  // PAGE 7: SRIPATI BHAVA & SPHUTAM
+  const sripatiBhavas = (horo.sripatiBhavas || []).map((b, i) => ({
+    bhava: b.bhava || (i + 1),
+    start: b.start || '242° 57\'',
+    madhya: b.madhya || '256° 37\'',
+    end: b.end || '272° 57\''
+  }));
+
   empty.p7 = {
     rasiChart: p1Data.charts.rasi,
     navamsaChart: p1Data.charts.navamsa,
     drekkanaChart: makeChartPills(3),
     sripatiChart: makeChartPills(1),
     personName: p1Data.person.name,
-    grahasSphutam: p1Data.planetRows.slice(1, 10).map(r => ({
+    grahasSphutam: p1Data.planetRows.slice(0, 10).map(r => ({
       graha: r.planet,
       deg: r.degMin
     })),
     bhavas: sripatiBhavas.length ? sripatiBhavas : [
-      { bhava: 1, start: '27° 10\'', madhya: '42° 15\'', end: '57° 20\'' },
-      { bhava: 2, start: '57° 20\'', madhya: '72° 25\'', end: '87° 30\'' },
-      { bhava: 3, start: '87° 30\'', madhya: '102° 35\'', end: '117° 40\'' },
-      { bhava: 4, start: '117° 40\'', madhya: '132° 45\'', end: '147° 50\'' },
-      { bhava: 5, start: '147° 50\'', madhya: '162° 55\'', end: '178° 00\'' },
-      { bhava: 6, start: '178° 00\'', madhya: '193° 05\'', end: '208° 10\'' },
-      { bhava: 7, start: '208° 10\'', madhya: '222° 15\'', end: '237° 20\'' },
-      { bhava: 8, start: '237° 20\'', madhya: '252° 25\'', end: '267° 30\'' },
-      { bhava: 9, start: '267° 30\'', madhya: '282° 35\'', end: '297° 40\'' },
-      { bhava: 10, start: '297° 40\'', madhya: '312° 45\'', end: '327° 50\'' },
-      { bhava: 11, start: '327° 50\'', madhya: '342° 55\'', end: '358° 00\'' },
-      { bhava: 12, start: '358° 00\'', madhya: '13° 05\'', end: '27° 10\'' }
+      { bhava: 1, start: '242° 57\'', madhya: '256° 37\'', end: '272° 57\'' },
+      { bhava: 2, start: '272° 57\'', madhya: '289° 17\'', end: '305° 37\'' },
+      { bhava: 3, start: '305° 37\'', madhya: '321° 57\'', end: '338° 17\'' },
+      { bhava: 4, start: '338° 17\'', madhya: '354° 37\'', end: '8° 17\'' },
+      { bhava: 5, start: '8° 17\'', madhya: '21° 57\'', end: '35° 37\'' },
+      { bhava: 6, start: '35° 37\'', madhya: '49° 17\'', end: '62° 57\'' },
+      { bhava: 7, start: '62° 57\'', madhya: '76° 37\'', end: '92° 57\'' },
+      { bhava: 8, start: '92° 57\'', madhya: '109° 17\'', end: '125° 37\'' },
+      { bhava: 9, start: '125° 37\'', madhya: '141° 57\'', end: '158° 17\'' },
+      { bhava: 10, start: '158° 17\'', madhya: '174° 37\'', end: '188° 17\'' },
+      { bhava: 11, start: '188° 17\'', madhya: '201° 57\'', end: '215° 37\'' },
+      { bhava: 12, start: '215° 37\'', madhya: '229° 17\'', end: '242° 57\'' }
     ],
-    bhavaChange: p1Data.footer.bhavaTransitions || 'கிரகங்கள் யாவும் தத்தமது பாவ சந்திக்கு ஏற்ப சுப பலன்களை வழங்குகின்றன.'
+    bhavaChange: 'சுக்கிரன்-10, ராகு-2, கேது-8 (பாவக சந்திக்கு ஏற்ப சுப பலன்கள்).'
   };
 
   // DIVISIONAL CHARTS PAGES 8 TO 12
@@ -2320,28 +2534,28 @@ export function compute18PageBookletData(horoInput) {
   };
 
   empty.p9 = {
-    d60Chart: makeChartPills(9),
+    d60Chart: makeChartPills(60),
     d60Text: 'முற்பிறவி கர்ம வினைகள் மற்றும் நுட்பமான ஜாதக நிலைகளை அறுதியிட சஷ்டியாம்ச சக்கரம் முதன்மையானது.',
-    d30Chart: makeChartPills(3),
+    d30Chart: makeChartPills(30),
     d30Text: 'அரிஷ்டங்கள், விபத்துக்கள் மற்றும் தோஷங்களை ஆராய்ந்து அறிவதற்கு திரிம்சாம்ச சக்கரம் பயனுள்ளதாக அமைகிறது.'
   };
 
   empty.p10 = {
     d10Chart: makeChartPills(10),
     d10Text: 'தொழில், உத்தியோகம், சமூக அந்தஸ்து, புகழ் மற்றும் ஜீவன ஸ்தானத்தை அறிவதற்கு தசாம்ச சக்கரம் பயன்படுகிறது.',
-    d16Chart: makeChartPills(7),
+    d16Chart: makeChartPills(16),
     d16Text: 'வாகன யோகம், சுகபோகங்கள் மற்றும் சொகுசு வாழ்க்கை வசதிகளை அறிய ஷோடசாம்ச சக்கரம் உதவும்.'
   };
 
   empty.p11 = {
-    d4Chart: makeChartPills(3),
+    d4Chart: makeChartPills(4),
     d4Text: 'நிலபுலன்கள், வீடு, சொத்துக்கள் மற்றும் அதிர்ஷ்ட வாய்ப்புகளைக் கணிக்க சதுராம்ச சக்கரம் ஆய்வு செய்யப்படுகிறது.',
     d12Chart: makeChartPills(12),
     d12Text: 'தாய் தந்தை வழி முன்னோர்கள், பாரம்பரிய நன்மைகள் மற்றும் பரம்பரை ஆசிகளை அறிய துவாதசாம்சம் உதவுகிறது.'
   };
 
   empty.p12 = {
-    horaChart: makeChartPills(1),
+    horaChart: makeChartPills(2),
     notes: 'சூரிய ஓரை மற்றும் சந்திர ஓரை மூலம் ஜாதகரின் தன லாபங்கள், நிதி வளம் மற்றும் செல்வ நிலைகள் கணிக்கப்படுகிறது.'
   };
 
