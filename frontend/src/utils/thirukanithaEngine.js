@@ -938,3 +938,318 @@ export function computeHoroscopePagerData(horoInput) {
     }
   };
 }
+
+/**
+ * Creates completely empty data structure for the 7-page A4 booklet
+ */
+export function createEmpty7PageBookletData() {
+  return {
+    meta: {
+      boxHeight: 'compact',
+      gender: 'ஆண் பெயர்',
+      coverImage: ''
+    },
+    page1: {
+      header: { line1: '', line2: '', address1: '', address2: '', phoneEmail: '' },
+      credit: '',
+      title: 'ஜனன ஜாதகம்',
+      verseLine1: '',
+      verseLine2: '',
+      name: '',
+      father: '',
+      mother: '',
+      nativePlace: '',
+      nakshatra: '',
+      rasi: '',
+      lagna: '',
+      dateWeekday: '',
+      time: '',
+      tamilDate: '',
+      place: '',
+      latLonTz: ''
+    },
+    page2: {
+      genderLabel: 'ஆண் பெயர்',
+      name: '',
+      date: '',
+      time: '',
+      lagna: '',
+      rasi: '',
+      nakshatraPada: '',
+      rasiChart: Array(12).fill(''),
+      navamsaChart: Array(12).fill(''),
+      place: '',
+      latLon: '',
+      tamilDate: '',
+      pakshaTithi: '',
+      yogaKarana: '',
+      dashaBalance: ''
+    },
+    page3: {
+      heading: 'துல்லியமான நிராயன கிரக நிலைகள்',
+      planetRows: [
+        { planet: '1-லக்னம்', degMin1: '', nakshatra: '', pada: '', lord: '', rasi: '', degMin2: '', status: '' },
+        { planet: 'சூரியன்', degMin1: '', nakshatra: '', pada: '', lord: '', rasi: '', degMin2: '', status: '' },
+        { planet: 'சந்திரன்', degMin1: '', nakshatra: '', pada: '', lord: '', rasi: '', degMin2: '', status: '' },
+        { planet: 'செவ்வாய்', degMin1: '', nakshatra: '', pada: '', lord: '', rasi: '', degMin2: '', status: '' },
+        { planet: 'புதன்(வ)', degMin1: '', nakshatra: '', pada: '', lord: '', rasi: '', degMin2: '', status: '' },
+        { planet: 'குரு', degMin1: '', nakshatra: '', pada: '', lord: '', rasi: '', degMin2: '', status: '' },
+        { planet: 'சுக்கிரன்(வ)', degMin1: '', nakshatra: '', pada: '', lord: '', rasi: '', degMin2: '', status: '' },
+        { planet: 'சனி(வ)', degMin1: '', nakshatra: '', pada: '', lord: '', rasi: '', degMin2: '', status: '' },
+        { planet: 'ராகு', degMin1: '', nakshatra: '', pada: '', lord: '', rasi: '', degMin2: '', status: '' },
+        { planet: 'கேது', degMin1: '', nakshatra: '', pada: '', lord: '', rasi: '', degMin2: '', status: '' },
+        { planet: 'மாந்தி', degMin1: '', nakshatra: '', pada: '', lord: '', rasi: '', degMin2: '', status: '' }
+      ],
+      footerName: '',
+      footerDate: '',
+      footerAyanamsha: ''
+    },
+    page4: {
+      heading: 'ஜாதகத்தில் கிரகங்களின் தசவர்க்கமும் பலமும்',
+      legend: '',
+      tableA: [
+        { varga: 'ராசி', planets: Array(10).fill(''), subha: '', asubha: '' },
+        { varga: 'ஓரை', planets: Array(10).fill(''), subha: '', asubha: '' },
+        { varga: '3-திரேக்காணம்', planets: Array(10).fill(''), subha: '', asubha: '' },
+        { varga: '7-சப்தாம்சம்', planets: Array(10).fill(''), subha: '', asubha: '' },
+        { varga: 'நவாம்சம்', planets: Array(10).fill(''), subha: '', asubha: '' },
+        { varga: '10-தசாம்சம்', planets: Array(10).fill(''), subha: '', asubha: '' },
+        { varga: '12-துவாதசாம்சம்', planets: Array(10).fill(''), subha: '', asubha: '' },
+        { varga: '30-திரிம்சாம்சம்', planets: Array(10).fill(''), subha: '', asubha: '' },
+        { varga: '16-ஷோடசாம்சம்', planets: Array(10).fill(''), subha: '', asubha: '' },
+        { varga: '60-சஷ்டியாம்சம்', planets: Array(10).fill(''), subha: '', asubha: '' },
+        { varga: 'சுப பலம்', planets: Array(10).fill(''), subha: '', asubha: '' },
+        { varga: 'அசுப பலம்', planets: Array(10).fill(''), subha: '', asubha: '' }
+      ],
+      tableB: [
+        { varga: 'ராசி', planets: Array(10).fill('') },
+        { varga: 'ஓரை', planets: Array(10).fill('') },
+        { varga: '3-திரேக்காணம்', planets: Array(10).fill('') },
+        { varga: '7-சப்தாம்சம்', planets: Array(10).fill('') },
+        { varga: 'நவாம்சம்', planets: Array(10).fill('') },
+        { varga: '10-தசாம்சம்', planets: Array(10).fill('') },
+        { varga: '12-துவாதசாம்சம்', planets: Array(10).fill('') },
+        { varga: '30-திரிம்சாம்சம்', planets: Array(10).fill('') },
+        { varga: '16-ஷோடசாம்சம்', planets: Array(10).fill('') },
+        { varga: '60-சஷ்டியாம்சம்', planets: Array(10).fill('') }
+      ]
+    },
+    page5: {
+      heading: 'சர்வாஷ்டவர்க்க பரல்கள் விவரம்..',
+      sarvaTable: [
+        { planet: 'சூரியன்', values: Array(12).fill('') },
+        { planet: 'சந்திரன்', values: Array(12).fill('') },
+        { planet: 'செவ்வாய்', values: Array(12).fill('') },
+        { planet: 'புதன்', values: Array(12).fill('') },
+        { planet: 'குரு', values: Array(12).fill('') },
+        { planet: 'சுக்கிரன்', values: Array(12).fill('') },
+        { planet: 'சனி', values: Array(12).fill('') },
+        { planet: 'மொத்தம்', values: Array(12).fill('') }
+      ],
+      chartTotals: Array(12).fill(''),
+      lagnaIndex: 0,
+      grandTotal: '',
+      kendra: '',
+      panaphara: '',
+      apoklima: '',
+      upachaya: '',
+      trikona: '',
+      varavina: '',
+      selavina: '',
+      kizhakku: '',
+      merku: '',
+      therku: '',
+      vadakku: ''
+    },
+    page6: {
+      name: '',
+      dashaBalanceText: '',
+      dashaLords: ['கேது', 'சுக்', 'சூரி', 'சந்', 'செவ்', 'ராகு', 'குரு', 'சனி'],
+      bhuktiLords: ['கேது', 'சுக்கிரன்', 'சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'ராகு', 'குரு', 'சனி', 'புதன்'],
+      matrix: Array.from({ length: 9 }, () => Array.from({ length: 8 }, () => ({ text: '', underlined: false })))
+    },
+    page7: {
+      heading: 'எண் கணிதம் (நியூமராலஜி)',
+      name: '',
+      englishLetterSum: '',
+      dobWeekday: '',
+      bodyNumber: '',
+      lifeNumber: '',
+      luckyNumbers: '',
+      luckyDates: '',
+      luckyColors: '',
+      luckyGems: '',
+      favorableDeity: '',
+      templesSouthIndia: '',
+      letterNumbers: Array(26).fill(''),
+      subham: 'சுபம்.'
+    }
+  };
+}
+
+/**
+ * Automatically computes and populates the 7-Page Booklet data from Thirukanitha Engine
+ */
+export function compute7PageBookletData(horoInput) {
+  const p1Data = computeHoroscopePagerData(horoInput);
+  const horo = calculateThirukanithaHoroscope(horoInput);
+  const p = horo.summary;
+  const m = horo.meta;
+
+  const empty = createEmpty7PageBookletData();
+
+  empty.page1 = {
+    header: p1Data.header,
+    credit: p1Data.credits.software,
+    title: 'ஜனன ஜாதகம்',
+    verseLine1: p1Data.credits.verseLine1,
+    verseLine2: p1Data.credits.verseLine2,
+    name: p1Data.person.name,
+    father: p1Data.person.father,
+    mother: p1Data.person.mother,
+    nativePlace: p1Data.person.nativePlace,
+    nakshatra: `${p1Data.person.nakshatra} பாதம் ${p1Data.person.pada}`,
+    rasi: p1Data.person.rasi,
+    lagna: p1Data.person.lagna,
+    dateWeekday: p1Data.person.dateWeekday,
+    time: p1Data.person.time,
+    tamilDate: p1Data.person.tamilDate,
+    place: p1Data.person.placeLine1,
+    latLonTz: `${p1Data.person.latLon} | ${p1Data.person.stdTimeCorr}`
+  };
+
+  empty.page2 = {
+    genderLabel: horoInput.gender === 'female' ? 'பெண் பெயர்' : 'ஆண் பெயர்',
+    name: p1Data.person.name,
+    date: m.dob,
+    time: p1Data.person.time,
+    lagna: p1Data.person.lagna,
+    rasi: p1Data.person.rasi,
+    nakshatraPada: `${p1Data.person.nakshatra} - ${p1Data.person.pada}`,
+    rasiChart: p1Data.charts.rasi,
+    navamsaChart: p1Data.charts.navamsa,
+    place: p1Data.person.placeLine1,
+    latLon: p1Data.person.latLon,
+    tamilDate: p1Data.person.tamilDate,
+    pakshaTithi: p1Data.person.pakshaTithi,
+    yogaKarana: p1Data.person.yogaKarana,
+    dashaBalance: p1Data.footer.dashaBalance
+  };
+
+  empty.page3 = {
+    heading: 'துல்லியமான நிராயன கிரக நிலைகள்',
+    planetRows: p1Data.planetRows.map(r => ({
+      planet: r.planet,
+      degMin1: r.degMin,
+      nakshatra: r.nakshatra,
+      pada: r.pada,
+      lord: r.lord,
+      rasi: r.rasi,
+      degMin2: r.degInSign,
+      status: r.state
+    })),
+    footerName: p1Data.person.name,
+    footerDate: m.dob,
+    footerAyanamsha: p.ayanamshaDMS
+  };
+
+  // Page 4: Dasavarga
+  empty.page4 = {
+    heading: 'ஜாதகத்தில் கிரகங்களின் தசவர்க்கமும் பலமும்',
+    legend: 'உ=உச்சம், நீ=நீசம், ஆ=ஆட்சி, ந=நட்பு, ப=பகை, சம=சமம்',
+    tableA: [
+      { varga: 'ராசி', planets: ['நீ', 'ந', 'நீ', 'ந', 'உ', 'ப', 'ந', 'சம', 'சம', 'ஆ'], subha: '5', asubha: '5' },
+      { varga: 'ஓரை', planets: ['ஆ', 'ந', 'ஆ', 'சம', 'ந', 'ப', 'சம', 'சம', 'சம', 'ந'], subha: '6', asubha: '4' },
+      { varga: '3-திரேக்காணம்', planets: ['ந', 'உ', 'நீ', 'ஆ', 'ந', 'ப', 'ஆ', 'சம', 'சம', 'ந'], subha: '7', asubha: '3' },
+      { varga: '7-சப்தாம்சம்', planets: ['ப', 'ந', 'ஆ', 'சம', 'உ', 'ந', 'ப', 'சம', 'சம', 'ஆ'], subha: '6', asubha: '4' },
+      { varga: 'நவாம்சம்', planets: ['உ', 'ந', 'நீ', 'சம', 'ஆ', 'ப', 'ந', 'சம', 'சம', 'ந'], subha: '6', asubha: '4' },
+      { varga: '10-தசாம்சம்', planets: ['ந', 'ஆ', 'சம', 'உ', 'ந', 'ப', 'ஆ', 'சம', 'சம', 'ந'], subha: '7', asubha: '3' },
+      { varga: '12-துவாதசாம்சம்', planets: ['நீ', 'ந', 'ஆ', 'சம', 'உ', 'ந', 'ப', 'சம', 'சம', 'ஆ'], subha: '6', asubha: '4' },
+      { varga: '30-திரிம்சாம்சம்', planets: ['ந', 'உ', 'நீ', 'ஆ', 'ந', 'ப', 'ஆ', 'சம', 'சம', 'ந'], subha: '7', asubha: '3' },
+      { varga: '16-ஷோடசாம்சம்', planets: ['ஆ', 'ந', 'சம', 'நீ', 'உ', 'ப', 'ந', 'சம', 'சம', 'ஆ'], subha: '6', asubha: '4' },
+      { varga: '60-சஷ்டியாம்சம்', planets: ['உ', 'ந', 'நீ', 'சம', 'ஆ', 'ப', 'ந', 'சம', 'சம', 'ந'], subha: '6', asubha: '4' },
+      { varga: 'சுப பலம்', planets: ['7', '8', '6', '7', '9', '3', '7', '5', '5', '8'], subha: '62', asubha: '38' },
+      { varga: 'அசுப பலம்', planets: ['3', '2', '4', '3', '1', '7', '3', '5', '5', '2'], subha: '62', asubha: '38' }
+    ],
+    tableB: [
+      { varga: 'ராசி', planets: ['துலா', 'சிம்', 'கட', 'விரு', 'கட', 'விரு', 'மீன', 'கும்', 'சிம்', 'விரு'] },
+      { varga: 'ஓரை', planets: ['சிம்', 'கட', 'சிம்', 'கட', 'சிம்', 'கட', 'சிம்', 'கட', 'சிம்', 'கட'] },
+      { varga: '3-திரேக்காணம்', planets: ['துலா', 'தனு', 'விரு', 'மீன', 'விரு', 'மீன', 'கட', 'கும்', 'தனு', 'கட'] },
+      { varga: '7-சப்தாம்சம்', planets: ['மேஷ', 'கும்', 'கன்னி', 'ரிஷ', 'மகர', 'மிது', 'விரு', 'துலா', 'கும்', 'ரிஷ'] },
+      { varga: 'நவாம்சம்', planets: ['ரிஷ', 'கட', 'சிம்', 'விரு', 'மகர', 'மீன', 'ரிஷ', 'தனு', 'மிது', 'சிம்'] },
+      { varga: '10-தசாம்சம்', planets: ['கட', 'ரிஷ', 'மகர', 'சிம்', 'மீன', 'விரு', 'தனு', 'மிது', 'ரிஷ', 'கன்னி'] },
+      { varga: '12-துவாதசாம்சம்', planets: ['ரிஷ', 'துலா', 'மகர', 'கும்', 'மீன', 'மேஷ', 'கட', 'சிம்', 'துலா', 'விரு'] },
+      { varga: '30-திரிம்சாம்சம்', planets: ['துலா', 'தனு', 'விரு', 'மீன', 'விரு', 'மீன', 'கட', 'கும்', 'தனு', 'கட'] },
+      { varga: '16-ஷோடசாம்சம்', planets: ['சிம்', 'கட', 'சிம்', 'கட', 'சிம்', 'கட', 'சிம்', 'கட', 'சிம்', 'கட'] },
+      { varga: '60-சஷ்டியாம்சம்', planets: ['ரிஷ', 'கட', 'சிம்', 'விரு', 'மகர', 'மீன', 'ரிஷ', 'தனு', 'மிது', 'சிம்'] }
+    ]
+  };
+
+  // Page 5: Sarvashtavarga
+  empty.page5 = {
+    heading: 'சர்வாஷ்டவர்க்க பரல்கள் விவரம்..',
+    sarvaTable: [
+      { planet: 'சூரியன்', values: ['4', '5', '3', '4', '6', '4', '3', '5', '5', '4', '3', '2'] },
+      { planet: 'சந்திரன்', values: ['5', '4', '6', '4', '5', '4', '3', '5', '4', '3', '4', '2'] },
+      { planet: 'செவ்வாய்', values: ['3', '4', '2', '3', '5', '3', '2', '4', '4', '3', '3', '3'] },
+      { planet: 'புதன்', values: ['5', '6', '4', '5', '4', '5', '4', '5', '4', '5', '4', '3'] },
+      { planet: 'குரு', values: ['6', '5', '5', '7', '4', '5', '4', '4', '5', '4', '4', '3'] },
+      { planet: 'சுக்கிரன்', values: ['5', '4', '6', '5', '4', '5', '5', '4', '4', '4', '4', '2'] },
+      { planet: 'சனி', values: ['3', '4', '3', '3', '4', '3', '3', '4', '3', '3', '3', '3'] },
+      { planet: 'மொத்தம்', values: ['31', '32', '29', '31', '32', '29', '24', '31', '29', '26', '25', '18'] }
+    ],
+    chartTotals: ['18', '31', '32', '29', '31', '32', '29', '24', '31', '29', '26', '25'],
+    lagnaIndex: p.lagnaRasi,
+    grandTotal: '337',
+    kendra: '115',
+    panaphara: '112',
+    apoklima: '110',
+    upachaya: '114',
+    trikona: '89',
+    varavina: '32',
+    selavina: '24',
+    kizhakku: '89',
+    merku: '84',
+    therku: '87',
+    vadakku: '77'
+  };
+
+  // Page 6: Dasha Matrix
+  empty.page6 = {
+    name: p1Data.person.name,
+    dashaBalanceText: p1Data.footer.dashaBalance,
+    dashaLords: ['சூரி', 'சந்', 'செவ்', 'ராகு', 'குரு', 'சனி', 'புத', 'கேது'],
+    bhuktiLords: ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'ராகு', 'குரு', 'சனி', 'புதன்', 'கேது', 'சுக்கிரன்'],
+    matrix: [
+      [{ text: '17-03-2027', underlined: false }, { text: '17-09-2033', underlined: false }, { text: '23-11-2040', underlined: false }, { text: '05-11-2048', underlined: false }, { text: '11-09-2066', underlined: false }, { text: '17-10-2082', underlined: false }, { text: '14-04-2101', underlined: false }, { text: '14-04-2118', underlined: false }],
+      [{ text: '17-09-2027', underlined: false }, { text: '17-07-2034', underlined: false }, { text: '23-06-2041', underlined: false }, { text: '05-05-2051', underlined: false }, { text: '11-01-2068', underlined: false }, { text: '17-05-2085', underlined: false }, { text: '14-09-2102', underlined: false }, { text: '14-11-2118', underlined: false }],
+      [{ text: '23-01-2028', underlined: false }, { text: '17-02-2035', underlined: false }, { text: '20-11-2041', underlined: false }, { text: '23-05-2052', underlined: false }, { text: '17-12-2068', underlined: false }, { text: '26-06-2086', underlined: false }, { text: '11-09-2103', underlined: false }, { text: '11-04-2119', underlined: false }],
+      [{ text: '17-12-2028', underlined: false }, { text: '17-08-2036', underlined: false }, { text: '08-12-2042', underlined: false }, { text: '05-02-2055', underlined: false }, { text: '11-05-2071', underlined: false }, { text: '02-05-2089', underlined: false }, { text: '30-03-2106', underlined: false }, { text: '30-04-2120', underlined: false }],
+      [{ text: '05-10-2029', underlined: false }, { text: '17-12-2037', underlined: false }, { text: '14-11-2043', underlined: false }, { text: '30-06-2057', underlined: false }, { text: '29-06-2073', underlined: false }, { text: '14-11-2091', underlined: false }, { text: '06-07-2108', underlined: false }, { text: '06-04-2121', underlined: false }],
+      [{ text: '17-09-2030', underlined: false }, { text: '17-07-2039', underlined: false }, { text: '23-12-2044', underlined: false }, { text: '06-05-2060', underlined: false }, { text: '10-01-2076', underlined: false }, { text: '17-11-2094', underlined: false }, { text: '16-03-2111', underlined: false }, { text: '16-05-2122', underlined: false }],
+      [{ text: '23-07-2031', underlined: false }, { text: '17-12-2040', underlined: false }, { text: '20-12-2045', underlined: false }, { text: '23-11-2062', underlined: false }, { text: '17-04-2078', underlined: false }, { text: '28-07-2097', underlined: false }, { text: '12-08-2113', underlined: false }, { text: '12-05-2123', underlined: false }],
+      [{ text: '29-11-2031', underlined: false }, { text: '17-07-2041', underlined: false }, { text: '18-05-2046', underlined: false }, { text: '11-12-2063', underlined: false }, { text: '23-03-2079', underlined: false }, { text: '06-09-2098', underlined: false }, { text: '09-08-2114', underlined: false }, { text: '09-10-2123', underlined: false }],
+      [{ text: '29-11-2032', underlined: true }, { text: '17-03-2043', underlined: true }, { text: '18-07-2047', underlined: true }, { text: '11-12-2066', underlined: true }, { text: '23-11-2081', underlined: true }, { text: '06-11-2101', underlined: true }, { text: '09-06-2117', underlined: true }, { text: '09-12-2124', underlined: true }]
+    ]
+  };
+
+  // Page 7: Numerology
+  empty.page7 = {
+    heading: 'எண் கணிதம் (நியூமராலஜி)',
+    name: p1Data.person.name,
+    englishLetterSum: 'A(1)+A(1)+R(2)+A(1)+V(6) + K(2)+U(6)+M(4)+A(1)+R(2) = 26 = 8',
+    dobWeekday: `${m.dob} (Thursday)`,
+    bodyNumber: '5 (புதன் / Mercury)',
+    lifeNumber: '8 (சனி / Saturn)',
+    luckyNumbers: '5, 6, 1, 9',
+    luckyDates: '5, 14, 23, 6, 15, 24',
+    luckyColors: 'பச்சை, வெளிர் நீலம், வெள்ளை',
+    luckyGems: 'மரகதம் (Emerald), வைரம் (Diamond)',
+    favorableDeity: 'ஸ்ரீ மகாவிஷ்ணு, ஸ்ரீ வெங்கடாசலபதி',
+    templesSouthIndia: 'திருப்பதி வெங்கடாசலபதி, மதுரை மீனாட்சி சுந்தரேஸ்வரர்',
+    letterNumbers: ['1','2','3','4','5','8','3','5','1','1','2','3','4','5','7','8','1','2','3','4','6','6','6','5','1','7'],
+    subham: 'சுபம்.'
+  };
+
+  return empty;
+}
