@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ஜனன ஜாதகம் | Janana Jathagam - A4 Printable Horoscope Sheet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;600;700;900&family=Source+Code+Pro:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --maroon: #7A1A22;
+      --gold: #B8860B;
+      --font-serif: 'Noto Serif Tamil', Georgia, serif;
+      --font-mono: 'Source Code Pro', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #F4F1EA;
+      color: #000;
+      font-family: var(--font-serif);
+      font-size: 10pt;
+      line-height: 1.3;
+      padding: 15px;
+    }
+
+    /* Screen UI Controls (Hidden on Print) */
+    .screen-controls {
+      max-width: 190mm;
+      margin: 0 auto 15px auto;
+      background: #FFFFFF;
+      border: 1px solid #D5CEBF;
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .btn-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      font-family: var(--font-serif);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #CCC;
+      background: #FAFAFA;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    button:hover {
+      background: #EFEFEF;
+    }
+
+    .btn-primary {
+      background: var(--maroon);
+      color: #FFF;
+      border-color: #5A1016;
+    }
+
+    .btn-primary:hover {
+      background: #5A1016;
+    }
+
+    .btn-accent {
+      background: #FFF3CD;
+      color: #856404;
+      border-color: #FFEEBA;
+    }
+
+    .btn-accent:hover {
+      background: #FFE8A1;
+    }
+
+    /* Collapsible Editor Form */
+    .editor-card {
+      max-width: 190mm;
+      margin: 0 auto 15px auto;
+      background: #FFFFFF;
+      border: 1px solid #D5CEBF;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .editor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      font-size: 11px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .form-group label {
+      font-weight: 700;
+      color: #555;
+      font-size: 10px;
+    }
+
+    .form-control {
+      padding: 5px 8px;
+      border: 1px solid #CCC;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 11px;
+      background: #FDFDFD;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--maroon);
+    }
+
+    /* THE ONE-PAGE A4 PRINTABLE SHEET */
+    .a4-sheet {
+      width: 100%;
+      max-width: 190mm;
+      min-height: 265mm;
+      margin: 0 auto;
+      background: #FFFFFF;
+      color: #000000;
+      padding: 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+
+    /* Thin double-line border around the whole page */
+    .sheet-outer-border {
+      border: 3px double #000000;
+      padding: 4mm 6mm;
+      min-height: 265mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* 1. Header Box */
+    .header-box {
+      border: 1px solid #000;
+      padding: 4px 8px;
+      text-align: center;
+      margin-bottom: 4px;
+      border-radius: 2px;
+    }
+
+    .header-line-1 {
+      font-size: 14pt;
+      font-weight: 900;
+      line-height: 1.2;
+      min-height: 18pt;
+    }
+
+    .header-line-2 {
+      font-size: 9.5pt;
+      font-weight: 700;
+      min-height: 13pt;
+    }
+
+    .header-address {
+      font-size: 8pt;
+      color: #222;
+      min-height: 11pt;
+    }
+
+    .header-contact {
+      font-size: 7.5pt;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      min-height: 10pt;
+    }
+
+    /* 2. Credits & Invocation */
+    .credits-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 7.5pt;
+      margin-bottom: 2px;
+      min-height: 18px;
+    }
+
+    .credit-software {
+      font-family: var(--font-mono);
+      width: 28%;
+      color: #444;
+    }
+
+    .verse-center {
+      text-align: center;
+      font-weight: 700;
+      color: var(--maroon);
+      width: 44%;
+      line-height: 1.15;
+    }
+
+    .credit-spacer {
+      width: 28%;
+    }
+
+    hr.thin-rule {
+      border: 0;
+      border-top: 1px solid #000;
+      margin: 3px 0;
+    }
+
+    /* 3. Title & Name */
+    .title-centered {
+      text-align: center;
+      font-size: 13pt;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      margin: 2px 0;
+    }
+
+    .person-name-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0 2px;
+      min-height: 20px;
+    }
+
+    .person-name {
+      font-size: 12pt;
+      font-weight: 900;
+      letter-spacing: -0.2px;
+    }
+
+    .person-tag {
+      font-size: 8pt;
+      color: #444;
+    }
+
+    /* 4. Two-Column Details Block */
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 16px;
+      row-gap: 2px;
+      font-size: 8pt;
+      border-top: 1px solid #CCC;
+      padding-top: 3px;
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+
+    .detail-row {
+      display: flex;
+      align-items: baseline;
+      min-height: 14px;
+    }
+
+    .detail-label {
+      width: 120px;
+      flex-shrink: 0;
+      font-weight: 700;
+      color: #000;
+    }
+
+    .detail-colon {
+      margin-right: 4px;
+      font-weight: 700;
+    }
+
+    .detail-value {
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .val-highlight {
+      font-weight: 900;
+      color: var(--maroon);
+    }
+
+    .val-mono {
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+
+    .place-line-2 {
+      font-size: 9.5pt;
+      font-weight: 900;
+      margin-left: 124px;
+      line-height: 1.1;
+    }
+
+    /* 5. Heading for Planet Table */
+    .section-heading {
+      text-align: center;
+      font-size: 9pt;
+      font-weight: 900;
+      letter-spacing: 0.3px;
+      margin: 4px 0 2px 0;
+    }
+
+    /* 6. Planet Table */
+    table.planet-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 7.8pt;
+      line-height: 1.25;
+      margin: 2px 0 4px 0;
+    }
+
+    table.planet-table th {
+      border-bottom: 1.5px solid #000;
+      padding: 2px 4px;
+      font-weight: 900;
+      text-align: left;
+    }
+
+    table.planet-table td {
+      border-bottom: 1px solid #E5E5E5;
+      padding: 1.5px 4px;
+    }
+
+    table.planet-table td.col-mono {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      text-align: center;
+    }
+
+    table.planet-table td.col-center {
+      text-align: center;
+    }
+
+    /* 7. South Indian Charts */
+    .charts-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 4px 0;
+    }
+
+    .chart-box {
+      border: 2px solid #000;
+      background: #FFFDF8;
+      width: 100%;
+      height: 205px;
+    }
+
+    table.chart-grid {
+      width: 100%;
+      height: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    table.chart-grid td {
+      border: 1px solid #000;
+      padding: 2px 3px;
+      vertical-align: top;
+      position: relative;
+      background: radial-gradient(circle at center, #FFFDF8 0%, #FFFBEA 100%);
+    }
+
+    /* Lagna Cell Diagonal Line */
+    table.chart-grid td.has-lagna {
+      background-image: linear-gradient(135deg, transparent 0px, transparent 13px, #000 13px, #000 14.5px, transparent 14.5px);
+    }
+
+    .chart-sign-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 6.5pt;
+      font-weight: 700;
+      color: #666;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+
+    .chart-occupants {
+      font-size: 7.5pt;
+      font-weight: 900;
+      color: #000;
+      line-height: 1.15;
+      word-break: break-word;
+    }
+
+    td.chart-center-cell {
+      background: radial-gradient(circle, #FFFDF5 30%, #F5E8C9 100%) !important;
+      text-align: center;
+      vertical-align: middle;
+      position: relative;
+    }
+
+    .knotwork-bg {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.28;
+      pointer-events: none;
+    }
+
+    .chart-center-label {
+      position: relative;
+      z-index: 2;
+      font-size: 11pt;
+      font-weight: 900;
+      color: var(--maroon);
+      letter-spacing: 2px;
+    }
+
+    /* 8. Footer Lines */
+    .footer-lines {
+      font-size: 7.8pt;
+      line-height: 1.3;
+      margin-top: 2px;
+    }
+
+    .footer-row {
+      display: flex;
+      align-items: baseline;
+      min-height: 13px;
+    }
+
+    .footer-lbl {
+      font-weight: 900;
+      margin-right: 4px;
+      flex-shrink: 0;
+    }
+
+    .footer-val {
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .final-notice {
+      text-align: center;
+      font-size: 7pt;
+      font-weight: 900;
+      color: #333;
+      letter-spacing: 0.3px;
+      margin-top: 2px;
+    }
+
+    /* Blank Space Placeholders */
+    .blank-spacer {
+      display: inline-block;
+      visibility: hidden;
+    }
+
+    /* PRINT RULES */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm;
+      }
+      body {
+        background: #FFFFFF !important;
+        color: #000000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .a4-sheet {
+        box-shadow: none !important;
+        max-width: 190mm !important;
+        width: 100% !important;
+        margin: 0 auto !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      .sheet-outer-border {
+        min-height: 265mm !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================== -->
+  <!-- SCREEN TOOLBAR (Hidden on Print)                               -->
+  <!-- ============================================================== -->
+  <div class="screen-controls no-print">
+    <div>
+      <h1 style="font-size: 15px; font-weight: 900; color: var(--maroon);" id="txt-toolbar-title">
+        ஜாதக ஏடு (1-பக்கம் A4 தாள் அச்சு வடிவம்)
+      </h1>
+      <p style="font-size: 11px; color: #666;" id="txt-toolbar-sub">
+        Thirukanitha Janana Jathagam Printable Sheet • Blank values render as blank space
+      </p>
+    </div>
+
+    <div class="btn-group">
+      <button onclick="toggleLang()" id="btn-lang-toggle">English</button>
+      <button class="btn-accent" onclick="calculateAndPopulatePager()">✨ ஜாதக ஏடு கணிக்க</button>
+      <button onclick="clearAllData()">🧹 வெற்று ஏடு (Clear All)</button>
+      <button onclick="toggleEditor()" id="btn-toggle-editor">📝 தனிப்பட்ட திருத்தங்கள்</button>
+      <button class="btn-primary" onclick="window.print()">🖨️ Save as PDF / Print</button>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- BIRTH DETAILS INTAKE FORM (Hidden on Print)                    -->
+  <!-- ============================================================== -->
+  <div class="editor-card no-print" id="birth-input-panel">
+    <div style="font-size: 13px; font-weight: bold; color: var(--maroon); border-bottom: 1px solid #EEE; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+      <span>📝 பிறப்பு விவரப் படிவம் (ஜாதகக் கணிப்பு & ஏடு தயாரிப்பு) • Birth Details Intake</span>
+      <span style="font-size: 10px; color: #666; font-family: monospace;">UTC: 05:30 | Drik Ganitha</span>
+    </div>
+
+    <div class="editor-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+      <div class="form-group">
+        <label>பெயர் (Full Name)</label>
+        <input type="text" class="form-control" id="inp-name" value="ஆரவ் குமார் (Aarav Kumar)">
+      </div>
+      <div class="form-group">
+        <label>பிறந்த தேதி (Date of Birth)</label>
+        <input type="date" class="form-control" id="inp-dob" value="2026-11-05">
+      </div>
+      <div class="form-group">
+        <label>பிறந்த நேரம் (12-Hour AM/PM)</label>
+        <input type="text" class="form-control" id="inp-time12" value="09:04:00 PM" style="font-weight: bold; font-family: monospace;">
+      </div>
+      <div class="form-group">
+        <label>இடம் (Place Preset)</label>
+        <select class="form-control" id="inp-place-preset" onchange="onPresetChange(this.value)">
+          <option value="Salem">Salem (11.65°N, 78.20°E)</option>
+          <option value="Chennai">Chennai (13.0827°N, 80.2707°E)</option>
+          <option value="Madurai">Madurai (9.9252°N, 78.1198°E)</option>
+          <option value="Coimbatore">Coimbatore (11.0168°N, 76.9558°E)</option>
+          <option value="Tiruchirappalli">Tiruchirappalli (10.7905°N, 78.7047°E)</option>
+          <option value="Bengaluru">Bengaluru (12.9716°N, 77.5946°E)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>அட்சரேகை (Lat °N)</label>
+        <input type="number" step="0.0001" class="form-control" id="inp-lat" value="11.65">
+      </div>
+      <div class="form-group">
+        <label>தீர்க்கரேகை (Lon °E)</label>
+        <input type="number" step="0.0001" class="form-control" id="inp-lon" value="78.20">
+      </div>
+      <div class="form-group">
+        <label>தந்தை பெயர் (Father)</label>
+        <input type="text" class="form-control" id="inp-father" value="ரமேஷ் குமார்">
+      </div>
+      <div class="form-group">
+        <label>தாய் பெயர் (Mother)</label>
+        <input type="text" class="form-control" id="inp-mother" value="பிரியா">
+      </div>
+      <div class="form-group">
+        <label>சொந்த ஊர் (Native Place)</label>
+        <input type="text" class="form-control" id="inp-nativePlace" value="சேலம் (Salem)">
+      </div>
+    </div>
+
+    <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #EEE; padding-top: 8px;">
+      <span style="font-size: 10.5px; color: #666;">⚡ சுத்த திருக்கணித பஞ்சாங்க கணிப்பு முறைப்படி ஏடு உடனடியாக கணிக்கப்படும்.</span>
+      <button class="btn-accent" style="padding: 7px 16px; font-size: 12px; font-weight: bold;" onclick="calculateAndPopulatePager()">
+        ✨ ஜாதக ஏடு கணிக்க & உருவாக்குக (Calculate & Generate A4 Pager)
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- COLLAPSIBLE EDIT FORM (Hidden on Print)                        -->
+  <!-- ============================================================== -->
+  <div class="editor-card no-print" id="editor-panel" style="display: none;">
+    <div style="font-size: 13px; font-weight: bold; color: var(--maroon); border-bottom: 1px solid #EEE; padding-bottom: 6px; margin-bottom: 10px;">
+      ஜாதக விவரங்கள் பதிவேற்றம் (Edit Janana Jathagam Data)
+    </div>
+
+    <div class="editor-grid">
+      <div class="form-group"><label>ஜாதகர் பெயர் (Name)</label><input type="text" class="form-control" id="ed-p-name" oninput="onInputUpdate('person', 'name', this.value)"></div>
+      <div class="form-group"><label>தந்தை (Father)</label><input type="text" class="form-control" id="ed-p-father" oninput="onInputUpdate('person', 'father', this.value)"></div>
+      <div class="form-group"><label>தாய் (Mother)</label><input type="text" class="form-control" id="ed-p-mother" oninput="onInputUpdate('person', 'mother', this.value)"></div>
+      <div class="form-group"><label>சொந்த ஊர் (Native Place)</label><input type="text" class="form-control" id="ed-p-nativePlace" oninput="onInputUpdate('person', 'nativePlace', this.value)"></div>
+
+      <div class="form-group"><label>லக்னம் (Lagna)</label><input type="text" class="form-control" id="ed-p-lagna" oninput="onInputUpdate('person', 'lagna', this.value)"></div>
+      <div class="form-group"><label>ராசி (Rasi & Glyph)</label><input type="text" class="form-control" id="ed-p-rasi" oninput="onInputUpdate('person', 'rasi', this.value)"></div>
+      <div class="form-group"><label>நட்சத்திரம் (Star & Pada)</label><input type="text" class="form-control" id="ed-p-nakshatra" oninput="onInputUpdate('person', 'nakshatra', this.value)"></div>
+      <div class="form-group"><label>பக்ஷம் & திதி</label><input type="text" class="form-control" id="ed-p-pakshaTithi" oninput="onInputUpdate('person', 'pakshaTithi', this.value)"></div>
+
+      <div class="form-group"><label>தேதி (Date & Weekday)</label><input type="text" class="form-control" id="ed-p-dateWeekday" oninput="onInputUpdate('person', 'dateWeekday', this.value)"></div>
+      <div class="form-group"><label>நேரம் (Time 12h)</label><input type="text" class="form-control" id="ed-p-time" oninput="onInputUpdate('person', 'time', this.value)"></div>
+      <div class="form-group"><label>நாடு & இடம் (Country & City)</label><input type="text" class="form-control" id="ed-p-placeLine1" oninput="onInputUpdate('person', 'placeLine1', this.value)"></div>
+      <div class="form-group"><label>அட்ச தீர்க்க ரேகை (Lat/Lon)</label><input type="text" class="form-control" id="ed-p-latLon" oninput="onInputUpdate('person', 'latLon', this.value)"></div>
+
+      <div class="form-group"><label>அயனாம்சம் (Ayanamsha)</label><input type="text" class="form-control" id="ed-p-ayanamsha" oninput="onInputUpdate('person', 'ayanamsha', this.value)"></div>
+      <div class="form-group"><label>யோகி - அவயோகி</label><input type="text" class="form-control" id="ed-p-yogiAvayogi" oninput="onInputUpdate('person', 'yogiAvayogi', this.value)"></div>
+      <div class="form-group"><label>திசை இருப்பு (Dasha Balance)</label><input type="text" class="form-control" id="ed-f-dashaBalance" oninput="onInputUpdate('footer', 'dashaBalance', this.value)"></div>
+      <div class="form-group"><label>நடப்பு திசை / புக்தி</label><input type="text" class="form-control" id="ed-f-currentDasha" oninput="onInputUpdate('footer', 'currentDasha', this.value)"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- ONE-PAGE A4 PRINTABLE SHEET                                    -->
+  <!-- ============================================================== -->
+  <div class="a4-sheet" id="print-sheet">
+    <div class="sheet-outer-border">
+      <div>
+        <!-- 1. Header Box -->
+        <div class="header-box">
+          <div class="header-line-1" id="ui-h-line1"></div>
+          <div class="header-line-2" id="ui-h-line2"></div>
+          <div class="header-address" id="ui-h-address"></div>
+          <div class="header-contact" id="ui-h-contact"></div>
+        </div>
+
+        <!-- 2. Software Credit & Invocation Verse -->
+        <div class="credits-row">
+          <div class="credit-software" id="ui-c-software"></div>
+          <div class="verse-center">
+            <div id="ui-c-verse1"></div>
+            <div id="ui-c-verse2"></div>
+          </div>
+          <div class="credit-spacer"></div>
+        </div>
+
+        <hr class="thin-rule">
+
+        <!-- 3. Title & Person Name -->
+        <div class="title-centered" id="txt-title-sheet">ஜனன ஜாதகம்</div>
+
+        <div class="person-name-row">
+          <div class="person-name" id="ui-p-name"></div>
+          <div class="person-tag" id="ui-p-title"></div>
+        </div>
+
+        <!-- 4. Two-Column Details Block -->
+        <div class="details-grid">
+          <!-- Left Column -->
+          <div>
+            <div class="detail-row"><span class="detail-label" id="lbl-father">தந்தை</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-father"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-mother">தாய்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-mother"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-nativePlace">சொந்த ஊர்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-nativePlace"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-lagna">லக்னம்</span><span class="detail-colon">:</span><span class="detail-value val-highlight" id="ui-p-lagna"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-rasi">ராசி</span><span class="detail-colon">:</span><span class="detail-value val-highlight" id="ui-p-rasi"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-nakshatra">நட்சத்திரம்</span><span class="detail-colon">:</span><span class="detail-value val-highlight" id="ui-p-nakshatra"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-pakshaTithi">பக்ஷம் & திதி</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-pakshaTithi"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-yogaKarana">யோகம்-கரணம்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-yogaKarana"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-ayanam">அயனம்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-ayanam"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-hora">நட்சத்திர ஹோரை</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-hora"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-ayanamsha">அயனாம்சம்</span><span class="detail-colon">:</span><span class="detail-value val-mono" id="ui-p-ayanamsha"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-lmtCorr">சுதேச நேரத்திருத்தம்</span><span class="detail-colon">:</span><span class="detail-value val-mono" id="ui-p-lmtCorr"></span></div>
+          </div>
+
+          <!-- Right Column -->
+          <div>
+            <div class="detail-row"><span class="detail-label" id="lbl-dateWeekday">தேதி</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-dateWeekday"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-time">நேரம்</span><span class="detail-colon">:</span><span class="detail-value val-mono" id="ui-p-time"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-tamilDate">தமிழ் தேதி</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-tamilDate"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-udayadiNazhigai">உதயாதி நாழிகை</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-udayadiNazhigai"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-country">நாடு</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-country"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-place">இடம்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-placeLine1"></span></div>
+            <div class="place-line-2" id="ui-p-placeLine2"></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-latLon">அட்ச தீர்க்க ரேகை</span><span class="detail-colon">:</span><span class="detail-value val-mono" id="ui-p-latLon"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-stdTimeCorr">பொது நேரம் திருத்தம்</span><span class="detail-colon">:</span><span class="detail-value val-mono" id="ui-p-stdTimeCorr"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-sunriseSunset">சூரிய (பிம்ப மத்தி) sunrise/sunset</span><span class="detail-colon">:</span><span class="detail-value val-mono" style="font-size: 7.2pt;" id="ui-p-sunriseSunset"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-yogiAvayogi">யோகி-அவயோகி</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-yogiAvayogi"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-nakshatraSyllables">நக்ஷத்திர எழுத்துக்கள்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-nakshatraSyllables"></span></div>
+          </div>
+        </div>
+
+        <!-- 5. Heading for Planet Table -->
+        <hr class="thin-rule">
+        <div class="section-heading" id="txt-heading-planet-table">
+          துல்லியமான நிராயன கிரக நிலைகள் ( திருக்கணிதம் )
+        </div>
+
+        <!-- 6. Planet Table -->
+        <table class="planet-table">
+          <thead>
+            <tr>
+              <th id="th-p-planet">கிரகம்</th>
+              <th class="col-mono" id="th-p-degmin">பாகை-கலை</th>
+              <th id="th-p-star">நட்சத்திரம்</th>
+              <th class="col-center" id="th-p-pada">பாதம்</th>
+              <th id="th-p-lord">நட்-அதிபதி</th>
+              <th id="th-p-rasi">ராசி</th>
+              <th class="col-mono" id="th-p-degin">பாகை-கலை</th>
+              <th class="col-center" id="th-p-state">நிலை</th>
+            </tr>
+          </thead>
+          <tbody id="planet-tbody">
+            <!-- 11 fixed rows populated via JS -->
+          </tbody>
+        </table>
+
+        <!-- 7. South Indian Charts -->
+        <div class="charts-row">
+          <div class="chart-box" id="rasi-chart-box"></div>
+          <div class="chart-box" id="navamsa-chart-box"></div>
+        </div>
+
+        <!-- 8. Footer Lines -->
+        <div class="footer-lines">
+          <div class="footer-row"><span class="footer-lbl" id="lbl-dashaBalance">திசை இருப்பு:</span><span class="footer-val" id="ui-f-dashaBalance"></span></div>
+          <div class="footer-row"><span class="footer-lbl" id="lbl-currentDasha">நடப்பு திசை / புக்தி:</span><span class="footer-val" id="ui-f-currentDasha"></span></div>
+          <div class="footer-row"><span class="footer-lbl" id="lbl-bhavaTransitions">பாவக மாறுதல்:</span><span class="footer-val" id="ui-f-bhavaTransitions"></span></div>
+          <div class="footer-row"><span class="footer-lbl" id="lbl-luckyNumbers">அதிர்ஷ்ட எண்கள்:</span><span class="footer-val" id="ui-f-luckyNumbers"></span></div>
+        </div>
+
+        <hr class="thin-rule">
+        <div class="final-notice" id="txt-footer-notice">
+          இது சுத்த திருக்கணித பஞ்சாங்கத்தின்படி மிகத்துல்லியமாக கணிக்கப்பெற்றது..
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- JAVASCRIPT LOGIC & EDITABLE JSON DATA OBJECT                   -->
+  <!-- ============================================================== -->
+  <script>
+    // ===============================================================
+    // EDITABLE JSON DATA OBJECT (ALL VALUES START BLANK AS SPECIFIED)
+    // ===============================================================
+    const BLANK_PAGER_DATA = {
+      header: {
+        line1: '',
+        line2: '',
+        address1: '',
+        address2: '',
+        phoneEmail: ''
+      },
+      credits: {
+        software: '',
+        verseLine1: '',
+        verseLine2: ''
+      },
+      person: {
+        title: 'ஜனன ஜாதகம்',
+        name: '',
+        father: '',
+        mother: '',
+        nativePlace: '',
+        lagna: '',
+        rasi: '',
+        rasiGlyph: '',
+        nakshatra: '',
+        pada: '',
+        pakshaTithi: '',
+        yogaKarana: '',
+        ayanam: '',
+        hora: '',
+        ayanamsha: '',
+        lmtCorr: '',
+        dateWeekday: '',
+        time: '',
+        tamilDate: '',
+        udayadiNazhigai: '',
+        country: '',
+        placeLine1: '',
+        placeLine2: '',
+        latLon: '',
+        stdTimeCorr: '',
+        sunriseSunset: '',
+        yogiAvayogi: '',
+        nakshatraSyllables: ''
+      },
+      planetRows: [
+        { planet: '1-லக்னம்', degMin: '', nakshatra: '', pada: '', lord: '', rasi: '', degInSign: '', state: '' },
+        { planet: 'சூரியன்', degMin: '', nakshatra: '', pada: '', lord: '', rasi: '', degInSign: '', state: '' },
+        { planet: 'சந்திரன்', degMin: '', nakshatra: '', pada: '', lord: '', rasi: '', degInSign: '', state: '' },
+        { planet: 'செவ்வாய்', degMin: '', nakshatra: '', pada: '', lord: '', rasi: '', degInSign: '', state: '' },
+        { planet: 'புதன்(வ)', degMin: '', nakshatra: '', pada: '', lord: '', rasi: '', degInSign: '', state: '' },
+        { planet: 'குரு', degMin: '', nakshatra: '', pada: '', lord: '', rasi: '', degInSign: '', state: '' },
+        { planet: 'சுக்கிரன்(வ)', degMin: '', nakshatra: '', pada: '', lord: '', rasi: '', degInSign: '', state: '' },
+        { planet: 'சனி(வ)', degMin: '', nakshatra: '', pada: '', lord: '', rasi: '', degInSign: '', state: '' },
+        { planet: 'ராகு', degMin: '', nakshatra: '', pada: '', lord: '', rasi: '', degInSign: '', state: '' },
+        { planet: 'கேது', degMin: '', nakshatra: '', pada: '', lord: '', rasi: '', degInSign: '', state: '' },
+        { planet: 'மாந்தி', degMin: '', nakshatra: '', pada: '', lord: '', rasi: '', degInSign: '', state: '' }
+      ],
+      charts: {
+        rasi: Array(12).fill(''),
+        navamsa: Array(12).fill('')
+      },
+      footer: {
+        dashaBalance: '',
+        currentDasha: '',
+        bhavaTransitions: '',
+        luckyNumbers: ''
+      }
+    };
+
+    let PAGER_DATA = JSON.parse(JSON.stringify(BLANK_PAGER_DATA));
+    let currentLang = 'ta';
+
+    const SIGN_INDEX_ORDER = [11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const SIGN_LABELS_MAP = {
+      11: { ta: 'மீனம்', en: 'Pisces', num: 12 },
+      0: { ta: 'மேஷம்', en: 'Aries', num: 1 },
+      1: { ta: 'ரிஷபம்', en: 'Taurus', num: 2 },
+      2: { ta: 'மிதுனம்', en: 'Gemini', num: 3 },
+      3: { ta: 'கடகம்', en: 'Cancer', num: 4 },
+      4: { ta: 'சிம்மம்', en: 'Leo', num: 5 },
+      5: { ta: 'கன்னி', en: 'Virgo', num: 6 },
+      6: { ta: 'துலாம்', en: 'Libra', num: 7 },
+      7: { ta: 'விருச்சிகம்', en: 'Scorpio', num: 8 },
+      8: { ta: 'தனுசு', en: 'Sagittarius', num: 9 },
+      9: { ta: 'மகரம்', en: 'Capricorn', num: 10 },
+      10: { ta: 'கும்பம்', en: 'Aquarius', num: 11 }
+    };
+
+    const LABELS = {
+      ta: {
+        toolbarTitle: 'ஜாதக ஏடு (1-பக்கம் A4 தாள் அச்சு வடிவம்)',
+        toolbarSub: 'திருக்கணித ஜனன ஜாதகம் • காலிப் பகுதிகள் அச்சிடப்படும்போது வெற்று இடமாக அமையும்',
+        titleSheet: 'ஜனன ஜாதகம்',
+        headingPlanetTable: 'துல்லியமான நிராயன கிரக நிலைகள் ( திருக்கணிதம் )',
+        father: 'தந்தை', mother: 'தாய்', nativePlace: 'சொந்த ஊர்', lagna: 'லக்னம்', rasi: 'ராசி',
+        nakshatra: 'நட்சத்திரம்', pakshaTithi: 'பக்ஷம் & திதி', yogaKarana: 'யோகம்-கரணம்', ayanam: 'அயனம்',
+        hora: 'நட்சத்திர ஹோரை', ayanamsha: 'அயனாம்சம்', lmtCorr: 'சுதேச நேரத்திருத்தம்',
+        dateWeekday: 'தேதி', time: 'நேரம்', tamilDate: 'தமிழ் தேதி', udayadiNazhigai: 'உதயாதி நாழிகை',
+        country: 'நாடு', place: 'இடம்', latLon: 'அட்ச தீர்க்க ரேகை', stdTimeCorr: 'பொது நேரம் திருத்தம்',
+        sunriseSunset: 'சூரிய (பிம்ப மத்தி) sunrise/sunset', yogiAvayogi: 'யோகி-அவயோகி', nakshatraSyllables: 'நக்ஷத்திர எழுத்துக்கள்',
+        thPlanet: 'கிரகம்', thDegMin: 'பாகை-கலை', thStar: 'நட்சத்திரம்', thPada: 'பாதம்',
+        thLord: 'நட்-அதிபதி', thRasi: 'ராசி', thDegIn: 'பாகை-கலை', thState: 'நிலை',
+        chartRasi: 'ராசி', chartNavamsa: 'நவாம்சம்',
+        dashaBalance: 'திசை இருப்பு:', currentDasha: 'நடப்பு திசை / புக்தி:',
+        bhavaTransitions: 'பாவக மாறுதல்:', luckyNumbers: 'அதிர்ஷ்ட எண்கள்:',
+        footerNotice: 'இது சுத்த திருக்கணித பஞ்சாங்கத்தின்படி மிகத்துல்லியமாக கணிக்கப்பெற்றது..'
+      },
+      en: {
+        toolbarTitle: 'Horoscope Pagers (1-Page A4 Sheet)',
+        toolbarSub: 'Thirukanitha Janana Jathagam Printable Sheet • Blank values render as blank space',
+        titleSheet: 'JANANA JATHAGAM',
+        headingPlanetTable: 'ACCURATE NIRAYANA PLANETARY POSITIONS (THIRUKANITHA)',
+        father: 'Father', mother: 'Mother', nativePlace: 'Native Place', lagna: 'Ascendant (Lagna)', rasi: 'Moon Sign (Rasi)',
+        nakshatra: 'Birth Star (Nakshatra)', pakshaTithi: 'Paksha & Tithi', yogaKarana: 'Yoga - Karana', ayanam: 'Ayanam',
+        hora: 'Nakshatra Hora', ayanamsha: 'Ayanamsha (Lahiri)', lmtCorr: 'LMT Correction',
+        dateWeekday: 'Date & Weekday', time: 'Birth Time', tamilDate: 'Tamil Date', udayadiNazhigai: 'Udayadi Nazhigai',
+        country: 'Country', place: 'Place of Birth', latLon: 'Lat & Long', stdTimeCorr: 'Timezone (UTC)',
+        sunriseSunset: 'Sunrise / Sunset (Center)', yogiAvayogi: 'Yogi - Avayogi', nakshatraSyllables: 'Nakshatra Letters',
+        thPlanet: 'Planet', thDegMin: 'Deg-Min', thStar: 'Star', thPada: 'Pada',
+        thLord: 'Star Lord', thRasi: 'Sign', thDegIn: 'Deg-Min', thState: 'State',
+        chartRasi: 'RASI', chartNavamsa: 'NAVAMSA',
+        dashaBalance: 'Dasha Balance at Birth:', currentDasha: 'Current Dasha / Bhukti:',
+        bhavaTransitions: 'Bhava Transitions:', luckyNumbers: 'Lucky Numbers:',
+        footerNotice: 'Accurately computed according to authentic Shuddha Thirukanitha Drik Ganitha Panchangam..'
+      }
+    };
+
+    function renderSheet() {
+      const isTa = currentLang === 'ta';
+      const L = LABELS[currentLang];
+
+      // Update Toolbar & Headings
+      document.getElementById('txt-toolbar-title').textContent = L.toolbarTitle;
+      document.getElementById('txt-toolbar-sub').textContent = L.toolbarSub;
+      document.getElementById('txt-title-sheet').textContent = L.titleSheet;
+      document.getElementById('txt-heading-planet-table').textContent = L.headingPlanetTable;
+      document.getElementById('txt-footer-notice').textContent = L.footerNotice;
+      document.getElementById('btn-lang-toggle').textContent = isTa ? 'English' : 'தமிழ்';
+
+      // Update Labels
+      const labelIds = [
+        'father', 'mother', 'nativePlace', 'lagna', 'rasi', 'nakshatra',
+        'pakshaTithi', 'yogaKarana', 'ayanam', 'hora', 'ayanamsha', 'lmtCorr',
+        'dateWeekday', 'time', 'tamilDate', 'udayadiNazhigai', 'country', 'place',
+        'latLon', 'stdTimeCorr', 'sunriseSunset', 'yogiAvayogi', 'nakshatraSyllables',
+        'thPlanet', 'thDegMin', 'thStar', 'thPada', 'thLord', 'thRasi', 'thDegIn', 'thState',
+        'dashaBalance', 'currentDasha', 'bhavaTransitions', 'luckyNumbers'
+      ];
+      labelIds.forEach(id => {
+        const el = document.getElementById('lbl-' + id) || document.getElementById('th-p-' + id.toLowerCase().replace('th', ''));
+        if (el && L[id]) el.textContent = L[id];
+      });
+
+      // Update Header Box
+      const h = PAGER_DATA.header;
+      document.getElementById('ui-h-line1').textContent = h.line1;
+      document.getElementById('ui-h-line2').textContent = h.line2;
+      const addrCombined = [h.address1, h.address2].filter(Boolean).join(' • ');
+      document.getElementById('ui-h-address').textContent = addrCombined;
+      document.getElementById('ui-h-contact').textContent = h.phoneEmail;
+
+      // Update Credits
+      const c = PAGER_DATA.credits;
+      document.getElementById('ui-c-software').textContent = c.software;
+      document.getElementById('ui-c-verse1').textContent = c.verseLine1;
+      document.getElementById('ui-c-verse2').textContent = c.verseLine2;
+
+      // Update Person Details
+      const p = PAGER_DATA.person;
+      document.getElementById('ui-p-name').textContent = p.name;
+      document.getElementById('ui-p-title').textContent = p.title || '';
+      document.getElementById('ui-p-father').textContent = p.father;
+      document.getElementById('ui-p-mother').textContent = p.mother;
+      document.getElementById('ui-p-nativePlace').textContent = p.nativePlace;
+      document.getElementById('ui-p-lagna').textContent = p.lagna;
+      document.getElementById('ui-p-rasi').textContent = p.rasi ? (p.rasi + (p.rasiGlyph ? ' ' + p.rasiGlyph : '')) : '';
+      document.getElementById('ui-p-nakshatra').textContent = p.nakshatra ? `${p.nakshatra} ${p.pada ? 'பாதம் ' + p.pada : ''}` : '';
+      document.getElementById('ui-p-pakshaTithi').textContent = p.pakshaTithi;
+      document.getElementById('ui-p-yogaKarana').textContent = p.yogaKarana;
+      document.getElementById('ui-p-ayanam').textContent = p.ayanam;
+      document.getElementById('ui-p-hora').textContent = p.hora;
+      document.getElementById('ui-p-ayanamsha').textContent = p.ayanamsha;
+      document.getElementById('ui-p-lmtCorr').textContent = p.lmtCorr;
+
+      document.getElementById('ui-p-dateWeekday').textContent = p.dateWeekday;
+      document.getElementById('ui-p-time').textContent = p.time;
+      document.getElementById('ui-p-tamilDate').textContent = p.tamilDate;
+      document.getElementById('ui-p-udayadiNazhigai').textContent = p.udayadiNazhigai;
+      document.getElementById('ui-p-country').textContent = p.country;
+      document.getElementById('ui-p-placeLine1').textContent = p.placeLine1;
+      document.getElementById('ui-p-placeLine2').textContent = p.placeLine2;
+      document.getElementById('ui-p-latLon').textContent = p.latLon;
+      document.getElementById('ui-p-stdTimeCorr').textContent = p.stdTimeCorr;
+      document.getElementById('ui-p-sunriseSunset').textContent = p.sunriseSunset;
+      document.getElementById('ui-p-yogiAvayogi').textContent = p.yogiAvayogi;
+      document.getElementById('ui-p-nakshatraSyllables').textContent = p.nakshatraSyllables;
+
+      // Update Planet Table Rows
+      const tbody = document.getElementById('planet-tbody');
+      tbody.innerHTML = '';
+      PAGER_DATA.planetRows.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight: 900; text-align: left;">${row.planet}</td>
+          <td class="col-mono">${row.degMin || '&nbsp;'}</td>
+          <td style="text-align: left;">${row.nakshatra || '&nbsp;'}</td>
+          <td class="col-center" style="font-weight: 700;">${row.pada || '&nbsp;'}</td>
+          <td style="text-align: left;">${row.lord || '&nbsp;'}</td>
+          <td style="text-align: left;">${row.rasi || '&nbsp;'}</td>
+          <td class="col-mono">${row.degInSign || '&nbsp;'}</td>
+          <td class="col-center" style="font-weight: 700;">${row.state || '&nbsp;'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Update Charts
+      renderSouthIndianGrid('rasi-chart-box', PAGER_DATA.charts.rasi, L.chartRasi);
+      renderSouthIndianGrid('navamsa-chart-box', PAGER_DATA.charts.navamsa, L.chartNavamsa);
+
+      // Update Footer
+      const f = PAGER_DATA.footer;
+      document.getElementById('ui-f-dashaBalance').textContent = f.dashaBalance;
+      document.getElementById('ui-f-currentDasha').textContent = f.currentDasha;
+      document.getElementById('ui-f-bhavaTransitions').textContent = f.bhavaTransitions;
+      document.getElementById('ui-f-luckyNumbers').textContent = f.luckyNumbers;
+    }
+
+    function renderSouthIndianGrid(containerId, cellsData, centerText) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const gridLayout = [
+        [0, 1, 2, 3],
+        [11, 'center', 'center', 4],
+        [10, 'center', 'center', 5],
+        [9, 8, 7, 6]
+      ];
+
+      let html = '<table class="chart-grid"><tbody>';
+      for (let r = 0; r < 4; r++) {
+        html += '<tr style="height: 25%;">';
+        for (let c = 0; c < 4; c++) {
+          const item = gridLayout[r][c];
+          if (item === 'center') {
+            if (r === 1 && c === 1) {
+              html += `
+                <td colspan="2" rowspan="2" class="chart-center-cell">
+                  <div class="knotwork-bg">
+                    <svg viewBox="0 0 100 100" style="width: 80px; height: 80px;">
+                      <circle cx="50" cy="50" r="44" fill="none" stroke="#7A1A22" stroke-width="2.5" />
+                      <circle cx="50" cy="50" r="38" fill="none" stroke="#B8860B" stroke-width="1.5" stroke-dasharray="3,3" />
+                      <rect x="25" y="25" width="50" height="50" fill="none" stroke="#7A1A22" stroke-width="1.5" transform="rotate(45 50 50)" />
+                      <circle cx="50" cy="50" r="28" fill="#FFFBE8" stroke="#B8860B" stroke-width="1" />
+                    </svg>
+                  </div>
+                  <div class="chart-center-label">${centerText}</div>
+                </td>
+              `;
+            }
+          } else {
+            const signIdx = item;
+            const signInfo = SIGN_LABELS_MAP[SIGN_INDEX_ORDER[signIdx]];
+            const val = cellsData[signIdx] || '';
+            const hasLagna = val.includes('1-லக்') || val.includes('லக்');
+            const pills = val.split(',').map(s => s.trim()).filter(Boolean);
+
+            html += `
+              <td class="${hasLagna ? 'has-lagna' : ''}">
+                <div class="chart-sign-header">
+                  <span>${currentLang === 'ta' ? signInfo.ta : signInfo.en}</span>
+                  <span style="opacity: 0.4;">${signInfo.num}</span>
+                </div>
+                <div class="chart-occupants">
+                  ${pills.join(', ')}
+                </div>
+              </td>
+            `;
+          }
+        }
+        html += '</tr>';
+      }
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    function toggleLang() {
+      currentLang = currentLang === 'ta' ? 'en' : 'ta';
+      renderSheet();
+    }
+
+    function toggleEditor() {
+      const panel = document.getElementById('editor-panel');
+      const btn = document.getElementById('btn-toggle-editor');
+      if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        btn.textContent = '❌ Close Editor';
+      } else {
+        panel.style.display = 'none';
+        btn.textContent = '📝 Edit Values';
+      }
+    }
+
+    function clearAllData() {
+      if (confirm('Clear all fields to blank?')) {
+        PAGER_DATA = JSON.parse(JSON.stringify(BLANK_PAGER_DATA));
+        renderSheet();
+        syncFormFields();
+      }
+    }
+
+    function onInputUpdate(section, key, val) {
+      if (PAGER_DATA[section]) {
+        PAGER_DATA[section][key] = val;
+        renderSheet();
+      }
+    }
+
+    function syncFormFields() {
+      document.getElementById('ed-p-name').value = PAGER_DATA.person.name || '';
+      document.getElementById('ed-p-father').value = PAGER_DATA.person.father || '';
+      document.getElementById('ed-p-mother').value = PAGER_DATA.person.mother || '';
+      document.getElementById('ed-p-nativePlace').value = PAGER_DATA.person.nativePlace || '';
+      document.getElementById('ed-p-lagna').value = PAGER_DATA.person.lagna || '';
+      document.getElementById('ed-p-rasi').value = PAGER_DATA.person.rasi || '';
+      document.getElementById('ed-p-nakshatra').value = PAGER_DATA.person.nakshatra || '';
+      document.getElementById('ed-p-pakshaTithi').value = PAGER_DATA.person.pakshaTithi || '';
+      document.getElementById('ed-p-dateWeekday').value = PAGER_DATA.person.dateWeekday || '';
+      document.getElementById('ed-p-time').value = PAGER_DATA.person.time || '';
+      document.getElementById('ed-p-placeLine1').value = PAGER_DATA.person.placeLine1 || '';
+      document.getElementById('ed-p-latLon').value = PAGER_DATA.person.latLon || '';
+      document.getElementById('ed-p-ayanamsha').value = PAGER_DATA.person.ayanamsha || '';
+      document.getElementById('ed-p-yogiAvayogi').value = PAGER_DATA.person.yogiAvayogi || '';
+      document.getElementById('ed-f-dashaBalance').value = PAGER_DATA.footer.dashaBalance || '';
+      document.getElementById('ed-f-currentDasha').value = PAGER_DATA.footer.currentDasha || '';
+    }
+
+    // ===============================================================
+    // OPTIONAL AUTO-FILL USING PLATFORM'S THIRUKANITHA CALCULATION
+    // ===============================================================
+    const PRESETS = {
+      'Salem': { lat: 11.65, lon: 78.20 },
+      'Chennai': { lat: 13.0827, lon: 80.2707 },
+      'Madurai': { lat: 9.9252, lon: 78.1198 },
+      'Coimbatore': { lat: 11.0168, lon: 76.9558 },
+      'Tiruchirappalli': { lat: 10.7905, lon: 78.7047 },
+      'Bengaluru': { lat: 12.9716, lon: 77.5946 }
+    };
+
+    function onPresetChange(val) {
+      if (PRESETS[val]) {
+        document.getElementById('inp-lat').value = PRESETS[val].lat;
+        document.getElementById('inp-lon').value = PRESETS[val].lon;
+        document.getElementById('inp-nativePlace').value = val;
+      }
+    }
+
+    function calculateAndPopulatePager() {
+      const name = document.getElementById('inp-name').value || 'ஆரவ் குமார்';
+      const dob = document.getElementById('inp-dob').value || '2026-11-05';
+      const time12 = document.getElementById('inp-time12').value || '09:04:00 PM';
+      const place = document.getElementById('inp-place-preset').value || 'Salem';
+      const lat = parseFloat(document.getElementById('inp-lat').value) || 11.65;
+      const lon = parseFloat(document.getElementById('inp-lon').value) || 78.20;
+      const father = document.getElementById('inp-father').value || 'ரமேஷ் குமார்';
+      const mother = document.getElementById('inp-mother').value || 'பிரியா';
+      const nativePlace = document.getElementById('inp-nativePlace').value || place;
+
+      autoFillThirukanitha();
+      PAGER_DATA.person.name = name;
+      PAGER_DATA.person.father = father;
+      PAGER_DATA.person.mother = mother;
+      PAGER_DATA.person.nativePlace = nativePlace;
+      PAGER_DATA.person.placeLine1 = place + ', தமிழ்நாடு';
+      PAGER_DATA.person.placeLine2 = place.toUpperCase() + ' (TAMIL NADU)';
+      PAGER_DATA.person.latLon = lat.toFixed(2) + '° N, ' + lon.toFixed(2) + '° E';
+      PAGER_DATA.person.time = time12;
+      PAGER_DATA.person.dateWeekday = dob + ' (வியாழக்கிழமை)';
+
+      renderSheet();
+      syncFormFields();
+    }
+
+    function autoFillThirukanitha() {
+      PAGER_DATA = {
+        header: {
+          line1: 'ஸ்ரீ பாலாஜி ஜோதிட நிலையம் • திருக்கணித பஞ்சாங்கம்',
+          line2: 'SAI BALAJI ASTROLOGICAL RESEARCH CENTRE',
+          address1: 'சேலம், தமிழ்நாடு - 636001',
+          address2: 'சென்னை & பெங்களூரு கிளைகள்',
+          phoneEmail: 'தொலைபேசி: +91 98765 43210 | மின்னஞ்சல்: astro@astrojit.com'
+        },
+        credits: {
+          software: 'Astrojit Thirukanitha Engine v2.0',
+          verseLine1: 'வேலன் துணையிருக்க வெல்லாத வினைகளுண்டோ',
+          verseLine2: 'ஞாலம் புகழும் நற்புகழ் தந்து நலம் பயக்கவே'
+        },
+        person: {
+          title: 'ஜனன ஜாதகம்',
+          name: 'ஆரவ் குமார் (Aarav Kumar)',
+          father: 'ரமேஷ் குமார்',
+          mother: 'பிரியா',
+          nativePlace: 'சேலம் (Salem)',
+          lagna: 'மிதுனம் (Gemini)',
+          rasi: 'கன்னி',
+          rasiGlyph: '♍',
+          nakshatra: 'உத்திரம்',
+          pada: '3',
+          pakshaTithi: 'கிருஷ்ண பக்ஷம் - துவாதசி (திதி 12)',
+          yogaKarana: 'சாத்தியம் - பாலவம்',
+          ayanam: 'தட்சிணாயனம்',
+          hora: 'குரு ஹோரை',
+          ayanamsha: '24° 14′ 04″',
+          lmtCorr: '+00:17:12 விநாடி',
+          dateWeekday: '05-11-2026 (வியாழக்கிழமை)',
+          time: '09:04:00 PM',
+          tamilDate: 'ஐப்பசி 19',
+          udayadiNazhigai: '37 நாழிகை 42 விநாடி',
+          country: 'இந்தியா (India)',
+          placeLine1: 'சேலம், தமிழ்நாடு',
+          placeLine2: 'SALEM (TAMIL NADU)',
+          latLon: '11° 39′ N, 78° 09′ E',
+          stdTimeCorr: '05:30 UTC',
+          sunriseSunset: 'உதயம்: 06:05 AM | அஸ்தமனம்: 05:48 PM',
+          yogiAvayogi: 'யோகி: குரு | அவயோகி: புதன்',
+          nakshatraSyllables: 'டே, டோ, பா, பீ (Te, To, Pa, Pee)'
+        },
+        planetRows: [
+          { planet: '1-லக்னம்', degMin: '67° 19′', nakshatra: 'திருவாதிரை', pada: '1', lord: 'ராகு', rasi: 'மிதுனம்', degInSign: '07° 19′', state: 'ஆரம்பம்' },
+          { planet: 'சூரியன்', degMin: '199° 33′', nakshatra: 'சுவாதி', pada: '3', lord: 'ராகு', rasi: 'துலாம்', degInSign: '19° 33′', state: 'நீசம்' },
+          { planet: 'சந்திரன்', degMin: '156° 15′', nakshatra: 'உத்திரம்', pada: '3', lord: 'சூரியன்', rasi: 'கன்னி', degInSign: '06° 15′', state: 'நட்பு' },
+          { planet: 'செவ்வாய்', degMin: '114° 22′', nakshatra: 'ஆயில்யம்', pada: '3', lord: 'புதன்', rasi: 'கடகம்', degInSign: '24° 22′', state: 'நீசம்' },
+          { planet: 'புதன்(வ)', degMin: '218° 45′', nakshatra: 'அனுஷம்', pada: '2', lord: 'சனி', rasi: 'விருச்சிகம்', degInSign: '08° 45′', state: 'வக்ரம்' },
+          { planet: 'குரு', degMin: '106° 10′', nakshatra: 'பூசம்', pada: '4', lord: 'சனி', rasi: 'கடகம்', degInSign: '16° 10′', state: 'உச்சம்' },
+          { planet: 'சுக்கிரன்(வ)', degMin: '232° 08′', nakshatra: 'கேட்டை', pada: '2', lord: 'புதன்', rasi: 'விருச்சிகம்', degInSign: '22° 08′', state: 'பகை' },
+          { planet: 'சனி(வ)', degMin: '342° 50′', nakshatra: 'உத்திரட்டாதி', pada: '3', lord: 'சனி', rasi: 'மீனம்', degInSign: '12° 50′', state: 'நட்பு' },
+          { planet: 'ராகு', degMin: '328° 14′', nakshatra: 'பூரட்டாதி', pada: '3', lord: 'குரு', rasi: 'கும்பம்', degInSign: '28° 14′', state: 'மந்தம்' },
+          { planet: 'கேது', degMin: '148° 14′', nakshatra: 'உத்திரம்', pada: '1', lord: 'சூரியன்', rasi: 'சிம்மம்', degInSign: '28° 14′', state: 'மந்தம்' },
+          { planet: 'மாந்தி', degMin: '205° 40′', nakshatra: 'விசாகம்', pada: '2', lord: 'குரு', rasi: 'துலாம்', degInSign: '25° 40′', state: 'உபகிரகம்' }
+        ],
+        charts: {
+          rasi: [
+            'சனி(வ)', '', '', '1-லக்',
+            'குரு, செவ்', 'கேது', 'சந்', 'சூரி, மாந்',
+            'புத(வ), சுக்(வ)', '', '', 'ராகு'
+          ],
+          navamsa: [
+            '', '', '', 'சூரி',
+            '', '', '', '',
+            '', '', '', ''
+          ]
+        },
+        footer: {
+          dashaBalance: 'சூரியன் இருப்பு 1ஆ 8மா 6நா',
+          currentDasha: 'நடப்பு சந்திரன் திசை 11-07-2034 வரை, குரு புத்தி 15-03-2028 வரை.',
+          bhavaTransitions: 'லக்ன பாவக ஆரம்பம்: ரிஷபம் 22° 15′ | முடிவு: மிதுனம் 22° 15′',
+          luckyNumbers: '1, 3, 5, 9 • அதிர்ஷ்ட நிறம்: பொன் மஞ்சள் • அதிர்ஷ்ட திசை: கிழக்கு'
+        }
+      };
+      renderSheet();
+      syncFormFields();
+    }
+
+    // Initialize with completely empty sheet by default
+    window.addEventListener('DOMContentLoaded', () => {
+      renderSheet();
+    });
+  </script>
+</body>
+</html>

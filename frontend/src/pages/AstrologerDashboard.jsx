@@ -37,6 +37,7 @@ import ClientRegistrationReceiptModal from '../components/ClientRegistrationRece
 import KundliMatchmaking from '../components/KundliMatchmaking';
 import TamilPoruthamCard from '../components/TamilPoruthamCard';
 import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
+import HoroscopePagerView from '../components/HoroscopePagerView';
 import { MATCH_I18N } from '../matchmakingI18n';
 
 export default function AstrologerDashboard({ activeTab: propTab, onTabChange }) {
@@ -405,6 +406,17 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
             <span>{lang === 'ta' ? 'திருக்கணித ஜாதகம்' : 'Thirukanitha Horoscope'}</span>
           </button>
           <button
+            onClick={() => setActiveTab('horoscope_pagers')}
+            className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'horoscope_pagers' || activeTab === 'pager'
+                ? 'bg-indigo-600 text-white shadow-xs'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            }`}
+          >
+            <FileText className="w-3.5 h-3.5 text-amber-300" />
+            <span>{lang === 'ta' ? 'ஜாதக ஏடு (A4)' : 'Horoscope Pagers'}</span>
+          </button>
+          <button
             onClick={() => setActiveTab('search')}
             className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'search'
@@ -765,6 +777,25 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
             name: 'Sample',
             dob: '2026-11-05',
             dobTime: '21:04',
+            dobTime12: '09:04:00 PM',
+            country: 'India',
+            state: 'Tamil Nadu',
+            placeName: 'Salem',
+            city: 'Salem',
+            lat: 11.65,
+            lon: 78.20,
+            utcOffset: '05:30 UTC'
+          }}
+        />
+      )}
+
+      {/* TAB: Horoscope Pagers (1-Page A4 Sheet) */}
+      {(activeTab === 'horoscope_pagers' || activeTab === 'pager') && (
+        <HoroscopePagerView
+          initialBirthData={{
+            name: 'Sample',
+            dob: '2026-11-05',
+            dobTime: '21:04:00',
             dobTime12: '09:04:00 PM',
             country: 'India',
             state: 'Tamil Nadu',

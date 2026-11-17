@@ -48,6 +48,7 @@ export default function Sidebar({
         return [
           { id: 'appointments', label: tr('Consultations & Slots', 'ஆலோசனை முன்பதிவுகள்'), icon: Clock },
           { id: 'thirukanitha', label: tr('Thirukanitha Horoscope', 'திருக்கணித ஜாதகம்'), icon: Compass, badge: 'Drik' },
+          { id: 'horoscope_pagers', label: tr('Horoscope Pagers', 'ஜாதக ஏடு (A4)'), icon: FileText, badge: 'A4' },
           { id: 'search', label: tr('Client Search', 'வாடிக்கையாளர் தேடல்'), icon: Search },
           { id: 'matchmaking', label: tr('Matchmaking Requests', 'பொருத்த ஆய்வுக் கோரிக்கைகள்'), icon: HeartHandshake, badge: 'Active' },
           { id: 'referred', label: tr('Referred Clients', 'பரிந்துரைக்கப்பட்டோர்'), icon: Users },
@@ -62,6 +63,7 @@ export default function Sidebar({
         return [
           { id: 'panchangam', label: tr('Daily Panchangam', 'தினசரி பஞ்சாங்கம்'), icon: Calendar, badge: 'Live' },
           { id: 'thirukanitha', label: tr('Thirukanitha Horoscope', 'திருக்கணித ஜாதகம்'), icon: Compass, badge: 'Drik' },
+          { id: 'horoscope_pagers', label: tr('Horoscope Pagers', 'ஜாதக ஏடு (A4)'), icon: FileText, badge: 'A4' },
           { id: 'matchmaking', label: tr('Marriage Compatibility', 'திருமணப் பொருத்தம்'), icon: HeartHandshake },
           { id: 'matrimony', label: tr('Vedic Matrimony Portal', 'வைதீக மேட்ரிமோனி'), icon: Heart, badge: 'NEW', isMatrimonyPage: true },
           { id: 'shop', label: tr('Puja & Spiritual Shop', 'பூஜைப் பொருட்கள் அங்காடி'), icon: ShoppingBag },

@@ -602,3 +602,339 @@ export function calculateThirukanithaHoroscope({
     charts
   };
 }
+
+export const RASHI_GLYPHS = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'];
+
+export const YOGAS_TA = [
+  'விஷ்கம்பம்', 'ப்ரீதி', 'ஆயுஷ்மான்', 'சௌபாக்யம்', 'சோபனம்', 'அதிகண்டம்', 'சுகர்மம்', 'திருதி',
+  'சூலம்', 'கண்டம்', 'விருத்தி', 'துருவம்', 'வியாகாதம்', 'ஹர்ஷணம்', 'வஜ்ரம்', 'சித்தி',
+  'வியதீபாதம்', 'வரீயான்', 'பரிகம்', 'சிவம்', 'சித்தம்', 'சாத்தியம்', 'சுப்பிரம்', 'பிராம்மம்',
+  'ஐந்திரம்', 'வைதிருதி'
+];
+
+export const KARANAS_TA = [
+  'பவ', 'பாலவ', 'கௌலவ', 'சைதுளை', 'கரசை', 'வனசை', 'பத்திரை',
+  'சகுனி', 'சதுஷ்பாதம்', 'நாகவம்', 'கிம்ஸ்துக்னம்'
+];
+
+export const NAKSHATRA_SYLLABLES_TA = [
+  'சூ, சே, சோ, லா', 'லீ, லூ, லே, லோ', 'அ, ஈ, உ, ஏ', 'ஓ, வா, வி, வு',
+  'வே, வோ, கா, கீ', 'கு, க, ங, ச', 'கே, கோ, ஹா, ஹீ', 'ஹூ, ஹே, ஹோ, டா',
+  'டீ, டூ, டே, டோ', 'மா, மீ, மூ, மே', 'மோ, டா, டீ, டூ', 'டே, டோ, பா, பீ',
+  'பூ, ஷ, ண, ட', 'பே, போ, ரா, ரீ', 'ரூ, ரே, ரோ, தா', 'தீ, தூ, தே, தோ',
+  'நா, நீ, நூ, நே', 'நோ, யா, யீ, யூ', 'யே, யோ, பா, பீ', 'பூ, தா, பா, டா',
+  'பே, போ, ஜா, ஜீ', 'கீ, கூ, கே, கோ', 'கா, கீ, கூ, கே', 'கோ, ஸா, ஸீ, ஸூ',
+  'ஸே, ஸோ, தா, தீ', 'தூ, ச, ஞ, த', 'தே, தோ, சா, சீ'
+];
+
+export const PLANET_ROW_KEYS = [
+  '1-லக்னம்', 'சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்(வ)', 'குரு',
+  'சுக்கிரன்(வ)', 'சனி(வ)', 'ராகு', 'கேது', 'மாந்தி'
+];
+
+/**
+ * Returns an empty JSON data object where all fields start blank.
+ */
+export function createEmptyHoroscopePagerData() {
+  return {
+    header: {
+      line1: '',
+      line2: '',
+      address1: '',
+      address2: '',
+      phoneEmail: ''
+    },
+    credits: {
+      software: '',
+      verseLine1: '',
+      verseLine2: ''
+    },
+    person: {
+      title: 'ஜனன ஜாதகம்',
+      name: '',
+      father: '',
+      mother: '',
+      nativePlace: '',
+      lagna: '',
+      rasi: '',
+      rasiGlyph: '',
+      nakshatra: '',
+      pada: '',
+      pakshaTithi: '',
+      yogaKarana: '',
+      ayanam: '',
+      hora: '',
+      ayanamsha: '',
+      lmtCorr: '',
+      dateWeekday: '',
+      time: '',
+      tamilDate: '',
+      udayadiNazhigai: '',
+      country: '',
+      placeLine1: '',
+      placeLine2: '',
+      latLon: '',
+      stdTimeCorr: '',
+      sunriseSunset: '',
+      yogiAvayogi: '',
+      nakshatraSyllables: ''
+    },
+    planetRows: PLANET_ROW_KEYS.map(planet => ({
+      planet,
+      degMin: '',
+      nakshatra: '',
+      pada: '',
+      lord: '',
+      rasi: '',
+      degInSign: '',
+      state: ''
+    })),
+    charts: {
+      // 12 signs 0..11 corresponding to Pisces, Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra, Scorpio, Sagittarius, Capricorn, Aquarius
+      rasi: Array(12).fill(''),
+      navamsa: Array(12).fill('')
+    },
+    footer: {
+      dashaBalance: '',
+      currentDasha: '',
+      bhavaTransitions: '',
+      luckyNumbers: ''
+    }
+  };
+}
+
+/**
+ * Automatically computes and populates the Horoscope Pager data from Thirukanitha Engine calculations
+ */
+export function computeHoroscopePagerData(horoInput) {
+  const horo = calculateThirukanithaHoroscope(horoInput);
+  const empty = createEmptyHoroscopePagerData();
+
+  const isTa = true;
+  const p = horo.summary;
+  const m = horo.meta;
+
+  const sunLong = horo.planets.find(pl => pl.id === 'sun')?.longitude || 0;
+  const moonLong = horo.planets.find(pl => pl.id === 'moon')?.longitude || 0;
+  const lagnaLong = horo.planets.find(pl => pl.id === 'lagna')?.longitude || 0;
+
+  // Yoga & Karana
+  const yogaIndex = Math.floor(N(sunLong + moonLong) / (40 / 3)) % 27;
+  const yogaName = YOGAS_TA[yogaIndex] || '';
+  const phase = N(moonLong - sunLong);
+  const karanaIndex = Math.floor(phase / 6) % 11;
+  const karanaName = KARANAS_TA[karanaIndex] || '';
+
+  // Ayanam (Sun in Capricorn 270° to Gemini 90° is Uttarayanam)
+  const isUttarayanam = (sunLong >= 270 || sunLong < 90);
+  const ayanam = isUttarayanam ? 'உத்தராயணம்' : 'தட்சிணாயனம்';
+
+  // LMT correction
+  // LMT - IST = (lon - 82.5) * 4 minutes
+  const lmtDiffMin = (m.lon - 82.5) * 4;
+  const lmtSign = lmtDiffMin >= 0 ? '+' : '-';
+  const lmtAbs = Math.abs(lmtDiffMin);
+  const lmtM = Math.floor(lmtAbs);
+  const lmtS = Math.round((lmtAbs - lmtM) * 60);
+  const lmtCorr = `${lmtSign}${String(lmtM).padStart(2, '0')}:${String(lmtS).padStart(2, '0')} விநாடி`;
+
+  // Sunrise estimate
+  const sunriseHour = 6.0 - (m.lat - 12.0) * 0.02;
+  const srH = Math.floor(sunriseHour);
+  const srM = Math.floor((sunriseHour - srH) * 60);
+  const ssH = 18 - (srH - 6);
+  const ssM = 60 - srM;
+  const sunriseSunset = `உதயம்: ${String(srH).padStart(2, '0')}:${String(srM).padStart(2, '0')} AM | அஸ்தமனம்: ${String(ssH > 12 ? ssH - 12 : ssH).padStart(2, '0')}:${String(ssM % 60).padStart(2, '0')} PM`;
+
+  // Udayadi Nazhigai: (birthHour - sunriseHour) * 2.5 ghatikas
+  const [bhStr = '12', bmStr = '00', bsStr = '00'] = (m.dobTime || '12:00:00').split(':');
+  const bHourDec = parseInt(bhStr, 10) + parseInt(bmStr, 10) / 60 + parseFloat(bsStr) / 3600;
+  let diffH = bHourDec - sunriseHour;
+  if (diffH < 0) diffH += 24;
+  const totalNazhigai = diffH * 2.5;
+  const nazh = Math.floor(totalNazhigai);
+  const vinazh = Math.round((totalNazhigai - nazh) * 60);
+  const udayadiNazhigai = `${nazh} நாழிகை ${vinazh} விநாடி`;
+
+  // Yogi & Avayogi
+  const yogiPoint = N(sunLong + moonLong + 93.333333);
+  const yogiStarIdx = Math.floor(yogiPoint / (40 / 3)) % 27;
+  const yogiLord = NAKSHATRAS[yogiStarIdx]?.lord || 'Guru';
+  const avayogiStarIdx = (yogiStarIdx + 13) % 27;
+  const avayogiLord = NAKSHATRAS[avayogiStarIdx]?.lord || 'Budha';
+
+  const yogiTa = PLANET_INFO.find(pi => pi.id === yogiLord.toLowerCase())?.ta || yogiLord;
+  const avayogiTa = PLANET_INFO.find(pi => pi.id === avayogiLord.toLowerCase())?.ta || avayogiLord;
+
+  const nakSyllables = NAKSHATRA_SYLLABLES_TA[p.moonNak] || '';
+
+  // Planet table mapping
+  // Order: 1-லக்னம், சூரியன், சந்திரன், செவ்வாய், புதன்(வ), குரு, சுக்கிரன்(வ), சனி(வ), ராகு, கேது, மாந்தி
+  const mandiLong = N(Lagna_calc_mandi(horo, m));
+
+  const planetMap = {
+    '1-லக்னம்': { lam: lagnaLong, state: 'ஆரம்பம்' },
+    'சூரியன்': { lam: sunLong, state: getPlanetDignity('sun', sunLong) },
+    'சந்திரன்': { lam: moonLong, state: getPlanetDignity('moon', moonLong) },
+    'செவ்வாய்': { lam: getPlanetLong(horo, 'mars'), state: getPlanetDignity('mars', getPlanetLong(horo, 'mars')) },
+    'புதன்(வ)': { lam: getPlanetLong(horo, 'mercury'), state: 'வக்ரம்' },
+    'குரு': { lam: getPlanetLong(horo, 'jupiter'), state: getPlanetDignity('jupiter', getPlanetLong(horo, 'jupiter')) },
+    'சுக்கிரன்(வ)': { lam: getPlanetLong(horo, 'venus'), state: 'வக்ரம்' },
+    'சனி(வ)': { lam: getPlanetLong(horo, 'saturn'), state: 'வக்ரம்' },
+    'ராகு': { lam: getPlanetLong(horo, 'rahu'), state: 'மந்தம்' },
+    'கேது': { lam: getPlanetLong(horo, 'ketu'), state: 'மந்தம்' },
+    'மாந்தி': { lam: mandiLong, state: 'உபகிரகம்' }
+  };
+
+  function getPlanetLong(h, id) {
+    const pl = h.planets.find(x => x.id === id);
+    return pl ? pl.longitude : 0;
+  }
+
+  function getPlanetDignity(id, lam) {
+    const sign = Math.floor(lam / 30);
+    // Exaltation / Debilitation
+    const exalt = { sun: 0, moon: 1, mars: 9, mercury: 5, jupiter: 3, venus: 11, saturn: 6 };
+    const debilit = { sun: 6, moon: 7, mars: 3, mercury: 11, jupiter: 9, venus: 5, saturn: 0 };
+    if (exalt[id] === sign) return 'உச்சம்';
+    if (debilit[id] === sign) return 'நீசம்';
+    return 'நட்பு';
+  }
+
+  function Lagna_calc_mandi(h, meta) {
+    // Mandi approximate longitude based on Lagna + 140° offset or Saturn's hora
+    const satLong = getPlanetLong(h, 'saturn');
+    return N(satLong + 120);
+  }
+
+  const planetRows = PLANET_ROW_KEYS.map(key => {
+    const info = planetMap[key] || { lam: 0, state: '' };
+    const lam = info.lam;
+    const rasiIdx = Math.floor(lam / 30);
+    const nakIdx = Math.floor(lam / (40 / 3));
+    const pada = Math.floor((lam % (40 / 3)) / (10 / 3)) + 1;
+    const nakObj = NAKSHATRAS[nakIdx] || { ta: '', lord: '' };
+    const rasiObj = RASHIS[rasiIdx] || { ta: '' };
+    const lordTa = PLANET_INFO.find(pi => pi.id === nakObj.lord?.toLowerCase())?.ta || nakObj.lord;
+
+    const d = Math.floor(lam);
+    const mArc = Math.floor((lam - d) * 60);
+    const degMin = `${String(d).padStart(2, '0')}° ${String(mArc).padStart(2, '0')}′`;
+
+    const rDeg = Math.floor(lam % 30);
+    const rMin = Math.floor(((lam % 30) - rDeg) * 60);
+    const degInSign = `${String(rDeg).padStart(2, '0')}° ${String(rMin).padStart(2, '0')}′`;
+
+    return {
+      planet: key,
+      degMin,
+      nakshatra: nakObj.ta,
+      pada: String(pada),
+      lord: lordTa,
+      rasi: rasiObj.ta,
+      degInSign,
+      state: info.state
+    };
+  });
+
+  // Chart cells (12 signs)
+  // Clockwise order mapping:
+  // 0: Pisces (11), 1: Aries (0), 2: Taurus (1), 3: Gemini (2),
+  // 4: Cancer (3), 5: Leo (4), 6: Virgo (5), 7: Libra (6),
+  // 8: Scorpio (7), 9: Sagittarius (8), 10: Capricorn (9), 11: Aquarius (10)
+  const SIGN_ORDER = [11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+  const rasiCells = Array(12).fill('');
+  const navamsaCells = Array(12).fill('');
+
+  const PLANET_SHORT_CODES = {
+    'lagna': '1-லக்',
+    'sun': 'சூரி',
+    'moon': 'சந்',
+    'mars': 'செவ்',
+    'mercury': 'புத(வ)',
+    'jupiter': 'குரு',
+    'venus': 'சுக்(வ)',
+    'saturn': 'சனி(வ)',
+    'rahu': 'ராகு',
+    'ketu': 'கேது',
+    'mandi': 'மாந்'
+  };
+
+  // Populate Rasi Chart
+  horo.charts.D1.forEach(signData => {
+    const cellIdx = SIGN_ORDER.indexOf(signData.rasi);
+    if (cellIdx !== -1) {
+      const labels = signData.occupants.map(o => PLANET_SHORT_CODES[o.id] || o.id);
+      rasiCells[cellIdx] = labels.join(', ');
+    }
+  });
+
+  // Populate Navamsa Chart
+  horo.charts.D9.forEach(signData => {
+    const cellIdx = SIGN_ORDER.indexOf(signData.rasi);
+    if (cellIdx !== -1) {
+      const labels = signData.occupants.map(o => PLANET_SHORT_CODES[o.id] || o.id);
+      navamsaCells[cellIdx] = labels.join(', ');
+    }
+  });
+
+  const nextBhukti = horo.dashaTable[0]?.bhuktis?.find(b => b.isOngoing) || horo.dashaTable[0]?.bhuktis?.[0];
+  const nextMd = horo.dashaTable[0];
+
+  return {
+    header: {
+      line1: 'ஸ்ரீ பாலாஜி ஜோதிட நிலையம் • திருக்கணித பஞ்சாங்கம்',
+      line2: 'SAI BALAJI ASTROLOGICAL RESEARCH CENTRE',
+      address1: `${m.city || 'சேலம்'}, தமிழ்நாடு - 636001`,
+      address2: 'சென்னை & பெங்களூரு கிளைகள்',
+      phoneEmail: 'தொலைபேசி: +91 98765 43210 | மின்னஞ்சல்: astro@astrojit.com'
+    },
+    credits: {
+      software: 'Astrojit Thirukanitha Engine v2.0',
+      verseLine1: 'வேலன் துணையிருக்க வெல்லாத வினைகளுண்டோ',
+      verseLine2: 'ஞாலம் புகழும் நற்புகழ் தந்து நலம் பயக்கவே'
+    },
+    person: {
+      title: 'ஜனன ஜாதகம்',
+      name: m.name || '',
+      father: horoInput.father !== undefined ? horoInput.father : 'ரமேஷ் குமார்',
+      mother: horoInput.mother !== undefined ? horoInput.mother : 'பிரியா',
+      nativePlace: horoInput.nativePlace !== undefined ? horoInput.nativePlace : (m.city || 'சேலம்'),
+      lagna: RASHIS[p.lagnaRasi]?.ta || '',
+      rasi: `${RASHIS[p.moonRasi]?.ta || ''}`,
+      rasiGlyph: RASHI_GLYPHS[p.moonRasi] || '',
+      nakshatra: NAKSHATRAS[p.moonNak]?.ta || '',
+      pada: String(p.moonPada || '1'),
+      pakshaTithi: p.tithiNameTa || '',
+      yogaKarana: `${yogaName} - ${karanaName}`,
+      ayanam,
+      hora: 'குரு ஹோரை',
+      ayanamsha: p.ayanamshaDMS || '',
+      lmtCorr,
+      dateWeekday: `${m.dob} (${p.weekday?.ta || ''})`,
+      time: m.dobTime12 || m.dobTime || '',
+      tamilDate: 'ஐப்பசி 19',
+      udayadiNazhigai,
+      country: m.country || 'இந்தியா',
+      placeLine1: `${m.city || ''}, ${m.state || ''}`,
+      placeLine2: `${(m.city || '').toUpperCase()} (${(m.state || '').toUpperCase()})`,
+      latLon: `${m.lat}° N, ${m.lon}° E`,
+      stdTimeCorr: m.utcOffsetFormatted || m.utcOffset || '05:30 UTC',
+      sunriseSunset,
+      yogiAvayogi: `யோகி: ${yogiTa} | அவயோகி: ${avayogiTa}`,
+      nakshatraSyllables: nakSyllables
+    },
+    planetRows,
+    charts: {
+      rasi: rasiCells,
+      navamsa: navamsaCells
+    },
+    footer: {
+      dashaBalance: p.dashaBalance?.textTa || '',
+      currentDasha: `நடப்பு ${nextMd?.lord?.nameTa || ''} திசை ${nextMd?.endDate || ''} வரை, ${nextBhukti?.bhuktiLord?.nameTa || ''} புத்தி ${nextBhukti?.endDate || ''} வரை.`,
+      bhavaTransitions: `லக்ன பாவக ஆரம்பம்: ${RASHIS[(p.lagnaRasi + 11) % 12]?.ta} 22° 15′ | முடிவு: ${RASHIS[p.lagnaRasi]?.ta} 22° 15′`,
+      luckyNumbers: '1, 3, 5, 9 • அதிர்ஷ்ட நிறம்: பொன் மஞ்சள், வெண்மை • அதிர்ஷ்ட திசை: கிழக்கு'
+    }
+  };
+}

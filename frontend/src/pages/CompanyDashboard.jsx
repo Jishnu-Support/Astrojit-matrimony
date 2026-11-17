@@ -7,6 +7,7 @@ import {
 import { API } from '../api';
 import { useLang } from '../i18n';
 import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
+import HoroscopePagerView from '../components/HoroscopePagerView';
 
 export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
   const { lang, t } = useLang();
@@ -348,6 +349,11 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
           {/* TAB: THIRUKANITHA HOROSCOPE */}
           {activeTab === 'thirukanitha' && (
             <ThirukanithaHoroscopeView />
+          )}
+
+          {/* TAB: HOROSCOPE PAGERS (1-PAGE A4) */}
+          {(activeTab === 'horoscope_pagers' || activeTab === 'pager') && (
+            <HoroscopePagerView />
           )}
 
           {/* TAB 2: CLIENTS */}

@@ -7,6 +7,7 @@ import DailyPanchangam from '../components/DailyPanchangam';
 import KundliMatchmaking from '../components/KundliMatchmaking';
 import SlotBookingModal from '../components/SlotBookingModal';
 import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
+import HoroscopePagerView from '../components/HoroscopePagerView';
 
 export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
   const { user } = useAuth();
@@ -395,6 +396,25 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
             name: user?.name || 'Aarav Kumar',
             dob: user?.dob || '2026-11-05',
             dobTime: user?.dobTime || '21:04',
+            dobTime12: '09:04:00 PM',
+            country: 'India',
+            state: 'Tamil Nadu',
+            placeName: user?.dobPlace || 'Salem',
+            city: user?.dobPlace || 'Salem',
+            lat: 11.65,
+            lon: 78.20,
+            utcOffset: '05:30 UTC'
+          }}
+        />
+      )}
+
+      {/* Tab 2B: Horoscope Pagers (1-Page A4 Sheet) */}
+      {(activeTab === 'horoscope_pagers' || activeTab === 'pager') && (
+        <HoroscopePagerView
+          initialBirthData={{
+            name: user?.name || 'Aarav Kumar',
+            dob: user?.dob || '2026-11-05',
+            dobTime: user?.dobTime || '21:04:00',
             dobTime12: '09:04:00 PM',
             country: 'India',
             state: 'Tamil Nadu',
