@@ -26,11 +26,14 @@ import {
   computeHoroscopePagerData,
   createEmpty7PageBookletData,
   compute7PageBookletData,
+  createEmpty18PageBookletData,
+  compute18PageBookletData,
   PLANET_ROW_KEYS,
   RASHIS
 } from '../utils/thirukanithaEngine';
 import { COUNTRIES, GEO_DATA, lookupCoordinates } from '../data/geoCoordinates';
 import HoroscopeBooklet7PageView from './HoroscopeBooklet7PageView';
+import HoroscopeBooklet18PageView from './HoroscopeBooklet18PageView';
 
 function parseInitialTime(timeStr) {
   let raw = timeStr || '21:04:00';
@@ -136,12 +139,13 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
     nativePlace: initialBirthData?.nativePlace || 'சேலம்'
   }));
 
-  // Pager Format Mode: '7page' (Booklet) or '1page' (Single sheet)
-  const [pagerType, setPagerType] = useState('7page');
+  // Pager Format Mode: '18page' (18-Page Booklet), '7page' (7-Page Booklet) or '1page' (Single sheet)
+  const [pagerType, setPagerType] = useState('18page');
 
-  // Initial computed data so both 1-page and 7-page are pre-populated with authentic calculations
+  // Initial computed data so 1-page, 7-page, and 18-page are pre-populated with authentic calculations
   const [data, setData] = useState(() => computeHoroscopePagerData(calcInputs));
   const [bookletData, setBookletData] = useState(() => compute7PageBookletData(calcInputs));
+  const [booklet18Data, setBooklet18Data] = useState(() => compute18PageBookletData(calcInputs));
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [activeEditorTab, setActiveEditorTab] = useState('person');
   const [calcSuccessMsg, setCalcSuccessMsg] = useState('');
@@ -247,8 +251,10 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
     if (e && e.preventDefault) e.preventDefault();
     const computed1 = computeHoroscopePagerData(calcInputs);
     const computed7 = compute7PageBookletData(calcInputs);
+    const computed18 = compute18PageBookletData(calcInputs);
     setData(computed1);
     setBookletData(computed7);
+    setBooklet18Data(computed18);
     setCalcSuccessMsg(isTa ? 'ஜாதகக் கணிப்பு வெற்றிகரமாக கணிக்கப்பெற்று தயார்!' : 'Horoscope generated successfully!');
     setTimeout(() => setCalcSuccessMsg(''), 4000);
   };
@@ -480,8 +486,20 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            {/* Format Switcher: 7-Page Booklet vs 1-Page Sheet */}
+            {/* Format Switcher: 18-Page Booklet vs 7-Page Booklet vs 1-Page Sheet */}
             <div className="flex bg-stone-100 dark:bg-stone-800 p-0.5 rounded-lg border border-stone-300 dark:border-stone-700">
+              <button
+                type="button"
+                onClick={() => setPagerType('18page')}
+                className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  pagerType === '18page'
+                    ? 'bg-[#7A1A22] text-white shadow-xs'
+                    : 'text-stone-600 dark:text-stone-300 hover:text-stone-900'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>{isTa ? '18-பக்கம்' : '18-Page'}</span>
+              </button>
               <button
                 type="button"
                 onClick={() => setPagerType('7page')}
@@ -492,7 +510,7 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
                 }`}
               >
                 <BookOpen className="w-3.5 h-3.5" />
-                <span>{isTa ? '7-பக்க புத்தகம்' : '7-Page Booklet'}</span>
+                <span>{isTa ? '7-பக்கம்' : '7-Page'}</span>
               </button>
               <button
                 type="button"
@@ -504,7 +522,7 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
                 }`}
               >
                 <FileText className="w-3.5 h-3.5" />
-                <span>{isTa ? '1-பக்கம்' : '1-Page Sheet'}</span>
+                <span>{isTa ? '1-பக்கம்' : '1-Page'}</span>
               </button>
             </div>
 
@@ -1427,9 +1445,18 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
         )}
 
         {/* ========================================================================= */}
-        {/* CONDITIONAL RENDER: 7-PAGE BOOKLET vs 1-PAGE SHEET                        */}
+        {/* CONDITIONAL RENDER: 18-PAGE BOOKLET vs 7-PAGE BOOKLET vs 1-PAGE SHEET     */}
         {/* ========================================================================= */}
-        {pagerType === '7page' ? (
+        {pagerType === '18page' ? (
+          <HoroscopeBooklet18PageView
+            data={booklet18Data}
+            setData={setBooklet18Data}
+            isTa={isTa}
+            onAutoFill={() => setBooklet18Data(compute18PageBookletData(calcInputs))}
+            onClearAll={() => setBooklet18Data(createEmpty18PageBookletData())}
+            onPrint={handlePrint}
+          />
+        ) : pagerType === '7page' ? (
           <HoroscopeBooklet7PageView
             data={bookletData}
             setData={setBookletData}

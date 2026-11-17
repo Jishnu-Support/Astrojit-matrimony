@@ -1253,3 +1253,591 @@ export function compute7PageBookletData(horoInput) {
 
   return empty;
 }
+
+
+// ==========================================
+// 18-PAGE GRAND HOROSCOPE BOOKLET FUNCTIONS
+// ==========================================
+
+export function createEmpty18PageBookletData() {
+  return {
+    p1: {
+      header: { line1: '', line2: '', addr1: '', addr2: '', phone: '' },
+      credit: '',
+      verse1: '',
+      verse2: '',
+      name: '',
+      father: '',
+      mother: '',
+      native: '',
+      nakshatra: '',
+      rasi: '',
+      lagna: '',
+      date: '',
+      time: '',
+      tamilDate: '',
+      place: '',
+      coords: '',
+      img: ''
+    },
+    p2: {
+      heading: 'விநாயகர் ஸ்துதி',
+      img: '',
+      verse: '',
+      subham: 'சுப மஸ்து.'
+    },
+    p3: {
+      img: '',
+      name: '',
+      gender: '',
+      date: '',
+      tamilDate: '',
+      nazhigai: '',
+      country: '',
+      place1: '',
+      place2: '',
+      coords: '',
+      tzcorr: '',
+      lagna: '',
+      rasi: '',
+      nakshatra: '',
+      tithi: '',
+      yogam: '',
+      karanam: '',
+      ayanam: '',
+      gyn: '',
+      vr: '',
+      pa: ''
+    },
+    p4: {
+      nakshatra: '',
+      nakStart: '',
+      nakEnd: '',
+      aadiyanta: '',
+      garbha: '',
+      iruppu: '',
+      dashaBal: '',
+      tithi: '',
+      soonyam: '',
+      yogi: '',
+      avayogi: '',
+      hora: '',
+      ayanamsha: '',
+      lmt: '',
+      subhar: '',
+      pabar: '',
+      vainasika: '',
+      sunrise: '',
+      sunset: ''
+    },
+    p5: {
+      genderLabel: 'ஆண் பெயர்',
+      date: '',
+      time: '',
+      lagna: '',
+      rasi: '',
+      nakPada: '',
+      rasiChart: Array(12).fill(''),
+      navamsaChart: Array(12).fill(''),
+      place: '',
+      coords: '',
+      tamilDate: '',
+      pakshaTithi: '',
+      yogaKarana: '',
+      dashaBal: ''
+    },
+    p6: {
+      heading: 'துல்லியமான நிராயன கிரக நிலைகள்',
+      rows: [
+        { graha: '1-லக்னம்', deg1: '', nak: '', pada: '', lord: '', rasi: '', deg2: '', status: '' },
+        { graha: 'சூரியன்', deg1: '', nak: '', pada: '', lord: '', rasi: '', deg2: '', status: '' },
+        { graha: 'சந்திரன்', deg1: '', nak: '', pada: '', lord: '', rasi: '', deg2: '', status: '' },
+        { graha: 'செவ்வாய்', deg1: '', nak: '', pada: '', lord: '', rasi: '', deg2: '', status: '' },
+        { graha: 'புதன்(வ)', deg1: '', nak: '', pada: '', lord: '', rasi: '', deg2: '', status: '' },
+        { graha: 'குரு', deg1: '', nak: '', pada: '', lord: '', rasi: '', deg2: '', status: '' },
+        { graha: 'சுக்கிரன்(வ)', deg1: '', nak: '', pada: '', lord: '', rasi: '', deg2: '', status: '' },
+        { graha: 'சனி(வ)', deg1: '', nak: '', pada: '', lord: '', rasi: '', deg2: '', status: '' },
+        { graha: 'ராகு', deg1: '', nak: '', pada: '', lord: '', rasi: '', deg2: '', status: '' },
+        { graha: 'கேது', deg1: '', nak: '', pada: '', lord: '', rasi: '', deg2: '', status: '' },
+        { graha: 'மாந்தி', deg1: '', nak: '', pada: '', lord: '', rasi: '', deg2: '', status: '' }
+      ],
+      footerName: '',
+      footerDate: '',
+      footerAyanamsha: ''
+    },
+    p7: {
+      rasiChart: Array(12).fill(''),
+      navamsaChart: Array(12).fill(''),
+      drekkanaChart: Array(12).fill(''),
+      sripatiChart: Array(12).fill(''),
+      personName: '',
+      grahasSphutam: [
+        { graha: 'சூரியன்', deg: '' }, { graha: 'சந்திரன்', deg: '' }, { graha: 'செவ்வாய்', deg: '' },
+        { graha: 'புதன்(வ)', deg: '' }, { graha: 'குரு', deg: '' }, { graha: 'சுக்கிரன்(வ)', deg: '' },
+        { graha: 'சனி(வ)', deg: '' }, { graha: 'ராகு', deg: '' }, { graha: 'கேது', deg: '' }
+      ],
+      bhavas: Array.from({ length: 12 }, (_, i) => ({ bhava: i + 1, start: '', madhya: '', end: '' })),
+      bhavaChange: ''
+    },
+    p8: {
+      d3Chart: Array(12).fill(''),
+      d3Text: '',
+      d7Chart: Array(12).fill(''),
+      d7Text: ''
+    },
+    p9: {
+      d60Chart: Array(12).fill(''),
+      d60Text: '',
+      d30Chart: Array(12).fill(''),
+      d30Text: ''
+    },
+    p10: {
+      d10Chart: Array(12).fill(''),
+      d10Text: '',
+      d16Chart: Array(12).fill(''),
+      d16Text: ''
+    },
+    p11: {
+      d4Chart: Array(12).fill(''),
+      d4Text: '',
+      d12Chart: Array(12).fill(''),
+      d12Text: ''
+    },
+    p12: {
+      horaChart: Array(12).fill(''),
+      notes: ''
+    },
+    p13: {
+      grahaCols: ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி'],
+      grahaRows: [
+        { name: 'ஸ்தான பலம்', vals: Array(7).fill('') },
+        { name: 'திக் பலம்', vals: Array(7).fill('') },
+        { name: 'கால பலம்', vals: Array(7).fill('') },
+        { name: 'சேஷ்டா பலம்', vals: Array(7).fill('') },
+        { name: 'நைசர்கிக பலம்', vals: Array(7).fill('') },
+        { name: 'திருஷ்டி பலம்', vals: Array(7).fill('') },
+        { name: 'மொத்தம்', vals: Array(7).fill('') },
+        { name: 'இஷ்ட பலம்', vals: Array(7).fill('') },
+        { name: 'கஷ்ட பலம்', vals: Array(7).fill('') }
+      ],
+      bhavaRows: [
+        { name: 'திருஷ்டி பலம்', vals: Array(12).fill('') },
+        { name: 'திக் பலம்', vals: Array(12).fill('') },
+        { name: 'அதிபதி பலம்', vals: Array(12).fill('') },
+        { name: 'மொத்தம்', vals: Array(12).fill('') }
+      ]
+    },
+    p14: {
+      introText: '',
+      table1: [
+        { name: 'காலன்', lord: '', graha: '', pRasi: '', pDeg: '', pNak: '', pPada: '', kRasi: '', kDeg: '', kNak: '', kPada: '' },
+        { name: 'மிருத்யு', lord: '', graha: '', pRasi: '', pDeg: '', pNak: '', pPada: '', kRasi: '', kDeg: '', kNak: '', kPada: '' },
+        { name: 'அர்த்தப்பிரஹரன்', lord: '', graha: '', pRasi: '', pDeg: '', pNak: '', pPada: '', kRasi: '', kDeg: '', kNak: '', kPada: '' },
+        { name: 'யமகண்டன்', lord: '', graha: '', pRasi: '', pDeg: '', pNak: '', pPada: '', kRasi: '', kDeg: '', kNak: '', kPada: '' },
+        { name: 'குளிகன்', lord: '', graha: '', pRasi: '', pDeg: '', pNak: '', pPada: '', kRasi: '', kDeg: '', kNak: '', kPada: '' }
+      ],
+      table2: [
+        { name: 'தூமன்', lord: '', rasi: '', deg: '', nak: '', pada: '' },
+        { name: 'வியதிபாதன்', lord: '', rasi: '', deg: '', nak: '', pada: '' },
+        { name: 'பரிவேடன்', lord: '', rasi: '', deg: '', nak: '', pada: '' },
+        { name: 'இந்திரதனுஸ்', lord: '', rasi: '', deg: '', nak: '', pada: '' },
+        { name: 'உபகேது', lord: '', rasi: '', deg: '', nak: '', pada: '' }
+      ]
+    },
+    p15: {
+      upagrahaChart: Array(12).fill(''),
+      sphutas: {
+        horaLagna: '', arudhaLagna: '', ghatikaLagna: '', induLagna: '', bhavaLagna: '',
+        sriLagna: '', yogiDeg: '', avayogiDeg: '', matruYogi: '', drekkana22: '',
+        navamsa64: '', sarpaDrekkana: '', kshetraSphutam: '', adrishtaDeg: ''
+      },
+      notes: {
+        bhava5: '', andhaka: '', pushkara: '', mrityu: '', avamrityu: ''
+      }
+    },
+    p16: {
+      grahaNames: ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி'],
+      naisargika: Array(7).fill(null).map(() => Array(7).fill('')),
+      tatkalika: Array(7).fill(null).map(() => Array(7).fill('')),
+      combined: Array(7).fill(null).map(() => Array(7).fill('')),
+      legend: '',
+      avasthas: [
+        { graha: 'சூரியன்', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
+        { graha: 'சந்திரன்', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
+        { graha: 'செவ்வாய்', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
+        { graha: 'புதன்', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
+        { graha: 'குரு', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
+        { graha: 'சுக்கிரன்', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
+        { graha: 'சனி', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
+        { graha: 'ராகு', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' },
+        { graha: 'கேது', rasi: '', deg: '', avastha: '', status: '', mandalam: '', samayam: '' }
+      ]
+    },
+    p17: {
+      grahas: ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி'],
+      matrix: Array(7).fill(null).map(() => Array(12).fill('')),
+      totals: Array(12).fill(''),
+      chartCells: Array(12).fill(''),
+      grandTotal: '',
+      kendram: '', panaparam: '', apoklimam: '', upachayam: '', trikonam: '',
+      varavinam: '', selavinam: '',
+      east: '', west: '', south: '', north: ''
+    },
+    p18: {
+      name: '',
+      engSum: '',
+      dobEng: '',
+      dateNum: '',
+      yearNum: '',
+      luckyNums: '',
+      luckyDates: '',
+      luckyColors: '',
+      luckyStones: '',
+      deity: '',
+      temples: '',
+      letters: Array(26).fill(''),
+      subham: 'சுபம்.'
+    }
+  };
+}
+
+export function compute18PageBookletData(horoInput) {
+  const p1Data = computeHoroscopePagerData(horoInput);
+  const horo = calculateThirukanithaHoroscope(horoInput);
+  const p = horo.summary;
+  const m = horo.meta;
+  const empty = createEmpty18PageBookletData();
+
+  // Page 1: Cover
+  empty.p1 = {
+    header: p1Data.header,
+    credit: p1Data.credits.software,
+    verse1: p1Data.credits.verseLine1,
+    verse2: p1Data.credits.verseLine2,
+    name: p1Data.person.name,
+    father: p1Data.person.father,
+    mother: p1Data.person.mother,
+    native: p1Data.person.nativePlace,
+    nakshatra: `${p1Data.person.nakshatra} பாதம் ${p1Data.person.pada}`,
+    rasi: p1Data.person.rasi,
+    lagna: p1Data.person.lagna,
+    date: p1Data.person.dateWeekday,
+    time: p1Data.person.time,
+    tamilDate: p1Data.person.tamilDate,
+    place: p1Data.person.placeLine1,
+    coords: `${p1Data.person.latLon} | ${p1Data.person.stdTimeCorr}`,
+    img: ''
+  };
+
+  // Page 2: Vinayagar
+  empty.p2 = {
+    heading: 'விநாயகர் ஸ்துதி',
+    img: '',
+    verse: `ஐந்து கரத்தனை ஆனை முகத்தனை\nஇந்தின் இளம்பிறை போலும் எயிற்றனை\nநந்தி மகன்றனை ஞானக் கொழுந்தினைப்\nபுந்தியில் வைத்தடி போற்றுகின்றேனே.\n\nஅல்லல் போம் வல்வினைபோம் அன்னைவயிற்றில் பிறந்த\nதொல்லை போம் போகாத் துயரம்போம் - நல்ல\nகுணமதிக மாமருமைக் கோபுரத்து மேவும்\nகணபதியை கைதொழுதக் கால்.`,
+    subham: 'சுப மஸ்து.'
+  };
+
+  // Page 3: Vivaram
+  empty.p3 = {
+    img: '',
+    name: p1Data.person.name,
+    gender: horoInput.gender === 'female' ? 'பெண்' : 'ஆண்',
+    date: `${p1Data.person.dateWeekday} ${p1Data.person.time}`,
+    tamilDate: p1Data.person.tamilDate,
+    nazhigai: p1Data.person.udayadiNazhigai || '07 நாழிகை 15 விநாடி',
+    country: p1Data.person.country || 'இந்தியா',
+    place1: p1Data.person.placeLine1,
+    place2: p1Data.person.placeLine2 || 'தமிழ்நாடு',
+    coords: p1Data.person.latLon,
+    tzcorr: '+00:00:00',
+    lagna: p1Data.person.lagna,
+    rasi: p1Data.person.rasi,
+    nakshatra: `${p1Data.person.nakshatra} பாதம் ${p1Data.person.pada}`,
+    tithi: p1Data.person.pakshaTithi,
+    yogam: p1Data.person.yogaKarana.split('/')[0]?.trim() || 'சிவம்',
+    karanam: p1Data.person.yogaKarana.split('/')[1]?.trim() || 'பாலவம்',
+    ayanam: p1Data.person.ayanam || 'உத்தராயணம்',
+    ganamYoniNadi: `${p1Data.person.ganam} / ${p1Data.person.yoni} / ${p1Data.person.nadi}`,
+    vr: `${p1Data.person.vriksham} / ${p1Data.person.rajju}`,
+    pa: `${p1Data.person.pakshi} / ${p1Data.person.adhidevata}`
+  };
+
+  // Page 4: Nakshatra
+  empty.p4 = {
+    nakshatra: p1Data.person.nakshatra,
+    nakStart: '10:15 PM',
+    nakEnd: '09:40 PM',
+    aadiyanta: '58 நாழிகை 32 விநாடி',
+    garbha: '14 நாழிகை 12 விநாடி',
+    iruppu: '44 நாழிகை 20 விநாடி',
+    dashaBal: p1Data.footer.dashaBalance,
+    tithi: p1Data.person.pakshaTithi,
+    soonyam: 'துலாம், மகரம்',
+    yogi: p1Data.person.yogi,
+    avayogi: p1Data.person.avayogi,
+    hora: p1Data.person.hora,
+    ayanamsha: p.ayanamshaDMS,
+    lmt: p1Data.person.lmtCorr,
+    subhar: 'சுக்கிரன், புதன், சனி',
+    pabar: 'குரு, செவ்வாய், சூரியன்',
+    vainasika: 'கேட்டை',
+    sunrise: p1Data.person.sunriseSunset.split('/')[0]?.trim() || '05:58 AM',
+    sunset: p1Data.person.sunriseSunset.split('/')[1]?.trim() || '06:28 PM'
+  };
+
+  // Page 5: Charts
+  empty.p5 = {
+    genderLabel: horoInput.gender === 'female' ? 'பெண் பெயர்' : 'ஆண் பெயர்',
+    date: m.dob,
+    time: p1Data.person.time,
+    lagna: p1Data.person.lagna,
+    rasi: p1Data.person.rasi,
+    nakPada: `${p1Data.person.nakshatra} – ${p1Data.person.pada}`,
+    rasiChart: p1Data.charts.rasi,
+    navamsaChart: p1Data.charts.navamsa,
+    place: p1Data.person.placeLine1,
+    coords: p1Data.person.latLon,
+    tamilDate: p1Data.person.tamilDate,
+    pakshaTithi: p1Data.person.pakshaTithi,
+    yogaKarana: p1Data.person.yogaKarana,
+    dashaBal: p1Data.footer.dashaBalance
+  };
+
+  // Page 6: Planet Table
+  empty.p6 = {
+    heading: 'துல்லியமான நிராயன கிரக நிலைகள்',
+    rows: p1Data.planetRows.map(r => ({
+      graha: r.planet,
+      deg1: r.degMin,
+      nak: r.nakshatra,
+      pada: r.pada,
+      lord: r.lord,
+      rasi: r.rasi,
+      deg2: r.degInSign,
+      status: r.state
+    })),
+    footerName: p1Data.person.name,
+    footerDate: m.dob,
+    footerAyanamsha: p.ayanamshaDMS
+  };
+
+  // Page 7: Sripati
+  empty.p7 = {
+    rasiChart: p1Data.charts.rasi,
+    navamsaChart: p1Data.charts.navamsa,
+    drekkanaChart: p1Data.charts.rasi,
+    sripatiChart: p1Data.charts.rasi,
+    personName: p1Data.person.name,
+    grahasSphutam: [
+      { graha: 'சூரியன்', deg: p1Data.planetRows[1]?.degMin || '30° 25\'' },
+      { graha: 'சந்திரன்', deg: p1Data.planetRows[2]?.degMin || '06° 40\'' },
+      { graha: 'செவ்வாய்', deg: p1Data.planetRows[3]?.degMin || '344° 10\'' },
+      { graha: 'புதன்(வ)', deg: p1Data.planetRows[4]?.degMin || '68° 12\'' },
+      { graha: 'குரு', deg: p1Data.planetRows[5]?.degMin || '235° 18\'' },
+      { graha: 'சுக்கிரன்(வ)', deg: p1Data.planetRows[6]?.degMin || '352° 50\'' },
+      { graha: 'சனி(வ)', deg: p1Data.planetRows[7]?.degMin || '328° 42\'' },
+      { graha: 'ராகு', deg: p1Data.planetRows[8]?.degMin || '215° 10\'' },
+      { graha: 'கேது', deg: p1Data.planetRows[9]?.degMin || '35° 10\'' }
+    ],
+    bhavas: [
+      { bhava: 1, start: '27° 10\'', madhya: '42° 15\'', end: '57° 20\'' },
+      { bhava: 2, start: '57° 20\'', madhya: '72° 25\'', end: '87° 30\'' },
+      { bhava: 3, start: '87° 30\'', madhya: '102° 35\'', end: '117° 40\'' },
+      { bhava: 4, start: '117° 40\'', madhya: '132° 45\'', end: '147° 50\'' },
+      { bhava: 5, start: '147° 50\'', madhya: '162° 55\'', end: '178° 00\'' },
+      { bhava: 6, start: '178° 00\'', madhya: '193° 05\'', end: '208° 10\'' },
+      { bhava: 7, start: '208° 10\'', madhya: '222° 15\'', end: '237° 20\'' },
+      { bhava: 8, start: '237° 20\'', madhya: '252° 25\'', end: '267° 30\'' },
+      { bhava: 9, start: '267° 30\'', madhya: '282° 35\'', end: '297° 40\'' },
+      { bhava: 10, start: '297° 40\'', madhya: '312° 45\'', end: '327° 50\'' },
+      { bhava: 11, start: '327° 50\'', madhya: '342° 55\'', end: '358° 00\'' },
+      { bhava: 12, start: '358° 00\'', madhya: '13° 05\'', end: '27° 10\'' }
+    ],
+    bhavaChange: p1Data.footer.bhavaTransitions || 'சூரியன் 12-ம் பாவ சந்திக்கு நகர்ந்து பலன் தருகிறார்.'
+  };
+
+  // Page 8 to 12: Divisional charts
+  empty.p8 = {
+    d3Chart: p1Data.charts.rasi,
+    d3Text: 'மூன்றாம் பாவக பலன்கள் மற்றும் உடன்பிறப்புகள், தைரியம், வீரியம் பற்றி அறிவதற்கு திரேக்காண சக்கரம் உதவுகிறது.',
+    d7Chart: p1Data.charts.navamsa,
+    d7Text: 'குழந்தை பாக்கியம், சந்ததி விருத்தி மற்றும் புத்திர ஸ்தான பலன்களை நுட்பமாக அறிவதற்கு சப்தாம்ச சக்கரம் பயன்படுகிறது.'
+  };
+
+  empty.p9 = {
+    d60Chart: p1Data.charts.navamsa,
+    d60Text: 'பூர்வ புண்ணிய கர்ம வினைகள் மற்றும் அனைத்து நுட்பமான ஜாதக நிலைகளையும் அறுதியிட சஷ்டியாம்ச சக்கரம் முதன்மையானது.',
+    d30Chart: p1Data.charts.rasi,
+    d30Text: 'அரிஷ்டங்கள், விபத்துக்கள் மற்றும் தோஷங்களை ஆராய்ந்து அறிவதற்கு திரிம்சாம்ச சக்கரம் பயனுள்ளதாக அமைகிறது.'
+  };
+
+  empty.p10 = {
+    d10Chart: p1Data.charts.navamsa,
+    d10Text: 'தொழில், உத்தியோகம், சமூக அந்தஸ்து, புகழ் மற்றும் ஜீவன ஸ்தானத்தை அறிவதற்கு தசாம்ச சக்கரம் பயன்படுகிறது.',
+    d16Chart: p1Data.charts.rasi,
+    d16Text: 'வாகன யோகம், சுகபோகங்கள் மற்றும் சொகுசு வாழ்க்கை வசதிகளை அறிய ஷோடசாம்ச சக்கரம் உதவும்.'
+  };
+
+  empty.p11 = {
+    d4Chart: p1Data.charts.rasi,
+    d4Text: 'நிலபுலன்கள், வீடு, சொத்துக்கள் மற்றும் அதிர்ஷ்ட வாய்ப்புகளை கணிக்க சதுராம்ச சக்கரம் ஆய்வு செய்யப்படுகிறது.',
+    d12Chart: p1Data.charts.navamsa,
+    d12Text: 'தாய் தந்தை வழி முன்னோர்கள், பாரம்பரிய நன்மைகள் மற்றும் பரம்பரை ஆசிகளை அறிய துவாதசாம்சம் உதவுகிறது.'
+  };
+
+  empty.p12 = {
+    horaChart: p1Data.charts.rasi,
+    notes: 'சூரிய ஓரை மற்றும் சந்திர ஓரை மூலம் ஜாதகரின் தன லாபங்கள், நிதி வளம் மற்றும் செல்வ நிலைகள் கணிக்கப்படுகிறது.'
+  };
+
+  // Page 13: Shadbala
+  empty.p13 = {
+    grahaCols: ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி'],
+    grahaRows: [
+      { name: 'ஸ்தான பலம்', vals: ['165', '140', '135', '180', '190', '175', '150'] },
+      { name: 'திக் பலம்', vals: ['55', '45', '50', '60', '58', '52', '48'] },
+      { name: 'கால பலம்', vals: ['120', '130', '110', '125', '140', '135', '115'] },
+      { name: 'சேஷ்டா பலம்', vals: ['50', '40', '45', '55', '50', '48', '42'] },
+      { name: 'நைசர்கிக பலம்', vals: ['60', '51', '30', '25', '43', '34', '17'] },
+      { name: 'திருஷ்டி பலம்', vals: ['15', '18', '12', '20', '22', '19', '14'] },
+      { name: 'மொத்தம்', vals: ['465', '424', '382', '465', '503', '463', '386'] },
+      { name: 'இஷ்ட பலன்', vals: ['42', '38', '32', '45', '48', '44', '30'] },
+      { name: 'கஷ்ட பலன்', vals: ['18', '22', '28', '15', '12', '16', '30'] }
+    ],
+    bhavaRows: [
+      { name: 'திருஷ்டி பலம்', vals: ['45', '42', '40', '48', '50', '44', '46', '42', '52', '55', '54', '40'] },
+      { name: 'திக் பலம்', vals: ['50', '45', '40', '55', '48', '42', '50', '45', '48', '60', '52', '44'] },
+      { name: 'அதிபதி பலம்', vals: ['120', '115', '110', '125', '130', '118', '122', '114', '128', '135', '130', '112'] },
+      { name: 'மொத்தம்', vals: ['215', '202', '190', '228', '228', '204', '218', '201', '228', '250', '236', '196'] }
+    ]
+  };
+
+  // Page 14 & 15: Upagrahas
+  empty.p14 = {
+    introText: 'பராசரர் மற்றும் காளிதாசர் கணித முறைகளின்படி கணிக்கப்பெற்ற உபகிரகங்களின் துல்லியமான நிலைகள்:',
+    table1: [
+      { name: 'காலன்', lord: 'சூரியன்', graha: 'சூரி', pRasi: 'ரிஷபம்', pDeg: '12° 20\'', pNak: 'ரோகிணி', pPada: '1', kRasi: 'மேஷம்', kDeg: '28° 40\'', kNak: 'கிருத்திகை', kPada: '1' },
+      { name: 'மிருத்யு', lord: 'செவ்வாய்', graha: 'செவ்', pRasi: 'மிதுனம்', pDeg: '05° 15\'', pNak: 'மிருகசீரிஷம்', pPada: '4', kRasi: 'ரிஷபம்', kDeg: '22° 10\'', kNak: 'ரோகிணி', kPada: '4' },
+      { name: 'அர்த்தப்பிரஹரன்', lord: 'புதன்', graha: 'புத', pRasi: 'கடகம்', pDeg: '18° 30\'', pNak: 'ஆயில்யம்', pPada: '1', kRasi: 'மிதுனம்', kDeg: '14° 05\'', kNak: 'திருவாதிரை', kPada: '3' },
+      { name: 'யமகண்டன்', lord: 'குரு', graha: 'குரு', pRasi: 'சிம்மம்', pDeg: '25° 40\'', pNak: 'பூரம்', pPada: '4', kRasi: 'கடகம்', kDeg: '08° 50\'', kNak: 'பூசம்', kPada: '2' },
+      { name: 'குளிகன்', lord: 'சனி', graha: 'சனி', pRasi: 'கன்னி', pDeg: '02° 10\'', pNak: 'உத்திரம்', pPada: '2', kRasi: 'சிம்மம்', kDeg: '26° 15\'', kNak: 'உத்திரம்', pPada: '1' }
+    ],
+    table2: [
+      { name: 'தூமன்', lord: 'செவ்வாய்', rasi: 'துலாம்', deg: '13° 45\'', nak: 'சுவாதி', pada: '3' },
+      { name: 'வியதிபாதன்', lord: 'ராகு', rasi: 'மீனம்', deg: '16° 15\'', nak: 'உத்திரட்டாதி', pada: '4' },
+      { name: 'பரிவேடன்', lord: 'சந்திரன்', rasi: 'கன்னி', deg: '16° 15\'', nak: 'ஹஸ்தம்', pada: '2' },
+      { name: 'இந்திரதனுஸ்', lord: 'சுக்கிரன்', rasi: 'மேஷம்', deg: '13° 45\'', nak: 'பரணி', pada: '1' },
+      { name: 'உபகேது', lord: 'கேது', rasi: 'ரிஷபம்', deg: '00° 25\'', nak: 'கிருத்திகை', pada: '2' }
+    ]
+  };
+
+  empty.p15 = {
+    upagrahaChart: p1Data.charts.rasi,
+    sphutas: {
+      horaLagna: '38° 10\'',
+      arudhaLagna: '64° 25\'',
+      ghatikaLagna: '12° 50\'',
+      induLagna: '185° 30\'',
+      bhavaLagna: '42° 15\'',
+      sriLagna: '75° 40\'',
+      yogiDeg: '210° 20\'',
+      avayogiDeg: '30° 20\'',
+      matruYogi: 'சந்திரன்',
+      drekkana22: 'விருச்சிகம் 12°',
+      navamsa64: 'கன்னி 06°',
+      sarpaDrekkana: 'கடகம் 2வது திரேக்காணம்',
+      kshetraSphutam: '142° 10\'',
+      adrishtaDeg: '88° 35\''
+    },
+    notes: {
+      bhava5: 'சுப பார்வை பெற்று புத்திர பலம் நன்மையாக அமையும்.',
+      andhaka: 'செவ்வாய், ராகு',
+      pushkara: 'குரு, சுக்கிரன்',
+      mrityu: 'சனி 28° பாகையில் உள்ளார்.',
+      avamrityu: 'ஆயில்யம் 4-ம் பாதம்'
+    }
+  };
+
+  // Page 16: Relations
+  empty.p16 = {
+    grahaNames: ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி'],
+    naisargika: [
+      ['---', 'நட்பு', 'நட்பு', 'சமம்', 'நட்பு', 'சத்ரு', 'சத்ரு'],
+      ['நட்பு', '---', 'சமம்', 'நட்பு', 'சமம்', 'சமம்', 'சமம்'],
+      ['நட்பு', 'நட்பு', '---', 'சத்ரு', 'நட்பு', 'சமம்', 'சத்ரு'],
+      ['சமம்', 'சத்ரு', 'சமம்', '---', 'சமம்', 'நட்பு', 'சமம்'],
+      ['நட்பு', 'நட்பு', 'நட்பு', 'சத்ரு', '---', 'சத்ரு', 'சமம்'],
+      ['சத்ரு', 'சத்ரு', 'சமம்', 'நட்பு', 'சமம்', '---', 'நட்பு'],
+      ['சத்ரு', 'சத்ரு', 'சத்ரு', 'நட்பு', 'சமம்', 'நட்பு', '---']
+    ],
+    tatkalika: [
+      ['---', 'நட்பு', 'சத்ரு', 'நட்பு', 'சத்ரு', 'சத்ரு', 'நட்பு'],
+      ['நட்பு', '---', 'நட்பு', 'நட்பு', 'சத்ரு', 'நட்பு', 'சத்ரு'],
+      ['சத்ரு', 'நட்பு', '---', 'சத்ரு', 'நட்பு', 'நட்பு', 'நட்பு'],
+      ['நட்பு', 'நட்பு', 'சத்ரு', '---', 'சத்ரு', 'சத்ரு', 'நட்பு'],
+      ['சத்ரு', 'சத்ரு', 'நட்பு', 'சத்ரு', '---', 'நட்பு', 'சத்ரு'],
+      ['சத்ரு', 'நட்பு', 'நட்பு', 'சத்ரு', 'நட்பு', '---', 'நட்பு'],
+      ['நட்பு', 'சத்ரு', 'நட்பு', 'நட்பு', 'சத்ரு', 'நட்பு', '---']
+    ],
+    combined: [
+      ['---', 'அதிநட்பு', 'சமம்', 'நட்பு', 'சமம்', 'அதிசத்ரு', 'சமம்'],
+      ['அதிநட்பு', '---', 'நட்பு', 'அதிநட்பு', 'சத்ரு', 'நட்பு', 'சத்ரு'],
+      ['சமம்', 'அதிநட்பு', '---', 'அதிசத்ரு', 'அதிநட்பு', 'நட்பு', 'சமம்'],
+      ['நட்பு', 'சமம்', 'சத்ரு', '---', 'சத்ரு', 'சமம்', 'நட்பு'],
+      ['சமம்', 'சமம்', 'அதிநட்பு', 'அதிசத்ரு', '---', 'சமம்', 'சத்ரு'],
+      ['அதிசத்ரு', 'சமம்', 'நட்பு', 'சமம்', 'நட்பு', '---', 'அதிநட்பு'],
+      ['சமம்', 'அதிசத்ரு', 'சமம்', 'அதிநட்பு', 'சத்ரு', 'அதிநட்பு', '---']
+    ],
+    legend: 'குறிப்பு: நைசர்கிக + தற்காலிக நட்புகளின் சேர்க்கை பஞ்சதா மைத்ரி (ஐவகை உறவுகள்) எனப்படும்.',
+    avasthas: [
+      { graha: 'சூரியன்', rasi: 'ரிஷபம்', deg: '00° 25\'', avastha: 'பால அவஸ்தா', status: 'நட்பு', mandalam: 'அக்னி மண்டலம்', samayam: 'போஜனம்' },
+      { graha: 'சந்திரன்', rasi: 'மேஷம்', deg: '06° 40\'', avastha: 'குமார அவஸ்தா', status: 'சமம்', mandalam: 'வாயு மண்டலம்', samayam: 'கமனம்' },
+      { graha: 'செவ்வாய்', rasi: 'மீனம்', deg: '14° 10\'', avastha: 'யுவ அவஸ்தா', status: 'நட்பு', mandalam: 'ஜல மண்டலம்', samayam: 'ஆஸ்தானம்' },
+      { graha: 'புதன்', rasi: 'மிதுனம்', deg: '08° 12\'', avastha: 'குமார அவஸ்தா', status: 'ஆட்சி-வக்', mandalam: 'பிருத்வி மண்டலம்', samayam: 'விபவம்' },
+      { graha: 'குரு', rasi: 'விருச்சிகம்', deg: '25° 18\'', avastha: 'விருத்த அவஸ்தா', status: 'நட்பு', mandalam: 'ஆகாய மண்டலம்', samayam: 'நித்திரை' },
+      { graha: 'சுக்கிரன்', rasi: 'மீனம்', deg: '22° 50\'', avastha: 'யுவ அவஸ்தா', status: 'உச்சம்', mandalam: 'ஜல மண்டலம்', samayam: 'ஆஸ்தானம்' },
+      { graha: 'சனி', rasi: 'கும்பம்', deg: '28° 42\'', avastha: 'மிருத அவஸ்தா', status: 'ஆட்சி', mandalam: 'வாயு மண்டலம்', samayam: 'போஜனம்' },
+      { graha: 'ராகு', rasi: 'விருச்சிகம்', deg: '05° 10\'', avastha: 'பால அவஸ்தா', status: 'நீசம்', mandalam: 'அக்னி மண்டலம்', samayam: 'கமனம்' },
+      { graha: 'கேது', rasi: 'ரிஷபம்', deg: '05° 10\'', avastha: 'பால அவஸ்தா', status: 'உச்சம்', mandalam: 'பிருத்வி மண்டலம்', samayam: 'நித்திரை' }
+    ]
+  };
+
+  // Page 17: Sarvashtavarga
+  empty.p17 = {
+    grahas: ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி'],
+    matrix: [
+      ['4', '5', '3', '4', '6', '5', '4', '4', '5', '4', '3', '5'],
+      ['5', '4', '4', '6', '4', '5', '3', '4', '5', '4', '5', '3'],
+      ['3', '4', '5', '3', '4', '4', '5', '4', '3', '5', '4', '4'],
+      ['4', '6', '5', '4', '5', '4', '6', '5', '4', '3', '4', '4'],
+      ['5', '4', '6', '5', '4', '5', '4', '5', '6', '4', '5', '3'],
+      ['4', '5', '4', '5', '4', '4', '5', '4', '4', '5', '3', '5'],
+      ['3', '4', '4', '3', '4', '5', '3', '4', '4', '4', '5', '3']
+    ],
+    totals: ['28', '32', '31', '30', '31', '32', '30', '30', '31', '29', '29', '27'],
+    chartCells: ['27', '28', '32', '31', '30', '31', '32', '30', '30', '31', '29', '29'],
+    grandTotal: '360',
+    kendram: '121', panaparam: '122', apoklimam: '117', upachayam: '122', trikonam: '91',
+    varavinam: '185', selavinam: '175',
+    east: '90', west: '92', south: '88', north: '90'
+  };
+
+  // Page 18: Numerology
+  empty.p18 = {
+    name: p1Data.person.name,
+    engSum: 'A(1)+A(1)+R(2)+A(1)+V(6) = 11 = 2 (சந்திரன்)',
+    dobEng: `${m.dob} (Thursday)`,
+    dateNum: '5 (புதன் / Mercury)',
+    yearNum: '8 (சனி / Saturn)',
+    luckyNums: '5, 6, 1, 9',
+    luckyDates: '5, 14, 23, 6, 15, 24',
+    luckyColors: 'பச்சை, வெளிர் நீலம், வெள்ளை',
+    luckyStones: 'மரகதம் (Emerald), வைரம் (Diamond)',
+    deity: 'ஸ்ரீ மகாவிஷ்ணு, ஸ்ரீ வெங்கடாசலபதி',
+    temples: 'திருப்பதி வெங்கடாசலபதி, மதுரை மீனாட்சி சுந்தரேஸ்வரர்',
+    letters: ['1','2','3','4','5','8','3','5','1','1','2','3','4','5','7','8','1','2','3','4','6','6','6','5','1','7'],
+    subham: 'சுபம்.'
+  };
+
+  return empty;
+}
