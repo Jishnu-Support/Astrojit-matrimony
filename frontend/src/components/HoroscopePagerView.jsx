@@ -582,6 +582,15 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
               </button>
             )}
 
+            {/* Dark / Light Toggle */}
+            <button
+              type="button"
+              onClick={() => setTheme(isDark ? 'light' : 'dark')}
+              className="px-3 py-1.5 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 text-xs font-bold hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors cursor-pointer"
+            >
+              {isDark ? (isTa ? '☀️ பகல் முறை' : '☀️ Light') : (isTa ? '🌙 இரவு முறை' : '🌙 Dark')}
+            </button>
+
             {/* Print / Save as PDF Button */}
             <button
               type="button"
@@ -589,7 +598,7 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
               className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-white text-xs font-bold hover:from-[#5C1017] hover:to-[#7A1A22] shadow-md shadow-red-950/20 transition-all cursor-pointer flex items-center gap-1.5"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>{pagerType === '7page' ? (isTa ? 'அச்சு / PDF (7-பக்கம்)' : 'Save as PDF / Print (7 Pages)') : (isTa ? 'அச்சு / PDF (1-A4)' : 'Save as PDF / Print (1-A4)')}</span>
+              <span>{pagerType === '18page' ? (isTa ? 'அச்சு / PDF (18-பக்கம்)' : 'Save as PDF / Print (18 Pages)') : pagerType === '7page' ? (isTa ? 'அச்சு / PDF (7-பக்கம்)' : 'Save as PDF / Print (7 Pages)') : (isTa ? 'அச்சு / PDF (1-A4)' : 'Save as PDF / Print (1-A4)')}</span>
             </button>
 
             {onClose && (

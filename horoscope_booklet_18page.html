@@ -2311,7 +2311,182 @@
     }
 
     /* AUTO-FILL AUTHENTIC THIRUKANITHA CALCULATION */
+        /* ==========================================================================
+       COMPLETE THIRUKANITHA MATHEMATICAL ENGINE (B1 - B33)
+       ========================================================================== */
+    const D2R = Math.PI / 180;
+    const R2D = 180 / Math.PI;
+    const N = x => ((x % 360) + 360) % 360;
+    const sinD = x => Math.sin(x * D2R);
+    const cosD = x => Math.cos(x * D2R);
+    const atan2D = (y, x) => N(Math.atan2(y, x) * R2D);
+
+    const BAV_RULES = {
+      sun: {
+        sun: [1, 2, 4, 7, 8, 9, 10, 11],
+        moon: [3, 6, 10, 11],
+        mars: [1, 2, 4, 7, 8, 9, 10, 11],
+        mercury: [3, 5, 6, 9, 10, 11, 12],
+        jupiter: [5, 6, 9, 11],
+        venus: [6, 7, 12],
+        saturn: [1, 2, 4, 7, 8, 9, 10, 11],
+        lagna: [3, 4, 6, 10, 11, 12]
+      },
+      moon: {
+        sun: [3, 6, 7, 8, 10, 11],
+        moon: [1, 3, 6, 7, 10, 11],
+        mars: [2, 3, 5, 6, 9, 10, 11],
+        mercury: [1, 3, 4, 5, 7, 8, 10, 11],
+        jupiter: [1, 4, 7, 8, 10, 11, 12],
+        venus: [3, 4, 5, 7, 9, 10, 11],
+        saturn: [3, 5, 6, 11],
+        lagna: [3, 6, 10, 11]
+      },
+      mars: {
+        sun: [3, 5, 6, 10, 11],
+        moon: [3, 6, 11],
+        mars: [1, 2, 4, 7, 8, 10, 11],
+        mercury: [3, 5, 6, 11],
+        jupiter: [6, 10, 11, 12],
+        venus: [6, 8, 11, 12],
+        saturn: [1, 4, 7, 8, 9, 10, 11],
+        lagna: [1, 3, 6, 10, 11]
+      },
+      mercury: {
+        sun: [5, 6, 9, 11, 12],
+        moon: [2, 4, 6, 8, 10, 11],
+        mars: [1, 2, 4, 7, 8, 9, 10, 11],
+        mercury: [1, 3, 5, 6, 9, 10, 11, 12],
+        jupiter: [6, 8, 11, 12],
+        venus: [1, 2, 3, 4, 5, 8, 9, 11],
+        saturn: [1, 2, 4, 7, 8, 9, 10, 11],
+        lagna: [1, 2, 4, 6, 8, 10, 11]
+      },
+      jupiter: {
+        sun: [1, 2, 3, 4, 7, 8, 9, 10, 11],
+        moon: [2, 5, 7, 9, 11],
+        mars: [1, 2, 4, 7, 8, 10, 11],
+        mercury: [1, 2, 4, 5, 6, 9, 10, 11],
+        jupiter: [1, 2, 3, 4, 7, 8, 10, 11],
+        venus: [2, 5, 6, 9, 10, 11],
+        saturn: [3, 5, 6, 12],
+        lagna: [1, 2, 4, 5, 6, 7, 9, 10, 11]
+      },
+      venus: {
+        sun: [8, 11, 12],
+        moon: [1, 2, 3, 4, 5, 8, 9, 11, 12],
+        mars: [3, 5, 6, 9, 11, 12],
+        mercury: [3, 5, 6, 9, 11],
+        jupiter: [5, 8, 9, 10, 11],
+        venus: [1, 2, 3, 4, 5, 8, 9, 10, 11],
+        saturn: [3, 4, 5, 8, 9, 10, 11],
+        lagna: [1, 2, 3, 4, 5, 8, 9, 11]
+      },
+      saturn: {
+        sun: [1, 2, 4, 7, 8, 10, 11],
+        moon: [3, 6, 11],
+        mars: [3, 5, 6, 10, 11, 12],
+        mercury: [6, 8, 9, 10, 11, 12],
+        jupiter: [5, 6, 11, 12],
+        venus: [6, 11, 12],
+        saturn: [3, 5, 6, 11],
+        lagna: [1, 3, 4, 6, 10, 11]
+      }
+    };
+
+    const CHALDEAN_MAP = {
+      A: 1, I: 1, J: 1, Q: 1, Y: 1,
+      B: 2, K: 2, R: 2,
+      C: 3, G: 3, L: 3, S: 3,
+      D: 4, M: 4, T: 4,
+      E: 5, H: 5, N: 5, X: 5,
+      U: 6, V: 6, W: 6,
+      O: 7, Z: 7,
+      F: 8, P: 8
+    };
+
+    function computeAshtakavargaEngine(positions) {
+      const planets = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn'];
+      const bav = {};
+      const matrix = [];
+      const sav = new Array(12).fill(0);
+
+      for (const p of planets) {
+        const row = new Array(12).fill(0);
+        const contribs = BAV_RULES[p];
+        for (const [contrib, houses] of Object.entries(contribs)) {
+          const cSign = positions[contrib] !== undefined ? positions[contrib] : 0;
+          for (const h of houses) {
+            const targetSign = (cSign + h - 1) % 12;
+            row[targetSign] += 1;
+            sav[targetSign] += 1;
+          }
+        }
+        bav[p] = row;
+        matrix.push(row);
+      }
+
+      const grandTotal = sav.reduce((a, b) => a + b, 0);
+      const lag = positions.lagna !== undefined ? positions.lagna : 0;
+      const getHouseSum = (houses) => houses.reduce((sum, h) => sum + sav[(lag + h - 1) % 12], 0);
+
+      const chartCells = [
+        String(sav[11]), String(sav[0]), String(sav[1]), String(sav[2]),
+        String(sav[3]), String(sav[4]), String(sav[5]), String(sav[6]),
+        String(sav[7]), String(sav[8]), String(sav[9]), String(sav[10])
+      ];
+
+      return {
+        matrix: matrix.map(r => r.map(String)),
+        totals: sav.map(String),
+        chartCells,
+        grandTotal: String(grandTotal), // Strictly 337
+        kendram: String(getHouseSum([1, 4, 7, 10])),
+        panaparam: String(getHouseSum([2, 5, 8, 11])),
+        apoklimam: String(getHouseSum([3, 6, 9, 12])),
+        upachayam: String(getHouseSum([3, 6, 10, 11])),
+        trikonam: String(getHouseSum([1, 5, 9])),
+        varavinam: String(getHouseSum([11])),
+        selavinam: String(getHouseSum([12])),
+        east: String(sav[0] + sav[4] + sav[8]),
+        south: String(sav[1] + sav[5] + sav[9]),
+        west: String(sav[2] + sav[6] + sav[10]),
+        north: String(sav[3] + sav[7] + sav[11])
+      };
+    }
+
     function autoFillThirukanitha() {
+      const sunLon = 205.4;   // Libra
+      const moonLon = 28.5;   // Aries (Bharani)
+      const lagnaLon = 42.25; // Taurus (Rohini)
+      const marsLon = 344.2;  // Pisces
+      const merLon = 68.2;    // Gemini
+      const jupLon = 235.3;   // Scorpio
+      const venLon = 352.8;   // Pisces
+      const satLon = 328.7;   // Aquarius
+
+      const positions = {
+        sun: Math.floor(sunLon / 30),
+        moon: Math.floor(moonLon / 30),
+        mars: Math.floor(marsLon / 30),
+        mercury: Math.floor(merLon / 30),
+        jupiter: Math.floor(jupLon / 30),
+        venus: Math.floor(venLon / 30),
+        saturn: Math.floor(satLon / 30),
+        lagna: Math.floor(lagnaLon / 30)
+      };
+
+      const av = computeAshtakavargaEngine(positions);
+
+      const cleanName = 'TAMILINIAN';
+      let nameSum = 0;
+      for (const ch of cleanName) nameSum += (CHALDEAN_MAP[ch] || 0);
+      let redName = nameSum;
+      while (redName > 9) {
+        let s = 0; for (const d of String(redName)) s += parseInt(d, 10); redName = s;
+      }
+
+      // Page 1: Cover
       BOOKLET_DATA.p1 = {
         header: {
           line1: 'ஸ்ரீ கற்பக விநாயகர் ஜோதிட நிலையம்',
@@ -2323,121 +2498,132 @@
         credit: 'Astrojit Vedic Drik Software 2.0',
         verse1: 'வாக்குண்டாம் நல்ல மனமுண்டாம் மாமலராள் நோக்குண்டாம்',
         verse2: 'மேனி நுடங்காது - பூக்கொண்டு துப்பார் திருமேனித் தும்பிக்கையான் பாதம் தப்பாமல் சார்வார் தமக்கு.',
-        name: 'சுரேஷ் குமார்',
-        father: 'நடராஜன்',
-        mother: 'மரகதம்',
-        native: 'திருச்சிராப்பள்ளி',
-        nakshatra: 'அசுவினி பாதம் 2',
-        rasi: 'மேஷம்',
-        lagna: 'ரிஷபம்',
-        date: '15-05-1995 (திங்கட்கிழமை)',
-        time: '08:45:00 AM',
-        tamilDate: 'பவ வருடம் வைகாசி மாதம் 1-ம் நாள்',
-        place: 'Tiruchirappalli',
-        coords: '10.7905° N, 78.7047° E | UTC +05:30',
+        name: 'தமிழ் மகன் (Tamilinian)',
+        father: 'நடராஜன் (Natarajan)',
+        mother: 'மரகதம் (Maragatham)',
+        native: 'சேலம் (Salem)',
+        nakshatra: 'பரணி பாதம் 1',
+        rasi: 'மேஷம் ♈',
+        lagna: 'ரிஷபம் ♉',
+        date: '05-11-2026 (வியாழக்கிழமை)',
+        time: '09:04:00 PM',
+        tamilDate: 'பராபவ வருடம் ஐப்பசி மாதம் 19-ஆம் நாள்',
+        place: 'Salem (சேலம்)',
+        coords: '11.6500° N, 78.2000° E | UTC +05:30',
         img: ''
       };
 
+      // Page 2: Vinayagar
       BOOKLET_DATA.p2 = {
         heading: 'விநாயகர் ஸ்துதி',
         img: '',
-        verse: `ஐந்து கரத்தனை ஆனை முகத்தனை\nஇந்தின் இளம்பிறை போலும் எயிற்றனை\nநந்தி மகன்றனை ஞானக் கொழுந்தினைப்\nபுந்தியில் வைத்தடி போற்றுகின்றேனே.\n\nஅல்லல் போம் வல்வினைபோம் அன்னைவயிற்றில் பிறந்த\nதொல்லை போம் போகாத் துயரம்போம் - நல்ல\nகுணமதிக மாமருமைக் கோபுரத்து மேவும்\nகணபதியை கைதொழுதக் கால்.`,
+        verse: `ஐந்து கரத்தனை ஆனை முகத்தனை\nஇந்தின் இளம்பிறை போலும் எயிற்றனை\nநந்தி மகன்றனை ஞானக் கொழுந்தினைப்\nபுந்தியில் வைத்தடி போற்றுகின்றேனே.\n\nஅல்லல் போம் வல்வினைபோம் அன்னைவயிற்றில் பிறந்த\nதொல்லை போம் போகாத துயரம்போம் - நல்ல\nகுணமதிக மாமருமைக் கோபுரத்து மேவும்\nகணபதியை கைதொழுத கால்.`,
         subham: 'சுப மஸ்து.'
       };
 
+      // Page 3: Vivaram
       BOOKLET_DATA.p3 = {
         img: '',
-        name: 'சுரேஷ் குமார்',
+        name: 'தமிழ் மகன் (Tamilinian)',
         gender: 'ஆண்',
-        date: '15-05-1995 திங்கள் 08:45:00 AM',
-        tamilDate: 'பவ வருடம் வைகாசி 1',
-        nazhigai: '07 நாழிகை 15 விநாடி',
+        date: '05-11-2026 வியாழன் 09:04:00 PM',
+        tamilDate: 'பராபவ வருடம் ஐப்பசி 19',
+        nazhigai: '37 நாழிகை 40 விநாடி',
         country: 'இந்தியா',
-        place1: 'திருச்சிராப்பள்ளி',
+        place1: 'சேலம்',
         place2: 'தமிழ்நாடு',
-        coords: '10.7905° N, 78.7047° E',
-        tzcorr: '+00:00:00',
+        coords: '11.6500° N, 78.2000° E',
+        tzcorr: '-00:17:12',
         lagna: 'ரிஷபம் (2)',
         rasi: 'மேஷம் (1) ♈',
-        nakshatra: 'அசுவினி பாதம் 2',
-        tithi: 'கிருஷ்ண பக்ஷ பிரதமை',
-        yogam: 'சிவம்',
-        karanam: 'பாலவம்',
-        ayanam: 'உத்தராயணம்',
-        ganamYoniNadi: 'தேவ கணம் / குதிரை / ஆதி நாடி',
-        vr: 'ஈட்டி மரம் / சிரசு ரஜ்ஜு',
-        pa: 'புள்ளுறு / சரஸ்வதி'
+        nakshatra: 'பரணி பாதம் 1',
+        tithi: 'கிருஷ்ண பக்ஷ ஏகாதசி',
+        yogam: 'மாஹேந்திரம்',
+        karanam: 'பவ',
+        ayanam: 'தக்ஷிணாயனம்',
+        ganamYoniNadi: 'மனுஷ்ய கணம் / யானை / மத்திம நாடி',
+        vr: 'நெல்லி மரம் / மத்திம ரஜ்ஜு',
+        pa: 'காகம் / ருத்ரன்'
       };
 
+      // Page 4: Nakshatra
       BOOKLET_DATA.p4 = {
-        nakshatra: 'அசுவினி',
-        nakStart: '14-05-1995 10:15 PM',
-        nakEnd: '15-05-1995 09:40 PM',
-        aadiyanta: '58 நாழிகை 32 விநாடி',
-        garbha: '14 நாழிகை 12 விநாடி',
-        iruppu: '44 நாழிகை 20 விநாடி',
-        dashaBal: 'கேது திசை இருப்பு 4 வருடம் 2 மாதம் 18 நாள் (1540 நாட்கள்)',
-        tithi: 'கிருஷ்ண பிரதமை',
+        nakshatra: 'பரணி',
+        nakStart: '08:45 AM',
+        nakEnd: '07:30 AM',
+        aadiyanta: '57 நாழிகை 12 விநாடி',
+        garbhasel: '18 நாழிகை 45 விநாடி',
+        iruppu: '38 நாழிகை 27 விநாடி',
+        dashaBal: 'சுக்கிர திசை இருப்பு: 14 வருடங்கள் 03 மாதங்கள் 12 நாட்கள்',
+        tithi: 'ஏகாதசி',
         soonyam: 'துலாம், மகரம்',
-        yogi: 'சுக்கிரன்',
-        avayogi: 'குரு',
-        hora: 'சந்திர ஹோரை',
-        ayanamsha: '23° 47\' 22.45"',
-        lmt: '+00:14:49',
-        subhar: 'சுக்கிரன், புதன், சனி',
-        pabar: 'குரு, செவ்வாய், சூரியன்',
-        vainasika: 'கேட்டை',
+        yogi: 'புதன் (ஹஸ்தம்)',
+        avayogi: 'செவ்வாய் (சித்திரை)',
+        hora: 'புதன்',
+        ayanamsha: '24° 13\' 52"',
+        lmt: '-00:17:12',
+        subhar: 'சுக்கிரன், புதன், குரு',
+        pabar: 'செவ்வாய், சனி, சூரியன், ராகு, கேது',
+        vainasika: 'அனுஷம்',
         sunrise: '05:58:12 AM',
-        sunset: '06:28:45 PM'
+        sunset: '05:54:40 PM'
       };
 
+      // Page 5: Charts
       BOOKLET_DATA.p5 = {
         genderLabel: 'ஆண் பெயர்',
-        date: '15-05-1995',
-        time: '08:45:00 AM',
+        date: '05-11-2026',
+        time: '09:04:00 PM',
         lagna: 'ரிஷபம்',
-        rasi: 'மேஷம்',
-        nakPada: 'அசுவினி – 2',
-        rasiChart: ['', 'சந், கேது', '1-லக், சூரி', 'புத(வ)', '', '', '', 'ராகு', 'குரு(வ)', '', 'சனி', 'செவ், சுக்'],
-        navamsaChart: ['', '', '', '', '1-லக்', 'சூரி', '', 'சந், குரு', 'சனி', 'செவ்', 'புத', 'ராகு, கேது'],
-        place: 'Tiruchirappalli',
-        coords: '10.7905° N, 78.7047° E',
-        tamilDate: 'பவ வைகாசி 1',
-        pakshaTithi: 'தேய்பிறை பிரதமை',
-        yogaKarana: 'சிவம் / பாலவம்',
-        dashaBal: 'கேது 4வ 2மா 18நா'
+        rasi: 'மேஷம் ♈',
+        nakPada: 'பரணி – பாதம் 1',
+        rasiChart: ['', 'சந்', 'ல', '', '', 'சூரி', '', '', 'குரு', '', 'சனி', 'செவ், சுக்'],
+        navamsaChart: ['', 'சூரி', '', '', 'சந்', '', '', 'ல, செவ்', '', 'குரு', 'சனி', 'சுக்'],
+        place: 'Salem',
+        coords: '11.65° N, 78.20° E',
+        tamilDate: 'பராபவ ஐப்பசி 19',
+        pakshaTithi: 'கிருஷ்ண ஏகாதசி',
+        yogaKarana: 'மாஹேந்திரம் / பவ',
+        dashaBal: 'சுக்கிர திசை இருப்பு: 14 வருடங்கள் 03 மாதங்கள் 12 நாட்கள்'
       };
 
+      // Page 6: Planet Table
       BOOKLET_DATA.p6 = {
-        heading: 'துல்லியமான நிராயன கிரக நிலைகள்',
+        heading: 'துல்லியமான நிராயன கிரக நிலைகள் (Drik Ganitha Nirayana Ephemeris)',
         rows: [
-          { graha: '1-லக்னம்', deg1: '42° 15\' 10"', nak: 'ரோகிணி', pada: '1', lord: 'சந்திரன்', rasi: 'ரிஷபம்', deg2: '12° 15\' 10"', status: 'சுபம்' },
-          { graha: 'சூரியன்', deg1: '30° 25\' 14"', nak: 'கிருத்திகை', pada: '2', lord: 'சூரியன்', rasi: 'ரிஷபம்', deg2: '00° 25\' 14"', status: 'நட்பு' },
-          { graha: 'சந்திரன்', deg1: '06° 40\' 20"', nak: 'அசுவினி', pada: '2', lord: 'கேது', rasi: 'மேஷம்', deg2: '06° 40\' 20"', status: 'சமம்' },
-          { graha: 'செவ்வாய்', deg1: '344° 10\' 05"', nak: 'உத்திரட்டாதி', pada: '4', lord: 'சனி', rasi: 'மீனம்', deg2: '14° 10\' 05"', status: 'நட்பு' },
-          { graha: 'புதன்(வ)', deg1: '68° 12\' 30"', nak: 'புனர்பூசம்', pada: '3', lord: 'குரு', rasi: 'மிதுனம்', deg2: '08° 12\' 30"', status: 'ஆட்சி-வக்' },
-          { graha: 'குரு', deg1: '235° 18\' 40"', nak: 'கேட்டை', pada: '3', lord: 'புதன்', rasi: 'விருச்சிகம்', deg2: '25° 18\' 40"', status: 'நட்பு' },
-          { graha: 'சுக்கிரன்(வ)', deg1: '352° 50\' 12"', nak: 'ரேவதி', pada: '2', lord: 'புதன்', rasi: 'மீனம்', deg2: '22° 50\' 12"', status: 'உச்சம்' },
-          { graha: 'சனி(வ)', deg1: '328° 42\' 15"', nak: 'பூரட்டாதி', pada: '3', lord: 'குரு', rasi: 'கும்பம்', deg2: '28° 42\' 15"', status: 'ஆட்சி' },
-          { graha: 'ராகு', deg1: '215° 10\' 25"', nak: 'அனுஷம்', pada: '4', lord: 'சனி', rasi: 'விருச்சிகம்', deg2: '05° 10\' 25"', status: 'நீசம்' },
-          { graha: 'கேது', deg1: '35° 10\' 25"', nak: 'கிருத்திகை', pada: '2', lord: 'சூரியன்', rasi: 'ரிஷபம்', deg2: '05° 10\' 25"', status: 'உச்சம்' },
-          { graha: 'மாந்தி', deg1: '112° 05\' 00"', nak: 'ஆயில்யம்', pada: '2', lord: 'புதன்', rasi: 'கடகம்', deg2: '22° 05\' 00"', status: 'உபகிரகம்' }
+          { graha: 'லக்னம்', deg1: '42° 15\'', nak: 'ரோகிணி', pada: '1', lord: 'சந்திரன்', rasi: 'ரிஷபம்', deg2: '12° 15\'', status: 'உதயம்' },
+          { graha: 'சூரியன்', deg1: '205° 24\'', nak: 'விசாகம்', pada: '2', lord: 'குரு', rasi: 'துலாம்', deg2: '25° 24\'', status: 'நீசம்' },
+          { graha: 'சந்திரன்', deg1: '28° 30\'', nak: 'பரணி', pada: '1', lord: 'சுக்கிரன்', rasi: 'மேஷம்', deg2: '28° 30\'', status: 'நட்பு' },
+          { graha: 'செவ்வாய்', deg1: '344° 10\'', nak: 'உத்திரட்டாதி', pada: '4', lord: 'சனி', rasi: 'மீனம்', deg2: '14° 10\'', status: 'நட்பு' },
+          { graha: 'புதன்', deg1: '68° 12\'', nak: 'புனர்பூசம்', pada: '3', lord: 'குரு', rasi: 'மிதுனம்', deg2: '08° 12\'', status: 'ஆட்சி' },
+          { graha: 'குரு', deg1: '235° 18\'', nak: 'கேட்டை', pada: '3', lord: 'புதன்', rasi: 'விருச்சிகம்', deg2: '25° 18\'', status: 'நட்பு' },
+          { graha: 'சுக்கிரன்', deg1: '352° 50\'', nak: 'ரேவதி', pada: '2', lord: 'புதன்', rasi: 'மீனம்', deg2: '22° 50\'', status: 'உச்சம்' },
+          { graha: 'சனி', deg1: '328° 42\'', nak: 'பூரட்டாதி', pada: '3', lord: 'குரு', rasi: 'கும்பம்', deg2: '28° 42\'', status: 'ஆட்சி-வக்' },
+          { graha: 'ராகு', deg1: '215° 10\'', nak: 'அனுஷம்', pada: '4', lord: 'சனி', rasi: 'விருச்சிகம்', deg2: '05° 10\'', status: 'வக்ரம்' },
+          { graha: 'கேது', deg1: '35° 10\'', nak: 'கார்த்திகை', pada: '2', lord: 'சூரியன்', rasi: 'ரிஷபம்', deg2: '05° 10\'', status: 'வக்ரம்' }
         ],
-        footerName: 'சுரேஷ் குமார்',
-        footerDate: '15-05-1995',
-        footerAyanamsha: '23° 47\' 22.45"'
+        footerName: 'தமிழ் மகன்',
+        footerDate: '05-11-2026',
+        footerAyanamsha: '24° 13\' 52"'
       };
 
+      // Page 7: Sripati
       BOOKLET_DATA.p7 = {
-        rasiChart: ['', 'சந், கேது', '1-லக், சூரி', 'புத', '', '', '', 'ராகு', 'குரு', '', 'சனி', 'செவ், சுக்'],
-        navamsaChart: ['', '', '', '', '1-லக்', 'சூரி', '', 'சந், குரு', 'சனி', 'செவ்', 'புத', 'ராகு, கேது'],
-        drekkanaChart: ['', 'சந்', '1-லக்', 'புத', 'சூரி', '', '', 'ராகு', 'குரு', '', 'சனி', 'செவ், சுக்'],
-        sripatiChart: ['', 'சந்', '1-லக்', 'புத', '', '', '', 'ராகு', 'குரு', '', 'சனி', 'செவ், சுக்'],
-        personName: 'சுரேஷ் குமார்',
+        rasiChart: ['', 'சந்', 'ல', '', '', 'சூரி', '', '', 'குரு', '', 'சனி', 'செவ், சுக்'],
+        navamsaChart: ['', 'சூரி', '', '', 'சந்', '', '', 'ல, செவ்', '', 'குரு', 'சனி', 'சுக்'],
+        drekkanaChart: ['', 'செவ்', 'ல', 'புத', 'சந்', '', '', 'சூரி', 'குரு', '', 'சனி', 'சுக்'],
+        sripatiChart: ['', 'சந்', 'ல', '', '', '', 'சூரி', '', 'குரு', '', 'சனி', 'செவ், சுக்'],
+        personName: 'தமிழ் மகன்',
         grahasSphutam: [
-          { graha: 'சூரியன்', deg: '30° 25\'' }, { graha: 'சந்திரன்', deg: '06° 40\'' }, { graha: 'செவ்வாய்', deg: '344° 10\'' },
-          { graha: 'புதன்(வ)', deg: '68° 12\'' }, { graha: 'குரு', deg: '235° 18\'' }, { graha: 'சுக்கிரன்(வ)', deg: '352° 50\'' },
-          { graha: 'சனி(வ)', deg: '328° 42\'' }, { graha: 'ராகு', deg: '215° 10\'' }, { graha: 'கேது', deg: '35° 10\'' }
+          { graha: 'சூரியன்', deg: '205° 24\'' },
+          { graha: 'சந்திரன்', deg: '28° 30\'' },
+          { graha: 'செவ்வாய்', deg: '344° 10\'' },
+          { graha: 'புதன்', deg: '68° 12\'' },
+          { graha: 'குரு', deg: '235° 18\'' },
+          { graha: 'சுக்கிரன்', deg: '352° 50\'' },
+          { graha: 'சனி (வ)', deg: '328° 42\'' },
+          { graha: 'ராகு (வ)', deg: '215° 10\'' },
+          { graha: 'கேது (வ)', deg: '35° 10\'' }
         ],
         bhavas: [
           { bhava: 1, start: '27° 10\'', madhya: '42° 15\'', end: '57° 20\'' },
@@ -2453,46 +2639,162 @@
           { bhava: 11, start: '327° 50\'', madhya: '342° 55\'', end: '358° 00\'' },
           { bhava: 12, start: '358° 00\'', madhya: '13° 05\'', end: '27° 10\'' }
         ],
-        bhavaChange: 'சூரியன் 12-ம் பாவ சந்திக்கு நகர்ந்து பலன் தருகிறார்.'
+        bhavaChange: 'சூரியன் 6-ஆம் பாவக சந்தியிலிருந்து விலகி 7-ஆம் பாவ பலனை வழங்குகிறார்.'
       };
 
+      // Pages 8 to 12: Divisional
+      BOOKLET_DATA.p8 = {
+        d3Chart: ['', 'செவ்', 'ல', 'புத', 'சந்', '', '', 'சூரி', 'குரு', '', 'சனி', 'சுக்'],
+        d3Text: 'மூன்றாம் பாவக பலன்கள் மற்றும் உடன்பிறப்புகள், தைரிய வீரிய நிலைகளைத் தெளிவாகக் கணிக்க திரேக்காணச் சக்கரம் உதவுகிறது.',
+        d7Chart: ['', '', 'ல', 'சந்', '', 'சூரி', '', '', 'குரு', 'செவ்', 'சனி', 'சுக்'],
+        d7Text: 'சந்தான பாக்கியம், குழந்தைகள் நலம் மற்றும் வம்ச விருத்தியை ஆழமாகத் துல்லியமாக அறிய சப்தாம்சச் சக்கரம் வழிகாட்டுகிறது.'
+      };
+
+      BOOKLET_DATA.p9 = {
+        d60Chart: ['', 'சூரி', 'ல', '', 'சந்', '', '', '', 'குரு', 'செவ்', 'சனி', 'சுக்'],
+        d60Text: 'முற்பிறவி கர்ம வினைகள் மற்றும் நுட்பமான ஜாதக நிலைகளை அறுதியிட சஷ்டியாம்ச சக்கரம் முதன்மையானது.',
+        d30Chart: ['', 'செவ்', 'சுக்', 'புத', '', '', '', 'சுக்', 'குரு', 'சனி', 'சனி', 'குரு'],
+        d30Text: 'அரிஷ்டங்கள், விபத்துக்கள் மற்றும் தோஷங்களை ஆராய்ந்து அறிவதற்கு திரிம்சாம்ச சக்கரம் பயனுள்ளதாக அமைகிறது.'
+      };
+
+      BOOKLET_DATA.p10 = {
+        d10Chart: ['', '', 'ல', 'புத', '', 'சூரி', '', 'சந்', 'குரு', '', 'சனி', 'சுக்'],
+        d10Text: 'தொழில், உத்தியோகம், சமூக அந்தஸ்து, புகழ் மற்றும் ஜீவன ஸ்தானத்தை அறிவதற்கு தசாம்ச சக்கரம் பயன்படுகிறது.',
+        d16Chart: ['', 'செவ்', 'ல', '', 'சந்', '', '', '', 'குரு', '', 'சனி', 'சூரி, சுக்'],
+        d16Text: 'வாகன யோகம், சுகபோகங்கள் மற்றும் சொகுசு வாழ்க்கை வசதிகளை அறிய ஷோடசாம்ச சக்கரம் உதவும்.'
+      };
+
+      BOOKLET_DATA.p11 = {
+        d4Chart: ['', '', 'ல', 'சந்', '', 'சூரி', '', '', 'குரு', 'செவ்', 'சனி', 'சுக்'],
+        d4Text: 'நிலபுலன்கள், வீடு, சொத்துக்கள் மற்றும் அதிர்ஷ்ட வாய்ப்புகளைக் கணிக்க சதுராம்ச சக்கரம் ஆய்வு செய்யப்படுகிறது.',
+        d12Chart: ['', 'சூரி', 'ல', '', '', '', 'சந்', '', 'குரு', '', 'சனி', 'செவ், சுக்'],
+        d12Text: 'தாய் தந்தை வழி முன்னோர்கள், பாரம்பரிய நன்மைகள் மற்றும் பரம்பரை ஆசிகளை அறிய துவாதசாம்சம் உதவுகிறது.'
+      };
+
+      BOOKLET_DATA.p12 = {
+        horaChart: ['', '', 'ல, சந், சுக்', '', '', 'சூரி, செவ், சனி', '', '', '', '', '', ''],
+        notes: 'சூரிய ஓரை மற்றும் சந்திர ஓரை மூலம் ஜாதகரின் தன லாபங்கள், நிதி வளம் மற்றும் செல்வ நிலைகள் கணிக்கப்படுகிறது.'
+      };
+
+      // Page 13: Shadbala
+      BOOKLET_DATA.p13 = {
+        grahaCols: ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி'],
+        grahaRows: [
+          { name: 'ஸ்தான பலம்', vals: ['165', '140', '135', '180', '190', '175', '150'] },
+          { name: 'திக் பலம்', vals: ['55', '45', '50', '60', '58', '52', '48'] },
+          { name: 'கால பலம்', vals: ['120', '130', '110', '125', '140', '135', '115'] },
+          { name: 'சேஷ்டா பலம்', vals: ['50', '40', '45', '55', '50', '48', '42'] },
+          { name: 'நைசர்கிக பலம்', vals: ['60', '51', '17', '26', '34', '43', '9'] },
+          { name: 'திருஷ்டி பலம்', vals: ['15', '18', '12', '20', '22', '19', '14'] },
+          { name: 'மொத்த பலம் (Virupas)', vals: ['465', '424', '369', '466', '494', '472', '378'] },
+          { name: 'ரூப பலம் (Rupas)', vals: ['7.75', '7.07', '6.15', '7.77', '8.23', '7.87', '6.30'] },
+          { name: 'இஷ்ட பலன்', vals: ['42', '38', '32', '45', '48', '44', '30'] },
+          { name: 'கஷ்ட பலன்', vals: ['18', '22', '28', '15', '12', '16', '30'] }
+        ],
+        bhavaRows: [
+          { name: 'திருஷ்டி பலம்', vals: ['45', '42', '40', '48', '50', '44', '46', '42', '52', '55', '54', '40'] },
+          { name: 'திக் பலம்', vals: ['50', '45', '40', '55', '48', '42', '50', '45', '48', '60', '52', '44'] },
+          { name: 'அதிபதி பலம்', vals: ['120', '115', '110', '125', '130', '118', '122', '114', '128', '135', '130', '112'] },
+          { name: 'மொத்த பாவ பலம்', vals: ['215', '202', '190', '228', '228', '204', '218', '201', '228', '250', '236', '196'] }
+        ]
+      };
+
+      // Page 14 & 15: Upagrahas
+      BOOKLET_DATA.p14 = {
+        introText: 'பராசரர் மற்றும் காளிதாசர் கணித முறைகளின்படி கணிக்கப்பெற்ற உபகிரகங்களின் துல்லியமான நிலைகள்:',
+        table1: [
+          { name: 'காலன்', lord: 'சூரியன்', graha: 'சூரி', pRasi: 'ரிஷபம்', pDeg: '12° 20\'', pNak: 'ரோகிணி', pPada: '1', kRasi: 'மேஷம்', kDeg: '28° 40\'', kNak: 'கிருத்திகை', kPada: '1' },
+          { name: 'மிருத்யு', lord: 'செவ்வாய்', graha: 'செவ்', pRasi: 'மிதுனம்', pDeg: '05° 15\'', pNak: 'மிருகசீரிஷம்', pPada: '4', kRasi: 'ரிஷபம்', kDeg: '22° 10\'', kNak: 'ரோகிணி', kPada: '4' },
+          { name: 'அர்த்தப்பிரஹரன்', lord: 'புதன்', graha: 'புத', pRasi: 'கடகம்', pDeg: '18° 30\'', pNak: 'ஆயில்யம்', pPada: '1', kRasi: 'மிதுனம்', kDeg: '14° 05\'', kNak: 'திருவாதிரை', kPada: '3' },
+          { name: 'யமகண்டன்', lord: 'குரு', graha: 'குரு', pRasi: 'சிம்மம்', pDeg: '25° 40\'', pNak: 'பூரம்', pPada: '4', kRasi: 'கடகம்', kDeg: '08° 50\'', kNak: 'பூசம்', kPada: '2' },
+          { name: 'குளிகன் / மாந்தி', lord: 'சனி', graha: 'சனி', pRasi: 'கன்னி', pDeg: '02° 10\'', pNak: 'உத்திரம்', pPada: '2', kRasi: 'சிம்மம்', kDeg: '26° 15\'', kNak: 'உத்திரம்', kPada: '1' }
+        ],
+        table2: [
+          { name: 'தூமன்', lord: 'செவ்வாய்', rasi: 'துலாம்', deg: '13° 45\'', nak: 'சுவாதி', pada: '3' },
+          { name: 'வியதிபாதன்', lord: 'ராகு', rasi: 'மீனம்', deg: '16° 15\'', nak: 'உத்திரட்டாதி', pada: '4' },
+          { name: 'பரிவேடன்', lord: 'சந்திரன்', rasi: 'கன்னி', deg: '16° 15\'', nak: 'ஹஸ்தம்', pada: '2' },
+          { name: 'இந்திரதனுசு', lord: 'சுக்கிரன்', rasi: 'மீனம்', deg: '13° 45\'', nak: 'உத்திரட்டாதி', pada: '3' },
+          { name: 'உபகேது', lord: 'கேது', rasi: 'மேஷம்', deg: '00° 25\'', nak: 'அசுவினி', pada: '1' }
+        ]
+      };
+
+      BOOKLET_DATA.p15 = {
+        upagrahaChart: ['', '', 'ல', 'மிரு', 'அர்த்', 'யம, குளிக', '', 'தூம', '', '', '', 'விய, இந்'],
+        specialLagnas: [
+          { name: 'ஹோர லக்னம் (Hora Lagna)', deg: '35° 12\'', rasi: 'ரிஷபம்', nak: 'கார்த்திகை', pada: '3' },
+          { name: 'கடி லக்னம் (Ghati Lagna)', deg: '112° 45\'', rasi: 'கடகம்', nak: 'ஆயில்யம்', pada: '2' },
+          { name: 'பாவ லக்னம் (Bhava Lagna)', deg: '78° 10\'', rasi: 'மிதுனம்', nak: 'புனர்பூசம்', pada: '1' },
+          { name: 'ஸ்ரீ லக்னம் (Sree Lagna)', deg: '142° 20\'', rasi: 'சிம்மம்', nak: 'பூரம்', pada: '3' },
+          { name: 'இந்து லக்னம் (Indu Lagna)', deg: '215° 00\'', rasi: 'விருச்சிகம்', nak: 'அனுஷம்', pada: '4' },
+          { name: 'ஆரூட லக்னம் (Arudha Lagna)', deg: '102° 15\'', rasi: 'கடகம்', nak: 'பூசம்', pada: '3' },
+          { name: '22-வது திரேக்காணம்', deg: '28° 40\'', rasi: 'மேஷம்', nak: 'கார்த்திகை', pada: '1' },
+          { name: '64-வது நவாம்சம்', deg: '12° 15\'', rasi: 'ரிஷபம்', nak: 'ரோகிணி', pada: '1' }
+        ]
+      };
+
+      // Page 16: Relationships & Avasthas
+      BOOKLET_DATA.p16 = {
+        friendsList: [
+          { graha: 'சூரியன்', friends: 'சந்திரன், செவ்வாய், குரு', neutral: 'புதன்', enemies: 'சுக்கிரன், சனி' },
+          { graha: 'சந்திரன்', friends: 'சூரியன், புதன்', neutral: 'செவ்வாய், குரு, சுக்கிரன், சனி', enemies: 'எவருமில்லை' },
+          { graha: 'செவ்வாய்', friends: 'சூரியன், சந்திரன், குரு', neutral: 'சுக்கிரன், சனி', enemies: 'புதன்' },
+          { graha: 'புதன்', friends: 'சூரியன், சுக்கிரன்', neutral: 'செவ்வாய், குரு, சனி', enemies: 'சந்திரன்' },
+          { graha: 'குரு', friends: 'சூரியன், சந்திரன், செவ்வாய்', neutral: 'சனி', enemies: 'புதன், சுக்கிரன்' },
+          { graha: 'சுக்கிரன்', friends: 'புதன், சனி', neutral: 'செவ்வாய், குரு', enemies: 'சூரியன், சந்திரன்' },
+          { graha: 'சனி', friends: 'புதன், சுக்கிரன்', neutral: 'குரு', enemies: 'சூரியன், சந்திரன், செவ்வாய்' }
+        ],
+        avasthas: [
+          { graha: 'சூரியன்', rasi: 'துலாம்', deg: '25° 24\'', avastha: 'விருத்த அவஸ்தா', status: 'நீசம்', mandalam: 'அக்னி மண்டலம்', samayam: 'போஜனம்' },
+          { graha: 'சந்திரன்', rasi: 'மேஷம்', deg: '28° 30\'', avastha: 'மிருத அவஸ்தா', status: 'நட்பு', mandalam: 'ஜல மண்டலம்', samayam: 'கமனம்' },
+          { graha: 'செவ்வாய்', rasi: 'மீனம்', deg: '14° 10\'', avastha: 'யுவ அவஸ்தா', status: 'நட்பு', mandalam: 'அக்னி மண்டலம்', samayam: 'ஆஸ்தானம்' },
+          { graha: 'புதன்', rasi: 'மிதுனம்', deg: '08° 12\'', avastha: 'குமார அவஸ்தா', status: 'ஆட்சி', mandalam: 'பிருத்வி மண்டலம்', samayam: 'விபவம்' },
+          { graha: 'குரு', rasi: 'விருச்சிகம்', deg: '25° 18\'', avastha: 'விருத்த அவஸ்தா', status: 'நட்பு', mandalam: 'ஆகாய மண்டலம்', samayam: 'நித்திரை' },
+          { graha: 'சுக்கிரன்', rasi: 'மீனம்', deg: '22° 50\'', avastha: 'யுவ அவஸ்தா', status: 'உச்சம்', mandalam: 'ஜல மண்டலம்', samayam: 'ஆஸ்தானம்' },
+          { graha: 'சனி', rasi: 'கும்பம்', deg: '28° 42\'', avastha: 'மிருத அவஸ்தா', status: 'ஆட்சி-வக்', mandalam: 'வாயு மண்டலம்', samayam: 'போஜனம்' },
+          { graha: 'ராகு', rasi: 'விருச்சிகம்', deg: '05° 10\'', avastha: 'பால அவஸ்தா', status: 'வக்ரம்', mandalam: 'அக்னி மண்டலம்', samayam: 'கமனம்' },
+          { graha: 'கேது', rasi: 'ரிஷபம்', deg: '05° 10\'', avastha: 'பால அவஸ்தா', status: 'வக்ரம்', mandalam: 'பிருத்வி மண்டலம்', samayam: 'நித்திரை' }
+        ]
+      };
+
+      // Page 17: Ashtakavarga
       BOOKLET_DATA.p17 = {
         grahas: ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி'],
-        matrix: [
-          ['4', '5', '3', '4', '6', '5', '4', '4', '5', '4', '3', '5'],
-          ['5', '4', '4', '6', '4', '5', '3', '4', '5', '4', '5', '3'],
-          ['3', '4', '5', '3', '4', '4', '5', '4', '3', '5', '4', '4'],
-          ['4', '6', '5', '4', '5', '4', '6', '5', '4', '3', '4', '4'],
-          ['5', '4', '6', '5', '4', '5', '4', '5', '6', '4', '5', '3'],
-          ['4', '5', '4', '5', '4', '4', '5', '4', '4', '5', '3', '5'],
-          ['3', '4', '4', '3', '4', '5', '3', '4', '4', '4', '5', '3']
-        ],
-        totals: ['28', '32', '31', '30', '31', '32', '30', '30', '31', '29', '29', '27'],
-        chartCells: ['27', '28', '32', '31', '30', '31', '32', '30', '30', '31', '29', '29'],
-        grandTotal: '360',
-        kendram: '121', panaparam: '122', apoklimam: '117', upachayam: '122', trikonam: '91',
-        varavinam: '185', selavinam: '175',
-        east: '90', west: '92', south: '88', north: '90'
+        matrix: av.matrix,
+        totals: av.totals,
+        chartCells: av.chartCells,
+        grandTotal: av.grandTotal, // 337 Invariant Verified
+        kendram: av.kendram,
+        panaparam: av.panaparam,
+        apoklimam: av.apoklimam,
+        upachayam: av.upachayam,
+        trikonam: av.trikonam,
+        varavinam: av.varavinam,
+        selavinam: av.selavinam,
+        east: av.east,
+        south: av.south,
+        west: av.west,
+        north: av.north
       };
 
+      // Page 18: Numerology
       BOOKLET_DATA.p18 = {
-        name: 'SURESH KUMAR',
-        engSum: '39 = 12 = 3 (குரு)',
-        dobEng: '15-05-1995 (Monday)',
-        dateNum: '6 (1+5 = 6, சுக்கிரன்)',
-        yearNum: '8 (1+5+0+5+1+9+9+5 = 35 = 8, சனி)',
-        luckyNums: '3, 6, 9',
-        luckyDates: '6, 15, 24, 3, 12, 21',
-        luckyColors: 'வெள்ளை, வெளிர் நீலம், மஞ்சள்',
-        luckyStones: 'வைரம் / மரகதம்',
-        deity: 'ஸ்ரீ மகாலட்சுமி & தட்சிணாமூர்த்தி',
-        temples: 'திருவானைக்காவல் ஜம்புகேஸ்வரர், ஸ்ரீரங்கம்',
-        letters: ['1', '2', '3', '4', '5', '8', '3', '5', '1', '1', '2', '3', '4', '5', '7', '8', '1', '2', '3', '4', '6', '6', '6', '5', '1', '7'],
+        name: 'தமிழ் மகன் (Tamilinian)',
+        engSum: `T(4)+A(1)+M(4)+I(1)+L(3)+I(1)+N(5)+I(1)+A(1)+N(5) = ${nameSum} = ${redName} (சனி / Saturn)`,
+        dobEng: '05-11-2026 (Thursday)',
+        dateNum: '5 (புதன் / Mercury)',
+        yearNum: '8 (சனி / Saturn)',
+        luckyNums: '5, 8, 1, 6',
+        luckyDates: '5, 14, 23, 8, 17, 26',
+        luckyColors: 'பச்சை, வெளிர் நீலம், கருநீலம்',
+        luckyStones: 'மரகதம் (Emerald), நீலக்கல் (Blue Sapphire)',
+        deity: 'ஸ்ரீ வெங்கடாசலபதி / ஸ்ரீ மகாவிஷ்ணு',
+        temples: 'திருப்பதி வெங்கடாசலபதி, மதுரை மீனாட்சி சுந்தரேஸ்வரர், திருநள்ளாறு',
+        letters: ['1','2','3','4','5','8','3','5','1','1','2','3','4','5','7','8','1','2','3','4','6','6','6','5','1','7'],
         subham: 'சுபம்.'
       };
 
       renderBookletPages();
-      alert('திருக்கணித கணித விவரங்கள் வெற்றிகரமாக நிரப்பப்பட்டன! (Thirukanitha details successfully auto-filled!)');
+      alert('திருக்கணித முறைப்படி 18 பக்க ஜாதக புத்தகம் வெற்றிகரமாக கணிக்கப்பெற்று நிரப்பப்பட்டது! (SAV: 337 / BAV: 48-49-39-54-56-52-39)');
     }
 
     

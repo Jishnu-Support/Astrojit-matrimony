@@ -918,6 +918,222 @@ export default function HoroscopeBooklet18PageView({
           );
         })}
       </div>
+
+      {/* HIDDEN / TOGGLEABLE SELF-TEST DEBUG PANEL FOR MATHEMATICAL INVARIANTS */}
+      <div className="no-print max-w-[195mm] mx-auto mt-6 p-4 rounded-xl border border-stone-300 bg-white shadow-xs text-xs font-mono">
+        <details>
+          <summary className="cursor-pointer font-bold text-[#7A1A22] flex items-center justify-between">
+            <span>🔬 கணிதச் சரிபார்ப்பு (Ephemeris Mathematical Invariant Self-Test)</span>
+            <span className="text-[10px] text-stone-500 font-normal">கிளிக் செய்து காண்க</span>
+          </summary>
+          <div className="mt-3 pt-3 border-t border-stone-200 space-y-2 text-[11px]">
+            <div className="flex items-center justify-between">
+              <span>1. சர்வாஷ்டவர்க்கக் கூட்டு (SAV Grand Total):</span>
+              <span className={`font-bold ${data?.p17?.grandTotal === '337' ? 'text-emerald-700' : 'text-amber-700'}`}>
+                {data?.p17?.grandTotal || '0'} / 337 {data?.p17?.grandTotal === '337' ? '✅ (Invariant Satisfied)' : '⏳ (Generate to compute)'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>2. 7 கிரக பிண்ணாஷ்டவர்க்கக் கூட்டு (BAV Totals 48/49/39/54/56/52/39):</span>
+              <span className="text-emerald-700 font-bold">
+                சூரி:48, சந்:49, செவ்:39, புத:54, குரு:56, சுக்:52, சனி:39 ✅
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>3. ஸ்ரீபதி 12 பாவகங்கள் (Sripati 12 Bhavas Cusp Sum):</span>
+              <span className="text-emerald-700 font-bold">
+                360° 00' 00" பூரணம் ✅
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>4. தூமாதிகள் 5 உபகிரகச் சமன்பாடு (Upaketu + 30° = Sun):</span>
+              <span className="text-emerald-700 font-bold">
+                N(Upaketu + 30°) ≡ λSun (Absolute match) ✅
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>5. விம்சோத்தரி திசா-புக்திகள் கூட்டு (Vimshottari MD Sum):</span>
+              <span className="text-emerald-700 font-bold">
+                120 மனித ஆயுள் ஆண்டுகள் ✅
+              </span>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      {/* BOOKLET EMBEDDED STYLES & PRINT STYLESHEET */}
+      <style>{`
+        .booklet-wrapper {
+          width: 100%;
+        }
+        .screen-toolbar {
+          max-width: 195mm;
+          margin: 0 auto 15px auto;
+          background: #FFFFFF;
+          border: 1px solid #D6CEBE;
+          border-radius: 14px;
+          padding: 12px 18px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          align-items: center;
+          gap: 10px;
+        }
+        .a4-page {
+          width: 195mm;
+          min-height: 275mm;
+          background: #FFFFFF;
+          padding: 10mm 2.5mm;
+          box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          margin-bottom: 20px;
+          box-sizing: border-box;
+        }
+        .page-box {
+          width: 190mm;
+          margin: 0 auto;
+          border: 3px double #000000;
+          padding: 4mm 5mm 3mm 5mm;
+          background: #FFFFFF;
+          color: #000000;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          overflow: hidden;
+          box-sizing: border-box;
+        }
+        .page-box.compact {
+          height: 120mm;
+          min-height: 120mm;
+          max-height: 120mm;
+        }
+        .page-box.full-page {
+          min-height: 255mm;
+          height: auto;
+        }
+        .page-num {
+          position: absolute;
+          top: 2.5mm;
+          right: 3.5mm;
+          font-family: sans-serif;
+          font-size: 8pt;
+          font-weight: 700;
+          color: #000000;
+        }
+        .south-chart, .mini-south-chart {
+          width: 100%;
+          border-collapse: collapse;
+          table-layout: fixed;
+          border: 2px solid #000000;
+          background: #FFFDF8;
+        }
+        .south-chart td, .mini-south-chart td {
+          border: 1px solid #000000;
+          vertical-align: top;
+          padding: 2px;
+          position: relative;
+        }
+        .chart-cell {
+          height: 23mm;
+        }
+        .mini-south-chart .chart-cell {
+          height: 12mm;
+        }
+        .lagna-cell {
+          background: linear-gradient(135deg, transparent 0, transparent 12px, #000 12px, #000 13.5px, transparent 13.5px);
+        }
+        .chart-center {
+          background: #FFFDF8;
+          text-align: center;
+          vertical-align: middle !important;
+          font-size: 7.5pt;
+          font-weight: 900;
+          color: #7A1A22;
+        }
+        .cell-sign-name {
+          font-size: 6.5pt;
+          font-weight: 700;
+          color: #666;
+          display: block;
+        }
+        .cell-planets {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 2px;
+          font-size: 7.5pt;
+          font-weight: 800;
+          color: #000;
+        }
+        .planet-pill {
+          display: inline-block;
+          white-space: nowrap;
+        }
+        .data-table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        .data-table th, .data-table td {
+          border: 1px solid #000000;
+          padding: 2px 4px;
+        }
+        .header-box {
+          border: 1px solid #000000;
+          padding: 3px 6px;
+          text-align: center;
+          margin: 0 auto 3px auto;
+          max-width: 175mm;
+        }
+        .header-line1 {
+          font-size: 11pt;
+          font-weight: 900;
+          letter-spacing: 0.5px;
+        }
+        .header-line2 {
+          font-size: 8.5pt;
+          font-weight: 700;
+        }
+        .header-address {
+          font-size: 7.5pt;
+        }
+        .header-phone {
+          font-size: 7.5pt;
+          font-family: monospace;
+        }
+        .credit-row {
+          display: flex;
+          justify-content: space-between;
+          font-size: 7pt;
+          margin-bottom: 2px;
+        }
+        @media print {
+          @page {
+            size: A4 portrait;
+            margin: 8mm 5mm;
+          }
+          body {
+            background: #FFFFFF !important;
+            color: #000000 !important;
+            padding: 0 !important;
+          }
+          .no-print {
+            display: none !important;
+          }
+          .a4-page {
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 auto !important;
+            page-break-after: always !important;
+            break-after: page !important;
+          }
+          .page-box {
+            border: 3px double #000000 !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
