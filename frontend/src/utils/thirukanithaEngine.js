@@ -257,6 +257,84 @@ export const DASHA_LORDS = [
   { id: 'mercury', nameEn: 'Mercury', nameTa: 'புதன்', years: 17 }
 ];
 
+export const GRAHA_FOUR_ROLES_MAP = {
+  sun: {
+    pasakarId: 'saturn', pasakarTa: 'சனி', pasakarEn: 'Saturn',
+    bodhakarId: 'mars', bodhakarTa: 'செவ்வாய்', bodhakarEn: 'Mars',
+    karagarId: 'jupiter', karagarTa: 'குரு', karagarEn: 'Jupiter',
+    vedhakarId: 'venus', vedhakarTa: 'சுக்கிரன்', vedhakarEn: 'Venus'
+  },
+  moon: {
+    pasakarId: 'venus', pasakarTa: 'சுக்கிரன்', pasakarEn: 'Venus',
+    bodhakarId: 'mars', bodhakarTa: 'செவ்வாய்', bodhakarEn: 'Mars',
+    karagarId: 'saturn', karagarTa: 'சனி', karagarEn: 'Saturn',
+    vedhakarId: 'sun', vedhakarTa: 'சூரியன்', vedhakarEn: 'Sun'
+  },
+  mars: {
+    pasakarId: 'sun', pasakarTa: 'சூரியன்', pasakarEn: 'Sun',
+    bodhakarId: 'moon', bodhakarTa: 'சந்திரன்', bodhakarEn: 'Moon',
+    karagarId: 'saturn', karagarTa: 'சனி', karagarEn: 'Saturn',
+    vedhakarId: 'mercury', vedhakarTa: 'புதன்', vedhakarEn: 'Mercury'
+  },
+  mercury: {
+    pasakarId: 'moon', pasakarTa: 'சந்திரன்', pasakarEn: 'Moon',
+    bodhakarId: 'jupiter', bodhakarTa: 'குரு', bodhakarEn: 'Jupiter',
+    karagarId: 'venus', karagarTa: 'சுக்கிரன்', karagarEn: 'Venus',
+    vedhakarId: 'mars', vedhakarTa: 'செவ்வாய்', vedhakarEn: 'Mars'
+  },
+  jupiter: {
+    pasakarId: 'saturn', pasakarTa: 'சனி', pasakarEn: 'Saturn',
+    bodhakarId: 'mars', bodhakarTa: 'செவ்வாய்', bodhakarEn: 'Mars',
+    karagarId: 'moon', karagarTa: 'சந்திரன்', karagarEn: 'Moon',
+    vedhakarId: 'sun', vedhakarTa: 'சூரியன்', vedhakarEn: 'Sun'
+  },
+  venus: {
+    pasakarId: 'mars', pasakarTa: 'செவ்வாய்', pasakarEn: 'Mars',
+    bodhakarId: 'mercury', bodhakarTa: 'புதன்', bodhakarEn: 'Mercury',
+    karagarId: 'sun', karagarTa: 'சூரியன்', karagarEn: 'Sun',
+    vedhakarId: 'saturn', vedhakarTa: 'சனி', vedhakarEn: 'Saturn'
+  },
+  saturn: {
+    pasakarId: 'venus', pasakarTa: 'சுக்கிரன்', pasakarEn: 'Venus',
+    bodhakarId: 'moon', bodhakarTa: 'சந்திரன்', bodhakarEn: 'Moon',
+    karagarId: 'jupiter', karagarTa: 'குரு', karagarEn: 'Jupiter',
+    vedhakarId: 'mars', vedhakarTa: 'செவ்வாய்', vedhakarEn: 'Mars'
+  },
+  rahu: {
+    pasakarId: 'saturn', pasakarTa: 'சனி', pasakarEn: 'Saturn',
+    bodhakarId: 'jupiter', bodhakarTa: 'குரு', bodhakarEn: 'Jupiter',
+    karagarId: 'venus', karagarTa: 'சுக்கிரன்', karagarEn: 'Venus',
+    vedhakarId: 'mars', vedhakarTa: 'செவ்வாய்', vedhakarEn: 'Mars'
+  },
+  ketu: {
+    pasakarId: 'mars', pasakarTa: 'செவ்வாய்', pasakarEn: 'Mars',
+    bodhakarId: 'venus', bodhakarTa: 'சுக்கிரன்', bodhakarEn: 'Venus',
+    karagarId: 'jupiter', karagarTa: 'குரு', karagarEn: 'Jupiter',
+    vedhakarId: 'saturn', vedhakarTa: 'சனி', vedhakarEn: 'Saturn'
+  }
+};
+
+export function getGrahaFourRoles(planetKeyOrName) {
+  if (!planetKeyOrName) return null;
+  const key = String(planetKeyOrName).toLowerCase().trim();
+  if (GRAHA_FOUR_ROLES_MAP[key]) return GRAHA_FOUR_ROLES_MAP[key];
+
+  const nameMap = {
+    'சூரியன்': 'sun', 'sun': 'sun', 'சூரிய': 'sun',
+    'சந்திரன்': 'moon', 'moon': 'moon', 'சந்திர': 'moon',
+    'செவ்வாய்': 'mars', 'mars': 'mars',
+    'புதன்': 'mercury', 'mercury': 'mercury',
+    'குரு': 'jupiter', 'jupiter': 'jupiter',
+    'சுக்கிரன்': 'venus', 'venus': 'venus', 'சுக்கிர': 'venus',
+    'சனி': 'saturn', 'saturn': 'saturn',
+    'ராகு': 'rahu', 'rahu': 'rahu',
+    'கேது': 'ketu', 'ketu': 'ketu'
+  };
+  const mapped = nameMap[key];
+  return mapped ? GRAHA_FOUR_ROLES_MAP[mapped] : null;
+}
+
+
 export const MR_M_DASHA_DATA = [
   {
     lordId: 'ketu',
@@ -2517,6 +2595,7 @@ export function calculateThirukanithaHoroscope({
 
       dashaTable.push({
         lord: mdLord,
+        fourRoles: getGrahaFourRoles(mdLord.id),
         isBirthDasha,
         balanceAtBirth: isBirthDasha ? {
           years: balY,
@@ -2624,6 +2703,7 @@ export function calculateThirukanithaHoroscope({
 
       dashaTable.push({
         lord: mdLord,
+        fourRoles: getGrahaFourRoles(mdLord.id),
         isBirthDasha,
         balanceAtBirth: isBirthDasha ? {
           years: balY,
@@ -9815,6 +9895,7 @@ export function computeDashaCalculationsSection20(moonRow, dashaTable = [], dash
       isOngoingToday: md.isOngoingToday,
       isPastToday: md.isPastToday,
       bhuktisCount: md.bhuktis?.length || 9,
+      fourRoles: md.fourRoles || getGrahaFourRoles(md.lord.id),
       phalam
     };
   });

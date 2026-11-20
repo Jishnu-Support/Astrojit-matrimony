@@ -6,6 +6,7 @@ import {
   NAKSHATRAS,
   WEEKDAYS,
   DASHA_LORDS,
+  getGrahaFourRoles,
   calculateThirukanithaHoroscope,
   parseUtcOffset,
   formatUtcOffset,
@@ -1382,7 +1383,63 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
 
                   {/* Bhukti Accordion Content */}
                   {isExpanded && (
-                    <div className="p-3 sm:p-4 bg-white dark:bg-[#201A16] border-t border-amber-900/10 space-y-2">
+                    <div className="p-3 sm:p-4 bg-white dark:bg-[#201A16] border-t border-amber-900/10 space-y-2.5">
+                      {/* Pasakar, Bodhakar, Karagar, Vedhakar 4-Roles Banner */}
+                      {(() => {
+                        const roles = md.fourRoles || getGrahaFourRoles(md.lord?.id);
+                        if (!roles) return null;
+                        return (
+                          <div className="p-2.5 rounded-xl bg-amber-50/70 dark:bg-stone-900/60 border border-amber-900/15 dark:border-amber-500/20 space-y-1.5">
+                            <div className="flex flex-wrap items-center justify-between gap-1 text-[11px]">
+                              <span className="font-bold text-[#7A1A22] dark:text-amber-300 flex items-center gap-1.5">
+                                <span>👑</span>
+                                <span>
+                                  {isTamil
+                                    ? `${md.lord.nameTa} திசா நாதனின் 4 முக்கிய கிரகப் பங்களிப்பு (பராசரர் முறை):`
+                                    : `4 Functional Planetary Roles for ${md.lord.nameEn} Dasha Lord:`}
+                                </span>
+                              </span>
+                              <span className="text-[10px] text-stone-500 font-mono">
+                                {isTamil ? 'திசா பலன்களைத் தூண்டும் கிரகங்கள்' : 'Actionable Trigger Planets'}
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-xs">
+                              <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300/80 dark:border-emerald-700/60 flex flex-col gap-0.5">
+                                <span className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300">
+                                  {isTamil ? 'பாசகர் (சீக்கிர பலன்)' : 'Pasakar (Fast Result)'}
+                                </span>
+                                <span className="font-bold text-stone-900 dark:text-stone-100 text-xs">
+                                  {isTamil ? roles.pasakarTa : roles.pasakarEn}
+                                </span>
+                              </div>
+                              <div className="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-300/80 dark:border-blue-700/60 flex flex-col gap-0.5">
+                                <span className="text-[10px] font-bold text-blue-800 dark:text-blue-300">
+                                  {isTamil ? 'போதகர் (நிறையத் தருபவர்)' : 'Bodhakar (Abundance)'}
+                                </span>
+                                <span className="font-bold text-stone-900 dark:text-stone-100 text-xs">
+                                  {isTamil ? roles.bodhakarTa : roles.bodhakarEn}
+                                </span>
+                              </div>
+                              <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-300/80 dark:border-amber-700/60 flex flex-col gap-0.5">
+                                <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300">
+                                  {isTamil ? 'காரகர் (நிதான பலன்)' : 'Karagar (Steady Fruit)'}
+                                </span>
+                                <span className="font-bold text-stone-900 dark:text-stone-100 text-xs">
+                                  {isTamil ? roles.karagarTa : roles.karagarEn}
+                                </span>
+                              </div>
+                              <div className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-300/80 dark:border-rose-700/60 flex flex-col gap-0.5">
+                                <span className="text-[10px] font-bold text-rose-800 dark:text-rose-300">
+                                  {isTamil ? 'வேதகர் (தடுத்து சோதிப்பவர்)' : 'Vedhakar (Obstructor/Tester)'}
+                                </span>
+                                <span className="font-bold text-stone-900 dark:text-stone-100 text-xs">
+                                  {isTamil ? roles.vedhakarTa : roles.vedhakarEn}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()}
                       <div className="text-[11px] font-bold text-stone-600 dark:text-stone-400 pb-1 border-b border-stone-200 dark:border-stone-800 flex justify-between">
                         <span>{isTamil ? `${md.lord.nameTa} மகாதிசையின் 9 புக்திகள்:` : `9 Bhuktis of ${md.lord.nameEn} Mahadasha:`}</span>
                         <span className="text-[10px] text-stone-400 font-normal">
@@ -1395,6 +1452,20 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                           const isOngoingToday = bh.isOngoingToday;
                           const isOngoingAtBirth = bh.isOngoingAtBirth;
                           const isPastAtBirth = bh.isPastAtBirth;
+
+                          const mdRoles = md.fourRoles || getGrahaFourRoles(md.lord?.id);
+                          let bhuktiRoleTag = null;
+                          if (mdRoles) {
+                            if (bh.bhuktiLord?.id === mdRoles.pasakarId) {
+                              bhuktiRoleTag = { labelTa: 'பாசகர்', labelEn: 'Pasakar', badgeClass: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700' };
+                            } else if (bh.bhuktiLord?.id === mdRoles.bodhakarId) {
+                              bhuktiRoleTag = { labelTa: 'போதகர்', labelEn: 'Bodhakar', badgeClass: 'bg-blue-100 text-blue-800 dark:bg-blue-950/70 dark:text-blue-300 border-blue-300 dark:border-blue-700' };
+                            } else if (bh.bhuktiLord?.id === mdRoles.karagarId) {
+                              bhuktiRoleTag = { labelTa: 'காரகர்', labelEn: 'Karagar', badgeClass: 'bg-amber-100 text-amber-800 dark:bg-amber-950/70 dark:text-amber-300 border-amber-300 dark:border-amber-700' };
+                            } else if (bh.bhuktiLord?.id === mdRoles.vedhakarId) {
+                              bhuktiRoleTag = { labelTa: 'வேதகர்', labelEn: 'Vedhakar', badgeClass: 'bg-rose-100 text-rose-800 dark:bg-rose-950/70 dark:text-rose-300 border-rose-300 dark:border-rose-700' };
+                            }
+                          }
 
                           let cardBgClass = 'bg-[#FAF6EF]/50 dark:bg-stone-900/40 border-stone-200 dark:border-stone-800';
                           if (isOngoingToday) {
@@ -1414,6 +1485,11 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                                 <span className="font-bold text-[#7A1A22] dark:text-amber-200 text-[11.5px]">
                                   {bIdx + 1}. {isTamil ? `${md.lord.nameTa} - ${bh.bhuktiLord.nameTa}` : `${md.lord.nameEn} - ${bh.bhuktiLord.nameEn}`}
                                 </span>
+                                {bhuktiRoleTag && (
+                                  <span className={`text-[9px] px-1.5 py-0.2 rounded font-bold border shrink-0 ${bhuktiRoleTag.badgeClass}`}>
+                                    {isTamil ? bhuktiRoleTag.labelTa : bhuktiRoleTag.labelEn}
+                                  </span>
+                                )}
                                 <div className="flex items-center gap-1">
                                   <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/80 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300">
                                     {isTamil ? bh.duration.textTa : bh.duration.textEn}
@@ -6290,6 +6366,49 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                               </span>
                             </div>
                           </div>
+
+                          {/* 4 ROLES: PASAKAR, BODHAKAR, KARAGAR, VEDHAKAR */}
+                          {(() => {
+                            const roles = md.fourRoles || getGrahaFourRoles(md.lordId);
+                            if (!roles) return null;
+                            return (
+                              <div className="p-2.5 rounded-lg bg-stone-50 dark:bg-stone-900/80 border border-amber-900/15 dark:border-amber-500/20 space-y-1.5">
+                                <div className="flex items-center justify-between border-b border-stone-200/80 dark:border-stone-800 pb-1">
+                                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#7A1A22] dark:text-amber-300 flex items-center gap-1">
+                                    <span>👑</span>
+                                    <span>{isTamil ? 'திசா நாதனின் 4 முக்கிய கிரகங்கள்' : 'Dasha Lord 4 Key Roles'}</span>
+                                  </span>
+                                  <span className="text-[9px] text-stone-400 font-mono">
+                                    {isTamil ? 'பராசரர் முறை' : 'Parashari'}
+                                  </span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-1.5 text-[11px]">
+                                  <div className="p-1 rounded bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-300/70 dark:border-emerald-800 flex items-center justify-between px-2">
+                                    <span className="text-emerald-900 dark:text-emerald-300 font-bold text-[10.5px]">{isTamil ? 'பாசகர்' : 'Pasakar'}:</span>
+                                    <span className="font-bold text-stone-900 dark:text-stone-100 text-[11px]">{isTamil ? roles.pasakarTa : roles.pasakarEn}</span>
+                                  </div>
+                                  <div className="p-1 rounded bg-blue-50/80 dark:bg-blue-950/40 border border-blue-300/70 dark:border-blue-800 flex items-center justify-between px-2">
+                                    <span className="text-blue-900 dark:text-blue-300 font-bold text-[10.5px]">{isTamil ? 'போதகர்' : 'Bodhakar'}:</span>
+                                    <span className="font-bold text-stone-900 dark:text-stone-100 text-[11px]">{isTamil ? roles.bodhakarTa : roles.bodhakarEn}</span>
+                                  </div>
+                                  <div className="p-1 rounded bg-amber-50/80 dark:bg-amber-950/40 border border-amber-300/70 dark:border-amber-800 flex items-center justify-between px-2">
+                                    <span className="text-amber-900 dark:text-amber-300 font-bold text-[10.5px]">{isTamil ? 'காரகர்' : 'Karagar'}:</span>
+                                    <span className="font-bold text-stone-900 dark:text-stone-100 text-[11px]">{isTamil ? roles.karagarTa : roles.karagarEn}</span>
+                                  </div>
+                                  <div className="p-1 rounded bg-rose-50/80 dark:bg-rose-950/40 border border-rose-300/70 dark:border-rose-800 flex items-center justify-between px-2">
+                                    <span className="text-rose-900 dark:text-rose-300 font-bold text-[10.5px]">{isTamil ? 'வேதகர்' : 'Vedhakar'}:</span>
+                                    <span className="font-bold text-stone-900 dark:text-stone-100 text-[11px]">{isTamil ? roles.vedhakarTa : roles.vedhakarEn}</span>
+                                  </div>
+                                </div>
+                                <div className="text-[9.5px] text-stone-500 dark:text-stone-400 flex flex-wrap gap-x-2 gap-y-0.5 leading-tight pt-0.5">
+                                  <span><strong className="text-emerald-700 dark:text-emerald-400">{isTamil ? 'பாசகர்' : 'Pasakar'}:</strong> {isTamil ? 'சீக்கிர பலன்' : 'Fast fruit'}</span>
+                                  <span><strong className="text-blue-700 dark:text-blue-400">{isTamil ? 'போதகர்' : 'Bodhakar'}:</strong> {isTamil ? 'நிறையத் தருபவர்' : 'Abundance'}</span>
+                                  <span><strong className="text-amber-700 dark:text-amber-400">{isTamil ? 'காரகர்' : 'Karagar'}:</strong> {isTamil ? 'நிதான பலன்' : 'Steady fruit'}</span>
+                                  <span><strong className="text-rose-700 dark:text-rose-400">{isTamil ? 'வேதகர்' : 'Vedhakar'}:</strong> {isTamil ? 'தடுத்து சோதிப்பவர்' : 'Tester'}</span>
+                                </div>
+                              </div>
+                            );
+                          })()}
 
                           {/* Content Details */}
                           <div className="text-xs space-y-2">
