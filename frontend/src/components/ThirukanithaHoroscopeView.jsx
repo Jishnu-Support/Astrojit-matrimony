@@ -286,25 +286,25 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
     minute: isTamil ? 'நிமிடம்' : 'Min',
     second: isTamil ? 'விநாடி' : 'Sec',
     period: isTamil ? 'பகல்/இரவு' : 'AM/PM',
-    country: isTamil ? 'நாடு (Country)' : 'Country',
-    state: isTamil ? 'மாநிலம் (State)' : 'State / Province',
-    city: isTamil ? 'ஊர் / நகரம் (City / Place)' : 'City / Place',
+    country: isTamil ? 'நாடு' : 'Country',
+    state: isTamil ? 'மாநிலம்' : 'State / Province',
+    city: isTamil ? 'ஊர் / நகரம்' : 'City / Place',
     searchCity: isTamil ? 'ஊர் வடிகட்டல்...' : 'Filter city...',
-    latitude: isTamil ? 'அட்சரேகை (Lat °N)' : 'Latitude (°N)',
-    longitude: isTamil ? 'தீர்க்கரேகை (Lon °E)' : 'Longitude (°E)',
-    utcOffset: isTamil ? 'UTC ஆஃப்செட் (Timezone)' : 'UTC Offset (e.g. 05:30 UTC)',
+    latitude: isTamil ? 'அட்சரேகை' : 'Latitude',
+    longitude: isTamil ? 'தீர்க்கரேகை' : 'Longitude',
+    utcOffset: isTamil ? 'நேர மண்டலம்' : 'UTC Offset',
     calculate: isTamil ? 'ஜாதகம் கணிக்க' : 'Recalculate Horoscope',
     birthSummary: isTamil ? 'ஜனன விவரக் குறிப்பு' : 'Birth & Planetary Summary',
-    ayanamsha: isTamil ? 'அயனாம்சம் (Lahiri)' : 'Ayanamsha (Lahiri)',
-    obliquity: isTamil ? 'சாய்கோணம் (Obliquity ε)' : 'Obliquity (ε)',
-    lagna: isTamil ? 'லக்னம்' : 'Ascendant (Lagna)',
-    rasi: isTamil ? 'ராசி (சந்திரன்)' : 'Moon Sign (Rasi)',
-    nakshatra: isTamil ? 'நட்சத்திரம்' : 'Birth Star (Nakshatra)',
+    ayanamsha: isTamil ? 'அயனாம்சம் (லஹிரி)' : 'Ayanamsha (Lahiri)',
+    obliquity: isTamil ? 'சாய்கோணம் (ε)' : 'Obliquity (ε)',
+    lagna: isTamil ? 'லக்னம்' : 'Ascendant',
+    rasi: isTamil ? 'ராசி' : 'Moon Sign',
+    nakshatra: isTamil ? 'நட்சத்திரம்' : 'Birth Star',
     pada: isTamil ? 'பாதம்' : 'Pada',
     tithi: isTamil ? 'திதி' : 'Tithi',
     weekday: isTamil ? 'கிழமை' : 'Weekday',
     dashaBalance: isTamil ? 'திசா இருப்பு (பிறப்பில்)' : 'Dasha Balance at Birth',
-    charts: isTamil ? 'வர்க்கச் சக்கரங்கள் (16 Shodashavarga Charts)' : 'Divisional Charts (16 Shodashavarga)',
+    charts: isTamil ? 'வர்க்கச் சக்கரங்கள் (16 வர்க்கங்கள்)' : 'Divisional Charts (16 Varga Charts)',
     chartsSubtitle: isTamil ? 'பராசரர் முறைப்படி 16 வர்க்கச் சக்கரங்கள் மற்றும் பாவக சூட்சும பலன்கள்' : 'Parashari 16 Divisional Varga Chakras & Subtle Karakatva Domains',
     masterVargaTableToggle: isTamil ? '16 வர்க்கங்களில் கிரக நிலைகள் & பலம் அட்டவணை' : '16-Varga Planetary Placements & Dignity Matrix',
     dignityLegend: isTamil ? 'உ=உச்சம், ஆ=ஆட்சி, ந=நட்பு, ச=சமம், ப=பகை, நீ=நீசம்' : 'Ex=Exalted, Own=Own Sign, Fr=Friendly, Neu=Neutral, En=Enemy, Deb=Debilitated',
@@ -4921,7 +4921,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                       : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
                   }`}
                 >
-                  {isTamil ? 'அனைத்தும் (All)' : 'All Views'}
+                  {isTamil ? 'அனைத்தும்' : 'All Views'}
                 </button>
                 <button
                   type="button"
@@ -5007,7 +5007,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                       <div className="text-xs sm:text-sm font-bold text-stone-800 dark:text-stone-200 mt-0.5">
                         {isTamil ? horoscope?.panchaPakshiData?.birthBird?.nakshatraNameTa : (horoscope?.panchaPakshiData?.birthBird?.nakshatraNameEn || horoscope?.panchaPakshiData?.birthBird?.nakshatraNameTa)}
                       </div>
-                      <div className="text-[10px] text-stone-500 mt-0.5">{horoscope?.panchaPakshiData?.birthBird?.pakshaTa}</div>
+                      <div className="text-[10px] text-stone-500 mt-0.5">{isTamil ? horoscope?.panchaPakshiData?.birthBird?.pakshaTa : (horoscope?.panchaPakshiData?.birthBird?.pakshaEn || horoscope?.panchaPakshiData?.birthBird?.pakshaTa)}</div>
                     </div>
 
                     <div className="p-3 rounded-xl bg-white/70 dark:bg-stone-800/40 border border-amber-900/10 dark:border-amber-500/15">
@@ -5032,7 +5032,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     <div className="p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-500/20 text-xs space-y-1">
                       <div className="font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5 text-xs">
                         <span>🤝</span>
-                        <span>{isTamil ? 'நட்பு பட்சிகள் (Friend Birds):' : 'Friend Birds:'}</span>
+                        <span>{isTamil ? 'நட்பு பட்சிகள்:' : 'Friend Birds:'}</span>
                       </div>
                       <div className="text-sm font-bold text-emerald-950 dark:text-emerald-200">
                         {isTamil ? horoscope?.panchaPakshiData?.birthBird?.friendBirdsTa : (horoscope?.panchaPakshiData?.birthBird?.friendBirdsEn || horoscope?.panchaPakshiData?.birthBird?.friendBirdsTa)}
@@ -5045,7 +5045,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     <div className="p-3 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 text-xs space-y-1">
                       <div className="font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1.5 text-xs">
                         <span>⚔️</span>
-                        <span>{isTamil ? 'பகை பட்சிகள் (Enemy Birds):' : 'Inimical Birds:'}</span>
+                        <span>{isTamil ? 'பகை பட்சிகள்:' : 'Inimical Birds:'}</span>
                       </div>
                       <div className="text-sm font-bold text-stone-900 dark:text-stone-100">
                         {isTamil ? horoscope?.panchaPakshiData?.birthBird?.enemyBirdsTa : (horoscope?.panchaPakshiData?.birthBird?.enemyBirdsEn || horoscope?.panchaPakshiData?.birthBird?.enemyBirdsTa)}
@@ -5058,7 +5058,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     <div className="p-3 rounded-xl bg-rose-50/80 dark:bg-rose-950/40 border border-rose-500/30 text-xs space-y-1">
                       <div className="font-bold text-rose-800 dark:text-rose-300 flex items-center gap-1.5 text-xs">
                         <span>⚠️</span>
-                        <span>{isTamil ? 'படுபக்ஷி / சாவு நாட்கள்:' : 'Padupakshi (Deadly Days):'}</span>
+                        <span>{isTamil ? 'படுபக்ஷி / சாவு நாட்கள்:' : 'Inauspicious Days (Padupakshi):'}</span>
                       </div>
                       <div className="text-sm font-bold text-rose-950 dark:text-rose-200">
                         {isTamil ? horoscope?.panchaPakshiData?.birthBird?.badDaysTa : (horoscope?.panchaPakshiData?.birthBird?.badDaysEn || horoscope?.panchaPakshiData?.birthBird?.badDaysTa)}
@@ -5075,7 +5075,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                   <div className="space-y-1.5 pt-1">
                     <div className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 flex items-center gap-1.5">
                       <span>⚙️</span>
-                      <span>{isTamil ? 'பட்சிகளின் ஐந்து தொழில்கள் மற்றும் பலன்கள் (5 Activities):' : 'The 5 Bird Activities & Potencies:'}</span>
+                      <span>{isTamil ? 'பட்சிகளின் ஐந்து தொழில்கள் மற்றும் பலன்கள்:' : 'The 5 Bird Activities & Potencies:'}</span>
                     </div>
                     <div className="overflow-x-auto rounded-xl border border-amber-900/15 dark:border-amber-500/20 bg-[#FFFDF9] dark:bg-[#1C1613]">
                       <table className="w-full text-xs text-left border-collapse">
@@ -5091,7 +5091,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                             <tr key={act.id} className="hover:bg-amber-50/50 dark:hover:bg-stone-800/40 transition-colors">
                               <td className="p-2 sm:p-2.5 font-bold whitespace-nowrap">
                                 <span className={`px-2 py-0.5 rounded ${act.badge}`}>
-                                  {act.ta} ({act.en})
+                                  {isTamil ? act.ta : act.en}
                                 </span>
                               </td>
                               <td className="p-2 sm:p-2.5 font-mono font-bold text-stone-800 dark:text-stone-200">
@@ -5142,8 +5142,8 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                           <th className="p-1 font-bold whitespace-nowrap">{isTamil ? "ஜாமம் 3" : "Yamam 3"}<br/><span className="text-[8px] font-normal text-stone-500 font-mono">10:48-13:12</span></th>
                           <th className="p-1 font-bold whitespace-nowrap">{isTamil ? "ஜாமம் 4" : "Yamam 4"}<br/><span className="text-[8px] font-normal text-stone-500 font-mono">13:12-15:36</span></th>
                           <th className="p-1 font-bold whitespace-nowrap">{isTamil ? "ஜாமம் 5" : "Yamam 5"}<br/><span className="text-[8px] font-normal text-stone-500 font-mono">15:36-18:00</span></th>
-                          <th className="p-2 font-bold text-left whitespace-nowrap">{isTamil ? 'வெற்றி நேரம் (அரசு / ஊண்)' : 'Golden Hours'}</th>
-                          <th className="p-2 font-bold text-left whitespace-nowrap">{isTamil ? 'தவிர்க்க வேண்டிய நேரம் (சாவு)' : 'Inauspicious (Saavu)'}</th>
+                          <th className="p-2 font-bold text-left whitespace-nowrap">{isTamil ? 'வெற்றி நேரம் (அரசு / ஊண்)' : 'Golden Hours (Ruling / Feeding)'}</th>
+                          <th className="p-2 font-bold text-left whitespace-nowrap">{isTamil ? 'தவிர்க்க வேண்டிய நேரம் (சாவு)' : 'Inauspicious Hours (Dying)'}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-amber-900/10 dark:divide-amber-500/10 font-sans">
@@ -5160,7 +5160,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                             {row.dayYamams.map(y => (
                               <td key={y.yamamNum} className="p-1">
                                 <span className={`px-1.5 py-0.5 rounded text-[9px] font-semibold inline-block whitespace-nowrap ${y.badge}`}>
-                                  {isTamil ? y.ta : (y.en || y.ta)} ({y.potency})
+                                  {isTamil ? y.ta : y.en} ({y.potency})
                                 </span>
                               </td>
                             ))}
@@ -5191,7 +5191,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     <div>
                       <h3 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
                         <span>⏱️</span>
-                        <span>{isTamil ? 'தற்போதைய பட்சி நிலை கண்காணிப்பான் (Live Status)' : 'Live Pancha Pakshi Activity Tracker'}</span>
+                        <span>{isTamil ? 'தற்போதைய பட்சி நிலை கண்காணிப்பான்' : 'Live Pancha Pakshi Activity Tracker'}</span>
                       </h3>
                       <p className="text-[11px] text-stone-600 dark:text-stone-400">
                         {isTamil ? 'இன்றைய நாளில் இந்த நேரத்தில் உங்கள் ஜென்ம பட்சியின் தொழில் நிலை மற்றும் உடனடி வழிகாட்டுதல்' : 'Current real-time activity and actionable advice for the native'}
@@ -5212,7 +5212,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                         </span>
                         <span className="text-stone-300 dark:text-stone-600">•</span>
                         <span className="text-xs text-stone-500 dark:text-stone-400 font-mono">
-                          {horoscope?.panchaPakshiData?.currentStatus?.timeSlot}
+                          {isTamil ? (horoscope?.panchaPakshiData?.currentStatus?.timeSlotTa || horoscope?.panchaPakshiData?.currentStatus?.timeSlot) : (horoscope?.panchaPakshiData?.currentStatus?.timeSlotEn || horoscope?.panchaPakshiData?.currentStatus?.timeSlot)}
                         </span>
                         <span className="text-stone-300 dark:text-stone-600">•</span>
                         <span className="text-xs font-bold text-stone-600 dark:text-stone-400">
@@ -5222,7 +5222,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                       <div className="flex items-center gap-2 pt-0.5">
                         <span className="text-xs text-stone-600 dark:text-stone-300">{isTamil ? 'தற்போதைய பட்சியின் தொழில்:' : 'Current Activity:'}</span>
                         <span className={`px-2.5 py-1 rounded-lg text-xs font-black ${horoscope?.panchaPakshiData?.currentStatus?.badge}`}>
-                          {isTamil ? horoscope?.panchaPakshiData?.currentStatus?.activityTa : (horoscope?.panchaPakshiData?.currentStatus?.activityEn || horoscope?.panchaPakshiData?.currentStatus?.activityTa)} ({horoscope?.panchaPakshiData?.currentStatus?.potency})
+                          {isTamil ? horoscope?.panchaPakshiData?.currentStatus?.activityTa : horoscope?.panchaPakshiData?.currentStatus?.activityEn} ({horoscope?.panchaPakshiData?.currentStatus?.potency})
                         </span>
                       </div>
                       <p className="text-[11px] text-stone-700 dark:text-stone-300 font-sans pt-1">

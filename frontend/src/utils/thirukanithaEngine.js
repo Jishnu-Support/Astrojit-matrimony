@@ -8766,10 +8766,10 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
     {
       id: 'hawk',
       ta: 'வல்லூறு',
-      en: 'Hawk / Vulture',
+      en: 'Hawk',
       elementTa: 'பூமி',
       elementEn: 'Earth',
-      colorTa: 'பொன் / மஞ்சள்',
+      colorTa: 'மஞ்சள்',
       colorEn: 'Golden Yellow',
       directionTa: 'கிழக்கு',
       directionEn: 'East',
@@ -8782,7 +8782,7 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
       badDaysSuklaTa: 'வியாழன், சனி',
       badDaysKrishnaTa: 'திங்கள், ஞாயிறு',
       badDaysTa: 'வளர்பிறையில் வியாழன், சனி; தேய்பிறையில் திங்கள், ஞாயிறு',
-      badDaysEn: 'Thursday, Saturday in Waxing Moon; Monday, Sunday in Waning Moon'
+      badDaysEn: 'Waxing Moon: Thursday, Saturday; Waning Moon: Monday, Sunday'
     },
     {
       id: 'owl',
@@ -8803,7 +8803,7 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
       badDaysSuklaTa: 'ஞாயிறு, வெள்ளி',
       badDaysKrishnaTa: 'செவ்வாய், புதன்',
       badDaysTa: 'வளர்பிறையில் ஞாயிறு, வெள்ளி; தேய்பிறையில் செவ்வாய், புதன்',
-      badDaysEn: 'Sunday, Friday in Waxing Moon; Tuesday, Wednesday in Waning Moon'
+      badDaysEn: 'Waxing Moon: Sunday, Friday; Waning Moon: Tuesday, Wednesday'
     },
     {
       id: 'crow',
@@ -8824,12 +8824,12 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
       badDaysSuklaTa: 'திங்கள், புதன்',
       badDaysKrishnaTa: 'வியாழன், சனி',
       badDaysTa: 'வளர்பிறையில் திங்கள், புதன்; தேய்பிறையில் வியாழன், சனி',
-      badDaysEn: 'Monday, Wednesday in Waxing Moon; Thursday, Saturday in Waning Moon'
+      badDaysEn: 'Waxing Moon: Monday, Wednesday; Waning Moon: Thursday, Saturday'
     },
     {
       id: 'rooster',
       ta: 'கோழி',
-      en: 'Rooster / Cock',
+      en: 'Rooster',
       elementTa: 'காற்று',
       elementEn: 'Air',
       colorTa: 'செம்மை',
@@ -8844,8 +8844,8 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
       enemyBirdsEn: 'Hawk, Crow',
       badDaysSuklaTa: 'புதன்',
       badDaysKrishnaTa: 'வெள்ளி, புதன்',
-      badDaysTa: 'வளர்பிறையில் புதன் மற்றும் தேய்பிறையில் வெள்ளி, புதன்',
-      badDaysEn: 'Wednesday in Waxing Moon; Friday, Wednesday in Waning Moon'
+      badDaysTa: 'வளர்பிறையில் புதன்; தேய்பிறையில் வெள்ளி, புதன்',
+      badDaysEn: 'Waxing Moon: Wednesday; Waning Moon: Friday, Wednesday'
     },
     {
       id: 'peacock',
@@ -8853,8 +8853,8 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
       en: 'Peacock',
       elementTa: 'ஆகாயம்',
       elementEn: 'Ether',
-      colorTa: 'நீலம் / பலவண்ணம்',
-      colorEn: 'Blue / Multi-color',
+      colorTa: 'நீலம்',
+      colorEn: 'Blue',
       directionTa: 'வடகிழக்கு',
       directionEn: 'North-East',
       rulingPlanetTa: 'குரு',
@@ -8866,7 +8866,7 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
       badDaysSuklaTa: 'புதன், வியாழன்',
       badDaysKrishnaTa: 'ஞாயிறு, சனி',
       badDaysTa: 'வளர்பிறையில் புதன், வியாழன்; தேய்பிறையில் ஞாயிறு, சனி',
-      badDaysEn: 'Wednesday, Thursday in Waxing Moon; Sunday, Saturday in Waning Moon'
+      badDaysEn: 'Waxing Moon: Wednesday, Thursday; Waning Moon: Sunday, Saturday'
     }
   ];
 
@@ -8882,7 +8882,7 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
     arasu: {
       id: 'arasu',
       ta: 'அரசு',
-      en: 'Arasu (Ruling)',
+      en: 'Ruling',
       potency: '100%',
       potencyVal: 100,
       badge: 'bg-amber-300 dark:bg-amber-500/80 text-stone-900 border border-amber-500 font-bold',
@@ -8893,7 +8893,7 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
     oon: {
       id: 'oon',
       ta: 'ஊண்',
-      en: 'Oon (Feeding)',
+      en: 'Feeding',
       potency: '75%',
       potencyVal: 75,
       badge: 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-300 border border-emerald-400 font-semibold',
@@ -8904,7 +8904,7 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
     nadai: {
       id: 'nadai',
       ta: 'நடை',
-      en: 'Nadai (Walking)',
+      en: 'Walking',
       potency: '50%',
       potencyVal: 50,
       badge: 'bg-blue-100 dark:bg-blue-950/50 text-blue-900 dark:text-blue-300 border border-blue-300',
@@ -8915,7 +8915,7 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
     thuyil: {
       id: 'thuyil',
       ta: 'துயில்',
-      en: 'Thuyil (Sleeping)',
+      en: 'Sleeping',
       potency: '25%',
       potencyVal: 25,
       badge: 'bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700',
@@ -8926,7 +8926,7 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
     saavu: {
       id: 'saavu',
       ta: 'சாவு',
-      en: 'Saavu (Dying)',
+      en: 'Dying',
       potency: '0%',
       potencyVal: 0,
       badge: 'bg-rose-200 dark:bg-rose-900/60 text-rose-950 dark:text-rose-200 border border-rose-500 font-black',
@@ -8972,7 +8972,7 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
     nakshatraNameEn: NAKSHATRAS_EN[nakIdx] || '',
     isSukla,
     pakshaTa: isSukla ? 'வளர்பிறை' : 'தேய்பிறை',
-    pakshaEn: isSukla ? 'Waxing Moon (Shukla Paksha)' : 'Waning Moon (Krishna Paksha)'
+    pakshaEn: isSukla ? 'Waxing Moon' : 'Waning Moon'
   };
 
   // 7 Weekdays Master Schedule
@@ -9011,7 +9011,7 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
     6: [0, 4, 3, 2, 1]  // Sat: Hawk starts Oon
   };
 
-  const DAY_YAMAM_TIMES = [
+  const DAY_YAMAM_TIMES_TA = [
     'காலை 06:00 - 08:24',
     'காலை 08:24 - 10:48',
     'முற்பகல் 10:48 - மதியம் 01:12',
@@ -9019,12 +9019,28 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
     'பிற்பகல் 03:36 - மாலை 06:00'
   ];
 
-  const NIGHT_YAMAM_TIMES = [
+  const DAY_YAMAM_TIMES_EN = [
+    '06:00 AM - 08:24 AM',
+    '08:24 AM - 10:48 AM',
+    '10:48 AM - 01:12 PM',
+    '01:12 PM - 03:36 PM',
+    '03:36 PM - 06:00 PM'
+  ];
+
+  const NIGHT_YAMAM_TIMES_TA = [
     'மாலை 06:00 - இரவு 08:24',
     'இரவு 08:24 - இரவு 10:48',
     'இரவு 10:48 - நள்ளிரவு 01:12',
     'நள்ளிரவு 01:12 - அதிகாலை 03:36',
     'அதிகாலை 03:36 - காலை 06:00'
+  ];
+
+  const NIGHT_YAMAM_TIMES_EN = [
+    '06:00 PM - 08:24 PM',
+    '08:24 PM - 10:48 PM',
+    '10:48 PM - 01:12 AM',
+    '01:12 AM - 03:36 AM',
+    '03:36 AM - 06:00 AM'
   ];
 
   const weeklySchedule = WEEKDAYS_CONFIG.map(w => {
@@ -9036,7 +9052,9 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
       const act = ACTIVITIES[actKey];
       return {
         yamamNum: yIdx + 1,
-        timeSlot: DAY_YAMAM_TIMES[yIdx],
+        timeSlotTa: DAY_YAMAM_TIMES_TA[yIdx],
+        timeSlotEn: DAY_YAMAM_TIMES_EN[yIdx],
+        timeSlot: DAY_YAMAM_TIMES_TA[yIdx],
         ...act
       };
     });
@@ -9047,7 +9065,9 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
       const act = ACTIVITIES[actKey];
       return {
         yamamNum: yIdx + 1,
-        timeSlot: NIGHT_YAMAM_TIMES[yIdx],
+        timeSlotTa: NIGHT_YAMAM_TIMES_TA[yIdx],
+        timeSlotEn: NIGHT_YAMAM_TIMES_EN[yIdx],
+        timeSlot: NIGHT_YAMAM_TIMES_TA[yIdx],
         ...act
       };
     });
@@ -9067,10 +9087,10 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
       isBadDay: badDayMatches,
       dayYamams,
       nightYamams,
-      goldenHoursTa: goldenDayYamams.map(g => `${g.timeSlot} (${g.ta})`).join(', ') || 'இல்லை',
-      goldenHoursEn: goldenDayYamams.map(g => `${g.timeSlot} (${g.en})`).join(', ') || 'None',
-      saavuHoursTa: saavuYamams.map(s => `${s.timeSlot}`).join(', ') || 'இல்லை',
-      saavuHoursEn: saavuYamams.map(s => `${s.timeSlot}`).join(', ') || 'None'
+      goldenHoursTa: goldenDayYamams.map(g => `${g.timeSlotTa} (${g.ta})`).join(', ') || 'இல்லை',
+      goldenHoursEn: goldenDayYamams.map(g => `${g.timeSlotEn} (${g.en})`).join(', ') || 'None',
+      saavuHoursTa: saavuYamams.map(s => `${s.timeSlotTa}`).join(', ') || 'இல்லை',
+      saavuHoursEn: saavuYamams.map(s => `${s.timeSlotEn}`).join(', ') || 'None'
     };
   });
 
@@ -9095,14 +9115,18 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
 
   const currentStatus = {
     weekdayTa: curDaySchedule.weekdayTa,
+    weekdayEn: curDaySchedule.weekdayEn,
     isNightTime,
     yamamNum: currentYamamIdx + 1,
-    timeSlot: curActivity.timeSlot,
+    timeSlotTa: curActivity.timeSlotTa,
+    timeSlotEn: curActivity.timeSlotEn,
+    timeSlot: curActivity.timeSlotTa,
     activityTa: curActivity.ta,
     activityEn: curActivity.en,
     potency: curActivity.potency,
     badge: curActivity.badge,
     effectTa: curActivity.effectTa,
+    effectEn: curActivity.effectEn,
     isBadDay: curDaySchedule.isBadDay
   };
 
