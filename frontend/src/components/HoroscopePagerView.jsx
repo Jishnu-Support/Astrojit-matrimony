@@ -126,23 +126,23 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
     parseInitialTime(initialBirthData?.dobTime12 || initialBirthData?.dobTime || '04:50:00')
   );
 
-  // Input form state for Thirukanitha calculation
+  // Input form state for Thirukanitha calculation, initialized directly from above-entered details
   const [calcInputs, setCalcInputs] = useState(() => ({
-    name: initialBirthData?.name || 'Mr. M',
+    name: initialBirthData?.name || 'Sample',
     gender: initialBirthData?.gender || 'male',
-    dob: initialBirthData?.dob || '1983-01-03',
-    dobTime: initialBirthData?.dobTime || '04:50:00',
-    dobTime12: initialBirthData?.dobTime12 || '04:50:00 AM',
+    dob: initialBirthData?.dob || '2026-11-05',
+    dobTime: initialBirthData?.dobTime || '21:04:00',
+    dobTime12: initialBirthData?.dobTime12 || '09:04:00 PM',
     country: initialBirthData?.country || 'India',
     state: initialBirthData?.state || 'Tamil Nadu',
-    placeName: initialBirthData?.city || initialBirthData?.placeName || 'Namakkal',
-    city: initialBirthData?.city || 'Namakkal',
-    lat: initialBirthData?.lat !== undefined ? initialBirthData.lat : 11.22,
-    lon: initialBirthData?.lon !== undefined ? initialBirthData.lon : 78.17,
-    utcOffset: initialBirthData?.utcOffset !== undefined ? initialBirthData.utcOffset : '+05:30 UTC',
-    father: initialBirthData?.father || 'ரமேஷ் குமார்',
-    mother: initialBirthData?.mother || 'பிரியா',
-    nativePlace: initialBirthData?.nativePlace || 'நாமக்கல்'
+    placeName: initialBirthData?.placeName || initialBirthData?.city || 'Salem',
+    city: initialBirthData?.city || 'Salem',
+    lat: initialBirthData?.lat !== undefined ? initialBirthData.lat : 11.6643,
+    lon: initialBirthData?.lon !== undefined ? initialBirthData.lon : 78.1460,
+    utcOffset: initialBirthData?.utcOffset !== undefined ? initialBirthData.utcOffset : '05:30 UTC',
+    father: initialBirthData?.father !== undefined ? initialBirthData.father : '',
+    mother: initialBirthData?.mother !== undefined ? initialBirthData.mother : '',
+    nativePlace: initialBirthData?.nativePlace !== undefined ? initialBirthData.nativePlace : ''
   }));
 
   // Initial computed data for authentic 1-page Janana Jathagam A4 sheet
@@ -150,6 +150,31 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [activeEditorTab, setActiveEditorTab] = useState('person');
   const [calcSuccessMsg, setCalcSuccessMsg] = useState('');
+
+  // Automatically recalculate whenever above-entered details (initialBirthData) change
+  useEffect(() => {
+    if (initialBirthData) {
+      const updatedInputs = {
+        name: initialBirthData.name || 'Sample',
+        gender: initialBirthData.gender || 'male',
+        dob: initialBirthData.dob || '2026-11-05',
+        dobTime: initialBirthData.dobTime || '21:04:00',
+        dobTime12: initialBirthData.dobTime12 || '09:04:00 PM',
+        country: initialBirthData.country || 'India',
+        state: initialBirthData.state || 'Tamil Nadu',
+        placeName: initialBirthData.placeName || initialBirthData.city || 'Salem',
+        city: initialBirthData.city || 'Salem',
+        lat: initialBirthData.lat !== undefined ? initialBirthData.lat : 11.6643,
+        lon: initialBirthData.lon !== undefined ? initialBirthData.lon : 78.1460,
+        utcOffset: initialBirthData.utcOffset || '05:30 UTC',
+        father: initialBirthData.father !== undefined ? initialBirthData.father : '',
+        mother: initialBirthData.mother !== undefined ? initialBirthData.mother : '',
+        nativePlace: initialBirthData.nativePlace !== undefined ? initialBirthData.nativePlace : ''
+      };
+      setCalcInputs(updatedInputs);
+      setData(computeHoroscopePagerData(updatedInputs));
+    }
+  }, [initialBirthData]);
 
   // Cascading place options
   const availableStates = useMemo(() => {
@@ -575,299 +600,6 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
               </button>
             )}
           </div>
-        </div>
-
-        {/* BIRTH DETAILS INTAKE FORM (Screen Only - Hidden on Print) */}
-        <div className="bg-white dark:bg-stone-900 border border-amber-900/15 dark:border-stone-800 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4 no-print text-xs">
-          <div className="flex items-center justify-between border-b border-amber-900/10 dark:border-stone-800 pb-2">
-            <div className="flex items-center gap-2">
-              <span className="text-base">📝</span>
-              <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-amber-200">
-                {isTa ? 'பிறப்பு விவரப் படிவம் (ஜாதகக் கணிப்பு & ஏடு தயாரிப்பு)' : 'Birth Details Intake (Compute & Generate Pager)'}
-              </h2>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono font-bold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-300 dark:border-amber-800">
-                🕒 {calcInputs.dobTime12}
-              </span>
-              <span className="text-[11px] font-mono font-bold text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded border border-indigo-300 dark:border-indigo-800">
-                🌐 {calcInputs.utcOffset}
-              </span>
-            </div>
-          </div>
-
-          {/* Form Fields */}
-          <form onSubmit={handleCalculatePager} className="space-y-3">
-            {/* ROW 1: Name, Date of Birth, 12-hr AM/PM Time */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {/* Full Name */}
-              <div>
-                <label className="block font-bold mb-1 opacity-90">
-                  <User className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22]" />
-                  {isTa ? 'பெயர் (Full Name)' : 'Full Name'}
-                </label>
-                <input
-                  type="text"
-                  value={calcInputs.name}
-                  onChange={e => setCalcInputs({ ...calcInputs, name: e.target.value })}
-                  placeholder="e.g. Aarav Kumar"
-                  className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#7A1A22]"
-                />
-              </div>
-
-              {/* Date of Birth */}
-              <div>
-                <label className="block font-bold mb-1 opacity-90">
-                  <Calendar className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22]" />
-                  {isTa ? 'பிறந்த தேதி (Date of Birth)' : 'Date of Birth'}
-                </label>
-                <input
-                  type="date"
-                  value={calcInputs.dob}
-                  onChange={e => setCalcInputs({ ...calcInputs, dob: e.target.value })}
-                  className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#7A1A22]"
-                />
-              </div>
-
-              {/* 12-Hour AM/PM Time */}
-              <div>
-                <label className="block font-bold mb-1 opacity-90">
-                  <Clock className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22]" />
-                  {isTa ? 'பிறந்த நேரம் (12 மணி நேரம் AM/PM)' : 'Birth Time (12-Hour AM/PM)'}
-                </label>
-                <div className="flex items-center gap-1.5">
-                  <select
-                    value={timeState.hour}
-                    onChange={e => updateTimeField('hour', e.target.value)}
-                    className="flex-1 bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-1.5 py-2 text-xs font-mono font-bold text-center cursor-pointer"
-                  >
-                    {HOURS_12.map(h => (
-                      <option key={h} value={h}>{h}</option>
-                    ))}
-                  </select>
-                  <span className="font-bold">:</span>
-                  <select
-                    value={timeState.minute}
-                    onChange={e => updateTimeField('minute', e.target.value)}
-                    className="flex-1 bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-1.5 py-2 text-xs font-mono font-bold text-center cursor-pointer"
-                  >
-                    {MINUTES_60.map(m => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
-                  </select>
-                  <span className="font-bold">:</span>
-                  <select
-                    value={timeState.second}
-                    onChange={e => updateTimeField('second', e.target.value)}
-                    className="flex-1 bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-1.5 py-2 text-xs font-mono font-bold text-center cursor-pointer"
-                  >
-                    {SECONDS_60.map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                  <div className="flex bg-stone-200 dark:bg-stone-800 rounded-xl p-0.5 border border-stone-300 dark:border-stone-700">
-                    <button
-                      type="button"
-                      onClick={() => updateTimeField('period', 'AM')}
-                      className={`px-2 py-1.5 rounded-lg text-xs font-black cursor-pointer transition-all ${
-                        timeState.period === 'AM'
-                          ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
-                          : 'text-stone-600 dark:text-stone-400'
-                      }`}
-                    >
-                      AM
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => updateTimeField('period', 'PM')}
-                      className={`px-2 py-1.5 rounded-lg text-xs font-black cursor-pointer transition-all ${
-                        timeState.period === 'PM'
-                          ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
-                          : 'text-stone-600 dark:text-stone-400'
-                      }`}
-                    >
-                      PM
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ROW 2: Hierarchical Place of Birth (Country -> State -> City) */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 border-t border-amber-900/10">
-              {/* Country */}
-              <div>
-                <label className="block font-bold mb-1 opacity-90">
-                  <Globe className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22]" />
-                  {isTa ? 'நாடு (Country)' : 'Country'}
-                </label>
-                <select
-                  value={selectedCountry}
-                  onChange={handleCountryChange}
-                  className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#7A1A22] cursor-pointer"
-                >
-                  {COUNTRIES.map(c => (
-                    <option key={c.code} value={c.name}>{c.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* State */}
-              <div>
-                <label className="block font-bold mb-1 opacity-90">
-                  <Building className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22]" />
-                  {isTa ? 'மாநிலம் (State)' : 'State'}
-                </label>
-                <select
-                  value={selectedState}
-                  onChange={handleStateChange}
-                  className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#7A1A22] cursor-pointer"
-                >
-                  {availableStates.map(st => (
-                    <option key={st} value={st}>{st}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* City / Place */}
-              <div>
-                <div className="flex justify-between items-center mb-1">
-                  <label className="font-bold opacity-90">
-                    <MapPin className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22]" />
-                    {isTa ? 'ஊர் / நகரம் (City / Place)' : 'City / Place'}
-                  </label>
-                  {availableCities.length > 8 && (
-                    <input
-                      type="text"
-                      placeholder={isTa ? 'ஊர் வடிகட்டல்...' : 'Search place...'}
-                      value={citySearch}
-                      onChange={e => setCitySearch(e.target.value)}
-                      className="w-24 text-[10px] bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded px-1.5 py-0.5 focus:outline-none"
-                    />
-                  )}
-                </div>
-                <select
-                  value={selectedCity}
-                  onChange={handleCityChange}
-                  className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#7A1A22] cursor-pointer"
-                >
-                  {filteredCities.map(c => (
-                    <option key={c.name} value={c.name}>
-                      {c.name} ({c.latDec}°N, {c.lonDec}°E)
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* ROW 3: Exact Coordinates & UTC Offset */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 border-t border-amber-900/10">
-              <div>
-                <label className="block font-bold mb-1 opacity-90">
-                  {isTa ? 'அட்சரேகை (Lat °N)' : 'Latitude (°N)'}
-                </label>
-                <input
-                  type="number"
-                  step="0.0001"
-                  value={calcInputs.lat}
-                  onChange={e => setCalcInputs({ ...calcInputs, lat: parseFloat(e.target.value) || 0 })}
-                  className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:border-[#7A1A22]"
-                />
-              </div>
-              <div>
-                <label className="block font-bold mb-1 opacity-90">
-                  {isTa ? 'தீர்க்கரேகை (Lon °E)' : 'Longitude (°E)'}
-                </label>
-                <input
-                  type="number"
-                  step="0.0001"
-                  value={calcInputs.lon}
-                  onChange={e => setCalcInputs({ ...calcInputs, lon: parseFloat(e.target.value) || 0 })}
-                  className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:border-[#7A1A22]"
-                />
-              </div>
-              <div>
-                <label className="block font-bold mb-1 opacity-90">
-                  {isTa ? 'UTC ஆப்செட் (Timezone)' : 'UTC Offset (Timezone)'}
-                </label>
-                <input
-                  type="text"
-                  value={calcInputs.utcOffset}
-                  onChange={e => setCalcInputs({ ...calcInputs, utcOffset: e.target.value })}
-                  placeholder="05:30 UTC"
-                  className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-mono font-bold focus:outline-none focus:border-[#7A1A22]"
-                />
-              </div>
-            </div>
-
-            {/* ROW 4: Janana Jathagam Specific Details: Father, Mother, Native Place */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 border-t border-amber-900/10">
-              <div>
-                <label className="block font-bold mb-1 opacity-90">
-                  <User className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22]" />
-                  {isTa ? 'தந்தை பெயர் (Father)' : "Father's Name"}
-                </label>
-                <input
-                  type="text"
-                  value={calcInputs.father}
-                  onChange={e => setCalcInputs({ ...calcInputs, father: e.target.value })}
-                  placeholder="e.g. Ramesh Kumar"
-                  className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#7A1A22]"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold mb-1 opacity-90">
-                  <Heart className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22]" />
-                  {isTa ? 'தாய் பெயர் (Mother)' : "Mother's Name"}
-                </label>
-                <input
-                  type="text"
-                  value={calcInputs.mother}
-                  onChange={e => setCalcInputs({ ...calcInputs, mother: e.target.value })}
-                  placeholder="e.g. Priya"
-                  className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#7A1A22]"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold mb-1 opacity-90">
-                  <Home className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22]" />
-                  {isTa ? 'சொந்த ஊர் (Native Place)' : 'Native Place / Town'}
-                </label>
-                <input
-                  type="text"
-                  value={calcInputs.nativePlace}
-                  onChange={e => setCalcInputs({ ...calcInputs, nativePlace: e.target.value })}
-                  placeholder="e.g. Salem"
-                  className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#7A1A22]"
-                />
-              </div>
-            </div>
-
-            {/* ROW 5: Prominent Action Button */}
-            <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-amber-900/10">
-              <div className="text-[11px] text-stone-500">
-                {isTa
-                  ? '⚡ சுத்த திருக்கணித முறையில் (Drik Ganitha) துல்லியமாக கணிக்கப்படும்.'
-                  : '⚡ Calculated strictly following pure Thirukanitha Drik Ganitha ephemeris.'}
-              </div>
-              <button
-                type="submit"
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#7A1A22] via-[#941F28] to-[#B32732] text-amber-100 font-bold text-sm shadow-md hover:shadow-lg hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer flex items-center gap-2"
-              >
-                <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
-                <span>{isTa ? '✨ ஜாதக ஏடு கணிக்க & உருவாக்குக' : '✨ Calculate & Generate A4 Pager'}</span>
-              </button>
-            </div>
-          </form>
-
-          {calcSuccessMsg && (
-            <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-400 text-emerald-800 dark:text-emerald-200 rounded-xl text-xs font-bold flex items-center gap-2 animate-fadeIn">
-              <Check className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>{calcSuccessMsg}</span>
-            </div>
-          )}
         </div>
 
         {/* COLLAPSIBLE EDIT FORM (Screen Only - Hidden on Print) */}

@@ -429,6 +429,33 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
     }
   };
 
+  const handleSwitchSubView = (targetView) => {
+    const time24 = to24HourTime(timeState.hour, timeState.minute, timeState.second, timeState.period);
+    const time12 = `${timeState.hour}:${timeState.minute}:${timeState.second} ${timeState.period}`;
+    const syncedData = {
+      name: name.trim() || 'Sample',
+      dob,
+      dobTime: time24,
+      dobTime12: time12,
+      country,
+      state,
+      placeName: city,
+      city,
+      lat: parseCoordinateToDec(lat, 11.6643),
+      lon: parseCoordinateToDec(lon, 78.1460),
+      utcOffset,
+      father: father.trim(),
+      mother: mother.trim(),
+      nativePlace: nativePlace.trim(),
+      mobile: mobile.trim(),
+      gender,
+      clientId: selectedClient?.id || null
+    };
+    setActiveBirthData(syncedData);
+    setCalcKey(prev => prev + 1);
+    setSubView(targetView);
+  };
+
   return (
     <div className="space-y-5">
       {/* ======================================================== */}
@@ -458,7 +485,7 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
         <div className="flex items-center bg-stone-100 dark:bg-stone-800 p-1 rounded-xl border border-stone-200 dark:border-stone-700 shadow-2xs self-start md:self-auto">
           <button
             type="button"
-            onClick={() => setSubView('screen')}
+            onClick={() => handleSwitchSubView('screen')}
             className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
               subView === 'screen'
                 ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
@@ -471,7 +498,7 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
 
           <button
             type="button"
-            onClick={() => setSubView('print')}
+            onClick={() => handleSwitchSubView('print')}
             className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
               subView === 'print'
                 ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
