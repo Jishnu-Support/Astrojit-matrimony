@@ -141,7 +141,6 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
   }, [initialData]);
 
   const [activeChartKey, setActiveChartKey] = useState('D1');
-  const [showVargaMasterTable, setShowVargaMasterTable] = useState(true);
   const [dasavargaMode, setDasavargaMode] = useState('bala'); // 'bala' | 'rasi' | 'shodashavarga'
   const [expandedMdIndex, setExpandedMdIndex] = useState(0);
   const [expandedBhuktiKey, setExpandedBhuktiKey] = useState(null);
@@ -874,19 +873,6 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
             <div className="p-4 sm:p-5 pt-0 border-t border-amber-900/10 dark:border-amber-500/15 space-y-4">
               {/* SECTION 3: South Indian Charts (16 Shodashavarga Grid Layout) */}
         <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
-          <div className="flex justify-end items-center gap-2 border-b border-amber-900/10 pb-2">
-            {/* Master Table Toggle Button */}
-            <button
-              type="button"
-              onClick={() => setShowVargaMasterTable(!showVargaMasterTable)}
-              className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500/15 dark:bg-amber-900/30 text-[#7A1A22] dark:text-amber-300 hover:bg-amber-500/25 transition-all cursor-pointer border border-amber-900/15 flex items-center gap-1.5"
-            >
-              <span>📊</span>
-              <span>{T.masterVargaTableToggle}</span>
-              <span className="text-[10px]">{showVargaMasterTable ? '▲' : '▼'}</span>
-            </button>
-          </div>
-
           {/* 16 Shodashavarga Switcher Pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 max-w-full print:hidden scrollbar-thin touch-pan-x overscroll-x-contain">
             {SHODASHAVARGA_DEFS.map(chart => (
@@ -1682,7 +1668,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
           {openSections[7] && (
             <div className="p-4 sm:p-5 pt-0 border-t border-amber-900/10 dark:border-amber-500/15 space-y-4">
               {/* Interactive Dasavarga & Shodashavarga Dignity Strength Section (Page 20 Benchmark) */}
-          {showVargaMasterTable && horoscope.dasavarga && (
+          {horoscope.dasavarga && (
             <div className="mt-4 p-3.5 sm:p-5 rounded-2xl bg-amber-50/60 dark:bg-stone-800/40 border border-amber-900/15 space-y-3.5">
               <div className="flex items-center justify-end gap-2.5 border-b border-amber-900/10 pb-3">
                 <div className="flex items-center gap-1.5 flex-wrap">
