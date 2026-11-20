@@ -121,6 +121,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
 
   useEffect(() => {
     if (initialData) {
+      const isNowEmpty = !initialData.name?.trim() || !initialData.dob?.trim();
       setForm({
         name: initialData.name || '',
         dob: initialData.dob || '',
