@@ -29,6 +29,7 @@ import {
 } from '../utils/thirukanithaEngine';
 import { COUNTRIES, GEO_DATA, lookupCoordinates } from '../data/geoCoordinates';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { API } from '../api';
 
 function parseInitialTime(timeStr) {
@@ -109,17 +110,7 @@ export default function HoroscopePagerView({ initialBirthData, astrologerProfile
   const [headerSavedMsg, setHeaderSavedMsg] = useState('');
   const [lang, setLang] = useState('ta'); // 'ta' or 'en'
   const isTa = lang === 'ta';
-  const [theme, setTheme] = useState('light'); // 'light' or 'dark'
-  const isDark = theme === 'dark';
-
-  // Ensure documentElement reflects light theme by default
-  React.useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDark]);
+  const { theme, isDark } = useTheme();
 
   // Selected Country / State / City state for hierarchical picker
   const [selectedCountry, setSelectedCountry] = useState(initialBirthData?.country || 'India');
@@ -619,15 +610,6 @@ export default function HoroscopePagerView({ initialBirthData, astrologerProfile
             >
               {isEditorOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
               <span>{isEditorOpen ? (isTa ? 'திருத்தத்தை மறைக்க' : 'Hide Editor') : (isTa ? 'தனிப்பட்ட திருத்தங்கள்' : 'Manual Overrides')}</span>
-            </button>
-
-            {/* Dark / Light Toggle */}
-            <button
-              type="button"
-              onClick={() => setTheme(isDark ? 'light' : 'dark')}
-              className="px-3 py-1.5 rounded-lg border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 text-xs font-bold hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors cursor-pointer"
-            >
-              {isDark ? (isTa ? '☀️ பகல் முறை' : '☀️ Light') : (isTa ? '🌙 இரவு முறை' : '🌙 Dark')}
             </button>
 
             {/* Print / Save as PDF Button */}

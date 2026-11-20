@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Sparkles, User, Shield, LogOut, ChevronDown, Store, Compass, Globe, Menu, X, HeartHandshake, Settings } from 'lucide-react';
+import { Sparkles, User, Shield, LogOut, ChevronDown, Store, Compass, Globe, Menu, X, HeartHandshake, Settings, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { useLang, LANGUAGES } from '../i18n';
 import Logo from './Logo';
 
 export default function Navbar({ activeTab, setActiveTab, onOpenMatrimony, onToggleSidebar, onOpenProfile, onOpenSettings }) {
   const { user, role, logout } = useAuth();
+  const { theme, isDark, toggleTheme } = useTheme();
   const { lang, setLanguage, t } = useLang();
   const [showLangMenu, setShowLangMenu] = useState(false);
 
@@ -27,7 +29,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenMatrimony, onTog
   const currentLangObj = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
 
   return (
-    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-amber-200/70 shadow-xs px-2 sm:px-6 py-1.5 sm:py-2.5">
+    <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#181412]/95 backdrop-blur-md border-b border-amber-200/70 dark:border-amber-900/40 shadow-xs px-2 sm:px-6 py-1.5 sm:py-2.5 transition-colors">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-1 sm:gap-4">
         {/* Left: Hamburger & Brand */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
@@ -81,21 +83,35 @@ export default function Navbar({ activeTab, setActiveTab, onOpenMatrimony, onTog
 
         {/* Right Actions */}
         <div className="flex items-center gap-1 sm:gap-2.5 shrink-0">
+          {/* Universal Theme Switcher (Dark / Light) */}
+          <button
+            onClick={toggleTheme}
+            className="flex items-center justify-center p-1.5 sm:p-2 rounded-lg bg-slate-50 dark:bg-stone-800 hover:bg-slate-100 dark:hover:bg-stone-700 text-slate-700 dark:text-amber-300 border border-slate-200 dark:border-stone-700 transition-colors cursor-pointer"
+            title={isDark ? (lang === 'ta' ? 'பகல் முறைக்கு மாறுக (Switch to Light Mode)' : 'Switch to Light Mode') : (lang === 'ta' ? 'இரவு முறைக்கு மாறுக (Switch to Dark Mode)' : 'Switch to Dark Mode')}
+            aria-label="Toggle Theme"
+          >
+            {isDark ? (
+              <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
+            ) : (
+              <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-700" />
+            )}
+          </button>
+
           {/* Language Switcher */}
           <div className="relative">
             <button
               onClick={() => setShowLangMenu(!showLangMenu)}
-              className="flex items-center gap-1 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-lg border border-slate-200 transition-colors cursor-pointer"
+              className="flex items-center gap-1 bg-slate-50 dark:bg-stone-800 hover:bg-slate-100 dark:hover:bg-stone-700 text-slate-700 dark:text-stone-200 text-xs px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-lg border border-slate-200 dark:border-stone-700 transition-colors cursor-pointer"
             >
-              <Globe className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+              <Globe className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
               <span className="font-bold text-xs uppercase sm:hidden">{lang}</span>
               <span className="font-medium text-xs hidden sm:inline">{currentLangObj.native}</span>
               <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
             </button>
 
             {showLangMenu && (
-              <div className="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-xl p-1.5 z-50">
-                <div className="text-[10px] text-slate-400 uppercase font-bold tracking-wider px-2 py-1 border-b border-slate-100">
+              <div className="absolute right-0 mt-2 w-44 bg-white dark:bg-stone-900 border border-slate-200 dark:border-stone-700 rounded-xl shadow-xl p-1.5 z-50">
+                <div className="text-[10px] text-slate-400 dark:text-stone-500 uppercase font-bold tracking-wider px-2 py-1 border-b border-slate-100 dark:border-stone-800">
                   {t('selectLanguage')}
                 </div>
                 {LANGUAGES.map((l) => (
@@ -105,12 +121,12 @@ export default function Navbar({ activeTab, setActiveTab, onOpenMatrimony, onTog
                       setLanguage(l.code);
                       setShowLangMenu(false);
                     }}
-                    className={`w-full text-left px-3 py-1.5 text-xs rounded-lg flex items-center justify-between hover:bg-amber-50 transition-colors cursor-pointer ${
-                      lang === l.code ? 'text-amber-700 font-bold bg-amber-50' : 'text-slate-700'
+                    className={`w-full text-left px-3 py-1.5 text-xs rounded-lg flex items-center justify-between hover:bg-amber-50 dark:hover:bg-stone-800 transition-colors cursor-pointer ${
+                      lang === l.code ? 'text-amber-700 dark:text-amber-300 font-bold bg-amber-50 dark:bg-stone-800' : 'text-slate-700 dark:text-stone-300'
                     }`}
                   >
                     <span>{l.native}</span>
-                    <span className="text-[10px] text-slate-400">{l.label}</span>
+                    <span className="text-[10px] text-slate-400 dark:text-stone-500">{l.label}</span>
                   </button>
                 ))}
               </div>
@@ -128,7 +144,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenMatrimony, onTog
                 <span className={`text-[11px] px-2 py-0.5 rounded-full border font-semibold ${badge.bg}`}>
                   {badge.label}
                 </span>
-                <span className="text-xs text-slate-700 font-medium truncate max-w-[120px]">
+                <span className="text-xs text-slate-700 dark:text-stone-300 font-medium truncate max-w-[120px]">
                   {user.name || user.shopName || user.mobile}
                 </span>
               </div>
@@ -136,7 +152,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenMatrimony, onTog
               {/* Quick Settings Icon */}
               <button
                 onClick={onOpenSettings}
-                className="flex items-center justify-center p-1.5 sm:p-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 transition-colors cursor-pointer"
+                className="flex items-center justify-center p-1.5 sm:p-2 rounded-lg bg-slate-50 dark:bg-stone-800 hover:bg-slate-100 dark:hover:bg-stone-700 text-slate-600 dark:text-stone-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-stone-700 transition-colors cursor-pointer"
                 title="Settings & Preferences"
               >
                 <Settings className="w-3.5 h-3.5" />
@@ -145,7 +161,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenMatrimony, onTog
               {/* Logout Button */}
               <button
                 onClick={logout}
-                className="flex items-center gap-1 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg border border-rose-200 transition-colors cursor-pointer"
+                className="flex items-center gap-1 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 text-xs px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg border border-rose-200 dark:border-rose-900/40 transition-colors cursor-pointer"
                 title="Logout"
               >
                 <LogOut className="w-3.5 h-3.5 shrink-0" />

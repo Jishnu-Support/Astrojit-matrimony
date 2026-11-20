@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useLang } from '../i18n';
+import { useTheme } from '../context/ThemeContext';
 import {
   PRESETS,
   RASHIS,
@@ -93,8 +94,8 @@ const SECONDS_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0
 
 export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
   const { lang: globalLang } = useLang();
+  const { theme, isDark } = useTheme();
   const [lang, setLang] = useState(globalLang || 'ta'); // 'ta' or 'en'
-  const [theme, setTheme] = useState('light'); // 'light' or 'dark'
 
   useEffect(() => {
     if (globalLang) setLang(globalLang);
@@ -385,8 +386,6 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
     subhamText: isTamil ? 'சுபம்.' : 'Subham (Auspicious).'
   };
 
-  const isDark = theme === 'dark';
-
   return (
     <div
       className={`min-h-screen transition-colors duration-200 font-serif p-3 sm:p-6 print:p-0 ${
@@ -498,15 +497,6 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
             >
               <span>▲</span>
               <span>{isTamil ? 'அனைத்தும் சுருக்கு' : 'Collapse All'}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setTheme(isDark ? 'light' : 'dark')}
-              className="px-2.5 py-1.5 rounded-xl border border-stone-300 dark:border-stone-700 text-xs font-bold hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
-              title="Toggle Theme"
-            >
-              {isDark ? '☀️' : '🌙'}
             </button>
 
             <button
@@ -5859,41 +5849,72 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
           {openSections[18] && (
             <div className="p-4 sm:p-6 border-t border-amber-900/10 dark:border-amber-500/10 space-y-6">
               {/* Top Highlight Cards: Udal Enn & Uyir Enn */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/30 flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-[#7A1A22] text-amber-100 flex flex-col items-center justify-center shrink-0 shadow-md">
-                    <span className="text-[9px] uppercase tracking-wider font-semibold opacity-80">{isTamil ? "உடல் எண்" : "Body No"}</span>
-                    <span className="text-2xl font-black font-mono leading-none mt-0.5">
-                      {(isTamil ? (horoscope?.numerologyData?.dateNumTa || horoscope?.numerologyData?.dateNum) : (horoscope?.numerologyData?.dateNumEn || horoscope?.numerologyData?.dateNum)) || '---'}
-                    </span>
-                  </div>
-                  <div className="space-y-0.5">
-                    <div className="text-xs font-bold text-stone-800 dark:text-stone-200">
-                      {isTamil ? 'தேதி (உடல்) எண் - Birth Number' : 'Birth Number (Body)'}
-                    </div>
-                    <div className="text-[11px] text-stone-600 dark:text-stone-400">
-                      {isTamil ? 'பிறந்த தேதியின் கூட்டுத்தொகை (புறக் குணம், உடனடி இயல்பு)' : 'Day of birth vibration (physical nature & basic temperament)'}
-                    </div>
-                  </div>
-                </div>
+              {(() => {
+                const numData = horoscope?.numerologyData || {};
+                const dateNumVal = String(numData.rawDateNum || numData.dateNumEn || numData.dateNum || '').match(/^\d+/)?.[0] || '---';
+                const datePlanet = isTamil
+                  ? (numData.datePlanetTa || String(numData.dateNumTa || numData.dateNum || '').match(/\(([^)]+)\)/)?.[1] || '')
+                  : (numData.datePlanetEn || String(numData.dateNumEn || numData.dateNum || '').match(/\(([^)]+)\)/)?.[1] || '');
 
-                <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-500/10 via-indigo-500/5 to-transparent border border-indigo-500/30 flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-indigo-900 text-indigo-100 flex flex-col items-center justify-center shrink-0 shadow-md">
-                    <span className="text-[9px] uppercase tracking-wider font-semibold opacity-80">{isTamil ? "உயிர் எண்" : "Destiny No"}</span>
-                    <span className="text-2xl font-black font-mono leading-none mt-0.5">
-                      {(isTamil ? (horoscope?.numerologyData?.yearNumTa || horoscope?.numerologyData?.yearNum) : (horoscope?.numerologyData?.yearNumEn || horoscope?.numerologyData?.yearNum)) || '---'}
-                    </span>
-                  </div>
-                  <div className="space-y-0.5">
-                    <div className="text-xs font-bold text-stone-800 dark:text-stone-200">
-                      {isTamil ? 'வருஷ (உயிர்) எண் - Life Path / Destiny' : 'Life Path Number (Destiny)'}
+                const yearNumVal = String(numData.rawLifeNum || numData.yearNumEn || numData.yearNum || '').match(/^\d+/)?.[0] || '---';
+                const yearPlanet = isTamil
+                  ? (numData.lifePlanetTa || String(numData.yearNumTa || numData.yearNum || '').match(/\(([^)]+)\)/)?.[1] || '')
+                  : (numData.lifePlanetEn || String(numData.yearNumEn || numData.yearNum || '').match(/\(([^)]+)\)/)?.[1] || '');
+
+                return (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Card 1: Birth Number (Body) */}
+                    <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/30 flex items-center gap-4">
+                      <div className="w-14 h-14 rounded-2xl bg-[#7A1A22] text-amber-100 flex flex-col items-center justify-center shrink-0 shadow-md">
+                        <span className="text-[9px] uppercase tracking-wider font-semibold opacity-85 leading-tight">
+                          {isTamil ? "உடல் எண்" : "Body No"}
+                        </span>
+                        <span className="text-2xl font-black font-mono leading-none mt-1">
+                          {dateNumVal}
+                        </span>
+                      </div>
+                      <div className="space-y-1 min-w-0">
+                        <div className="text-xs font-bold text-stone-800 dark:text-stone-200 flex items-center gap-1.5 flex-wrap">
+                          <span>{isTamil ? 'தேதி (உடல்) எண் - Birth Number' : 'Birth Number (Body)'}</span>
+                          {datePlanet && (
+                            <span className="text-[11px] font-bold text-[#7A1A22] dark:text-amber-300 bg-amber-100/80 dark:bg-amber-950/70 border border-amber-900/15 dark:border-amber-500/20 px-2 py-0.5 rounded-md">
+                              {datePlanet}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-stone-600 dark:text-stone-400">
+                          {isTamil ? 'பிறந்த தேதியின் கூட்டுத்தொகை (புறக் குணம், உடனடி இயல்பு)' : 'Day of birth vibration (physical nature & basic temperament)'}
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-[11px] text-stone-600 dark:text-stone-400">
-                      {isTamil ? 'முழு பிறந்த தேதியின் கூட்டுத்தொகை (ஆன்மப் பயணம், விதிப்பயன்)' : 'Full DOB compound sum (soul destiny & ultimate life purpose)'}
+
+                    {/* Card 2: Life Path Number (Destiny) */}
+                    <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-500/10 via-indigo-500/5 to-transparent border border-indigo-500/30 flex items-center gap-4">
+                      <div className="w-14 h-14 rounded-2xl bg-indigo-900 text-indigo-100 flex flex-col items-center justify-center shrink-0 shadow-md">
+                        <span className="text-[9px] uppercase tracking-wider font-semibold opacity-85 leading-tight">
+                          {isTamil ? "உயிர் எண்" : "Destiny No"}
+                        </span>
+                        <span className="text-2xl font-black font-mono leading-none mt-1">
+                          {yearNumVal}
+                        </span>
+                      </div>
+                      <div className="space-y-1 min-w-0">
+                        <div className="text-xs font-bold text-stone-800 dark:text-stone-200 flex items-center gap-1.5 flex-wrap">
+                          <span>{isTamil ? 'வருஷ (உயிர்) எண் - Life Path / Destiny' : 'Life Path Number (Destiny)'}</span>
+                          {yearPlanet && (
+                            <span className="text-[11px] font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-100/80 dark:bg-indigo-950/70 border border-indigo-900/15 dark:border-indigo-500/20 px-2 py-0.5 rounded-md">
+                              {yearPlanet}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-stone-600 dark:text-stone-400">
+                          {isTamil ? 'முழு பிறந்த தேதியின் கூட்டுத்தொகை (ஆன்மப் பயணம், விதிப்பயன்)' : 'Full DOB compound sum (soul destiny & ultimate life purpose)'}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
+                );
+              })()}
 
               {/* Master Numerology Profile Table */}
               <div className="space-y-3">

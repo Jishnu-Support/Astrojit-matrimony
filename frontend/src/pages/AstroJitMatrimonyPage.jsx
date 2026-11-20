@@ -4,10 +4,11 @@ import {
   ExternalLink, ArrowRight, ShieldCheck, Search, Filter, Briefcase, GraduationCap,
   Users, Lock, ChevronRight, ChevronLeft, Plus, Eye, Check, AlertCircle, Bookmark,
   Star, FileText, Camera, RefreshCw, X, MessageSquare, Award, Clock, ArrowLeft,
-  Globe, ChevronDown, Edit3
+  Globe, ChevronDown, Edit3, Sun, Moon
 } from 'lucide-react';
 import { useLang, LANGUAGES } from '../i18n';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { API } from '../api';
 import MatrimonyPortal from '../components/MatrimonyPortal';
 import MatrimonyProfileEditModal from '../components/MatrimonyProfileEditModal';
@@ -17,6 +18,7 @@ import { formatNakshatra, formatRasi, formatDosha, formatMaritalStatus } from '.
 export default function AstroJitMatrimonyPage({ onBackToAstrology }) {
   const { lang, setLanguage, t } = useLang();
   const { user } = useAuth();
+  const { theme, isDark, toggleTheme } = useTheme();
 
   const [checkingProfile, setCheckingProfile] = useState(true);
   const [hasProfile, setHasProfile] = useState(false);
@@ -68,11 +70,11 @@ export default function AstroJitMatrimonyPage({ onBackToAstrology }) {
   const currentLangObj = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-slate-800 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0F0D0C] text-slate-800 dark:text-slate-100 flex flex-col font-sans">
       {/* ========================================================================= */}
       {/* DEDICATED ASTROJIT MATRIMONY FULL-PAGE TOP NAVBAR */}
       {/* ========================================================================= */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-rose-200/80 shadow-xs px-2.5 sm:px-6 py-2.5 sm:py-3">
+      <header className="sticky top-0 z-50 bg-white/95 dark:bg-[#181412]/95 backdrop-blur-md border-b border-rose-200/80 dark:border-rose-900/40 shadow-xs px-2.5 sm:px-6 py-2.5 sm:py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3">
           {/* Brand & Matrimony Logo */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
@@ -163,8 +165,22 @@ export default function AstroJitMatrimonyPage({ onBackToAstrology }) {
             </button>
           </div>
 
-          {/* Right Controls: Back to Astrology + Language */}
+          {/* Right Controls: Theme Toggle + Language + Back to Astrology */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="flex items-center justify-center p-1.5 sm:p-2 rounded-xl bg-white dark:bg-stone-800 hover:bg-slate-50 dark:hover:bg-stone-700 text-slate-700 dark:text-amber-300 border border-slate-200 dark:border-stone-700 transition-colors cursor-pointer"
+              title={isDark ? tr('Switch to Light Mode', 'பகல் முறைக்கு மாறுக') : tr('Switch to Dark Mode', 'இரவு முறைக்கு மாறுக')}
+              aria-label="Toggle Theme"
+            >
+              {isDark ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-slate-600" />
+              )}
+            </button>
+
             {/* Language Switcher */}
             <div className="relative">
               <button

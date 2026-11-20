@@ -10,6 +10,10 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+  html.dark body {
+    background-color: #0F0D0C;
+    color: #F3F4F6;
+  }
 }
 
 /* Hide scrollbar for clean horizontal mobile tabs */
@@ -29,9 +33,15 @@
 ::-webkit-scrollbar-track {
   background: #F4EFE6;
 }
+.dark ::-webkit-scrollbar-track {
+  background: #181412;
+}
 ::-webkit-scrollbar-thumb {
   background: #CBD5E1;
   border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #3F3935;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #F59E0B;

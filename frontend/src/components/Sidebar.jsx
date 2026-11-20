@@ -6,6 +6,7 @@ import {
   ShieldCheck, Moon, Sun, ArrowRight
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { useLang } from '../i18n';
 import Logo from './Logo';
 
@@ -22,6 +23,7 @@ export default function Sidebar({
   currentView
 }) {
   const { user, role, logout } = useAuth();
+  const { theme, isDark, toggleTheme } = useTheme();
   const { lang, t } = useLang();
 
   const tr = (en, ta, kn, hi) => {
@@ -95,12 +97,12 @@ export default function Sidebar({
 
       {/* Main Sidebar Container */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-40 bg-white border-r border-slate-200/90 shadow-lg lg:shadow-xs flex flex-col justify-between transition-all duration-300 ease-in-out ${
+        className={`fixed top-0 bottom-0 left-0 z-40 bg-white dark:bg-[#14100E] border-r border-slate-200/90 dark:border-stone-800 shadow-lg lg:shadow-xs flex flex-col justify-between transition-all duration-300 ease-in-out ${
           isMobileOpen ? 'translate-x-0 w-72' : '-translate-x-full lg:translate-x-0'
         } ${isCollapsed ? 'lg:w-20' : 'lg:w-64'}`}
       >
         {/* Top: Brand Header */}
-        <div className="p-3.5 sm:p-4 border-b border-slate-100 flex items-center justify-between shrink-0">
+        <div className="p-3.5 sm:p-4 border-b border-slate-100 dark:border-stone-800 flex items-center justify-between shrink-0">
           <div className={`flex items-center overflow-hidden ${isCollapsed ? 'justify-center w-full' : ''}`}>
             <Logo
               size={isCollapsed ? 'xs' : 'sm'}
@@ -206,17 +208,42 @@ export default function Sidebar({
             </button>
           </div>
 
-          {/* SECTION 3: SETTINGS */}
-          <div className="space-y-1 pt-2 border-t border-slate-100">
+          {/* SECTION 3: SETTINGS & THEME */}
+          <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-stone-800">
             {!isCollapsed && (
-              <div className="px-2.5 pb-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400">
-                <span>{tr('SETTINGS', 'அமைப்புகள்')}</span>
+              <div className="px-2.5 pb-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-stone-500">
+                <span>{tr('SETTINGS & THEME', 'அமைப்புகள் & காட்சி')}</span>
               </div>
             )}
 
+            {/* Global Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl font-bold text-slate-600 dark:text-stone-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-stone-800 transition-all cursor-pointer group text-left ${
+                isCollapsed ? 'justify-center px-2' : ''
+              }`}
+              title={isCollapsed ? (isDark ? tr('Light Mode', 'பகல் முறை') : tr('Dark Mode', 'இரவு முறை')) : undefined}
+            >
+              {isDark ? (
+                <Sun className="w-4 h-4 text-amber-400 shrink-0" />
+              ) : (
+                <Moon className="w-4 h-4 text-slate-500 group-hover:text-amber-600 shrink-0" />
+              )}
+              {!isCollapsed && (
+                <div className="truncate flex-1">
+                  <span className="truncate block text-xs">
+                    {isDark ? tr('Light Theme', 'பகல் முறை') : tr('Dark Theme', 'இரவு முறை')}
+                  </span>
+                  <span className="text-[10px] text-slate-400 dark:text-stone-500 font-normal truncate block">
+                    {isDark ? tr('Switch to light mode', 'பகல் வண்ண முறைக்கு மாறுக') : tr('Switch to dark mode', 'இரவு வண்ண முறைக்கு மாறுக')}
+                  </span>
+                </div>
+              )}
+            </button>
+
             <button
               onClick={() => { if (onOpenSettings) onOpenSettings(); if (onCloseMobile) onCloseMobile(); }}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all cursor-pointer group text-left ${
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl font-bold text-slate-600 dark:text-stone-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-stone-800 transition-all cursor-pointer group text-left ${
                 isCollapsed ? 'justify-center px-2' : ''
               }`}
               title={isCollapsed ? tr('Settings & Preferences', 'அமைப்புகள்') : undefined}
@@ -224,8 +251,8 @@ export default function Sidebar({
               <Settings className="w-4 h-4 text-slate-500 group-hover:text-amber-600 shrink-0" />
               {!isCollapsed && (
                 <div className="truncate flex-1">
-                  <span className="truncate block">{tr('Preferences', 'விருப்பங்கள்')}</span>
-                  <span className="text-[10px] text-slate-400 font-normal truncate block">
+                  <span className="truncate block text-xs">{tr('Preferences', 'விருப்பங்கள்')}</span>
+                  <span className="text-[10px] text-slate-400 dark:text-stone-500 font-normal truncate block">
                     {tr('Language, Alerts, Security', 'மொழி, அறிவிப்பு, பாதுகாப்பு')}
                   </span>
                 </div>
@@ -235,7 +262,7 @@ export default function Sidebar({
         </div>
 
         {/* Bottom: User Card & Logout */}
-        <div className="p-3 border-t border-slate-200/90 bg-slate-50/70 shrink-0">
+        <div className="p-3 border-t border-slate-200/90 dark:border-stone-800 bg-slate-50/70 dark:bg-stone-900/60 shrink-0">
           <div className={`flex items-center gap-2.5 ${isCollapsed ? 'justify-center' : ''}`}>
             {/* Avatar */}
             <div

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Settings, Globe, Bell, Lock, Shield, Sparkles, Check, X, AlertCircle, KeyRound, Smartphone, Moon, Sun, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { useLang, LANGUAGES } from '../i18n';
 import { API } from '../api';
 
 export default function SettingsModal({ isOpen, onClose }) {
   const { user } = useAuth();
+  const { theme, isDark, setTheme, toggleTheme } = useTheme();
   const { lang, setLanguage, t } = useLang();
 
   const [activeTab, setActiveTab] = useState('language'); // 'language', 'notifications', 'security', 'about'
@@ -109,9 +111,10 @@ export default function SettingsModal({ isOpen, onClose }) {
         </div>
 
         {/* Tab Selector */}
-        <div className="flex items-center gap-1 p-2 bg-slate-100 border-b border-slate-200 overflow-x-auto text-xs shrink-0">
+        <div className="flex items-center gap-1 p-2 bg-slate-100 dark:bg-stone-900 border-b border-slate-200 dark:border-stone-800 overflow-x-auto text-xs shrink-0">
           {[
             { id: 'language', label: tr('Language', 'மொழி'), icon: Globe },
+            { id: 'theme', label: tr('Theme', 'வண்ண முறை'), icon: isDark ? Moon : Sun },
             { id: 'notifications', label: tr('Alerts & WhatsApp', 'அறிவிப்புகள்'), icon: Bell },
             { id: 'security', label: tr('Password & Security', 'பாதுகாப்பு'), icon: Lock },
             { id: 'about', label: tr('System Info', 'தகவல்'), icon: Shield },
@@ -124,11 +127,11 @@ export default function SettingsModal({ isOpen, onClose }) {
                 onClick={() => { setActiveTab(tab.id); setErrorMsg(''); setSuccessMsg(''); }}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold transition-all cursor-pointer whitespace-nowrap ${
                   isActive
-                    ? 'bg-white text-slate-900 shadow-xs border border-slate-200'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white dark:bg-stone-800 text-slate-900 dark:text-amber-300 shadow-xs border border-slate-200 dark:border-stone-700'
+                    : 'text-slate-600 dark:text-stone-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-amber-600' : 'text-slate-400'}`} />
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400'}`} />
                 <span>{tab.label}</span>
               </button>
             );
@@ -188,6 +191,66 @@ export default function SettingsModal({ isOpen, onClose }) {
                     </button>
                   );
                 })}
+              </div>
+            </div>
+          )}
+
+          {/* TAB: THEME PREFERENCES */}
+          {activeTab === 'theme' && (
+            <div className="space-y-4">
+              <p className="text-slate-500 dark:text-stone-400 font-medium text-[11px]">
+                {tr(
+                  'Choose your preferred visual theme for the entire Astrojit platform. Applies across all modules, client intake, and calculation views.',
+                  'அஸ்ட்ரோஜித் தளம் முழுவதற்குமான வண்ண முறையைத் தேர்ந்தெடுக்கவும். அனைத்து திரைகளுக்கும் இது பொருந்தும்.'
+                )}
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <button
+                  type="button"
+                  onClick={() => setTheme('light')}
+                  className={`p-4 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between gap-3 ${
+                    !isDark
+                      ? 'border-amber-600 bg-amber-50/70 shadow-md ring-2 ring-amber-500/20'
+                      : 'border-slate-200 dark:border-stone-700 bg-white dark:bg-stone-800 hover:border-slate-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shadow-xs">
+                      <Sun className="w-5 h-5 text-amber-600" />
+                    </div>
+                    {!isDark && <CheckCircle2 className="w-5 h-5 text-amber-600" />}
+                  </div>
+                  <div>
+                    <strong className="block text-slate-900 dark:text-white text-xs">{tr('Light Mode', 'பகல் முறை')}</strong>
+                    <span className="text-[11px] text-slate-500 dark:text-stone-400 block mt-0.5">
+                      {tr('Vedic parchment & bright aesthetic', 'தெளிவான வெளிச்ச முறை')}
+                    </span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setTheme('dark')}
+                  className={`p-4 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between gap-3 ${
+                    isDark
+                      ? 'border-amber-500 bg-amber-950/40 shadow-md ring-2 ring-amber-500/20'
+                      : 'border-slate-200 dark:border-stone-700 bg-white dark:bg-stone-800 hover:border-slate-300'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="w-9 h-9 rounded-xl bg-indigo-950 text-indigo-300 flex items-center justify-center shadow-xs">
+                      <Moon className="w-5 h-5 text-indigo-400" />
+                    </div>
+                    {isDark && <CheckCircle2 className="w-5 h-5 text-amber-400" />}
+                  </div>
+                  <div>
+                    <strong className="block text-slate-900 dark:text-white text-xs">{tr('Dark Mode', 'இரவு முறை')}</strong>
+                    <span className="text-[11px] text-slate-500 dark:text-stone-400 block mt-0.5">
+                      {tr('Comfortable night reading experience', 'இரவு பார்வைக்கான கருப்பு முறை')}
+                    </span>
+                  </div>
+                </button>
               </div>
             </div>
           )}

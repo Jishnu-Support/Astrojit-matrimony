@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LanguageProvider, useLang } from './i18n';
 import Navbar from './components/Navbar';
@@ -63,9 +64,9 @@ function AppContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FBF8F1] flex flex-col items-center justify-center text-slate-700">
+      <div className="min-h-screen bg-[#FBF8F1] dark:bg-[#0F0D0C] flex flex-col items-center justify-center text-slate-700 dark:text-slate-300">
         <Logo size="lg" showTagline={false} className="animate-pulse mb-3" />
-        <p className="text-xs text-amber-800 font-bold tracking-wider uppercase">Loading Astrojit...</p>
+        <p className="text-xs text-amber-800 dark:text-amber-400 font-bold tracking-wider uppercase">Loading Astrojit...</p>
       </div>
     );
   }
@@ -77,7 +78,7 @@ function AppContent() {
 
   if (!user || !role) {
     return (
-      <div className="min-h-screen bg-[#FBF8F1] text-slate-800">
+      <div className="min-h-screen bg-[#FBF8F1] dark:bg-[#0F0D0C] text-slate-800 dark:text-slate-100">
         <Navbar onOpenMatrimony={openMatrimony} />
         <main className="max-w-7xl mx-auto px-3 sm:px-6 py-6 sm:py-8">
           {authView === 'login' ? (
@@ -99,7 +100,7 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FBF8F1] text-slate-800 flex">
+    <div className="min-h-screen bg-[#FBF8F1] dark:bg-[#0F0D0C] text-slate-800 dark:text-slate-100 flex">
       {/* Sidebar Navigation */}
       <Sidebar
         isMobileOpen={isMobileSidebarOpen}
@@ -192,11 +193,13 @@ class ErrorBoundary extends React.Component {
 export default function App() {
   return (
     <ErrorBoundary>
-      <LanguageProvider>
-        <AuthProvider>
-          <AppContent />
-        </AuthProvider>
-      </LanguageProvider>
+      <ThemeProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <AppContent />
+          </AuthProvider>
+        </LanguageProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }
