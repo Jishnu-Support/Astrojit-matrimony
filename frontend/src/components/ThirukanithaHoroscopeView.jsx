@@ -138,41 +138,69 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
         nativePlace: initialData.nativePlace || '',
         gender: initialData.gender || 'male'
       });
+
+      if (isNowEmpty) {
+        setOpenSections({
+          1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false, 10: false,
+          11: false, 12: false, 13: false, 14: false, 15: false, 16: false, 17: false, 18: false, 19: false, 20: false
+        });
+      }
     }
   }, [initialData]);
+
+  // Check if birth details intake is empty (requires both Name and DOB)
+  const isBirthDetailsEmpty = !form.name?.trim() || !form.dob?.trim();
+  const [permissionNotice, setPermissionNotice] = useState(null);
 
   const [activeChartKey, setActiveChartKey] = useState('D1');
   const [dasavargaMode, setDasavargaMode] = useState('bala'); // 'bala' | 'rasi' | 'shodashavarga'
   const [expandedMdIndex, setExpandedMdIndex] = useState(0);
   const [expandedBhuktiKey, setExpandedBhuktiKey] = useState(null);
   const [selectedShodhanaPlanet, setSelectedShodhanaPlanet] = useState('sun');
-  const [openSections, setOpenSections] = useState({
-    1: true,
-    2: true,
-    3: true,
-    4: true,
-    5: true,
-    6: true,
-    7: true,
-    8: true,
-    9: true,
-    10: true,
-    11: true,
-    12: true,
-    13: true,
-    14: true,
-    15: true,
-    16: true,
-    17: true,
-    18: true,
-    19: true
+
+  const [openSections, setOpenSections] = useState(() => {
+    const isInitEmpty = !initialData?.name?.trim() || !initialData?.dob?.trim();
+    if (isInitEmpty) {
+      return {
+        1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false, 10: false,
+        11: false, 12: false, 13: false, 14: false, 15: false, 16: false, 17: false, 18: false, 19: false, 20: false
+      };
+    }
+    return {
+      1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true,
+      11: true, 12: true, 13: true, 14: true, 15: true, 16: true, 17: true, 18: true, 19: true, 20: true
+    };
   });
 
+  const notifyDetailsRequired = () => {
+    const msg = isTamil
+      ? '⚠️ பிறப்பு விவரங்கள் காலியாக உள்ளன! தயவுசெய்து மேலே உள்ள படிவத்தில் பெயர் மற்றும் பிறந்த தேதி உள்ளிட்ட விவரங்களை பூர்த்தி செய்து "ஜாதகம் கணிக்கவும்" பொத்தானை அழுத்தவும். அதன் பிறகே 20 பிரிவுகளும் திறக்கப்படும்.'
+      : '⚠️ Birth Details are empty! Please enter Name & Date of Birth in the intake form above and calculate to unlock and view the 20 sections.';
+    setPermissionNotice(msg);
+    const intakeCard = document.getElementById('birth-intake-card') || document.getElementById('birth-intake-form');
+    if (intakeCard) {
+      intakeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      intakeCard.classList.add('ring-4', 'ring-rose-500/70', 'transition-all');
+      setTimeout(() => {
+        intakeCard.classList.remove('ring-4', 'ring-rose-500/70');
+      }, 2500);
+    }
+    setTimeout(() => setPermissionNotice(null), 5000);
+  };
+
   const toggleSection = (secNum) => {
+    if (isBirthDetailsEmpty) {
+      notifyDetailsRequired();
+      return;
+    }
     setOpenSections(prev => ({ ...prev, [secNum]: !prev[secNum] }));
   };
 
   const expandAllSections = () => {
+    if (isBirthDetailsEmpty) {
+      notifyDetailsRequired();
+      return;
+    }
     setOpenSections({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true, 11: true, 12: true, 13: true, 14: true, 15: true, 16: true, 17: true, 18: true, 19: true, 20: true });
   };
 
@@ -181,11 +209,39 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
   };
 
   const jumpToSection = (secNum) => {
+    if (isBirthDetailsEmpty) {
+      notifyDetailsRequired();
+      return;
+    }
     setOpenSections(prev => ({ ...prev, [secNum]: true }));
     setTimeout(() => {
       const el = document.getElementById(`horoscope-section-${secNum}`);
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 60);
+  };
+
+  const renderSectionBadge = (secNum, customBadge = null) => {
+    if (isBirthDetailsEmpty) {
+      return (
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-100/90 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/60 px-2 py-0.5 rounded-md flex items-center gap-1 shadow-2xs">
+            <span>🔒</span>
+            <span className="hidden sm:inline">{isTamil ? 'விவரங்கள் தேவை' : 'Details Required'}</span>
+          </span>
+          <span className="w-6 h-6 rounded-lg bg-amber-900/10 dark:bg-stone-800 text-stone-500 dark:text-stone-400 flex items-center justify-center text-xs">
+            🔒
+          </span>
+        </div>
+      );
+    }
+    return (
+      <div className="flex items-center gap-2.5 shrink-0">
+        {customBadge}
+        <span className={`w-6 h-6 rounded-lg bg-amber-900/10 dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 flex items-center justify-center text-xs transition-transform duration-200 ${openSections[secNum] ? 'rotate-180' : 'rotate-0'}`}>
+          ▼
+        </span>
+      </div>
+    );
   };
   const [horaViewTab, setHoraViewTab] = useState('birth'); // 'birth' | 'today'
   const [horaDayNightFilter, setHoraDayNightFilter] = useState('all'); // 'all' | 'day' | 'night'
@@ -363,13 +419,20 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               <span>{isTamil ? 'பிரிவுக்குச் செல்ல (Drop List):' : 'Jump to Section:'}</span>
             </span>
             <select
+              disabled={isBirthDetailsEmpty}
               onChange={(e) => {
                 const val = parseInt(e.target.value, 10);
                 if (val) jumpToSection(val);
               }}
-              className="bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-1.5 text-xs font-bold text-stone-800 dark:text-stone-200 focus:outline-none focus:border-[#7A1A22] cursor-pointer w-full max-w-sm shadow-2xs"
+              className={`bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-1.5 text-xs font-bold text-stone-800 dark:text-stone-200 focus:outline-none focus:border-[#7A1A22] w-full max-w-sm shadow-2xs ${
+                isBirthDetailsEmpty ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
+              }`}
             >
-              <option value="">{isTamil ? '-- 20 பிரிவுகள் பட்டியல் (தேர்வு செய்க) --' : '-- Select Section to Jump (1 to 20) --'}</option>
+              <option value="">
+                {isBirthDetailsEmpty
+                  ? (isTamil ? '🔒 20 பிரிவுகள் (விவரங்கள் உள்ளிட்ட பின் திறக்கப்படும்)' : '🔒 20 Sections (Enter details above to unlock)')
+                  : (isTamil ? '-- 20 பிரிவுகள் பட்டியல் (தேர்வு செய்க) --' : '-- Select Section to Jump (1 to 20) --')}
+              </option>
               <option value="1">{isTamil ? '1. ஜனன விவரக் குறிப்பு' : '1. Birth Summary Details'}</option>
               <option value="2">{isTamil ? '2. வர்க்கச் சக்கரங்கள் (16 Shodashavarga Charts)' : '2. Divisional Charts (16 Shodashavarga)'}</option>
               <option value="3">{isTamil ? '3. கிரக நிலைகள் அட்டவணை (நிராயண)' : '3. Nirayana Planetary Positions Table'}</option>
@@ -419,9 +482,12 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
             <button
               type="button"
               onClick={expandAllSections}
-              className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-100 hover:bg-amber-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-[#7A1A22] dark:text-amber-300 transition-colors cursor-pointer flex items-center gap-1 shadow-2xs"
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-100 hover:bg-amber-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-[#7A1A22] dark:text-amber-300 transition-colors cursor-pointer flex items-center gap-1 shadow-2xs ${
+                isBirthDetailsEmpty ? 'opacity-60' : ''
+              }`}
+              title={isBirthDetailsEmpty ? (isTamil ? 'பிறப்பு விவரங்கள் தேவை' : 'Birth Details Required') : ''}
             >
-              <span>▼</span>
+              <span>{isBirthDetailsEmpty ? '🔒' : '▼'}</span>
               <span>{isTamil ? 'அனைத்தும் விரி' : 'Expand All'}</span>
             </button>
             <button
@@ -464,6 +530,42 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
           </div>
         </div>
 
+        {/* Floating Notification Toast when section clicked without entering details */}
+        {permissionNotice && (
+          <div className="bg-[#7A1A22] text-amber-100 p-3.5 sm:p-4 rounded-2xl shadow-lg border-2 border-amber-400 font-bold text-xs sm:text-sm flex items-center justify-between gap-3 animate-pulse">
+            <div className="flex items-center gap-2.5">
+              <span className="text-xl">🔒</span>
+              <span>{permissionNotice}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setPermissionNotice(null)}
+              className="text-amber-200 hover:text-white text-base px-2 py-0.5 cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
+        {/* Empty Birth Details Lock Notice Banner */}
+        {isBirthDetailsEmpty && (
+          <div className="bg-amber-50/90 dark:bg-[#1F1815] border-2 border-dashed border-amber-400/80 dark:border-amber-600/50 rounded-2xl p-4 sm:p-5 text-center shadow-xs space-y-2">
+            <div className="w-10 h-10 mx-auto rounded-full bg-amber-200/70 dark:bg-amber-900/50 text-[#7A1A22] dark:text-amber-300 flex items-center justify-center text-xl shadow-xs">
+              🔒
+            </div>
+            <h3 className="text-sm sm:text-base font-black text-[#7A1A22] dark:text-amber-300">
+              {isTamil
+                ? 'பிறப்பு விவரப் படிவத்தில் விவரங்களை உள்ளிட்ட பிறகே இப்பிரிவுகள் திறக்கப்படும்'
+                : 'Enter Birth Details in the Form Above to Unlock the 20 Sections'}
+            </h3>
+            <p className="text-xs text-stone-600 dark:text-stone-300 max-w-xl mx-auto leading-relaxed">
+              {isTamil
+                ? 'பிறப்பு விவரப் படிவம் தற்போது காலியாக உள்ளது. கீழே உள்ள 20 தலைப்புகளின் பட்டியல் மட்டுமே காட்டப்படுகிறது (அனைத்துப் பிரிவுகளும் சுருக்கப்பட்டுள்ளன). மேலே உள்ள படிவத்தில் பெயர் மற்றும் பிறந்த தேதியை உள்ளிட்ட பின்னரே இப்பிரிவுகளை திறக்க அனுமதி உண்டு.'
+                : 'Birth details intake is currently empty. The 20 section titles are displayed below in collapsed mode. Please enter name and date of birth in the intake form above and calculate to unlock and view these sections.'}
+            </p>
+          </div>
+        )}
+
 
         {/* ======================================================== */}
         {/* ITEM 1: 1. ஜனன விவரக் குறிப்பு (1. Birth Summary Details) */}
@@ -490,12 +592,9 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 shrink-0">
+            {renderSectionBadge(1, (
               <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">{isTamil ? RASHIS[horoscope.summary.lagnaRasi]?.ta : RASHIS[horoscope.summary.lagnaRasi]?.en} / {isTamil ? RASHIS[horoscope.summary.moonRasi]?.ta : RASHIS[horoscope.summary.moonRasi]?.en}</span>
-              <span className={`w-6 h-6 rounded-lg bg-amber-900/10 dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 flex items-center justify-center text-xs transition-transform duration-200 ${openSections[1] ? 'rotate-180' : 'rotate-0'}`}>
-                ▼
-              </span>
-            </div>
+            ))}
           </button>
 
           {/* Collapsible Dropdown Content */}
@@ -772,12 +871,9 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 shrink-0">
+            {renderSectionBadge(2, (
               <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">{activeChartKey} ({isTamil ? (SHODASHAVARGA_DEFS.find(d => d.key === activeChartKey)?.nameTa || '') : activeChartKey})</span>
-              <span className={`w-6 h-6 rounded-lg bg-amber-900/10 dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 flex items-center justify-center text-xs transition-transform duration-200 ${openSections[2] ? 'rotate-180' : 'rotate-0'}`}>
-                ▼
-              </span>
-            </div>
+            ))}
           </button>
 
           {/* Collapsible Dropdown Content */}
@@ -898,12 +994,9 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 shrink-0">
+            {renderSectionBadge(3, (
               <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">11 {isTamil ? 'கிரக நிலைகள்' : 'Planets'}</span>
-              <span className={`w-6 h-6 rounded-lg bg-amber-900/10 dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 flex items-center justify-center text-xs transition-transform duration-200 ${openSections[3] ? 'rotate-180' : 'rotate-0'}`}>
-                ▼
-              </span>
-            </div>
+            ))}
           </button>
 
           {/* Collapsible Dropdown Content */}
@@ -1006,12 +1099,9 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 shrink-0">
+            {renderSectionBadge(4, (
               <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">{isTamil ? horoscope.summary.dashaBalance?.textTa : horoscope.summary.dashaBalance?.textEn}</span>
-              <span className={`w-6 h-6 rounded-lg bg-amber-900/10 dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 flex items-center justify-center text-xs transition-transform duration-200 ${openSections[4] ? 'rotate-180' : 'rotate-0'}`}>
-                ▼
-              </span>
-            </div>
+            ))}
           </button>
 
           {/* Collapsible Dropdown Content */}
@@ -1444,12 +1534,9 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 shrink-0">
+            {renderSectionBadge(5, (
               <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">12 {isTamil ? 'பாவங்கள்' : 'Bhavas'}</span>
-              <span className={`w-6 h-6 rounded-lg bg-amber-900/10 dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 flex items-center justify-center text-xs transition-transform duration-200 ${openSections[5] ? 'rotate-180' : 'rotate-0'}`}>
-                ▼
-              </span>
-            </div>
+            ))}
           </button>
 
           {/* Collapsible Dropdown Content */}
@@ -3859,14 +3946,11 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 shrink-0">
+            {renderSectionBadge(13, (
               <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">
                 {isTamil ? '4 முக்கிய பகுதிகள்' : '4 Major Sections'}
               </span>
-              <span className={`text-stone-400 dark:text-stone-500 transition-transform duration-200 ${openSections[13] ? 'rotate-180' : ''}`}>
-                ▼
-              </span>
-            </div>
+            ))}
           </button>
 
           {/* Section Body */}
@@ -4454,14 +4538,11 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 shrink-0">
+            {renderSectionBadge(14, (
               <span className="px-2.5 py-1 rounded-lg bg-indigo-100/70 dark:bg-indigo-950/40 text-[11px] font-bold text-indigo-900 dark:text-indigo-300">
                 {isTamil ? '2 முக்கிய பகுதிகள்' : '2 Major Tables'}
               </span>
-              <span className={`text-stone-400 dark:text-stone-500 transition-transform duration-200 ${openSections[14] ? 'rotate-180' : ''}`}>
-                ▼
-              </span>
-            </div>
+            ))}
           </button>
 
           {/* Section Body */}
@@ -4818,14 +4899,11 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 shrink-0">
+            {renderSectionBadge(15, (
               <span className="px-2.5 py-1 rounded-lg bg-teal-100/70 dark:bg-teal-950/40 text-[11px] font-bold text-teal-900 dark:text-teal-300">
                 {isTamil ? 'சித்தர் பஞ்ச பட்சி' : 'Siddha Tradition'}
               </span>
-              <span className={`text-stone-400 dark:text-stone-500 transition-transform duration-200 ${openSections[15] ? 'rotate-180' : ''}`}>
-                ▼
-              </span>
-            </div>
+            ))}
           </button>
 
           {/* Section Body */}
@@ -5194,14 +5272,11 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 shrink-0">
+            {renderSectionBadge(16, (
               <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">
                 {isTamil ? '2 முக்கிய பகுதிகள்' : '2 Major Sections'}
               </span>
-              <span className={`text-stone-400 dark:text-stone-500 transition-transform duration-200 ${openSections[16] ? 'rotate-180' : ''}`}>
-                ▼
-              </span>
-            </div>
+            ))}
           </button>
 
           {/* Section Body */}
@@ -5501,10 +5576,17 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               </div>
             </div>
             <div className="flex items-center gap-2 text-stone-400">
-              <span className="text-[10px] hidden sm:inline-block px-2 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-500 font-mono">
-                {openSections[17] ? (isTamil ? 'விரிவாக்கப்பட்டது' : 'Expanded') : (isTamil ? 'சுருக்கப்பட்டது' : 'Collapsed')}
-              </span>
-              <span className="text-lg">{openSections[17] ? '▲' : '▼'}</span>
+              {isBirthDetailsEmpty ? (
+                <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-100/90 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/60 px-2 py-0.5 rounded-md flex items-center gap-1 shadow-2xs">
+                  <span>🔒</span>
+                  <span className="hidden sm:inline">{isTamil ? 'விவரங்கள் தேவை' : 'Details Required'}</span>
+                </span>
+              ) : (
+                <span className="text-[10px] hidden sm:inline-block px-2 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-500 font-mono">
+                  {openSections[17] ? (isTamil ? 'விரிவாக்கப்பட்டது' : 'Expanded') : (isTamil ? 'சுருக்கப்பட்டது' : 'Collapsed')}
+                </span>
+              )}
+              <span className="text-lg">{isBirthDetailsEmpty ? '🔒' : (openSections[17] ? '▲' : '▼')}</span>
             </div>
           </button>
 
@@ -5758,10 +5840,17 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               </div>
             </div>
             <div className="flex items-center gap-2 text-stone-400">
-              <span className="text-[10px] hidden sm:inline-block px-2 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-500 font-mono">
-                {openSections[18] ? (isTamil ? 'விரிவாக்கப்பட்டது' : 'Expanded') : (isTamil ? 'சுருக்கப்பட்டது' : 'Collapsed')}
-              </span>
-              <span className="text-lg">{openSections[18] ? '▲' : '▼'}</span>
+              {isBirthDetailsEmpty ? (
+                <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-100/90 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/60 px-2 py-0.5 rounded-md flex items-center gap-1 shadow-2xs">
+                  <span>🔒</span>
+                  <span className="hidden sm:inline">{isTamil ? 'விவரங்கள் தேவை' : 'Details Required'}</span>
+                </span>
+              ) : (
+                <span className="text-[10px] hidden sm:inline-block px-2 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-500 font-mono">
+                  {openSections[18] ? (isTamil ? 'விரிவாக்கப்பட்டது' : 'Expanded') : (isTamil ? 'சுருக்கப்பட்டது' : 'Collapsed')}
+                </span>
+              )}
+              <span className="text-lg">{isBirthDetailsEmpty ? '🔒' : (openSections[18] ? '▲' : '▼')}</span>
             </div>
           </button>
 
@@ -5996,13 +6085,21 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => toggleSection(19)}
-              className="p-1 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500 transition-colors"
-            >
-              {openSections[19] ? '▲' : '▼'}
-            </button>
+            <div className="flex items-center gap-2">
+              {isBirthDetailsEmpty && (
+                <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-100/90 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/60 px-2 py-0.5 rounded-md flex items-center gap-1 shadow-2xs">
+                  <span>🔒</span>
+                  <span>{isTamil ? 'விவரங்கள் தேவை' : 'Details Required'}</span>
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => toggleSection(19)}
+                className="p-1 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500 transition-colors cursor-pointer"
+              >
+                {isBirthDetailsEmpty ? '🔒' : (openSections[19] ? '▲' : '▼')}
+              </button>
+            </div>
           </div>
 
           {openSections[19] && (
@@ -6201,13 +6298,21 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => toggleSection(20)}
-              className="p-1 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500 transition-colors"
-            >
-              {openSections[20] ? '▲' : '▼'}
-            </button>
+            <div className="flex items-center gap-2">
+              {isBirthDetailsEmpty && (
+                <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-100/90 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/60 px-2 py-0.5 rounded-md flex items-center gap-1 shadow-2xs">
+                  <span>🔒</span>
+                  <span>{isTamil ? 'விவரங்கள் தேவை' : 'Details Required'}</span>
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => toggleSection(20)}
+                className="p-1 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500 transition-colors cursor-pointer"
+              >
+                {isBirthDetailsEmpty ? '🔒' : (openSections[20] ? '▲' : '▼')}
+              </button>
+            </div>
           </div>
 
           {openSections[20] && (

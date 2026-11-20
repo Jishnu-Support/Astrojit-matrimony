@@ -303,12 +303,22 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
   // Calculate & Refresh Horoscope
   const handleCalculate = (e) => {
     if (e) e.preventDefault();
+    if (!name.trim() || !dob.trim()) {
+      setActionFeedback({
+        type: 'error',
+        msg: isTa
+          ? 'தயவுசெய்து வாடிக்கையாளர் பெயர் மற்றும் பிறந்த தேதியை உள்ளிடவும்.'
+          : 'Please enter both Client Name and Date of Birth to compute horoscope.'
+      });
+      setTimeout(() => setActionFeedback(null), 4000);
+      return;
+    }
     const time24 = to24HourTime(timeState.hour, timeState.minute, timeState.second, timeState.period);
     const time12 = `${timeState.hour}:${timeState.minute}:${timeState.second} ${timeState.period}`;
 
     const updatedData = {
-      name: name || 'Native',
-      dob,
+      name: name.trim(),
+      dob: dob.trim(),
       dobTime: time24,
       dobTime12: time12,
       country,
@@ -527,7 +537,7 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
       {/* ======================================================== */}
       {/* 2. BIRTH DETAILS INTAKE FORM WITH PREVIOUS CLIENT SEARCH */}
       {/* ======================================================== */}
-      <div className="bg-white/95 dark:bg-[#251E1A] p-4 sm:p-6 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4 no-print text-xs">
+      <div id="birth-intake-card" className="bg-white/95 dark:bg-[#251E1A] p-4 sm:p-6 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4 no-print text-xs">
         {/* Header & Client Lookup Strip */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-amber-900/10 dark:border-amber-500/15 pb-3">
           <div className="flex items-center gap-2">
