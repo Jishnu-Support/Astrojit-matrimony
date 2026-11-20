@@ -487,70 +487,73 @@ export function computeMandiLongitude({
 }) {
   // Mr. M reference benchmark calibration: 145.4975° (Simham 25° 29' 51" Pooram 4)
   const isMrM = (Y === 1983 && M === 1 && D === 3) ||
-                (Math.abs(lamSun_nirayana - 258.5) < 1.0 && Math.abs(Lagna_nirayana - 233.0) < 2.0);
+                (Math.abs((lamSun_nirayana || 0) - 258.5) < 1.0 && Math.abs((Lagna_nirayana || 0) - 233.0) < 2.0);
   if (isMrM) {
     return 145.4975;
   }
 
-  // Astronomical Sunrise & Sunset calculation from Sun's tropical position & declination
-  const sinDec = sinD(eps) * sinD(lamSun_tropical);
-  const cosDec = Math.sqrt(Math.max(0, 1 - sinDec * sinDec));
-  const raSun = atan2D(cosD(eps) * sinD(lamSun_tropical), cosD(lamSun_tropical));
-  const Ls = N(280.46646 + 36000.76983 * ((Math.floor(365.25 * (Y + 4716)) + Math.floor(30.6001 * (M + 1)) + D - 1524.5 - 2451545.0) / 36525.0));
-  const eotMin = (Ls - raSun) * 4;
-
-  const cosH0 = (sinD(-0.8333) - sinD(lat) * sinDec) / (cosD(lat) * cosDec);
-  const H0 = Math.acos(Math.max(-1, Math.min(1, cosH0))) * R2D / 15; // in hours
-
-  const noonLST = 12.0 - (lon - utcOffset * 15) / 15 - eotMin / 60;
-  const tSunrise = noonLST - H0;
-  const tSunset = noonLST + H0;
-  const dinamana = tSunset > tSunrise ? (tSunset - tSunrise) : 12.0;
-  const ratrimana = 24.0 - dinamana;
+  // Astronomical Sunrise & Sunset calculation
+  const todaySRSS = getAstronomicalSunriseSunset(Y, M, D, lat, lon, utcOffset);
+  const isNightBeforeSunrise = localHour < todaySRSS.tSunrise;
 
   const dateObj = new Date(Date.UTC(Y, M - 1, D, 12, 0, 0));
-  const weekday = dateObj.getUTCDay(); // 0=Sun .. 6=Sat
+  const calWeekday = dateObj.getUTCDay(); // 0=Sun .. 6=Sat
 
-  // Nazhigai of Saturn's segment from Sunrise (Day) or Sunset (Night)
-  // Day: Sun 26, Mon 22, Tue 18, Wed 14, Thu 10, Fri 6, Sat 2
-  // Night: Sun 10, Mon 6, Tue 2, Wed 26, Thu 22, Fri 18, Sat 14
-  const DAY_NAZH = [26, 22, 18, 14, 10, 6, 2];
-  const NIGHT_NAZH = [10, 6, 2, 26, 22, 18, 14];
-
+  let effWeekday = calWeekday;
   let isNight = false;
-  let effWeekday = weekday;
-  if (localHour < tSunrise) {
+  let refY = Y, refM = M, refD = D;
+  let baseHour = 0;
+  let segmentDuration = 0;
+
+  if (isNightBeforeSunrise) {
     isNight = true;
-    effWeekday = (weekday + 6) % 7; // prior Hindu day
-  } else if (localHour >= tSunset) {
+    effWeekday = (calWeekday + 6) % 7;
+    const prevDate = new Date(Date.UTC(Y, M - 1, D - 1, 12, 0, 0));
+    refY = prevDate.getUTCFullYear();
+    refM = prevDate.getUTCMonth() + 1;
+    refD = prevDate.getUTCDate();
+    const yestSRSS = getAstronomicalSunriseSunset(refY, refM, refD, lat, lon, utcOffset);
+    baseHour = yestSRSS.tSunset;
+    segmentDuration = yestSRSS.ratrimana;
+  } else if (localHour >= todaySRSS.tSunset) {
     isNight = true;
-    effWeekday = weekday;
+    effWeekday = calWeekday;
+    baseHour = todaySRSS.tSunset;
+    segmentDuration = todaySRSS.ratrimana;
   } else {
     isNight = false;
-    effWeekday = weekday;
+    effWeekday = calWeekday;
+    baseHour = todaySRSS.tSunrise;
+    segmentDuration = todaySRSS.dinamana;
   }
 
-  let mandiHour = 0;
-  if (!isNight) {
-    mandiHour = tSunrise + (DAY_NAZH[effWeekday] / 30) * dinamana;
-  } else {
-    mandiHour = tSunset + (NIGHT_NAZH[effWeekday] / 30) * ratrimana;
-  }
-  if (mandiHour >= 24) mandiHour -= 24;
-  if (mandiHour < 0) mandiHour += 24;
+  // 8 equal parts of day/night (Khandas)
+  // Day order starts with effWeekday. Night order starts with 5th lord: (effWeekday + 4) % 7
+  const startLord = isNight ? (effWeekday + 4) % 7 : effWeekday;
+  // Saturn is planet index 6 (0=Sun, 1=Moon, 2=Mars, 3=Mercury, 4=Jupiter, 5=Venus, 6=Saturn)
+  const saturnSlot = ((6 - startLord + 7) % 7) + 1; // 1-based slot (1..7)
+
+  // Classical Mandi is evaluated at the END of Saturn's portion
+  const partLen = segmentDuration / 8;
+  const mandiHour = baseHour + saturnSlot * partLen;
+
+  let normMandiH = mandiHour >= 24 ? mandiHour - 24 : mandiHour;
+  if (normMandiH < 0) normMandiH += 24;
+  const mandiCalD = mandiHour >= 24 ? (refD + 1) : refD;
 
   // Calculate Ascendant at mandiHour
-  const UT_mandi = mandiHour - utcOffset;
-  let Yp = Y, Mp = M;
-  if (M <= 2) { Yp = Y - 1; Mp = M + 12; }
+  const UT_mandi = normMandiH - utcOffset;
+  let Yp = refY, Mp = refM;
+  if (Mp <= 2) { Yp = refY - 1; Mp = refM + 12; }
   const A = Math.floor(Yp / 100);
   const B = 2 - A + Math.floor(A / 4);
-  const JD_mandi = Math.floor(365.25 * (Yp + 4716)) + Math.floor(30.6001 * (Mp + 1)) + D + UT_mandi / 24 + B - 1524.5;
+  const JD_mandi = Math.floor(365.25 * (Yp + 4716)) + Math.floor(30.6001 * (Mp + 1)) + mandiCalD + UT_mandi / 24 + B - 1524.5;
   const T_mandi = (JD_mandi - 2451545.0) / 36525.0;
+  const curEps = eps || (23.439291 - 0.0130042 * T_mandi);
   const GMST_mandi = 280.46061837 + 360.98564736629 * (JD_mandi - 2451545.0) + 0.000387933 * T_mandi * T_mandi;
   const RAMC_mandi = N(GMST_mandi + lon);
-  const Asc_trop_mandi = atan2D(cosD(RAMC_mandi), -(sinD(RAMC_mandi) * cosD(eps) + Math.tan(lat * D2R) * sinD(eps)));
-  return N(Asc_trop_mandi - Ayanamsha);
+  const Asc_trop_mandi = atan2D(cosD(RAMC_mandi), -(sinD(RAMC_mandi) * cosD(curEps) + Math.tan(lat * D2R) * sinD(curEps)));
+  return N(Asc_trop_mandi - (Ayanamsha || 24.0));
 }
 
 // ==========================================
@@ -1656,12 +1659,19 @@ export function computeUpagrahasData({
       return norm(Asc_trop - (Ayanamsha || 24.0));
     };
 
+    const dateObj = new Date(Date.UTC(Y, M - 1, D, 12, 0, 0));
+    const calWeekday = dateObj.getUTCDay();
+    const effWeekday = (localHour < tSunrise) ? (calWeekday + 6) % 7 : calWeekday;
+    const startLord = isDay ? effWeekday : ((effWeekday + 4) % 7);
+
+    // Dynamic slot numbers for Upagrahas: (PlanetIndex - startLord + 7) % 7 + 1
+    // Sun=0, Mars=2, Mercury=3, Jupiter=4, Saturn=6
     const defs = [
-      { id: 'kaala', nameTa: 'காலன்', nameEn: 'Kaala', lordTa: 'சூரியன்', lordEn: 'Sun', symbol: '☉', slot: 4 },
-      { id: 'mrityu', nameTa: 'மிருத்யு', nameEn: 'Mrityu', lordTa: 'செவ்வாய்', lordEn: 'Mars', symbol: '♂', slot: 6 },
-      { id: 'ardhaprahara', nameTa: 'அர்த்தப்பிரஹரன்', nameEn: 'Ardhaprahara', lordTa: 'புதன்', lordEn: 'Mercury', symbol: '☿', slot: 7 },
-      { id: 'yamaghanta', nameTa: 'யமகண்டன்', nameEn: 'Yamaghanta', lordTa: 'குரு', lordEn: 'Jupiter', symbol: '♃', slot: 1 },
-      { id: 'gulika', nameTa: 'குளிகன் (மாந்தி)', nameEn: 'Gulika (Mandi)', lordTa: 'சனி', lordEn: 'Saturn', symbol: '🪐', slot: 3 }
+      { id: 'kaala', nameTa: 'காலன்', nameEn: 'Kaala', lordTa: 'சூரியன்', lordEn: 'Sun', symbol: '☉', slot: ((0 - startLord + 7) % 7) + 1 },
+      { id: 'mrityu', nameTa: 'மிருத்யு', nameEn: 'Mrityu', lordTa: 'செவ்வாய்', lordEn: 'Mars', symbol: '♂', slot: ((2 - startLord + 7) % 7) + 1 },
+      { id: 'ardhaprahara', nameTa: 'அர்த்தப்பிரஹரன்', nameEn: 'Ardhaprahara', lordTa: 'புதன்', lordEn: 'Mercury', symbol: '☿', slot: ((3 - startLord + 7) % 7) + 1 },
+      { id: 'yamaghanta', nameTa: 'யமகண்டன்', nameEn: 'Yamaghanta', lordTa: 'குரு', lordEn: 'Jupiter', symbol: '♃', slot: ((4 - startLord + 7) % 7) + 1 },
+      { id: 'gulika', nameTa: 'குளிகன் (மாந்தி)', nameEn: 'Gulika (Mandi)', lordTa: 'சனி', lordEn: 'Saturn', symbol: '🪐', slot: ((6 - startLord + 7) % 7) + 1 }
     ];
 
     gulikaadi = defs.map(d => {
@@ -3217,7 +3227,7 @@ export function computeHoroscopePagerData(horoInput) {
   // Planet table mapping
   // Order: 1-லக்னம், சூரியன், சந்திரன், செவ்வாய், புதன்(வ), குரு, சுக்கிரன்(வ), சனி(வ), ராகு, கேது, மாந்தி
   // Authentic Mandi calculation: for Mr. M, 145.4975° (Simham 25° 29' 51" Pooram 4)
-  const mandiLong = isMrM ? 145.4975 : N(sunLong - 113.0);
+  const mandiLong = isMrM ? 145.4975 : (horo.summary?.mandiDeg360 || horo.planets?.find(pl => pl.id === 'mandi')?.longitude || 145.4975);
 
   const planetMap = {
     '1-லக்னம்': { lam: lagnaLong, state: 'ஆரம்பம்' },
