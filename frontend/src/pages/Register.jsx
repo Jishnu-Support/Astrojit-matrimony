@@ -1,7 +1,26 @@
 import React, { useState } from 'react';
-import { User, Compass, Store, Shield, Phone, Lock, Calendar, Clock, MapPin, Building2, UserCheck, Sparkles, ArrowLeft } from 'lucide-react';
+import {
+  User,
+  Compass,
+  Store,
+  Shield,
+  Phone,
+  Lock,
+  Calendar,
+  Clock,
+  MapPin,
+  Building2,
+  UserCheck,
+  Sparkles,
+  ArrowLeft,
+  KeyRound,
+  CheckCircle2,
+  AlertCircle
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Logo from '../components/Logo';
+import LocationHierarchyInput from '../components/LocationHierarchyInput';
+import OtpMobileInput from '../components/OtpMobileInput';
 
 export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
   const { registerClient, registerAstrologer, registerVendor } = useAuth();
@@ -10,11 +29,49 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Shared Form State across tabs
+  const [mobile, setMobile] = useState('');
+  const [isMobileVerified, setIsMobileVerified] = useState(false);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  // Location State
+  const [country, setCountry] = useState('India');
+  const [state, setState] = useState('Tamil Nadu');
+  const [city, setCity] = useState('');
+  const [coords, setCoords] = useState(null);
+
+  // Switch role handler: resets verification and clears error
+  const handleRoleChange = (role) => {
+    setSelectedRole(role);
+    setError('');
+    setMobile('');
+    setIsMobileVerified(false);
+    setPassword('');
+    setConfirmPassword('');
+    setCity('');
+  };
+
   const handleClientSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
     setError('');
 
+    if (!isMobileVerified) {
+      setError('Please verify your 10-digit mobile number with OTP before completing registration.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Password and Confirm Password do not match.');
+      return;
+    }
+
+    if (!city.trim()) {
+      setError('Please select or enter your Birth Place / City.');
+      return;
+    }
+
+    setIsLoading(true);
     const formData = new FormData(e.target);
     const data = {
       name: formData.get('name'),
@@ -22,9 +79,15 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
       motherName: formData.get('motherName'),
       dob: formData.get('dob'),
       dobTime: formData.get('dobTime'),
-      dobPlace: formData.get('dobPlace'),
-      mobile: formData.get('mobile'),
-      password: formData.get('password'),
+      country,
+      state,
+      city: city.trim(),
+      dobPlace: `${city.trim()}, ${state}, ${country}`,
+      lat: coords?.lat,
+      lon: coords?.lon,
+      mobile: mobile.trim(),
+      password,
+      confirmPassword,
       astrologerReferralCode: formData.get('astrologerReferralCode'),
     };
 
@@ -39,16 +102,35 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
 
   const handleAstrologerSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
     setError('');
 
+    if (!isMobileVerified) {
+      setError('Please verify your 10-digit mobile number with OTP before completing registration.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Password and Confirm Password do not match.');
+      return;
+    }
+
+    if (!city.trim()) {
+      setError('Please select or enter your Office City / Town.');
+      return;
+    }
+
+    setIsLoading(true);
     const formData = new FormData(e.target);
     const data = {
       type: astroType,
       name: formData.get('name'),
       contactPerson: astroType === 'company' ? formData.get('contactPerson') : undefined,
-      mobile: formData.get('mobile'),
-      password: formData.get('password'),
+      mobile: mobile.trim(),
+      password,
+      confirmPassword,
+      country,
+      state,
+      city: city.trim(),
       address: formData.get('address'),
       specializations: formData.get('specializations'),
       experience: formData.get('experience'),
@@ -68,18 +150,35 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
 
   const handleVendorSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
     setError('');
 
+    if (!isMobileVerified) {
+      setError('Please verify your 10-digit mobile number with OTP before completing registration.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Password and Confirm Password do not match.');
+      return;
+    }
+
+    if (!city.trim()) {
+      setError('Please select or enter your Store City.');
+      return;
+    }
+
+    setIsLoading(true);
     const formData = new FormData(e.target);
     const data = {
       shopName: formData.get('shopName'),
       contactPerson: formData.get('contactPerson'),
-      mobile: formData.get('mobile'),
-      password: formData.get('password'),
+      mobile: mobile.trim(),
+      password,
+      confirmPassword,
+      country,
+      state,
+      city: city.trim(),
       address: formData.get('address'),
-      city: formData.get('city'),
-      state: formData.get('state'),
       pincode: formData.get('pincode'),
       gstNumber: formData.get('gstNumber'),
       category: formData.get('category'),
@@ -104,14 +203,14 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
           Create Your <span className="text-amber-600">Astrojit</span> Account
         </h2>
         <p className="text-xs text-slate-500">
-          Mobile Number is used as username for fast, OTP/SMS-ready login
+          Mobile Number is verified via OTP and used as your username
         </p>
       </div>
 
       {/* Role Picker */}
       <div className="grid grid-cols-3 gap-1.5 sm:gap-2 bg-slate-100 p-1 rounded-2xl border border-slate-200">
         <button
-          onClick={() => { setSelectedRole('client'); setError(''); }}
+          onClick={() => handleRoleChange('client')}
           className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             selectedRole === 'client'
               ? 'bg-white text-slate-950 shadow-xs border border-slate-300'
@@ -122,7 +221,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
         </button>
 
         <button
-          onClick={() => { setSelectedRole('astrologer'); setError(''); }}
+          onClick={() => handleRoleChange('astrologer')}
           className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             selectedRole === 'astrologer'
               ? 'bg-white text-slate-950 shadow-xs border border-slate-300'
@@ -133,7 +232,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
         </button>
 
         <button
-          onClick={() => { setSelectedRole('vendor'); setError(''); }}
+          onClick={() => handleRoleChange('vendor')}
           className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             selectedRole === 'vendor'
               ? 'bg-white text-slate-950 shadow-xs border border-slate-300'
@@ -147,8 +246,9 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
       {/* Form Container */}
       <div className="bg-white border border-amber-200/80 rounded-2xl p-4 sm:p-7 shadow-xs">
         {error && (
-          <div className="mb-4 bg-rose-50 border border-rose-200 text-rose-700 text-xs p-3 rounded-xl font-medium">
-            {error}
+          <div className="mb-4 bg-rose-50 border border-rose-200 text-rose-700 text-xs p-3 rounded-xl font-medium flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+            <span>{error}</span>
           </div>
         )}
 
@@ -164,6 +264,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
               </p>
             </div>
 
+            {/* Full Name */}
             <div>
               <label className="text-slate-700 font-bold block mb-1">Full Name *</label>
               <input
@@ -175,6 +276,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
               />
             </div>
 
+            {/* Parents' Names */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
                 <label className="text-slate-700 font-bold block mb-1">Father's Name</label>
@@ -197,9 +299,12 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            {/* DOB & Birth Time */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label className="text-slate-700 font-bold block mb-1">Date of Birth (D.O.B) *</label>
+                <label className="text-slate-700 font-bold block mb-1 flex items-center gap-1">
+                  <Calendar className="w-3.5 h-3.5 text-amber-600" /> Date of Birth (D.O.B) *
+                </label>
                 <input
                   type="date"
                   name="dob"
@@ -209,7 +314,9 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
               </div>
 
               <div>
-                <label className="text-slate-700 font-bold block mb-1">Birth Time *</label>
+                <label className="text-slate-700 font-bold block mb-1 flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5 text-amber-600" /> Birth Time *
+                </label>
                 <input
                   type="time"
                   name="dobTime"
@@ -217,45 +324,89 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500"
                 />
               </div>
-
-              <div>
-                <label className="text-slate-700 font-bold block mb-1">Birth Place *</label>
-                <input
-                  type="text"
-                  name="dobPlace"
-                  required
-                  placeholder="e.g. Varanasi, UP"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500"
-                />
-              </div>
             </div>
 
+            {/* Location Hierarchy: Country -> State/Province -> Birth Place (City) with 1-letter auto suggestions */}
+            <div className="pt-1">
+              <LocationHierarchyInput
+                labelCity="Birth Place *"
+                cityPlaceholder="Type city name (e.g. S, C, M...)"
+                country={country}
+                setCountry={setCountry}
+                state={state}
+                setState={setState}
+                city={city}
+                setCity={setCity}
+                onLocationChange={(coordsData) => setCoords(coordsData)}
+                theme="amber"
+                required={true}
+              />
+            </div>
+
+            {/* Mobile Number with OTP Verification */}
+            <div className="pt-1">
+              <OtpMobileInput
+                mobile={mobile}
+                setMobile={setMobile}
+                isVerified={isMobileVerified}
+                setIsVerified={setIsMobileVerified}
+                role="client"
+                theme="amber"
+                required={true}
+              />
+            </div>
+
+            {/* Password & Confirm Password */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label className="text-slate-700 font-bold block mb-1">
-                  Mobile Number (Username) *
+                <label className="text-slate-700 font-bold block mb-1 flex items-center gap-1">
+                  <Lock className="w-3.5 h-3.5 text-amber-600" /> Password *
                 </label>
                 <input
-                  type="text"
-                  name="mobile"
+                  type="password"
+                  name="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
-                  placeholder="10-digit mobile number"
+                  minLength={6}
+                  placeholder="Set password (min 6 chars)"
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500 font-medium"
                 />
               </div>
 
               <div>
-                <label className="text-slate-700 font-bold block mb-1">Password *</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-slate-700 font-bold flex items-center gap-1">
+                    <Lock className="w-3.5 h-3.5 text-amber-600" /> Confirm Password *
+                  </label>
+                  {confirmPassword && (
+                    <span
+                      className={`text-[10px] font-bold ${
+                        password === confirmPassword ? 'text-emerald-600' : 'text-rose-600'
+                      }`}
+                    >
+                      {password === confirmPassword ? '✓ Passwords match' : '✕ Do not match'}
+                    </span>
+                  )}
+                </div>
                 <input
                   type="password"
-                  name="password"
+                  name="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  placeholder="Set password"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500"
+                  minLength={6}
+                  placeholder="Re-enter password"
+                  className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none font-medium ${
+                    confirmPassword && password !== confirmPassword
+                      ? 'border-rose-400 focus:border-rose-500'
+                      : 'border-slate-300 focus:border-amber-500'
+                  }`}
                 />
               </div>
             </div>
 
+            {/* Astrologer Referral Code */}
             <div>
               <label className="text-slate-700 font-bold block mb-1">
                 Astrologer Referral Code (Optional)
@@ -264,14 +415,14 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                 type="text"
                 name="astrologerReferralCode"
                 placeholder="e.g. PANDIT101 or ASTROVEDA"
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500 uppercase"
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500 uppercase font-mono"
               />
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold py-3 rounded-xl transition-all shadow-md shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer text-sm mt-3"
+              className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold py-3 rounded-xl transition-all shadow-md shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer text-sm mt-3 disabled:opacity-50"
             >
               {isLoading ? <Sparkles className="w-4 h-4 animate-spin" /> : null}
               Register & Generate My One-Page Horoscope
@@ -291,6 +442,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
               </p>
             </div>
 
+            {/* Individual vs Firm Selector */}
             <div className="flex gap-4 p-2 bg-slate-50 rounded-xl border border-slate-200">
               <label className="flex items-center gap-2 text-slate-800 font-bold cursor-pointer">
                 <input
@@ -316,6 +468,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
               </label>
             </div>
 
+            {/* Name and Contact Person */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
                 <label className="text-slate-700 font-bold block mb-1">
@@ -330,7 +483,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                 />
               </div>
 
-              {astroType === 'company' && (
+              {astroType === 'company' ? (
                 <div>
                   <label className="text-slate-700 font-bold block mb-1">
                     Contact Person / Lead Astrologer *
@@ -343,56 +496,48 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
                   />
                 </div>
+              ) : (
+                <div>
+                  <label className="text-slate-700 font-bold block mb-1">Experience</label>
+                  <input
+                    type="text"
+                    name="experience"
+                    placeholder="e.g. 15+ Years"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
               )}
-
-              <div>
-                <label className="text-slate-700 font-bold block mb-1">
-                  Mobile Number (Username) *
-                </label>
-                <input
-                  type="text"
-                  name="mobile"
-                  required
-                  placeholder="10-digit mobile number"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500 font-medium"
-                />
-              </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <div>
-                <label className="text-slate-700 font-bold block mb-1">Password *</label>
-                <input
-                  type="password"
-                  name="password"
-                  required
-                  placeholder="Set password"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
-                />
-              </div>
-
-              <div>
-                <label className="text-slate-700 font-bold block mb-1">Experience</label>
-                <input
-                  type="text"
-                  name="experience"
-                  placeholder="e.g. 15+ Years"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
-                />
-              </div>
+            {/* Location Hierarchy: Country -> State/Province -> City/Town with 1-letter auto suggestions */}
+            <div className="pt-1">
+              <LocationHierarchyInput
+                labelCity="City / Town *"
+                cityPlaceholder="Type city name (e.g. S, C, M...)"
+                country={country}
+                setCountry={setCountry}
+                state={state}
+                setState={setState}
+                city={city}
+                setCity={setCity}
+                theme="indigo"
+                required={true}
+              />
             </div>
 
+            {/* Street / Office Address */}
             <div>
-              <label className="text-slate-700 font-bold block mb-1">Office / Temple Address *</label>
+              <label className="text-slate-700 font-bold block mb-1">Office / Temple Street Address *</label>
               <input
                 type="text"
                 name="address"
                 required
-                placeholder="Full consultation office address"
+                placeholder="Street address, building, landmark..."
                 className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
               />
             </div>
 
+            {/* Specializations & Languages */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
                 <label className="text-slate-700 font-bold block mb-1">Specializations</label>
@@ -409,7 +554,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                 <input
                   type="text"
                   name="languages"
-                  placeholder="e.g. Hindi, Sanskrit, English"
+                  placeholder="e.g. Tamil, English, Hindi"
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
                 />
               </div>
@@ -422,7 +567,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                   type="text"
                   name="gstNumber"
                   placeholder="e.g. 29ABCDE1234F1Z5"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500 font-mono"
                 />
               </div>
             )}
@@ -432,15 +577,78 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
               <textarea
                 name="bio"
                 rows={2}
-                placeholder="Summary of experience, lineage or certifications..."
+                placeholder="Summary of experience, lineage or astrological certifications..."
                 className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
               ></textarea>
+            </div>
+
+            {/* Mobile Number with OTP Verification */}
+            <div className="pt-1">
+              <OtpMobileInput
+                mobile={mobile}
+                setMobile={setMobile}
+                isVerified={isMobileVerified}
+                setIsVerified={setIsMobileVerified}
+                role="astrologer"
+                theme="indigo"
+                required={true}
+              />
+            </div>
+
+            {/* Password & Confirm Password */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div>
+                <label className="text-slate-700 font-bold block mb-1 flex items-center gap-1">
+                  <Lock className="w-3.5 h-3.5 text-indigo-600" /> Password *
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  placeholder="Set password (min 6 chars)"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500 font-medium"
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-slate-700 font-bold flex items-center gap-1">
+                    <Lock className="w-3.5 h-3.5 text-indigo-600" /> Confirm Password *
+                  </label>
+                  {confirmPassword && (
+                    <span
+                      className={`text-[10px] font-bold ${
+                        password === confirmPassword ? 'text-emerald-600' : 'text-rose-600'
+                      }`}
+                    >
+                      {password === confirmPassword ? '✓ Passwords match' : '✕ Do not match'}
+                    </span>
+                  )}
+                </div>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  placeholder="Re-enter password"
+                  className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none font-medium ${
+                    confirmPassword && password !== confirmPassword
+                      ? 'border-rose-400 focus:border-rose-500'
+                      : 'border-slate-300 focus:border-indigo-500'
+                  }`}
+                />
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-all shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2 cursor-pointer text-sm mt-3"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-all shadow-md shadow-indigo-600/20 flex items-center justify-center gap-2 cursor-pointer text-sm mt-3 disabled:opacity-50"
             >
               {isLoading ? <Sparkles className="w-4 h-4 animate-spin" /> : null}
               Register Astrologer & Get Referral Code
@@ -460,6 +668,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
               </p>
             </div>
 
+            {/* Shop Name & Contact Person */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
                 <label className="text-slate-700 font-bold block mb-1">Shop / Business Name *</label>
@@ -484,73 +693,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <div>
-                <label className="text-slate-700 font-bold block mb-1">Mobile (Username) *</label>
-                <input
-                  type="text"
-                  name="mobile"
-                  required
-                  placeholder="10-digit mobile number"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500 font-medium"
-                />
-              </div>
-
-              <div>
-                <label className="text-slate-700 font-bold block mb-1">Password *</label>
-                <input
-                  type="password"
-                  name="password"
-                  required
-                  placeholder="Set password"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="text-slate-700 font-bold block mb-1">Shop Address *</label>
-              <input
-                type="text"
-                name="address"
-                required
-                placeholder="Shop number, street, landmark"
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              <div>
-                <label className="text-slate-700 font-bold block mb-1">City</label>
-                <input
-                  type="text"
-                  name="city"
-                  placeholder="e.g. Varanasi"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-
-              <div>
-                <label className="text-slate-700 font-bold block mb-1">State</label>
-                <input
-                  type="text"
-                  name="state"
-                  placeholder="e.g. Uttar Pradesh"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-
-              <div>
-                <label className="text-slate-700 font-bold block mb-1">Pincode</label>
-                <input
-                  type="text"
-                  name="pincode"
-                  placeholder="e.g. 221001"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-            </div>
-
+            {/* Category, GST, UPI */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
               <div>
                 <label className="text-slate-700 font-bold block mb-1">Category</label>
@@ -571,7 +714,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                   type="text"
                   name="gstNumber"
                   placeholder="GST or MSME ID"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500 font-mono"
                 />
               </div>
 
@@ -586,10 +729,113 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
               </div>
             </div>
 
+            {/* Location Hierarchy: Country -> State/Province -> City with 1-letter auto suggestions */}
+            <div className="pt-1">
+              <LocationHierarchyInput
+                labelCity="City *"
+                cityPlaceholder="Type city name (e.g. S, C, M...)"
+                country={country}
+                setCountry={setCountry}
+                state={state}
+                setState={setState}
+                city={city}
+                setCity={setCity}
+                theme="emerald"
+                required={true}
+              />
+            </div>
+
+            {/* Shop Address & Pincode */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <div className="sm:col-span-2">
+                <label className="text-slate-700 font-bold block mb-1">Shop Street Address *</label>
+                <input
+                  type="text"
+                  name="address"
+                  required
+                  placeholder="Shop number, market, street, landmark..."
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="text-slate-700 font-bold block mb-1">Pincode</label>
+                <input
+                  type="text"
+                  name="pincode"
+                  placeholder="e.g. 636001"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500 font-mono"
+                />
+              </div>
+            </div>
+
+            {/* Mobile Number with OTP Verification */}
+            <div className="pt-1">
+              <OtpMobileInput
+                mobile={mobile}
+                setMobile={setMobile}
+                isVerified={isMobileVerified}
+                setIsVerified={setIsMobileVerified}
+                role="vendor"
+                theme="emerald"
+                required={true}
+              />
+            </div>
+
+            {/* Password & Confirm Password */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div>
+                <label className="text-slate-700 font-bold block mb-1 flex items-center gap-1">
+                  <Lock className="w-3.5 h-3.5 text-emerald-600" /> Password *
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  placeholder="Set password (min 6 chars)"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500 font-medium"
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-slate-700 font-bold flex items-center gap-1">
+                    <Lock className="w-3.5 h-3.5 text-emerald-600" /> Confirm Password *
+                  </label>
+                  {confirmPassword && (
+                    <span
+                      className={`text-[10px] font-bold ${
+                        password === confirmPassword ? 'text-emerald-600' : 'text-rose-600'
+                      }`}
+                    >
+                      {password === confirmPassword ? '✓ Passwords match' : '✕ Do not match'}
+                    </span>
+                  )}
+                </div>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  placeholder="Re-enter password"
+                  className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none font-medium ${
+                    confirmPassword && password !== confirmPassword
+                      ? 'border-rose-400 focus:border-rose-500'
+                      : 'border-slate-300 focus:border-emerald-500'
+                  }`}
+                />
+              </div>
+            </div>
+
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition-all shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 cursor-pointer text-sm mt-3"
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition-all shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 cursor-pointer text-sm mt-3 disabled:opacity-50"
             >
               {isLoading ? <Sparkles className="w-4 h-4 animate-spin" /> : null}
               Register Vendor & Start Listing

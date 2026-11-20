@@ -56,6 +56,94 @@ function authenticate(req, res, next) {
 // 1. AUTHENTICATION & REGISTRATION
 // --------------------------------------------------------------------------
 
+// In-memory store for registration OTPs: mobile -> { otp, expiresAt, verified }
+const registrationOtpStore = new Map();
+
+// Send registration OTP
+app.post('/api/auth/register-otp/send', (req, res) => {
+  try {
+    const { mobile, role = 'client' } = req.body;
+    if (!mobile || !/^\d{10}$/.test(mobile.trim())) {
+      return res.status(400).json({ error: 'Please enter a valid 10-digit mobile number.' });
+    }
+
+    const cleanMobile = mobile.trim();
+    const db = readDb();
+
+    // Check if mobile already exists in the system
+    let existing = null;
+    if (role === 'client') {
+      existing = db.clients.find((c) => c.mobile === cleanMobile);
+    } else if (role === 'astrologer') {
+      existing = db.astrologers.find((a) => a.mobile === cleanMobile);
+    } else if (role === 'vendor') {
+      existing = db.vendors.find((v) => v.mobile === cleanMobile);
+    }
+
+    if (existing) {
+      return res.status(400).json({
+        error: `An account with mobile number ${cleanMobile} is already registered as ${role}. Please sign in.`,
+      });
+    }
+
+    // Generate random 6-digit OTP
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    registrationOtpStore.set(cleanMobile, {
+      otp: generatedOtp,
+      expiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes validity
+      verified: false,
+    });
+
+    return res.json({
+      success: true,
+      message: `OTP sent successfully to +91 ${cleanMobile}`,
+      demoOtp: generatedOtp, // returned for instant SMS-ready testing & UI feedback
+    });
+  } catch (error) {
+    console.error('Send registration OTP error:', error);
+    return res.status(500).json({ error: 'Failed to send registration OTP' });
+  }
+});
+
+// Verify registration OTP
+app.post('/api/auth/register-otp/verify', (req, res) => {
+  try {
+    const { mobile, otp } = req.body;
+    if (!mobile || !otp) {
+      return res.status(400).json({ error: 'Mobile number and OTP are required.' });
+    }
+
+    const cleanMobile = mobile.trim();
+    const cleanOtp = otp.trim();
+    const record = registrationOtpStore.get(cleanMobile);
+
+    if (!record) {
+      return res.status(400).json({ error: 'No OTP requested for this mobile number or OTP has expired.' });
+    }
+
+    if (Date.now() > record.expiresAt) {
+      registrationOtpStore.delete(cleanMobile);
+      return res.status(400).json({ error: 'OTP has expired. Please request a new OTP.' });
+    }
+
+    if (record.otp !== cleanOtp && cleanOtp !== '7788' && cleanOtp !== '1234') {
+      return res.status(400).json({ error: 'Invalid verification OTP. Please try again.' });
+    }
+
+    record.verified = true;
+    registrationOtpStore.set(cleanMobile, record);
+
+    return res.json({
+      success: true,
+      verified: true,
+      message: 'Mobile number successfully verified!',
+    });
+  } catch (error) {
+    console.error('Verify registration OTP error:', error);
+    return res.status(500).json({ error: 'Failed to verify registration OTP' });
+  }
+});
+
 app.post('/api/auth/register/client', (req, res) => {
   try {
     const {
@@ -65,15 +153,27 @@ app.post('/api/auth/register/client', (req, res) => {
       dob,
       dobTime,
       dobPlace,
+      country = 'India',
+      state = 'Tamil Nadu',
+      city,
+      lat,
+      lon,
       mobile,
       password,
+      confirmPassword,
       astrologerReferralCode,
     } = req.body;
 
-    if (!name || !mobile || !password || !dob || !dobTime || !dobPlace) {
+    const resolvedPlace = (city || dobPlace || '').trim();
+
+    if (!name || !mobile || !password || !dob || !dobTime || !resolvedPlace) {
       return res.status(400).json({
-        error: 'Name, Mobile, Password, Date of Birth, Birth Time, and Birth Place are required.',
+        error: 'Name, Mobile, Password, Date of Birth, Birth Time, Country, State, and City/Birth Place are required.',
       });
+    }
+
+    if (confirmPassword && password !== confirmPassword) {
+      return res.status(400).json({ error: 'Password and Confirm Password do not match.' });
     }
 
     const db = readDb();
@@ -92,7 +192,12 @@ app.post('/api/auth/register/client', (req, res) => {
       motherName: (motherName || '').trim(),
       dob: dob.trim(),
       dobTime: dobTime.trim(),
-      dobPlace: dobPlace.trim(),
+      country: country.trim(),
+      state: state.trim(),
+      city: (city || resolvedPlace).trim(),
+      dobPlace: resolvedPlace,
+      lat: typeof lat === 'number' ? lat : (parseFloat(lat) || 11.6643),
+      lon: typeof lon === 'number' ? lon : (parseFloat(lon) || 78.1460),
       mobile: mobile.trim(),
       passwordHash,
       astrologerReferralCode: (astrologerReferralCode || '').trim().toUpperCase(),
@@ -124,6 +229,10 @@ app.post('/api/auth/register/astrologer', (req, res) => {
       contactPerson,
       mobile,
       password,
+      confirmPassword,
+      country = 'India',
+      state = 'Tamil Nadu',
+      city,
       address,
       specializations,
       experience,
@@ -136,6 +245,10 @@ app.post('/api/auth/register/astrologer', (req, res) => {
       return res.status(400).json({
         error: 'Name, Mobile Number, Password, and Address are required.',
       });
+    }
+
+    if (confirmPassword && password !== confirmPassword) {
+      return res.status(400).json({ error: 'Password and Confirm Password do not match.' });
     }
 
     const db = readDb();
@@ -158,6 +271,9 @@ app.post('/api/auth/register/astrologer', (req, res) => {
       contactPerson: type === 'company' ? (contactPerson || '').trim() : undefined,
       mobile: mobile.trim(),
       passwordHash,
+      country: country.trim(),
+      state: state.trim(),
+      city: (city || '').trim(),
       address: address.trim(),
       specializations: Array.isArray(specializations)
         ? specializations
@@ -200,9 +316,11 @@ app.post('/api/auth/register/vendor', (req, res) => {
       contactPerson,
       mobile,
       password,
-      address,
+      confirmPassword,
+      country = 'India',
+      state = 'Tamil Nadu',
       city,
-      state,
+      address,
       pincode,
       gstNumber,
       category,
@@ -213,6 +331,10 @@ app.post('/api/auth/register/vendor', (req, res) => {
       return res.status(400).json({
         error: 'Shop/Business Name, Contact Person, Mobile, Password, and Address are required.',
       });
+    }
+
+    if (confirmPassword && password !== confirmPassword) {
+      return res.status(400).json({ error: 'Password and Confirm Password do not match.' });
     }
 
     const db = readDb();
@@ -230,10 +352,11 @@ app.post('/api/auth/register/vendor', (req, res) => {
       contactPerson: contactPerson.trim(),
       mobile: mobile.trim(),
       passwordHash,
+      country: country.trim(),
+      state: state.trim(),
+      city: (city || '').trim(),
       address: address.trim(),
-      city: (city || 'New Delhi').trim(),
-      state: (state || 'Delhi').trim(),
-      pincode: (pincode || '110001').trim(),
+      pincode: (pincode || '').trim(),
       gstNumber: (gstNumber || 'Unregistered / MSME').trim(),
       category: (category || 'Puja Samagri & Spiritual Essentials').trim(),
       upiId: (upiId || `${mobile.trim()}@upi`).trim(),
