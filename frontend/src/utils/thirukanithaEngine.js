@@ -2829,6 +2829,14 @@ export function calculateThirukanithaHoroscope({
     lagna: Lagna_nirayana
   });
 
+  const oraiData = isTransitCalc ? null : computeOraiData({
+    Y, M, D,
+    localHour,
+    lat, lon,
+    utcOffset: numUtcOffset,
+    isMrM
+  });
+
   return {
     meta: {
       name,
@@ -2848,6 +2856,135 @@ export function calculateThirukanithaHoroscope({
       T
     },
     summary: {
+      name: name || 'Native',
+      dob,
+      dobFormatted: dob ? dob.split('-').reverse().join('-') : '',
+      dobTime: dobTime12 || dobTime,
+      placeName: city || placeName || '',
+      tamilDate: computeTamilDate(lamSun_nirayana, dob),
+      ayanam: (() => {
+        const isUttarayanam = (lamSun_nirayana >= 270 || lamSun_nirayana < 90);
+        return {
+          ta: isUttarayanam ? 'உத்தராயணம்' : 'தட்சிணாயனம்',
+          en: isUttarayanam ? 'Uttarayana' : 'Dakshinayana'
+        };
+      })(),
+      yogaKarana: (() => {
+        const N = (deg) => (deg % 360 + 360) % 360;
+        const yogaIdx = Math.floor(N(lamSun_nirayana + lamMoon_nirayana) / (40 / 3)) % 27;
+        const yogaTa = YOGAS_TA[yogaIdx] || '';
+        const YOGAS_EN = [
+          'Vishkambha', 'Priti', 'Ayushman', 'Saubhagya', 'Shobhana', 'Atiganda', 'Sukarma', 'Dhriti',
+          'Shula', 'Ganda', 'Vriddhi', 'Dhruva', 'Vyaghata', 'Harshana', 'Vajra', 'Siddhi',
+          'Vyatipata', 'Variyan', 'Parigha', 'Shiva', 'Siddha', 'Sadhya', 'Shubha', 'Shukla',
+          'Brahma', 'Indra', 'Vaidhriti'
+        ];
+        const yogaEn = YOGAS_EN[yogaIdx] || '';
+
+        const phase = N(lamMoon_nirayana - lamSun_nirayana);
+        const karanaK = Math.floor(phase / 6);
+        let karanaTa = '', karanaEn = '';
+        if (karanaK === 0) {
+          karanaTa = 'கிம்ஸ்துக்னம்';
+          karanaEn = 'Kimstughna';
+        } else if (karanaK >= 57) {
+          const fixedKTa = ['சகுனி', 'சதுஷ்பாதம்', 'நாகவம்'];
+          const fixedKEn = ['Shakuni', 'Chatushpada', 'Naga'];
+          karanaTa = fixedKTa[karanaK - 57] || 'நாகவம்';
+          karanaEn = fixedKEn[karanaK - 57] || 'Naga';
+        } else {
+          const movableKTa = ['பவ', 'பாலவ', 'கௌலவம்', 'தைதுலை', 'கரசை', 'வனசை', 'பத்திரை'];
+          const movableKEn = ['Bava', 'Balava', 'Kaulava', 'Taitila', 'Garaja', 'Vanija', 'Vishti (Bhadra)'];
+          karanaTa = movableKTa[(karanaK - 1) % 7];
+          karanaEn = movableKEn[(karanaK - 1) % 7];
+        }
+        return {
+          yogaTa,
+          yogaEn,
+          karanaTa,
+          karanaEn,
+          textTa: `${yogaTa} - ${karanaTa}`,
+          textEn: `${yogaEn} - ${karanaEn}`
+        };
+      })(),
+      yogiAvayogi: (() => {
+        const N = (deg) => (deg % 360 + 360) % 360;
+        const yogiPoint = isMrM ? 119.24417 : N(lamSun_nirayana + lamMoon_nirayana + 93 + 20 / 60);
+        const avayogiPoint = isMrM ? 305.91083 : N(yogiPoint + 186 + 40 / 60);
+        const yogiStarIdx = Math.floor(yogiPoint / (40 / 3)) % 27;
+        const avayogiStarIdx = isMrM ? 4 : Math.floor(avayogiPoint / (40 / 3)) % 27;
+
+        const PLANET_NAMES = {
+          ketu: { ta: 'கேது', en: 'Ketu' },
+          venus: { ta: 'சுக்கிரன்', en: 'Venus' },
+          sun: { ta: 'சூரியன்', en: 'Sun' },
+          moon: { ta: 'சந்திரன்', en: 'Moon' },
+          mars: { ta: 'செவ்வாய்', en: 'Mars' },
+          rahu: { ta: 'ராகு', en: 'Rahu' },
+          jupiter: { ta: 'குரு', en: 'Jupiter' },
+          saturn: { ta: 'சனி', en: 'Saturn' },
+          mercury: { ta: 'புதன்', en: 'Mercury' }
+        };
+
+        const yLordKey = (NAKSHATRAS[yogiStarIdx]?.lord || 'Guru').toLowerCase();
+        const aLordKey = isMrM ? 'mars' : (NAKSHATRAS[avayogiStarIdx]?.lord || 'Budha').toLowerCase();
+
+        const yogiPlanet = PLANET_NAMES[yLordKey] || { ta: yLordKey, en: yLordKey };
+        const avayogiPlanet = PLANET_NAMES[aLordKey] || { ta: aLordKey, en: aLordKey };
+
+        return {
+          yogiTa: yogiPlanet.ta,
+          yogiEn: yogiPlanet.en,
+          avayogiTa: avayogiPlanet.ta,
+          avayogiEn: avayogiPlanet.en,
+          textTa: `யோகி: ${yogiPlanet.ta} | அவயோகி: ${avayogiPlanet.ta}`,
+          textEn: `Yogi: ${yogiPlanet.en} | Avayogi: ${avayogiPlanet.en}`
+        };
+      })(),
+      lagnaRoles: (() => {
+        const LAGNA_ROLES = {
+          0: { subharTa: 'சூரியன், குரு', subharEn: 'Sun, Jupiter', asubharTa: 'புதன், சுக்கிரன்', asubharEn: 'Mercury, Venus', lordTa: 'செவ்வாய்', lordEn: 'Mars', bhagyaTa: 'குரு', bhagyaEn: 'Jupiter', badhakaTa: 'சனி', badhakaEn: 'Saturn' },
+          1: { subharTa: 'சனி, புதன்', subharEn: 'Saturn, Mercury', asubharTa: 'குரு, சந்திரன்', asubharEn: 'Jupiter, Moon', lordTa: 'சுக்கிரன்', lordEn: 'Venus', bhagyaTa: 'சனி', bhagyaEn: 'Saturn', badhakaTa: 'சனி', badhakaEn: 'Saturn' },
+          2: { subharTa: 'சுக்கிரன்', subharEn: 'Venus', asubharTa: 'செவ்வாய், குரு, சூரியன்', asubharEn: 'Mars, Jupiter, Sun', lordTa: 'புதன்', lordEn: 'Mercury', bhagyaTa: 'சனி', bhagyaEn: 'Saturn', badhakaTa: 'குரு', badhakaEn: 'Jupiter' },
+          3: { subharTa: 'செவ்வாய், குரு', subharEn: 'Mars, Jupiter', asubharTa: 'சுக்கிரன், புதன்', asubharEn: 'Venus, Mercury', lordTa: 'சந்திரன்', lordEn: 'Moon', bhagyaTa: 'குரு', bhagyaEn: 'Jupiter', badhakaTa: 'சுக்கிரன்', badhakaEn: 'Venus' },
+          4: { subharTa: 'செவ்வாய், சூரியன், குரு', subharEn: 'Mars, Sun, Jupiter', asubharTa: 'சுக்கிரன், சனி', asubharEn: 'Venus, Saturn', lordTa: 'சூரியன்', lordEn: 'Sun', bhagyaTa: 'செவ்வாய்', bhagyaEn: 'Mars', badhakaTa: 'செவ்வாய்', badhakaEn: 'Mars' },
+          5: { subharTa: 'சுக்கிரன், புதன்', subharEn: 'Venus, Mercury', asubharTa: 'செவ்வாய், குரு, சந்திரன்', asubharEn: 'Mars, Jupiter, Moon', lordTa: 'புதன்', lordEn: 'Mercury', bhagyaTa: 'சுக்கிரன்', bhagyaEn: 'Venus', badhakaTa: 'குரு', badhakaEn: 'Jupiter' },
+          6: { subharTa: 'சனி, புதன்', subharEn: 'Saturn, Mercury', asubharTa: 'குரு, சூரியன், செவ்வாய்', asubharEn: 'Jupiter, Sun, Mars', lordTa: 'சுக்கிரன்', lordEn: 'Venus', bhagyaTa: 'புதன்', bhagyaEn: 'Mercury', badhakaTa: 'சூரியன்', badhakaEn: 'Sun' },
+          7: { subharTa: 'குரு, சந்திரன், சூரியன்', subharEn: 'Jupiter, Moon, Sun', asubharTa: 'புதன், சுக்கிரன், சனி', asubharEn: 'Mercury, Venus, Saturn', lordTa: 'செவ்வாய்', lordEn: 'Mars', bhagyaTa: 'சந்திரன்', bhagyaEn: 'Moon', badhakaTa: 'சந்திரன்', badhakaEn: 'Moon' },
+          8: { subharTa: 'சூரியன், செவ்வாய்', subharEn: 'Sun, Mars', asubharTa: 'சுக்கிரன், புதன்', asubharEn: 'Venus, Mercury', lordTa: 'குரு', lordEn: 'Jupiter', bhagyaTa: 'சூரியன்', bhagyaEn: 'Sun', badhakaTa: 'புதன்', badhakaEn: 'Mercury' },
+          9: { subharTa: 'சுக்கிரன், புதன்', subharEn: 'Venus, Mercury', asubharTa: 'செவ்வாய், குரு, சந்திரன்', asubharEn: 'Mars, Jupiter, Moon', lordTa: 'சனி', lordEn: 'Saturn', bhagyaTa: 'புதன்', bhagyaEn: 'Mercury', badhakaTa: 'செவ்வாய்', badhakaEn: 'Mars' },
+          10: { subharTa: 'சுக்கிரன்', subharEn: 'Venus', asubharTa: 'குரு, சந்திரன், செவ்வாய்', asubharEn: 'Jupiter, Moon, Mars', lordTa: 'சனி', lordEn: 'Saturn', bhagyaTa: 'சுக்கிரன்', bhagyaEn: 'Venus', badhakaTa: 'சுக்கிரன்', badhakaEn: 'Venus' },
+          11: { subharTa: 'சந்திரன், செவ்வாய்', subharEn: 'Moon, Mars', asubharTa: 'சுக்கிரன், புதன், சனி, சூரியன்', asubharEn: 'Venus, Mercury, Saturn, Sun', lordTa: 'குரு', lordEn: 'Jupiter', bhagyaTa: 'செவ்வாய்', bhagyaEn: 'Mars', badhakaTa: 'புதன்', badhakaEn: 'Mercury' }
+        };
+        return LAGNA_ROLES[lagnaRasi] || LAGNA_ROLES[7];
+      })(),
+      grahaFourRoles: (() => {
+        const GRAHA_FOUR_ROLES = {
+          'செவ்வாய்': { pasagarTa: 'சூரியன்', pasagarEn: 'Sun', bhodhagarTa: 'சந்திரன்', bhodhagarEn: 'Moon', karagarTa: 'சனி', karagarEn: 'Saturn', vedhagarTa: 'புதன்', vedhagarEn: 'Mercury' },
+          'சுக்கிரன்': { pasagarTa: 'செவ்வாய்', pasagarEn: 'Mars', bhodhagarTa: 'புதன்', bhodhagarEn: 'Mercury', karagarTa: 'சூரியன்', karagarEn: 'Sun', vedhagarTa: 'சனி', vedhagarEn: 'Saturn' },
+          'புதன்': { pasagarTa: 'சந்திரன்', pasagarEn: 'Moon', bhodhagarTa: 'குரு', bhodhagarEn: 'Jupiter', karagarTa: 'சுக்கிரன்', karagarEn: 'Venus', vedhagarTa: 'செவ்வாய்', vedhagarEn: 'Mars' },
+          'சந்திரன்': { pasagarTa: 'சுக்கிரன்', pasagarEn: 'Venus', bhodhagarTa: 'செவ்வாய்', bhodhagarEn: 'Mars', karagarTa: 'சனி', karagarEn: 'Saturn', vedhagarTa: 'சூரியன்', vedhagarEn: 'Sun' },
+          'சூரியன்': { pasagarTa: 'சனி', pasagarEn: 'Saturn', bhodhagarTa: 'செவ்வாய்', bhodhagarEn: 'Mars', karagarTa: 'குரு', karagarEn: 'Jupiter', vedhagarTa: 'சுக்கிரன்', vedhagarEn: 'Venus' },
+          'குரு': { pasagarTa: 'சனி', pasagarEn: 'Saturn', bhodhagarTa: 'செவ்வாய்', bhodhagarEn: 'Mars', karagarTa: 'சந்திரன்', karagarEn: 'Moon', vedhagarTa: 'சூரியன்', vedhagarEn: 'Sun' },
+          'சனி': { pasagarTa: 'சுக்கிரன்', pasagarEn: 'Venus', bhodhagarTa: 'சந்திரன்', bhodhagarEn: 'Moon', karagarTa: 'குரு', karagarEn: 'Jupiter', vedhagarTa: 'செவ்வாய்', vedhagarEn: 'Mars' }
+        };
+        const LAGNA_LORDS_TA = ['செவ்வாய்', 'சுக்கிரன்', 'புதன்', 'சந்திரன்', 'சூரியன்', 'புதன்', 'சுக்கிரன்', 'செவ்வாய்', 'குரு', 'சனி', 'சனி', 'குரு'];
+        const lLord = LAGNA_LORDS_TA[lagnaRasi] || 'செவ்வாய்';
+        return GRAHA_FOUR_ROLES[lLord] || GRAHA_FOUR_ROLES['செவ்வாய்'];
+      })(),
+      nakshatraHora: (() => {
+        const nakLordObj = DASHA_LORDS[i0] || DASHA_LORDS[0];
+        const horaNameTa = (oraiData && oraiData.birthHora && oraiData.birthHora.nameTa) ? oraiData.birthHora.nameTa : 'குரு ஓரை';
+        const horaNameEn = (oraiData && oraiData.birthHora && oraiData.birthHora.nameEn) ? oraiData.birthHora.nameEn : 'Jupiter Hora';
+        return {
+          horaTa: horaNameTa,
+          horaEn: horaNameEn,
+          nakLordTa: nakLordObj.nameTa,
+          nakLordEn: nakLordObj.nameEn,
+          combinedTa: `${horaNameTa} • ${nakLordObj.nameTa}`,
+          combinedEn: `${horaNameEn} • ${nakLordObj.nameEn}`
+        };
+      })(),
       ayanamshaDMS: formatDMS(Ayanamsha),
       ayanamshaDeg: Ayanamsha,
       obliquityDMS: formatDMS(eps),
@@ -2918,13 +3055,7 @@ export function calculateThirukanithaHoroscope({
     dasavarga,
     shadbala,
     ashtakavarga,
-    orai: isTransitCalc ? null : computeOraiData({
-      Y, M, D,
-      localHour,
-      lat, lon,
-      utcOffset: numUtcOffset,
-      isMrM
-    }),
+    orai: oraiData,
     gocharam: isTransitCalc ? null : computeGocharamData({
       birthMoonRasi: moonRasi,
       birthLagnaRasi: lagnaRasi,
@@ -3128,20 +3259,30 @@ export function createEmptyHoroscopePagerData() {
  */
 
 export function computeTamilDate(sunLongitude, dobStr) {
-  const TAMIL_MONTHS = [
+  const TAMIL_MONTHS_TA = [
     'சித்திரை', 'வைகாசி', 'ஆனி', 'ஆடி', 'ஆவணி', 'புரட்டாசி',
     'ஐப்பசி', 'கார்த்திகை', 'மார்கழி', 'தை', 'மாசி', 'பங்குனி'
   ];
+  const TAMIL_MONTHS_EN = [
+    'Chithirai', 'Vaikasi', 'Aani', 'Aadi', 'Avani', 'Purattasi',
+    'Aippasi', 'Karthigai', 'Margazhi', 'Thai', 'Maasi', 'Panguni'
+  ];
+  const TAMIL_YEARS_60_EN = [
+    'Prabhava', 'Vibhava', 'Shukla', 'Pramodoota', 'Prajotpatti', 'Angirasa', 'Shrimukha', 'Bhava', 'Yuva', 'Dhatri',
+    'Ishvara', 'Bahudhanya', 'Pramathi', 'Vikrama', 'Vrishapraja', 'Chitrabhanu', 'Subhanu', 'Tarana', 'Parthiva', 'Vyaya',
+    'Sarvajit', 'Sarvadhari', 'Virodhi', 'Vikruti', 'Khara', 'Nandana', 'Vijaya', 'Jaya', 'Manmatha', 'Durmukhi',
+    'Hevilambi', 'Vilambi', 'Vikari', 'Sharvari', 'Plava', 'Shubhakrit', 'Sobhakrit', 'Krodhi', 'Vishvavasu', 'Parabhava',
+    'Plavanga', 'Kilaka', 'Saumya', 'Sadharana', 'Virodhikrit', 'Paridhavi', 'Pramadicha', 'Ananda', 'Rakshasa', 'Nala',
+    'Pingala', 'Kalayukti', 'Siddharthi', 'Raudra', 'Durmati', 'Dundubhi', 'Rudhirodgari', 'Raktakshi', 'Krodhana', 'Akshaya'
+  ];
+
   const rasiIdx = Math.floor(N(sunLongitude) / 30) % 12;
-  const monthName = TAMIL_MONTHS[rasiIdx] || 'மார்கழி';
+  const monthNameTa = TAMIL_MONTHS_TA[rasiIdx] || 'மார்கழி';
+  const monthNameEn = TAMIL_MONTHS_EN[rasiIdx] || 'Margazhi';
   const degInSign = N(sunLongitude) % 30;
   
-  // Day of month: 1-indexed
-  // For Dhanusu at 18.5 deg in Margazhi -> 18
-  // For Thulam at 12.57 deg in Aippasi -> 13
   let day = Math.floor(degInSign);
   if (rasiIdx === 8) {
-    // Margazhi: day is exactly 18 for Jan 3 1983
     day = Math.floor(degInSign);
     if (day === 0) day = 1;
   } else {
@@ -3154,9 +3295,20 @@ export function computeTamilDate(sunLongitude, dobStr) {
     gYear -= 1;
   }
   const cycleIndex = ((gYear - 1987) % 60 + 60) % 60;
-  const yearName = TAMIL_YEARS_60[cycleIndex] || 'துந்துபி';
+  const yearNameTa = TAMIL_YEARS_60[cycleIndex] || 'துந்துபி';
+  const yearNameEn = TAMIL_YEARS_60_EN[cycleIndex] || 'Dundubhi';
 
-  return `${yearName} ${monthName}-${day}`;
+  const res = {
+    ta: `${yearNameTa} ${monthNameTa}-${day}`,
+    en: `${yearNameEn} ${monthNameEn}-${day}`,
+    yearTa: yearNameTa,
+    yearEn: yearNameEn,
+    monthTa: monthNameTa,
+    monthEn: monthNameEn,
+    day,
+    toString() { return this.ta; }
+  };
+  return res;
 }
 
 export function computeHoroscopePagerData(horoInput) {

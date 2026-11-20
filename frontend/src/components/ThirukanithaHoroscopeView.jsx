@@ -818,60 +818,248 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
 
           {/* Collapsible Dropdown Content */}
           {openSections[1] && (
-            <div className="p-4 sm:p-5 pt-0 border-t border-amber-900/10 dark:border-amber-500/15 space-y-4">
-              {/* SECTION 2: Birth Summary Strip */}
-        <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs">
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2.5 text-xs">
-            <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 text-center">
-              <span className="block text-[10px] text-stone-500 uppercase font-bold">{T.ayanamsha}</span>
-              <strong className="text-xs font-mono text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
-                {horoscope.summary.ayanamshaDMS}
-              </strong>
-            </div>
+            <div className="p-4 sm:p-6 border-t border-amber-900/10 dark:border-amber-500/15 space-y-5">
+              {/* SUB-SECTION 1: Primary Birth Credentials */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 border-b border-amber-900/15 dark:border-amber-500/15 pb-1.5">
+                  <span className="text-sm">👤</span>
+                  <h3 className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-[#E8838B]">
+                    {isTamil ? 'முதன்மை ஜனன விவரங்கள்' : 'Primary Birth Profile'}
+                  </h3>
+                </div>
 
-            <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 text-center">
-              <span className="block text-[10px] text-stone-500 uppercase font-bold">{T.lagna}</span>
-              <strong className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
-                {isTamil ? RASHIS[horoscope.summary.lagnaRasi].ta : RASHIS[horoscope.summary.lagnaRasi].en} ({horoscope.summary.lagnaDegInSign})
-              </strong>
-            </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'பெயர்' : 'Name'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block truncate">
+                      {horoscope.summary?.name || horoscope.meta?.name || '---'}
+                    </strong>
+                  </div>
 
-            <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 text-center">
-              <span className="block text-[10px] text-stone-500 uppercase font-bold">{T.rasi}</span>
-              <strong className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
-                {isTamil ? RASHIS[horoscope.summary.moonRasi].ta : RASHIS[horoscope.summary.moonRasi].en}
-              </strong>
-            </div>
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'பிறந்த தேதி' : 'Date of Birth (D.O.B)'}</span>
+                    <strong className="text-xs sm:text-sm font-mono font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
+                      {horoscope.summary?.dobFormatted || horoscope.meta?.dob || '---'}
+                    </strong>
+                  </div>
 
-            <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 text-center">
-              <span className="block text-[10px] text-stone-500 uppercase font-bold">{T.nakshatra}</span>
-              <strong className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
-                {isTamil ? NAKSHATRAS[horoscope.summary.moonNak].ta : NAKSHATRAS[horoscope.summary.moonNak].en} - {horoscope.summary.moonPada} {T.pada}
-              </strong>
-            </div>
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'பிறந்த நேரம்' : 'Time of Birth'}</span>
+                    <strong className="text-xs sm:text-sm font-mono font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
+                      {horoscope.summary?.dobTime || horoscope.meta?.dobTime12 || horoscope.meta?.dobTime || '---'}
+                    </strong>
+                  </div>
 
-            <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 text-center">
-              <span className="block text-[10px] text-stone-500 uppercase font-bold">{T.tithi}</span>
-              <strong className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
-                {isTamil ? horoscope.summary.tithiNameTa : horoscope.summary.tithiNameEn}
-              </strong>
-            </div>
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'பிறந்த இடம்' : 'Place of Birth'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block truncate">
+                      {horoscope.summary?.placeName || horoscope.meta?.city || horoscope.meta?.placeName || '---'}
+                    </strong>
+                  </div>
 
-            <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 text-center">
-              <span className="block text-[10px] text-stone-500 uppercase font-bold">{T.weekday}</span>
-              <strong className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
-                {isTamil ? horoscope.summary.weekday.ta : horoscope.summary.weekday.en}
-              </strong>
-            </div>
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'தமிழ் தேதி' : 'Tamil Date of Birth'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block truncate">
+                      {isTamil ? (horoscope.summary?.tamilDate?.ta || horoscope.summary?.tamilDate) : (horoscope.summary?.tamilDate?.en || horoscope.summary?.tamilDate)}
+                    </strong>
+                  </div>
 
-            <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 text-center col-span-2 sm:col-span-1">
-              <span className="block text-[10px] text-stone-500 uppercase font-bold">{T.dashaBalance}</span>
-              <strong className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
-                {isTamil ? horoscope.summary.dashaBalance.textTa : horoscope.summary.dashaBalance.textEn}
-              </strong>
-            </div>
-          </div>
-        </div>
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'அயனம்' : 'Ayanam'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
+                      {isTamil ? horoscope.summary?.ayanam?.ta : horoscope.summary?.ayanam?.en}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'நட்சத்திர ஓரை / நாதன்' : 'Nakshatra Hora / Lord'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block truncate">
+                      {isTamil ? horoscope.summary?.nakshatraHora?.combinedTa : horoscope.summary?.nakshatraHora?.combinedEn}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-emerald-50/70 dark:bg-emerald-950/30 rounded-xl border border-emerald-400/40">
+                    <span className="block text-[10px] text-emerald-800 dark:text-emerald-400 uppercase font-bold">{isTamil ? 'நடப்பு தசா - புக்தி' : 'Current Dasha - Bhukti'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-emerald-950 dark:text-emerald-300 mt-0.5 block truncate">
+                      {isTamil ? (horoscope.summary?.currentDashaToday?.textTa || horoscope.summary?.dashaBalance?.textTa) : (horoscope.summary?.currentDashaToday?.textEn || horoscope.summary?.dashaBalance?.textEn)}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* SUB-SECTION 2: Panchangam & Astrological Foundations */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 border-b border-amber-900/15 dark:border-amber-500/15 pb-1.5">
+                  <span className="text-sm">📜</span>
+                  <h3 className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-[#E8838B]">
+                    {isTamil ? 'பஞ்சாங்க அங்கங்கள் & லக்ன விவரங்கள்' : 'Panchanga Angas & Astrological Foundations'}
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2.5 text-xs">
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15 text-center">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{T.lagna}</span>
+                    <strong className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
+                      {isTamil ? RASHIS[horoscope.summary.lagnaRasi].ta : RASHIS[horoscope.summary.lagnaRasi].en} ({horoscope.summary.lagnaDegInSign})
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15 text-center">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{T.rasi}</span>
+                    <strong className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
+                      {isTamil ? RASHIS[horoscope.summary.moonRasi].ta : RASHIS[horoscope.summary.moonRasi].en}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15 text-center">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{T.nakshatra}</span>
+                    <strong className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
+                      {isTamil ? NAKSHATRAS[horoscope.summary.moonNak].ta : NAKSHATRAS[horoscope.summary.moonNak].en} - {horoscope.summary.moonPada} {T.pada}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15 text-center">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{T.tithi}</span>
+                    <strong className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
+                      {isTamil ? horoscope.summary.tithiNameTa : horoscope.summary.tithiNameEn}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15 text-center">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{T.weekday}</span>
+                    <strong className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
+                      {isTamil ? horoscope.summary.weekday.ta : horoscope.summary.weekday.en}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15 text-center">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'யோகம் - கரணம்' : 'Yoga - Karana'}</span>
+                    <strong className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block truncate">
+                      {isTamil ? horoscope.summary?.yogaKarana?.textTa : horoscope.summary?.yogaKarana?.textEn}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15 text-center">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{T.ayanamsha}</span>
+                    <strong className="text-xs font-mono text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
+                      {horoscope.summary.ayanamshaDMS}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15 text-center">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{T.dashaBalance}</span>
+                    <strong className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block truncate">
+                      {isTamil ? horoscope.summary.dashaBalance.textTa : horoscope.summary.dashaBalance.textEn}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* SUB-SECTION 3: Special Planetary Rulerships (Lagnathipathi, Bhagyathipathi, Badhakathipathi, Subhar, Asubhar, Yogi-Avayogi) */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 border-b border-amber-900/15 dark:border-amber-500/15 pb-1.5">
+                  <span className="text-sm">👑</span>
+                  <h3 className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-[#E8838B]">
+                    {isTamil ? 'லக்ன ஆதிபத்தியங்கள், சுப-அசுபர்கள் & யோகி-அவயோகி' : 'Special Planetary Rulerships, Benefics & Malefics'}
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5 text-xs">
+                  <div className="p-2.5 bg-amber-50/70 dark:bg-amber-950/20 rounded-xl border border-amber-400/40 text-center">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'லக்னாதிபதி' : 'Lagnathipathi'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
+                      {isTamil ? horoscope.summary?.lagnaRoles?.lordTa : horoscope.summary?.lagnaRoles?.lordEn}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-amber-50/70 dark:bg-amber-950/20 rounded-xl border border-amber-400/40 text-center">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'பாக்கியாதிபதி' : 'Bhagyathipathi'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block">
+                      {isTamil ? horoscope.summary?.lagnaRoles?.bhagyaTa : horoscope.summary?.lagnaRoles?.bhagyaEn}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-rose-50/70 dark:bg-rose-950/20 rounded-xl border border-rose-400/40 text-center">
+                    <span className="block text-[10px] text-rose-700 dark:text-rose-400 uppercase font-bold">{isTamil ? 'பாதகாதிபதி' : 'Badhakathipathi'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-rose-900 dark:text-rose-300 mt-0.5 block">
+                      {isTamil ? horoscope.summary?.lagnaRoles?.badhakaTa : horoscope.summary?.lagnaRoles?.badhakaEn}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-emerald-50/70 dark:bg-emerald-950/20 rounded-xl border border-emerald-400/40 text-center">
+                    <span className="block text-[10px] text-emerald-800 dark:text-emerald-400 uppercase font-bold">{isTamil ? 'சுபர்கள்' : 'Benefics (Subhar)'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-emerald-950 dark:text-emerald-300 mt-0.5 block truncate">
+                      {isTamil ? horoscope.summary?.lagnaRoles?.subharTa : horoscope.summary?.lagnaRoles?.subharEn}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-rose-50/70 dark:bg-rose-950/20 rounded-xl border border-rose-400/40 text-center">
+                    <span className="block text-[10px] text-rose-800 dark:text-rose-400 uppercase font-bold">{isTamil ? 'அசுபர்கள்' : 'Malefics (Asubhar)'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-rose-950 dark:text-rose-300 mt-0.5 block truncate">
+                      {isTamil ? horoscope.summary?.lagnaRoles?.asubharTa : horoscope.summary?.lagnaRoles?.asubharEn}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-indigo-50/70 dark:bg-indigo-950/20 rounded-xl border border-indigo-400/40 text-center">
+                    <span className="block text-[10px] text-indigo-800 dark:text-indigo-400 uppercase font-bold">{isTamil ? 'யோகி - அவயோகி' : 'Yogi - Avayogi'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-indigo-950 dark:text-indigo-300 mt-0.5 block truncate">
+                      {isTamil ? horoscope.summary?.yogiAvayogi?.textTa : horoscope.summary?.yogiAvayogi?.textEn}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* SUB-SECTION 4: Four Functional Roles for Lagna Lord (Bhodhagar, Vedhagar, Pasagar, Karagar) */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 border-b border-amber-900/15 dark:border-amber-500/15 pb-1.5">
+                  <span className="text-sm">⚖️</span>
+                  <h3 className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-[#E8838B]">
+                    {isTamil ? 'லக்னாதிபதிக்கான பாசகாதி நால்வர்' : 'Functional Role Deliverers for Lagna Lord'}
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+                  <div className="p-2.5 bg-cyan-50/70 dark:bg-cyan-950/30 rounded-xl border border-cyan-400/40">
+                    <span className="block text-[10px] text-cyan-800 dark:text-cyan-400 uppercase font-bold">{isTamil ? 'பாசகர்' : 'Pasagar (Activator)'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-cyan-950 dark:text-cyan-200 mt-0.5 block">
+                      {isTamil ? horoscope.summary?.grahaFourRoles?.pasagarTa : horoscope.summary?.grahaFourRoles?.pasagarEn}
+                    </strong>
+                    <span className="text-[10px] text-cyan-700 dark:text-cyan-300 mt-0.5 block">
+                      {isTamil ? 'சீக்கிர பலனைத் தருபவர்' : 'Quickly ripens & delivers results'}
+                    </span>
+                  </div>
+
+                  <div className="p-2.5 bg-emerald-50/70 dark:bg-emerald-950/30 rounded-xl border border-emerald-400/40">
+                    <span className="block text-[10px] text-emerald-800 dark:text-emerald-400 uppercase font-bold">{isTamil ? 'போதகர்' : 'Bhodhagar (Bestower)'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-emerald-950 dark:text-emerald-200 mt-0.5 block">
+                      {isTamil ? horoscope.summary?.grahaFourRoles?.bhodhagarTa : horoscope.summary?.grahaFourRoles?.bhodhagarEn}
+                    </strong>
+                    <span className="text-[10px] text-emerald-700 dark:text-emerald-300 mt-0.5 block">
+                      {isTamil ? 'நிறையத் தருபவர்' : 'Showers abundant blessings'}
+                    </span>
+                  </div>
+
+                  <div className="p-2.5 bg-amber-50/70 dark:bg-amber-950/30 rounded-xl border border-amber-400/40">
+                    <span className="block text-[10px] text-amber-800 dark:text-amber-400 uppercase font-bold">{isTamil ? 'காரகர்' : 'Karagar (Steady Doer)'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-amber-950 dark:text-amber-200 mt-0.5 block">
+                      {isTamil ? horoscope.summary?.grahaFourRoles?.karagarTa : horoscope.summary?.grahaFourRoles?.karagarEn}
+                    </strong>
+                    <span className="text-[10px] text-amber-700 dark:text-amber-300 mt-0.5 block">
+                      {isTamil ? 'நிதானமாக, குறைந்த பலனைத் தருபவர்' : 'Gives measured, steady results'}
+                    </span>
+                  </div>
+
+                  <div className="p-2.5 bg-rose-50/70 dark:bg-rose-950/30 rounded-xl border border-rose-400/40">
+                    <span className="block text-[10px] text-rose-800 dark:text-rose-400 uppercase font-bold">{isTamil ? 'வேதகர்' : 'Vedhagar (Obstructionist)'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-rose-950 dark:text-rose-200 mt-0.5 block">
+                      {isTamil ? horoscope.summary?.grahaFourRoles?.vedhagarTa : horoscope.summary?.grahaFourRoles?.vedhagarEn}
+                    </strong>
+                    <span className="text-[10px] text-rose-700 dark:text-rose-300 mt-0.5 block">
+                      {isTamil ? 'தடுத்து விடுவார்' : 'Blocks, pierces or delays fruits'}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
