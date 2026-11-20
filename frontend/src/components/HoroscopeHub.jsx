@@ -21,6 +21,7 @@ import {
   RotateCcw
 } from 'lucide-react';
 import { useLang } from '../i18n';
+import { useAuth } from '../context/AuthContext';
 import { API } from '../api';
 import ClientRegistrationReceiptModal from './ClientRegistrationReceiptModal';
 import ThirukanithaHoroscopeView from './ThirukanithaHoroscopeView';
@@ -67,9 +68,18 @@ function to24HourTime(hStr, mStr, sStr, period) {
   return `${String(h).padStart(2, '0')}:${mStr || '00'}:${sStr || '00'}`;
 }
 
-export default function HoroscopeHub({ initialSubView = 'screen', initialClient = null, onClose }) {
+export default function HoroscopeHub({
+  initialSubView = 'screen',
+  initialClient = null,
+  onClose,
+  hideClientLookup = false
+}) {
   const { lang, tr } = useLang();
+  const { user } = useAuth();
   const isTa = lang === 'ta';
+
+  // Client view should not have the previous client search bar; astrologer portal requires it
+  const shouldHideLookup = Boolean(hideClientLookup || user?.role === 'client');
 
   // View mode: 'screen' (Thirukanitha Horoscope) | 'print' (Horoscope Pagers A4)
   const [subView, setSubView] = useState(initialSubView);
@@ -114,17 +124,61 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
     dobTime12: initialClient?.dobTime12 || '',
     country: initialClient?.country || 'India',
     state: initialClient?.state || 'Tamil Nadu',
-    placeName: 'Salem',
-    city: 'Salem',
-    lat: 11.6643,
-    lon: 78.1460,
-    utcOffset: '05:30 UTC',
+    placeName: initialClient?.dobPlace || initialClient?.place || initialClient?.city || 'Salem',
+    city: initialClient?.dobPlace || initialClient?.place || initialClient?.city || 'Salem',
+    lat: initialClient?.lat || 11.6643,
+    lon: initialClient?.lon || 78.1460,
+    utcOffset: initialClient?.utcOffset || '05:30 UTC',
     father: initialClient?.fatherName || initialClient?.father || '',
     mother: initialClient?.motherName || initialClient?.mother || '',
     nativePlace: initialClient?.nativePlace || '',
     mobile: initialClient?.mobile || '',
-    gender: 'male'
+    gender: initialClient?.gender || 'male'
   }));
+
+  // Sync state if initialClient prop changes or loads asynchronously
+  useEffect(() => {
+    if (initialClient) {
+      setSelectedClient(initialClient);
+      if (initialClient.name) setName(initialClient.name);
+      if (initialClient.dob) setDob(initialClient.dob);
+      if (initialClient.mobile) setMobile(initialClient.mobile);
+      if (initialClient.dobTime12 || initialClient.dobTime) {
+        setTimeState(parse12HourTime(initialClient.dobTime12 || initialClient.dobTime));
+      }
+      if (initialClient.country) setCountry(initialClient.country);
+      if (initialClient.state) setState(initialClient.state);
+      const place = initialClient.dobPlace || initialClient.place || initialClient.city || 'Salem';
+      setCity(place);
+      if (initialClient.lat) setLat(initialClient.lat);
+      if (initialClient.lon) setLon(initialClient.lon);
+      if (initialClient.utcOffset) setUtcOffset(initialClient.utcOffset);
+      if (initialClient.fatherName || initialClient.father) setFather(initialClient.fatherName || initialClient.father);
+      if (initialClient.motherName || initialClient.mother) setMother(initialClient.motherName || initialClient.mother);
+      if (initialClient.nativePlace) setNativePlace(initialClient.nativePlace);
+      if (initialClient.gender) setGender(initialClient.gender);
+
+      setActiveBirthData(prev => ({
+        ...prev,
+        name: initialClient.name || prev.name,
+        dob: initialClient.dob || prev.dob,
+        dobTime: initialClient.dobTime || prev.dobTime,
+        dobTime12: initialClient.dobTime12 || prev.dobTime12,
+        country: initialClient.country || prev.country,
+        state: initialClient.state || prev.state,
+        placeName: place,
+        city: place,
+        lat: initialClient.lat || prev.lat,
+        lon: initialClient.lon || prev.lon,
+        utcOffset: initialClient.utcOffset || prev.utcOffset,
+        father: initialClient.fatherName || initialClient.father || prev.father,
+        mother: initialClient.motherName || initialClient.mother || prev.mother,
+        nativePlace: initialClient.nativePlace || prev.nativePlace,
+        mobile: initialClient.mobile || prev.mobile,
+        gender: initialClient.gender || prev.gender
+      }));
+    }
+  }, [initialClient]);
 
   // Registration receipt modal state
   const [receiptModalData, setReceiptModalData] = useState(null);
@@ -547,9 +601,11 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
                 {isTa ? 'பிறப்பு விவரப் படிவம் (Birth Details Intake)' : 'Birth Details Intake (Compute & Generate Pager)'}
               </h2>
               <p className="text-[11px] text-stone-500">
-                {isTa
-                  ? 'முந்தைய வாடிக்கையாளர் விவரங்களை தேடவும் அல்லது புதிய விவரங்களை உள்ளிடவும்'
-                  : 'Search existing clients by mobile/name/dob/place, or enter new client birth data'}
+                {shouldHideLookup
+                  ? (isTa ? 'பிறப்பு விவரங்களை சரிபார்த்து திருக்கணித ஜாதகத்தை பார்க்கவும்' : 'Review birth details and calculate Thirukanitha horoscope')
+                  : (isTa
+                      ? 'முந்தைய வாடிக்கையாளர் விவரங்களை தேடவும் அல்லது புதிய விவரங்களை உள்ளிடவும்'
+                      : 'Search existing clients by mobile/name/dob/place, or enter new client birth data')}
               </p>
             </div>
           </div>
@@ -565,8 +621,9 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
           </div>
         </div>
 
-        {/* OPTION FOR PREVIOUS CLIENTS (Search by Mobile OR Name + D.O.B + Place) */}
-        <div ref={searchBoxRef} className="relative p-3 rounded-xl bg-amber-50/70 dark:bg-stone-800/60 border border-amber-900/15 dark:border-amber-500/20 space-y-2">
+        {/* OPTION FOR PREVIOUS CLIENTS (Search by Mobile OR Name + D.O.B + Place) - ONLY SHOWN IN ASTROLOGER/COMPANY PORTALS */}
+        {!shouldHideLookup && (
+          <div ref={searchBoxRef} className="relative p-3 rounded-xl bg-amber-50/70 dark:bg-stone-800/60 border border-amber-900/15 dark:border-amber-500/20 space-y-2">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <label className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 flex items-center gap-1.5">
               <Search className="w-3.5 h-3.5" />
@@ -665,6 +722,7 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
             </div>
           )}
         </div>
+        )}
 
         {/* INTAKE FORM FIELDS */}
         <form onSubmit={handleCalculate} className="space-y-3 pt-1">
@@ -925,17 +983,19 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
                 <span>{isTa ? 'ஜாதகம் கணிக்க & காட்சிப்படுத்து' : 'Calculate & View Horoscope'}</span>
               </button>
 
-              {/* Button 2: If New Client, Create Client Account & Share */}
-              <button
-                type="button"
-                onClick={handleCreateClientAccount}
-                disabled={isRegistering}
-                className="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-md shadow-emerald-950/20 transition-all cursor-pointer flex items-center gap-1.5"
-                title="Create client account, generate login credentials and print/share acknowledgement slip"
-              >
-                <PlusCircle className="w-3.5 h-3.5" />
-                <span>{isRegistering ? (isTa ? 'கணக்கு உருவாக்கப்படுகிறது...' : 'Creating Account...') : (isTa ? 'புதிய கணக்கு உருவாக்கி பகிர்' : 'Create Client Account & Share')}</span>
-              </button>
+              {/* Button 2: If Astrologer/Company, Create Client Account & Share */}
+              {!shouldHideLookup && (
+                <button
+                  type="button"
+                  onClick={handleCreateClientAccount}
+                  disabled={isRegistering}
+                  className="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-md shadow-emerald-950/20 transition-all cursor-pointer flex items-center gap-1.5"
+                  title="Create client account, generate login credentials and print/share acknowledgement slip"
+                >
+                  <PlusCircle className="w-3.5 h-3.5" />
+                  <span>{isRegistering ? (isTa ? 'கணக்கு உருவாக்கப்படுகிறது...' : 'Creating Account...') : (isTa ? 'புதிய கணக்கு உருவாக்கி பகிர்' : 'Create Client Account & Share')}</span>
+                </button>
+              )}
             </div>
           </div>
         </form>

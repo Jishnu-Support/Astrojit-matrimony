@@ -395,6 +395,7 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
         <HoroscopeHub
           initialSubView={activeTab === 'horoscope_pagers' || activeTab === 'pager' ? 'print' : 'screen'}
           initialClient={user}
+          hideClientLookup={true}
         />
       )}
 

@@ -859,6 +859,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
       {(activeTab === 'horoscope' || activeTab === 'thirukanitha' || activeTab === 'horoscope_pagers' || activeTab === 'pager') && (
         <HoroscopeHub
           initialSubView={activeTab === 'horoscope_pagers' || activeTab === 'pager' ? 'print' : 'screen'}
+          hideClientLookup={false}
         />
       )}
 
