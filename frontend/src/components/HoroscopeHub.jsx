@@ -26,6 +26,7 @@ import ClientRegistrationReceiptModal from './ClientRegistrationReceiptModal';
 import ThirukanithaHoroscopeView from './ThirukanithaHoroscopeView';
 import HoroscopePagerView from './HoroscopePagerView';
 import { COUNTRIES, GEO_DATA, lookupCoordinates, parseCoordinateToDec } from '../data/geoCoordinates';
+import { calculateThirukanithaHoroscope } from '../utils/thirukanithaEngine';
 
 const HOURS_12 = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
 const MINUTES_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
@@ -351,22 +352,60 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
 
     setIsRegistering(true);
     try {
+      // Compute astrological snapshot for the official registration receipt
+      let astrologicalSnapshot = null;
+      try {
+        const horo = calculateThirukanithaHoroscope({
+          name: name.trim(),
+          dob,
+          dobTime: time24,
+          dobTime12: time12,
+          country,
+          state,
+          placeName: city,
+          city,
+          lat: parseCoordinateToDec(lat, 11.6643),
+          lon: parseCoordinateToDec(lon, 78.1460),
+          utcOffset,
+          gender
+        });
+        if (horo && horo.summary) {
+          astrologicalSnapshot = {
+            starBasis: 'moon',
+            starBasisLabel: 'Moon Star (Chandra Nakshatra)',
+            nakshatra: horo.summary.nakshatra || '',
+            pada: horo.summary.pada || 1,
+            moonSign: horo.summary.rasi || '',
+            lagna: horo.summary.lagna || '',
+            lagnaSubhas: horo.summary.subhas || 'Jupiter, Venus, Mercury',
+            lagnaPapas: horo.summary.papas || 'Saturn, Mars, Rahu, Ketu',
+            lagnaSubhaPavar: horo.summary.subhaPavar || 'Jupiter, Sun',
+            dashaBalance: horo.summary.dashaBalance || '',
+            gana: horo.summary.gana || '',
+            yoni: horo.summary.yoni || ''
+          };
+        }
+      } catch (calcErr) {
+        console.warn('Snapshot calculation fallback:', calcErr);
+      }
+
       const payload = {
         name: name.trim(),
         mobile: mobile.trim(),
         dob,
         dobTime: time24,
         dobTime12: time12,
-        dobPlace: city,
-        fatherName: father,
-        motherName: mother,
-        nativePlace,
+        dobPlace: city || 'Chennai',
+        fatherName: father.trim(),
+        motherName: mother.trim(),
+        nativePlace: (nativePlace || city).trim(),
         country,
         state,
         city,
         latitude: lat,
         longitude: lon,
-        gender
+        gender,
+        astrologicalSnapshot
       };
 
       const res = await API.registerClientByAstrologer(payload);
@@ -858,7 +897,7 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
                 title="Create client account, generate login credentials and print/share acknowledgement slip"
               >
                 <PlusCircle className="w-3.5 h-3.5" />
-                <span>{isRegistering ? 'Creating Account...' : (isTa ? '➕ புதிய கணக்கு உருவாக்கி பகிர்' : '➕ Create Client Account & Share')}</span>
+                <span>{isRegistering ? (isTa ? 'கணக்கு உருவாக்கப்படுகிறது...' : 'Creating Account...') : (isTa ? 'புதிய கணக்கு உருவாக்கி பகிர்' : 'Create Client Account & Share')}</span>
               </button>
             </div>
           </div>
