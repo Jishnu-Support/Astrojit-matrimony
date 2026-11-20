@@ -2,9 +2,11 @@
  * Astrojit API Client
  */
 
-const API_BASE = typeof window !== 'undefined' && window.location.hostname
-  ? `http://${window.location.hostname}:5000/api`
-  : 'http://localhost:5000/api';
+const API_BASE = import.meta.env?.VITE_API_BASE || (
+  typeof window !== 'undefined' && (window.location.port === '5173' || window.location.port === '3000')
+    ? `http://${window.location.hostname}:5000/api`
+    : '/api'
+);
 
 export async function apiRequest(endpoint, method = 'GET', data = null, customToken = null) {
   const token = customToken || localStorage.getItem('astrojit_token');

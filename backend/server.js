@@ -6,6 +6,8 @@
 
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
@@ -2529,6 +2531,16 @@ app.post('/api/matrimony/shortlists/toggle', (req, res) => {
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', platform: 'Astrojit', timestamp: new Date().toISOString() });
 });
+
+// Serve frontend static build in production
+const frontendDist = path.join(__dirname, '../frontend/dist');
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Astrojit server running at http://localhost:${PORT}`);
