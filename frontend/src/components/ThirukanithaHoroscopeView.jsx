@@ -821,11 +821,6 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
             <div className="p-4 sm:p-5 pt-0 border-t border-amber-900/10 dark:border-amber-500/15 space-y-4">
               {/* SECTION 2: Birth Summary Strip */}
         <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs">
-          <h2 className="text-sm font-bold text-[#7A1A22] dark:text-[#E8838B] mb-3 pb-1 border-b border-amber-900/10 flex items-center gap-2">
-            <span>✨</span>
-            <span>{T.birthSummary}</span>
-          </h2>
-
           <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2.5 text-xs">
             <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 text-center">
               <span className="block text-[10px] text-stone-500 uppercase font-bold">{T.ayanamsha}</span>
@@ -920,17 +915,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
             <div className="p-4 sm:p-5 pt-0 border-t border-amber-900/10 dark:border-amber-500/15 space-y-4">
               {/* SECTION 3: South Indian Charts (16 Shodashavarga Grid Layout) */}
         <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-amber-900/10 pb-2">
-            <div>
-              <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
-                <span>☸️</span>
-                <span>{T.charts}</span>
-              </h2>
-              <p className="text-[11px] text-stone-500 mt-0.5">
-                {T.chartsSubtitle}
-              </p>
-            </div>
-
+          <div className="flex justify-end items-center gap-2 border-b border-amber-900/10 pb-2">
             {/* Master Table Toggle Button */}
             <button
               type="button"
@@ -1059,11 +1044,6 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
             <div className="p-4 sm:p-5 pt-0 border-t border-amber-900/10 dark:border-amber-500/15 space-y-4">
               {/* SECTION 4: Planetary Positions Table */}
         <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-3">
-          <h2 className="text-sm font-bold text-[#7A1A22] dark:text-[#E8838B] border-b border-amber-900/10 pb-2 flex items-center gap-2">
-            <span>🌌</span>
-            <span>{T.planetTable}</span>
-          </h2>
-
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
@@ -1166,11 +1146,6 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
             <div className="p-4 sm:p-5 pt-0 border-t border-amber-900/10 dark:border-amber-500/15 space-y-4">
               {/* SECTION 5: Sripati Bhava Sphutam Table */}
         <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-3">
-          <h2 className="text-sm font-bold text-[#7A1A22] dark:text-[#E8838B] border-b border-amber-900/10 pb-2 flex items-center gap-2">
-            <span>📐</span>
-            <span>{T.sripatiTable}</span>
-          </h2>
-
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
@@ -1246,22 +1221,13 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               {/* SECTION 5B: Shadbala & Bhava Bala Analysis (ஜாதகத்தில் ஷட்பலம் & பாவக பலம் ஆய்வு) */}
         {horoscope.shadbala && (
           <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
-            <div className="border-b border-amber-900/10 dark:border-amber-500/15 pb-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <div>
-                <h2 className="text-sm font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
-                  <span>⚖️</span>
-                  <span>{T.shadbalaTitle}</span>
-                </h2>
-                <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5">
-                  {T.shadbalaSubtitle}
-                </p>
-              </div>
+            <div className="border-b border-amber-900/10 dark:border-amber-500/15 pb-2 flex justify-end items-center">
               <a
                 href="/Shadbala_Calculation_Formulas_Tamil_English.pdf"
                 target="_blank"
                 rel="noreferrer"
                 download="Shadbala_Calculation_Formulas_Tamil_English.pdf"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#7A1A22] hover:bg-[#93232C] text-white shadow-2xs transition-colors shrink-0 print:hidden self-start sm:self-auto"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#7A1A22] hover:bg-[#93232C] text-white shadow-2xs transition-colors shrink-0 print:hidden"
               >
                 <span>📄</span>
                 <span>{isTamil ? 'சூத்திரங்கள் PDF தரவிறக்கம்' : 'Download Formulas PDF'}</span>
@@ -1398,19 +1364,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
             <div className="p-4 sm:p-5 pt-0 border-t border-amber-900/10 dark:border-amber-500/15 space-y-4">
               {/* SECTION 6: Vimshottari Dasha & Collapsible Bhukti Tables (120 Years) */}
         <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
-          <div className="border-b border-amber-900/10 pb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <div>
-              <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
-                <span>⏳</span>
-                <span>{T.vimshottari}</span>
-              </h2>
-              <p className="text-[11px] text-stone-500 mt-0.5">
-                {isTamil
-                  ? 'பராசரர் முறைப்படி 120 ஆண்டுகளுக்கான 9 மகாதிசைகள் மற்றும் 81 புக்திகள் கணக்கீடு'
-                  : 'Parashari 120-Year Vimshottari Cycle with 9 Mahadashas and 81 Sub-Periods (Bhuktis)'}
-              </p>
-            </div>
-
+          <div className="border-b border-amber-900/10 pb-3 flex flex-wrap items-center justify-end gap-2">
             {/* Quick Status Badges at Top */}
             <div className="flex flex-wrap items-center gap-2 text-xs">
               {horoscope.summary?.dashaBalance && (
@@ -1774,19 +1728,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               {/* Interactive Dasavarga & Shodashavarga Dignity Strength Section (Page 20 Benchmark) */}
           {showVargaMasterTable && horoscope.dasavarga && (
             <div className="mt-4 p-3.5 sm:p-5 rounded-2xl bg-amber-50/60 dark:bg-stone-800/40 border border-amber-900/15 space-y-3.5">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5 border-b border-amber-900/10 pb-3">
-                <div>
-                  <h3 className="text-sm font-bold text-[#7A1A22] dark:text-amber-200 flex items-center gap-2">
-                    <span>👑</span>
-                    <span>{isTamil ? horoscope.dasavarga.titleTa : horoscope.dasavarga.titleEn}</span>
-                  </h3>
-                  <p className="text-[11px] text-stone-500 mt-0.5">
-                    {isTamil
-                      ? 'பராசரர் முறைப்படி 10 முக்கிய வர்க்கங்களில் கிரகங்களின் ஆட்சி, உச்சம், நட்பு, சமம், பகை, நீசம் பலம் மற்றும் சுப-அசுப கணிதம்'
-                      : 'Parashara 10-Varga Planetary Dignity, Auspicious (Subha) vs Inauspicious (Asubha) Score'}
-                  </p>
-                </div>
-
+              <div className="flex items-center justify-end gap-2.5 border-b border-amber-900/10 pb-3">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-100/80 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">
                     <span>🌟</span>
@@ -2127,17 +2069,8 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
         {horoscope.ashtakavarga && (
           <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-5">
             {/* Section Header */}
-            <div className="border-b border-amber-900/10 dark:border-amber-500/15 pb-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <div>
-                <h2 className="text-sm font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
-                  <span>☸️</span>
-                  <span>{T.ashtakavargaTitle}</span>
-                </h2>
-                <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5">
-                  {T.ashtakavargaSubtitle}
-                </p>
-              </div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-900/40 text-[#7A1A22] dark:text-amber-200 border border-amber-900/20 shrink-0 self-start sm:self-auto">
+            <div className="border-b border-amber-900/10 dark:border-amber-500/15 pb-2 flex justify-end items-center">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-900/40 text-[#7A1A22] dark:text-amber-200 border border-amber-900/20 shrink-0">
                 <span>✨</span>
                 <span>337 {isTamil ? 'பரல்கள் (பராசரர் விதி)' : 'Bindus (Parashari Invariant)'}</span>
               </div>
@@ -2736,17 +2669,11 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
           <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
             {/* Header */}
             <div className="border-b border-amber-900/10 dark:border-amber-500/15 pb-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <div>
-                <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
-                  <span>🪐</span>
-                  <span>{T.gocharamTitle}</span>
-                </h2>
-                <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5">
-                  {isTamil
-                    ? `ஜென்ம ராசி (${horoscope.gocharam.birthMoonRasiTa}) மற்றும் லக்னம் (${horoscope.gocharam.birthLagnaRasiTa}) அடிப்படையில் கோச்சார கிரக சஞ்சார பலன்கள்`
-                    : `Planetary transits relative to birth Moon (${horoscope.gocharam.birthMoonRasiEn || horoscope.gocharam.birthMoonRasiTa}) and Lagna (${horoscope.gocharam.birthLagnaRasiEn || horoscope.gocharam.birthLagnaRasiTa})`}
-                </p>
-              </div>
+              <p className="text-[11px] text-stone-600 dark:text-stone-400">
+                {isTamil
+                  ? `ஜென்ம ராசி (${horoscope.gocharam.birthMoonRasiTa}) மற்றும் லக்னம் (${horoscope.gocharam.birthLagnaRasiTa}) அடிப்படையில் கோச்சார கிரக சஞ்சார பலன்கள்`
+                  : `Planetary transits relative to birth Moon (${horoscope.gocharam.birthMoonRasiEn || horoscope.gocharam.birthMoonRasiTa}) and Lagna (${horoscope.gocharam.birthLagnaRasiEn || horoscope.gocharam.birthLagnaRasiTa})`}
+              </p>
 
               {/* Transit Date Selector */}
               <div className="flex items-center gap-2 print:hidden">
@@ -3038,17 +2965,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
         {horoscope.orai && (
           <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
             {/* Header */}
-            <div className="border-b border-amber-900/10 dark:border-amber-500/15 pb-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <div>
-                <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
-                  <span>⏱️</span>
-                  <span>{T.oraiTitle}</span>
-                </h2>
-                <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5">
-                  {T.oraiSubtitle}
-                </p>
-              </div>
-
+            <div className="border-b border-amber-900/10 dark:border-amber-500/15 pb-2 flex justify-end items-center">
               {/* Tab Switcher: Birth Horas vs Today Live Horas */}
               <div className="flex items-center gap-1 bg-amber-900/10 dark:bg-stone-900 p-0.5 rounded-xl text-xs font-bold print:hidden">
                 <button
@@ -3381,7 +3298,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     <div>
                       <h3 className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 flex items-center gap-1.5">
                         <span>🪐</span>
-                        <span>{isTamil ? 'உபகிரகங்கள் - குளிகாதி ஐவர் விபரங்கள்' : 'Gulikaadi Five Upagrahas - Timing & Sphutas'}</span>
+                        <span>{isTamil ? 'குளிகாதி ஐவர் கால & ஸ்புட ஒப்பீட்டு அட்டவணை' : 'Gulikaadi Five Upagrahas - Timing & Sphutas'}</span>
                       </h3>
                       <p className="text-[11px] text-stone-600 dark:text-stone-400">
                         {isTamil
@@ -5032,7 +4949,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     <div>
                       <h3 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
                         <span>🦚</span>
-                        <span>{isTamil ? 'பஞ்ச பட்சி விபரம்' : 'Pancha Pakshi Profile & Details'}</span>
+                        <span>{isTamil ? 'ஜென்ம பட்சி அடிப்படை விவரக்குறிப்பு' : 'Natal Birth Bird Elemental Profile'}</span>
                       </h3>
                       <p className="text-[11px] text-stone-600 dark:text-stone-400">
                         {isTamil ? 'அகத்தியர் மற்றும் போகர் சித்தர்கள் அருளிய ஐந்து பட்சிகளின் பஞ்சபூத ஆற்றல் தத்துவம்' : 'Ancient Tamil Siddha classification of planetary and elemental biorhythms'}
@@ -5398,7 +5315,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     <div>
                       <h3 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
                         <span>🌟</span>
-                        <span>{isTamil ? 'கிரகங்களின் பாசகர்- போதகர்- காரகர்- வேதகர்' : 'Planetary Pasakar, Bodhakar, Karagar & Vedhagar'}</span>
+                        <span>{isTamil ? 'பாசகாதி நால்வர் கோட்பாடு' : '4 Functional Planetary Roles'}</span>
                       </h3>
                       <p className="text-[11px] text-stone-600 dark:text-stone-400">
                         {isTamil ? 'கிரகங்களின் பலன் வழங்கும் ஆற்றலைத் தூண்டும் மற்றும் தடுக்கும் காரக கிரகங்கள் (ஜாதக அலங்கார விதி)' : 'Astrological role agents that stimulate, deliver, delay or obstruct planetary results'}
