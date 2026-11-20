@@ -121,29 +121,6 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
     }
   };
 
-  const handlePurgeAllData = async () => {
-    const confirmPrompt = tr(
-      'CAUTION: Are you sure you want to PERMANENTLY WIPE ALL client, astrologer, vendor, and matrimony demo/junk records? Only jit_admin will be retained.',
-      'எச்சரிக்கை: அனைத்து கிளையன்ட், ஜோதிடர், விற்பனையாளர் மற்றும் வரன் பதிவுகளையும் நிரந்தரமாக நீக்க விரும்புகிறீர்களா? jit_admin மட்டுமே தக்கவைக்கப்படும்.'
-    );
-    if (!window.confirm(confirmPrompt)) return;
-    try {
-      setLoading(true);
-      await API.purgeAllCompanyData();
-      setActionSuccessMsg(
-        tr(
-          'All demo/junk data permanently wiped! Only jit_admin retained.',
-          'அனைத்து தரவுகளும் வெற்றிகரமாக நீக்கப்பட்டன! jit_admin மட்டுமே உள்ளது.'
-        )
-      );
-      await loadAllCompanyData();
-      setTimeout(() => setActionSuccessMsg(''), 4000);
-    } catch (err) {
-      alert('Purge failed: ' + (err.message || 'Error'));
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDeleteClient = async (clientId, clientName) => {
     const confirmPrompt = tr(
@@ -199,15 +176,6 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={handlePurgeAllData}
-              className="bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 text-xs px-3 py-2 rounded-xl border border-rose-300 font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
-              title="Permanently remove all demo and junk data, retain only jit_admin"
-            >
-              <span>🗑️</span>
-              <span>{tr('Purge Junk Data', 'குப்பைத் தரவை நீக்கு')}</span>
-            </button>
-
             <button
               onClick={loadAllCompanyData}
               className="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs px-3.5 py-2 rounded-xl border border-slate-200 font-semibold transition-colors cursor-pointer"
