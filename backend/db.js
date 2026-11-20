@@ -15,7 +15,7 @@ if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
-// Initial DB Schema (Production - No demo data)
+// Initial DB Schema (Production - Strictly only jit_admin, no demo data)
 const defaultDb = {
   clients: [],
   astrologers: [],
@@ -43,7 +43,6 @@ function readDb() {
   try {
     if (!fs.existsSync(DB_FILE)) {
       writeDb(defaultDb);
-      seedInitialData();
       return JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
     }
     const data = fs.readFileSync(DB_FILE, 'utf-8');
@@ -79,6 +78,7 @@ function seedInitialData() {
   const db = readDb();
   let modified = false;
 
+  // 1. Enforce Company Admin credentials: jit_admin / Jishnuinfotech@123
   if (!db.company) {
     db.company = {
       username: 'jit_admin',
@@ -92,6 +92,7 @@ function seedInitialData() {
   } else {
     if (db.company.username !== 'jit_admin') {
       db.company.username = 'jit_admin';
+      db.company.mobile = 'jit_admin';
       modified = true;
     }
     if (!bcrypt.compareSync('Jishnuinfotech@123', db.company.passwordHash)) {
@@ -100,12 +101,27 @@ function seedInitialData() {
     }
   }
 
+  // 2. Production Hard-Clean: Wipe all legacy demo & junk data if any exist
+  const collections = [
+    'clients', 'astrologers', 'vendors', 'products', 'consultations',
+    'matchmakingRequests', 'appointments', 'subscribers', 'familyMembers',
+    'matrimonyProfiles', 'matrimonyInterests', 'matrimonyShortlists'
+  ];
+
+  for (const col of collections) {
+    if (Array.isArray(db[col]) && db[col].length > 0) {
+      db[col] = [];
+      modified = true;
+    }
+  }
+
   if (modified) {
     writeDb(db);
+    console.log('[Astrojit DB] Purged all demo/junk data. Only jit_admin retained.');
   }
 }
 
-// Initial check & seed
+// Initial check & seed on load
 readDb();
 seedInitialData();
 

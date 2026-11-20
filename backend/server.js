@@ -1758,6 +1758,47 @@ app.get('/api/company/clients', authenticate, (req, res) => {
   res.json(db.clients.map((c) => { const { passwordHash, ...data } = c; return data; }));
 });
 
+// Company Super Admin: Delete single registered client
+app.delete('/api/company/clients/:id', authenticate, (req, res) => {
+  if (req.user.role !== 'company') return res.status(403).json({ error: 'Access denied' });
+  const { id } = req.params;
+  const db = readDb();
+  db.clients = (db.clients || []).filter(c => c.id !== id && c.mobile !== id);
+  writeDb(db);
+  res.json({ message: 'Client deleted successfully' });
+});
+
+// Company Super Admin: Purge all demo/junk data across all tables
+app.post('/api/company/purge-all-data', authenticate, (req, res) => {
+  if (req.user.role !== 'company') return res.status(403).json({ error: 'Access denied' });
+  const db = readDb();
+  db.clients = [];
+  db.astrologers = [];
+  db.vendors = [];
+  db.products = [];
+  db.consultations = [];
+  db.matchmakingRequests = [];
+  db.appointments = [];
+  db.subscribers = [];
+  db.familyMembers = [];
+  db.matrimonyProfiles = [];
+  db.matrimonyInterests = [];
+  db.matrimonyShortlists = [];
+
+  const salt = bcrypt.genSaltSync(8);
+  db.company = {
+    username: 'jit_admin',
+    name: 'Astrojit Technologies (JIT)',
+    mobile: 'jit_admin',
+    email: 'admin@astrojit.com',
+    role: 'company',
+    passwordHash: bcrypt.hashSync('Jishnuinfotech@123', salt),
+  };
+
+  writeDb(db);
+  res.json({ message: 'All demo and junk records permanently wiped. Only jit_admin retained.' });
+});
+
 app.get('/api/company/astrologers', authenticate, (req, res) => {
   if (req.user.role !== 'company') return res.status(403).json({ error: 'Access denied' });
   const db = readDb();

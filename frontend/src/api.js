@@ -101,6 +101,8 @@ export const API = {
   // Company (JIT Admin)
   getCompanyOverview: () => apiRequest('/company/overview', 'GET'),
   getCompanyClients: () => apiRequest('/company/clients', 'GET'),
+  deleteCompanyClient: (id) => apiRequest(`/company/clients/${id}`, 'DELETE'),
+  purgeAllCompanyData: () => apiRequest('/company/purge-all-data', 'POST'),
   getCompanyAstrologers: () => apiRequest('/company/astrologers', 'GET'),
   getCompanyVendors: () => apiRequest('/company/vendors', 'GET'),
   getCompanyProducts: () => apiRequest('/company/products', 'GET'),

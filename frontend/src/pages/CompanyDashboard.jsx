@@ -121,6 +121,46 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
     }
   };
 
+  const handlePurgeAllData = async () => {
+    const confirmPrompt = tr(
+      'CAUTION: Are you sure you want to PERMANENTLY WIPE ALL client, astrologer, vendor, and matrimony demo/junk records? Only jit_admin will be retained.',
+      'எச்சரிக்கை: அனைத்து கிளையன்ட், ஜோதிடர், விற்பனையாளர் மற்றும் வரன் பதிவுகளையும் நிரந்தரமாக நீக்க விரும்புகிறீர்களா? jit_admin மட்டுமே தக்கவைக்கப்படும்.'
+    );
+    if (!window.confirm(confirmPrompt)) return;
+    try {
+      setLoading(true);
+      await API.purgeAllCompanyData();
+      setActionSuccessMsg(
+        tr(
+          'All demo/junk data permanently wiped! Only jit_admin retained.',
+          'அனைத்து தரவுகளும் வெற்றிகரமாக நீக்கப்பட்டன! jit_admin மட்டுமே உள்ளது.'
+        )
+      );
+      await loadAllCompanyData();
+      setTimeout(() => setActionSuccessMsg(''), 4000);
+    } catch (err) {
+      alert('Purge failed: ' + (err.message || 'Error'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteClient = async (clientId, clientName) => {
+    const confirmPrompt = tr(
+      `Are you sure you want to delete client "${clientName || clientId}"?`,
+      `வாடிக்கையாளர் "${clientName || clientId}" ஐ நீக்க விரும்புகிறீர்களா?`
+    );
+    if (!window.confirm(confirmPrompt)) return;
+    try {
+      await API.deleteCompanyClient(clientId);
+      setClients((prev) => prev.filter((c) => c.id !== clientId && c.mobile !== clientId));
+      setActionSuccessMsg(tr('Client deleted successfully.', 'வாடிக்கையாளர் நீக்கப்பட்டார்.'));
+      setTimeout(() => setActionSuccessMsg(''), 3000);
+    } catch (err) {
+      alert('Delete failed: ' + (err.message || 'Error'));
+    }
+  };
+
   const handleInspectClient = async (mobile) => {
     setSelectedClientMobile(mobile);
     setLoadingClient(true);
@@ -158,12 +198,23 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
             </p>
           </div>
 
-          <button
-            onClick={loadAllCompanyData}
-            className="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs px-3.5 py-2 rounded-xl border border-slate-200 font-semibold transition-colors cursor-pointer"
-          >
-            {t('refreshRecords')}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePurgeAllData}
+              className="bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 text-xs px-3 py-2 rounded-xl border border-rose-300 font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
+              title="Permanently remove all demo and junk data, retain only jit_admin"
+            >
+              <span>🗑️</span>
+              <span>{tr('Purge Junk Data', 'குப்பைத் தரவை நீக்கு')}</span>
+            </button>
+
+            <button
+              onClick={loadAllCompanyData}
+              className="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs px-3.5 py-2 rounded-xl border border-slate-200 font-semibold transition-colors cursor-pointer"
+            >
+              {t('refreshRecords')}
+            </button>
+          </div>
         </div>
 
         {/* Tab Navigation */}
@@ -460,34 +511,51 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
-                        {clients.map((c) => (
-                          <tr key={c.id} className="hover:bg-amber-50/40">
-                            <td className="py-2.5 px-2.5 font-bold text-slate-900">{c.name}</td>
-                            <td className="py-2.5 px-2.5 font-mono text-amber-800 font-bold">{c.mobile}</td>
-                            <td className="py-2.5 px-2.5 text-slate-600">
-                              {c.fatherName || '-'} / {c.motherName || '-'}
-                            </td>
-                            <td className="py-2.5 px-2.5 text-slate-700">{c.dob} @ {c.dobTime}</td>
-                            <td className="py-2.5 px-2.5 text-slate-700">{c.dobPlace}</td>
-                            <td className="py-2.5 px-2.5">
-                              {c.astrologerReferralCode ? (
-                                <span className="text-indigo-700 font-bold bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 text-[10px]">
-                                  {c.astrologerReferralCode}
-                                </span>
-                              ) : (
-                                <span className="text-slate-400">Direct</span>
-                              )}
-                            </td>
-                            <td className="py-2.5 px-2.5 text-right">
-                              <button
-                                onClick={() => handleInspectClient(c.mobile)}
-                                className="bg-amber-50 hover:bg-amber-500 hover:text-slate-950 text-amber-800 border border-amber-300 text-xs px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer"
-                              >
-                                Inspect Profile
-                              </button>
+                        {clients.length === 0 ? (
+                          <tr>
+                            <td colSpan="7" className="py-8 text-center text-slate-400 font-medium">
+                              {tr('No registered clients found. Database is completely clean.', 'பதிவு செய்யப்பட்ட வாடிக்கையாளர்கள் இல்லை. தரவுத்தளம் சுத்தமாக உள்ளது.')}
                             </td>
                           </tr>
-                        ))}
+                        ) : (
+                          clients.map((c) => (
+                            <tr key={c.id} className="hover:bg-amber-50/40">
+                              <td className="py-2.5 px-2.5 font-bold text-slate-900">{c.name}</td>
+                              <td className="py-2.5 px-2.5 font-mono text-amber-800 font-bold">{c.mobile}</td>
+                              <td className="py-2.5 px-2.5 text-slate-600">
+                                {c.fatherName || '-'} / {c.motherName || '-'}
+                              </td>
+                              <td className="py-2.5 px-2.5 text-slate-700">{c.dob} @ {c.dobTime}</td>
+                              <td className="py-2.5 px-2.5 text-slate-700">{c.dobPlace}</td>
+                              <td className="py-2.5 px-2.5">
+                                {c.astrologerReferralCode ? (
+                                  <span className="text-indigo-700 font-bold bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 text-[10px]">
+                                    {c.astrologerReferralCode}
+                                  </span>
+                                ) : (
+                                  <span className="text-slate-400">Direct</span>
+                                )}
+                              </td>
+                              <td className="py-2.5 px-2.5 text-right">
+                                <div className="flex items-center justify-end gap-1.5">
+                                  <button
+                                    onClick={() => handleInspectClient(c.mobile)}
+                                    className="bg-amber-50 hover:bg-amber-500 hover:text-slate-950 text-amber-800 border border-amber-300 text-xs px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer"
+                                  >
+                                    Inspect Profile
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteClient(c.id || c.mobile, c.name)}
+                                    className="bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 border border-rose-300 text-xs px-2 py-1 rounded-lg font-bold transition-all cursor-pointer"
+                                    title="Delete Client"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -517,7 +585,13 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {astrologers.map((a) => (
+                    {astrologers.length === 0 ? (
+                      <tr>
+                        <td colSpan="7" className="py-8 text-center text-slate-400 font-medium">
+                          {tr('No registered astrologers found.', 'பதிவு செய்யப்பட்ட ஜோதிடர்கள் இல்லை.')}
+                        </td>
+                      </tr>
+                    ) : astrologers.map((a) => (
                       <tr key={a.id} className="hover:bg-amber-50/40">
                         <td className="py-2.5 px-2.5 font-bold text-slate-900">{a.name}</td>
                         <td className="py-2.5 px-2.5">
@@ -567,7 +641,13 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {vendors.map((v) => (
+                    {vendors.length === 0 ? (
+                      <tr>
+                        <td colSpan="7" className="py-8 text-center text-slate-400 font-medium">
+                          {tr('No verified vendors found.', 'விற்பனையாளர்கள் இல்லை.')}
+                        </td>
+                      </tr>
+                    ) : vendors.map((v) => (
                       <tr key={v.id} className="hover:bg-amber-50/40">
                         <td className="py-2.5 px-2.5 font-bold text-slate-900">{v.shopName}</td>
                         <td className="py-2.5 px-2.5 text-slate-700">{v.contactPerson}</td>
@@ -594,7 +674,11 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                {products.map((item) => (
+                {products.length === 0 ? (
+                  <div className="col-span-full py-8 text-center text-slate-400 font-medium">
+                    {tr('No products listed in catalog.', 'பொருட்கள் எதுவும் இல்லை.')}
+                  </div>
+                ) : products.map((item) => (
                   <div key={item.id} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden p-3 flex flex-col justify-between">
                     <div>
                       <div className="flex justify-between items-center mb-1">
