@@ -1175,18 +1175,28 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               );
             })()}
 
-            {/* Chart 2: D9 Navamsa (for comparison) */}
-            <div className="space-y-1.5 hidden md:block print:block">
-              <div className="text-center font-bold text-xs uppercase tracking-wider text-[#7A1A22] dark:text-[#E8838B]">
-                {activeChartKey === 'D9' ? (isTamil ? 'D1 ராசி' : 'D1 Rasi') : (isTamil ? 'D9 நவாம்சம்' : 'D9 Navamsa')}
-              </div>
-              <SouthIndianChartGrid
-                chartData={horoscope.charts[activeChartKey === 'D9' ? 'D1' : 'D9']}
-                isTamil={isTamil}
-                centerTitle={activeChartKey === 'D9' ? (isTamil ? 'D1 ராசி' : 'D1 Rasi') : (isTamil ? 'D9 நவாம்சம்' : 'D9 Navamsa')}
-                centerSub={form.name}
-              />
-            </div>
+            {/* Chart 2: Comparison Chart (D9 Navamsa when D1 is selected; D1 Rasi for D2, D3 and all other vargas) */}
+            {(() => {
+              const isD1 = activeChartKey === 'D1';
+              const compKey = isD1 ? 'D9' : 'D1';
+              const compTitle = isTamil
+                ? (isD1 ? 'D9 நவாம்சம்' : 'D1 ராசி')
+                : (isD1 ? 'D9 Navamsa' : 'D1 Rasi');
+
+              return (
+                <div className="space-y-1.5">
+                  <div className="text-center font-bold text-xs uppercase tracking-wider text-[#7A1A22] dark:text-[#E8838B]">
+                    {compTitle}
+                  </div>
+                  <SouthIndianChartGrid
+                    chartData={horoscope.charts[compKey] || horoscope.charts.D1}
+                    isTamil={isTamil}
+                    centerTitle={compTitle}
+                    centerSub={form.name}
+                  />
+                </div>
+              );
+            })()}
           </div>
         </div>
             </div>

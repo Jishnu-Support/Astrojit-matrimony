@@ -1160,9 +1160,12 @@
         </button>
       `).join('');
 
-      // 3. Render Chart (Screen: active chart & D9 side-by-side)
+      // 3. Render Chart (Screen: active chart & comparison chart side-by-side)
+      const isD1 = activeChart === 'D1';
+      const compKey = isD1 ? 'D9' : 'D1';
+      const compTitle = isTa ? (isD1 ? 'D9 நவாம்சம்' : 'D1 ராசி') : (isD1 ? 'D9 Navamsa' : 'D1 Rasi');
       const primaryChart = renderSouthIndianGrid(h.charts[activeChart], isTa, isTa ? chartKeys.find(c => c.k === activeChart).ta : chartKeys.find(c => c.k === activeChart).en);
-      const secondaryChart = renderSouthIndianGrid(h.charts[activeChart === 'D9' ? 'D1' : 'D9'], isTa, isTa ? (activeChart === 'D9' ? 'D1 ராசி' : 'D9 நவாம்சம்') : (activeChart === 'D9' ? 'D1 Rasi' : 'D9 Navamsa'));
+      const secondaryChart = renderSouthIndianGrid(h.charts[compKey] || h.charts.D1, isTa, compTitle);
 
       document.getElementById('charts-display-area').innerHTML = `
         <div class="chart-wrapper">
@@ -1170,7 +1173,7 @@
           ${primaryChart}
         </div>
         <div class="chart-wrapper">
-          <div class="chart-title">${isTa ? (activeChart === 'D9' ? 'D1 ராசி' : 'D9 நவாம்சம்') : (activeChart === 'D9' ? 'D1 Rasi' : 'D9 Navamsa')}</div>
+          <div class="chart-title">${compTitle}</div>
           ${secondaryChart}
         </div>
       `;
