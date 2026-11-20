@@ -372,9 +372,9 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               <option value="1">{isTamil ? '1. ஜனன விவரக் குறிப்பு' : '1. Birth Summary Details'}</option>
               <option value="2">{isTamil ? '2. வர்க்கச் சக்கரங்கள் (16 Shodashavarga Charts)' : '2. Divisional Charts (16 Shodashavarga)'}</option>
               <option value="3">{isTamil ? '3. கிரக நிலைகள் அட்டவணை (நிராயண)' : '3. Nirayana Planetary Positions Table'}</option>
-              <option value="4">{isTamil ? '4. ஸ்ரீபதி பாவ ஆரம்பம், மத்திமம், முடிவு' : '4. Sripati Bhava Sphutam Table'}</option>
-              <option value="5">{isTamil ? '5. ஜாதகத்தில் ஷட்பலம் & பாவக பலம் ஆய்வு' : '5. Shadbala & Bhava Bala Analysis'}</option>
-              <option value="6">{isTamil ? '6. விம்சோத்தரி திசா புக்தி விபரம் (120 ஆண்டுகள்)' : '6. Vimshottari Dasha & Bhukti Table (120 Years)'}</option>
+              <option value="4">{isTamil ? '4. விம்சோத்தரி திசா புக்தி விபரம் (120 ஆண்டுகள்)' : '4. Vimshottari Dasha & Bhukti Table (120 Years)'}</option>
+              <option value="5">{isTamil ? '5. ஸ்ரீபதி பாவ ஆரம்பம், மத்திமம், முடிவு' : '5. Sripati Bhava Sphutam Table'}</option>
+              <option value="6">{isTamil ? '6. ஜாதகத்தில் ஷட்பலம் & பாவக பலம் ஆய்வு' : '6. Shadbala & Bhava Bala Analysis'}</option>
               <option value="7">{isTamil ? '7. ஜாதகத்தில் கிரகங்களின் தசவர்க்கமும் பலமும்' : '7. Planetary Dasavarga & Dignity Strength Matrix'}</option>
               <option value="8">{isTamil ? '8. ஜாதகத்தில் அஷ்டகவர்க்கம் & சர்வாஷ்டகவர்க்கம் (337 பரல்கள்)' : '8. Ashtakavarga & Sarvashtakavarga (337 Bindus)'}</option>
               <option value="9">{isTamil ? '9. ஜாதகத்தில் கோச்சாரப் பலன்கள் (தற்போதைய கிரக சஞ்சாரம்)' : '9. Real-Time Gocharam (Planetary Transit) Analysis'}</option>
@@ -975,7 +975,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
   
 
         {/* ======================================================== */}
-        {/* ITEM 4: 4. ஸ்ரீபதி பாவ ஆரம்பம், மத்திமம், முடிவு (4. Sripati Bhava Sphutam Table) */}
+        {/* ITEM 4: 4. விம்சோத்தரி திசா புக்தி விபரம் (120 ஆண்டுகள்) (6. Vimshottari Dasha & Bhukti Table (120 Years)) */}
         {/* ======================================================== */}
         <div id="horoscope-section-4" className="bg-white/80 dark:bg-[#251E1A] rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs overflow-hidden transition-all">
           {/* Dropdown / Accordion Header Button */}
@@ -990,213 +990,8 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               </span>
               <div>
                 <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
-                  <span>📐</span>
-                  <span>{isTamil ? '4. ஸ்ரீபதி பாவ ஆரம்பம், மத்திமம், முடிவு' : '4. Sripati Bhava Sphutam Table'}</span>
-                </h2>
-                <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5 line-clamp-1">
-                  {isTamil ? 'ஸ்ரீபதி பத்ததி முறைப்படி 12 பாவகங்களின் ஆரம்பம், மத்திமம் (Cusp) மற்றும் முடிவு நிலைகள்' : 'Sripati System 12 House Cusps (Prarambha, Madhya, Antya)'}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2.5 shrink-0">
-              <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">12 {isTamil ? 'பாவங்கள்' : 'Bhavas'}</span>
-              <span className={`w-6 h-6 rounded-lg bg-amber-900/10 dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 flex items-center justify-center text-xs transition-transform duration-200 ${openSections[4] ? 'rotate-180' : 'rotate-0'}`}>
-                ▼
-              </span>
-            </div>
-          </button>
-
-          {/* Collapsible Dropdown Content */}
-          {openSections[4] && (
-            <div className="p-4 sm:p-5 pt-0 border-t border-amber-900/10 dark:border-amber-500/15 space-y-4">
-              {/* SECTION 5: Sripati Bhava Sphutam Table */}
-        <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-3">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-amber-900/20 text-[#7A1A22] dark:text-amber-300 font-bold bg-amber-900/5 dark:bg-stone-800">
-                  <th className="py-2 px-3 text-center">{T.bhavaNum}</th>
-                  <th className="py-2 px-3">{T.start}</th>
-                  <th className="py-2 px-3">{T.madhya}</th>
-                  <th className="py-2 px-3">{T.end}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-amber-900/10 dark:divide-stone-800 font-mono text-[11px]">
-                {horoscope.sripatiBhavas.map(b => (
-                  <tr key={b.bhava} className="hover:bg-amber-900/5 dark:hover:bg-stone-800/50">
-                    <td className="py-1.5 px-3 text-center font-bold font-serif text-[#7A1A22] dark:text-amber-300">
-                      {b.bhava}
-                    </td>
-                    <td className="py-1.5 px-3">
-                      {b.startDMS} ({isTamil ? RASHIS[b.startRasi].ta : RASHIS[b.startRasi].en})
-                    </td>
-                    <td className="py-1.5 px-3 font-bold text-[#7A1A22] dark:text-amber-200">
-                      {b.madhyaDMS} ({isTamil ? RASHIS[b.madhyaRasi].ta : RASHIS[b.madhyaRasi].en})
-                    </td>
-                    <td className="py-1.5 px-3">
-                      {b.endDMS} ({isTamil ? RASHIS[b.endRasi].ta : RASHIS[b.endRasi].en})
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-            </div>
-          )}
-        </div>
-  
-
-        {/* ======================================================== */}
-        {/* ITEM 5: 5. ஜாதகத்தில் ஷட்பலம் & பாவக பலம் ஆய்வு (5. Shadbala & Bhava Bala Analysis) */}
-        {/* ======================================================== */}
-        <div id="horoscope-section-5" className="bg-white/80 dark:bg-[#251E1A] rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs overflow-hidden transition-all">
-          {/* Dropdown / Accordion Header Button */}
-          <button
-            type="button"
-            onClick={() => toggleSection(5)}
-            className="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-amber-50/50 dark:hover:bg-stone-800/40 transition-colors cursor-pointer select-none"
-          >
-            <div className="flex items-center gap-3">
-              <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-900/10 dark:bg-amber-500/15 text-[#7A1A22] dark:text-amber-300 font-bold flex items-center justify-center text-xs sm:text-sm shrink-0 font-mono">
-                5
-              </span>
-              <div>
-                <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
-                  <span>⚖️</span>
-                  <span>{isTamil ? '5. ஜாதகத்தில் ஷட்பலம் & பாவக பலம் ஆய்வு' : '5. Shadbala & Bhava Bala Analysis'}</span>
-                </h2>
-                <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5 line-clamp-1">
-                  {isTamil ? 'பராசரர் முறைப்படி கிரகங்களின் அறுவகை பலங்கள் மற்றும் 12 பாவகங்களின் பலங்கள் (ரூபங்களில்)' : 'Parashari 6-fold planetary strengths and 12 house strengths (in Rupas)'}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2.5 shrink-0">
-              <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">{isTamil ? 'ஷட்பலம் & பாவக பலம்' : 'Shadbala Rupas'}</span>
-              <span className={`w-6 h-6 rounded-lg bg-amber-900/10 dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 flex items-center justify-center text-xs transition-transform duration-200 ${openSections[5] ? 'rotate-180' : 'rotate-0'}`}>
-                ▼
-              </span>
-            </div>
-          </button>
-
-          {/* Collapsible Dropdown Content */}
-          {openSections[5] && (
-            <div className="p-4 sm:p-5 pt-0 border-t border-amber-900/10 dark:border-amber-500/15 space-y-4">
-              {/* SECTION 5B: Shadbala & Bhava Bala Analysis (ஜாதகத்தில் ஷட்பலம் & பாவக பலம் ஆய்வு) */}
-        {horoscope.shadbala && (
-          <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
-            {/* Table 1: Graha Shadbala */}
-            <div className="space-y-1.5">
-              <h3 className="text-xs font-bold text-[#7A1A22] dark:text-amber-300">
-                {T.grahaShadbala}
-              </h3>
-              <div className="overflow-x-auto rounded-xl border border-amber-900/15 dark:border-amber-500/20 shadow-2xs">
-                <table className="w-full text-xs text-center border-collapse">
-                  <thead>
-                    <tr className="bg-amber-100/70 dark:bg-amber-900/30 text-[#7A1A22] dark:text-amber-200 font-bold border-b border-amber-900/15 dark:border-amber-500/20">
-                      <th className="py-2 px-3 text-left">{T.strength}</th>
-                      {(isTamil ? horoscope.shadbala.grahaHeaders.slice(1) : horoscope.shadbala.grahaHeadersEn.slice(1)).map((gh, idx) => (
-                        <th key={idx} className="py-2 px-2.5">{gh}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-amber-900/10 dark:divide-amber-500/15">
-                    {horoscope.shadbala.grahaRows.map((row, rIdx) => {
-                      const isTot = row.isTotal;
-                      return (
-                        <tr
-                          key={rIdx}
-                          className={
-                            isTot
-                              ? 'bg-amber-200/50 dark:bg-amber-900/40 font-bold text-[#7A1A22] dark:text-amber-200'
-                              : 'hover:bg-amber-50/50 dark:hover:bg-amber-900/10 transition-colors'
-                          }
-                        >
-                          <td className="py-1.5 px-3 text-left font-semibold">
-                            {isTamil ? row.label : row.labelEn}
-                          </td>
-                          {row.vals.map((v, vIdx) => (
-                            <td key={vIdx} className="py-1.5 px-2.5 font-mono text-[11px]">
-                              {v}
-                            </td>
-                          ))}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Table 2: Bhava Bala */}
-            <div className="space-y-1.5 pt-2">
-              <h3 className="text-xs font-bold text-[#7A1A22] dark:text-amber-300">
-                {T.bhavaBala}
-              </h3>
-              <div className="overflow-x-auto rounded-xl border border-amber-900/15 dark:border-amber-500/20 shadow-2xs">
-                <table className="w-full text-xs text-center border-collapse">
-                  <thead>
-                    <tr className="bg-amber-100/70 dark:bg-amber-900/30 text-[#7A1A22] dark:text-amber-200 font-bold border-b border-amber-900/15 dark:border-amber-500/20">
-                      <th className="py-2 px-3 text-left">{T.house}</th>
-                      {horoscope.shadbala.bhavaHeaders.map(bh => (
-                        <th key={bh} className="py-2 px-2 font-mono">{bh}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-amber-900/10 dark:divide-amber-500/15">
-                    {horoscope.shadbala.bhavaRows.map((row, rIdx) => {
-                      const isTot = row.isTotal;
-                      return (
-                        <tr
-                          key={rIdx}
-                          className={
-                            isTot
-                              ? 'bg-amber-200/50 dark:bg-amber-900/40 font-bold text-[#7A1A22] dark:text-amber-200'
-                              : 'hover:bg-amber-50/50 dark:hover:bg-amber-900/10 transition-colors'
-                          }
-                        >
-                          <td className="py-1.5 px-3 text-left font-semibold">
-                            {isTamil ? row.label : row.labelEn}
-                          </td>
-                          {row.vals.map((v, vIdx) => (
-                            <td key={vIdx} className="py-1.5 px-2 font-mono text-[11px]">
-                              {v}
-                            </td>
-                          ))}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-            </div>
-          )}
-        </div>
-  
-
-        {/* ======================================================== */}
-        {/* ITEM 6: 6. விம்சோத்தரி திசா புக்தி விபரம் (120 ஆண்டுகள்) (6. Vimshottari Dasha & Bhukti Table (120 Years)) */}
-        {/* ======================================================== */}
-        <div id="horoscope-section-6" className="bg-white/80 dark:bg-[#251E1A] rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs overflow-hidden transition-all">
-          {/* Dropdown / Accordion Header Button */}
-          <button
-            type="button"
-            onClick={() => toggleSection(6)}
-            className="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-amber-50/50 dark:hover:bg-stone-800/40 transition-colors cursor-pointer select-none"
-          >
-            <div className="flex items-center gap-3">
-              <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-900/10 dark:bg-amber-500/15 text-[#7A1A22] dark:text-amber-300 font-bold flex items-center justify-center text-xs sm:text-sm shrink-0 font-mono">
-                6
-              </span>
-              <div>
-                <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
                   <span>⏳</span>
-                  <span>{isTamil ? '6. விம்சோத்தரி திசா புக்தி விபரம் (120 ஆண்டுகள்)' : '6. Vimshottari Dasha & Bhukti Table (120 Years)'}</span>
+                  <span>{isTamil ? '4. விம்சோத்தரி திசா புக்தி விபரம் (120 ஆண்டுகள்)' : '4. Vimshottari Dasha & Bhukti Table (120 Years)'}</span>
                 </h2>
                 <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5 line-clamp-1">
                   {isTamil ? 'பராசரர் முறைப்படி 120 ஆண்டுகளுக்கான 9 மகாதிகைகள் மற்றும் 81 புக்திகள் கணக்கீடு' : 'Parashari 120-Year Vimshottari Cycle with 9 Mahadashas and 81 Sub-Periods'}
@@ -1206,14 +1001,14 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
 
             <div className="flex items-center gap-2.5 shrink-0">
               <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">{isTamil ? horoscope.summary.dashaBalance?.textTa : horoscope.summary.dashaBalance?.textEn}</span>
-              <span className={`w-6 h-6 rounded-lg bg-amber-900/10 dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 flex items-center justify-center text-xs transition-transform duration-200 ${openSections[6] ? 'rotate-180' : 'rotate-0'}`}>
+              <span className={`w-6 h-6 rounded-lg bg-amber-900/10 dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 flex items-center justify-center text-xs transition-transform duration-200 ${openSections[4] ? 'rotate-180' : 'rotate-0'}`}>
                 ▼
               </span>
             </div>
           </button>
 
           {/* Collapsible Dropdown Content */}
-          {openSections[6] && (
+          {openSections[4] && (
             <div className="p-4 sm:p-5 pt-0 border-t border-amber-900/10 dark:border-amber-500/15 space-y-4">
               {/* SECTION 6: Vimshottari Dasha & Collapsible Bhukti Tables (120 Years) */}
         <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
@@ -1612,6 +1407,211 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
             })}
           </div>
         </div>
+            </div>
+          )}
+        </div>
+  
+
+        {/* ======================================================== */}
+        {/* ITEM 5: 5. ஸ்ரீபதி பாவ ஆரம்பம், மத்திமம், முடிவு (4. Sripati Bhava Sphutam Table) */}
+        {/* ======================================================== */}
+        <div id="horoscope-section-5" className="bg-white/80 dark:bg-[#251E1A] rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs overflow-hidden transition-all">
+          {/* Dropdown / Accordion Header Button */}
+          <button
+            type="button"
+            onClick={() => toggleSection(5)}
+            className="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-amber-50/50 dark:hover:bg-stone-800/40 transition-colors cursor-pointer select-none"
+          >
+            <div className="flex items-center gap-3">
+              <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-900/10 dark:bg-amber-500/15 text-[#7A1A22] dark:text-amber-300 font-bold flex items-center justify-center text-xs sm:text-sm shrink-0 font-mono">
+                5
+              </span>
+              <div>
+                <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
+                  <span>📐</span>
+                  <span>{isTamil ? '5. ஸ்ரீபதி பாவ ஆரம்பம், மத்திமம், முடிவு' : '5. Sripati Bhava Sphutam Table'}</span>
+                </h2>
+                <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5 line-clamp-1">
+                  {isTamil ? 'ஸ்ரீபதி பத்ததி முறைப்படி 12 பாவகங்களின் ஆரம்பம், மத்திமம் (Cusp) மற்றும் முடிவு நிலைகள்' : 'Sripati System 12 House Cusps (Prarambha, Madhya, Antya)'}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5 shrink-0">
+              <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">12 {isTamil ? 'பாவங்கள்' : 'Bhavas'}</span>
+              <span className={`w-6 h-6 rounded-lg bg-amber-900/10 dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 flex items-center justify-center text-xs transition-transform duration-200 ${openSections[5] ? 'rotate-180' : 'rotate-0'}`}>
+                ▼
+              </span>
+            </div>
+          </button>
+
+          {/* Collapsible Dropdown Content */}
+          {openSections[5] && (
+            <div className="p-4 sm:p-5 pt-0 border-t border-amber-900/10 dark:border-amber-500/15 space-y-4">
+              {/* SECTION 5: Sripati Bhava Sphutam Table */}
+        <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-3">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-amber-900/20 text-[#7A1A22] dark:text-amber-300 font-bold bg-amber-900/5 dark:bg-stone-800">
+                  <th className="py-2 px-3 text-center">{T.bhavaNum}</th>
+                  <th className="py-2 px-3">{T.start}</th>
+                  <th className="py-2 px-3">{T.madhya}</th>
+                  <th className="py-2 px-3">{T.end}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-amber-900/10 dark:divide-stone-800 font-mono text-[11px]">
+                {horoscope.sripatiBhavas.map(b => (
+                  <tr key={b.bhava} className="hover:bg-amber-900/5 dark:hover:bg-stone-800/50">
+                    <td className="py-1.5 px-3 text-center font-bold font-serif text-[#7A1A22] dark:text-amber-300">
+                      {b.bhava}
+                    </td>
+                    <td className="py-1.5 px-3">
+                      {b.startDMS} ({isTamil ? RASHIS[b.startRasi].ta : RASHIS[b.startRasi].en})
+                    </td>
+                    <td className="py-1.5 px-3 font-bold text-[#7A1A22] dark:text-amber-200">
+                      {b.madhyaDMS} ({isTamil ? RASHIS[b.madhyaRasi].ta : RASHIS[b.madhyaRasi].en})
+                    </td>
+                    <td className="py-1.5 px-3">
+                      {b.endDMS} ({isTamil ? RASHIS[b.endRasi].ta : RASHIS[b.endRasi].en})
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+            </div>
+          )}
+        </div>
+  
+
+        {/* ======================================================== */}
+        {/* ITEM 6: 6. ஜாதகத்தில் ஷட்பலம் & பாவக பலம் ஆய்வு (5. Shadbala & Bhava Bala Analysis) */}
+        {/* ======================================================== */}
+        <div id="horoscope-section-6" className="bg-white/80 dark:bg-[#251E1A] rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs overflow-hidden transition-all">
+          {/* Dropdown / Accordion Header Button */}
+          <button
+            type="button"
+            onClick={() => toggleSection(6)}
+            className="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-amber-50/50 dark:hover:bg-stone-800/40 transition-colors cursor-pointer select-none"
+          >
+            <div className="flex items-center gap-3">
+              <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-900/10 dark:bg-amber-500/15 text-[#7A1A22] dark:text-amber-300 font-bold flex items-center justify-center text-xs sm:text-sm shrink-0 font-mono">
+                6
+              </span>
+              <div>
+                <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
+                  <span>⚖️</span>
+                  <span>{isTamil ? '6. ஜாதகத்தில் ஷட்பலம் & பாவக பலம் ஆய்வு' : '6. Shadbala & Bhava Bala Analysis'}</span>
+                </h2>
+                <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5 line-clamp-1">
+                  {isTamil ? 'பராசரர் முறைப்படி கிரகங்களின் அறுவகை பலங்கள் மற்றும் 12 பாவகங்களின் பலங்கள் (ரூபங்களில்)' : 'Parashari 6-fold planetary strengths and 12 house strengths (in Rupas)'}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5 shrink-0">
+              <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">{isTamil ? 'ஷட்பலம் & பாவக பலம்' : 'Shadbala Rupas'}</span>
+              <span className={`w-6 h-6 rounded-lg bg-amber-900/10 dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 flex items-center justify-center text-xs transition-transform duration-200 ${openSections[6] ? 'rotate-180' : 'rotate-0'}`}>
+                ▼
+              </span>
+            </div>
+          </button>
+
+          {/* Collapsible Dropdown Content */}
+          {openSections[6] && (
+            <div className="p-4 sm:p-5 pt-0 border-t border-amber-900/10 dark:border-amber-500/15 space-y-4">
+              {/* SECTION 5B: Shadbala & Bhava Bala Analysis (ஜாதகத்தில் ஷட்பலம் & பாவக பலம் ஆய்வு) */}
+        {horoscope.shadbala && (
+          <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
+            {/* Table 1: Graha Shadbala */}
+            <div className="space-y-1.5">
+              <h3 className="text-xs font-bold text-[#7A1A22] dark:text-amber-300">
+                {T.grahaShadbala}
+              </h3>
+              <div className="overflow-x-auto rounded-xl border border-amber-900/15 dark:border-amber-500/20 shadow-2xs">
+                <table className="w-full text-xs text-center border-collapse">
+                  <thead>
+                    <tr className="bg-amber-100/70 dark:bg-amber-900/30 text-[#7A1A22] dark:text-amber-200 font-bold border-b border-amber-900/15 dark:border-amber-500/20">
+                      <th className="py-2 px-3 text-left">{T.strength}</th>
+                      {(isTamil ? horoscope.shadbala.grahaHeaders.slice(1) : horoscope.shadbala.grahaHeadersEn.slice(1)).map((gh, idx) => (
+                        <th key={idx} className="py-2 px-2.5">{gh}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-amber-900/10 dark:divide-amber-500/15">
+                    {horoscope.shadbala.grahaRows.map((row, rIdx) => {
+                      const isTot = row.isTotal;
+                      return (
+                        <tr
+                          key={rIdx}
+                          className={
+                            isTot
+                              ? 'bg-amber-200/50 dark:bg-amber-900/40 font-bold text-[#7A1A22] dark:text-amber-200'
+                              : 'hover:bg-amber-50/50 dark:hover:bg-amber-900/10 transition-colors'
+                          }
+                        >
+                          <td className="py-1.5 px-3 text-left font-semibold">
+                            {isTamil ? row.label : row.labelEn}
+                          </td>
+                          {row.vals.map((v, vIdx) => (
+                            <td key={vIdx} className="py-1.5 px-2.5 font-mono text-[11px]">
+                              {v}
+                            </td>
+                          ))}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Table 2: Bhava Bala */}
+            <div className="space-y-1.5 pt-2">
+              <h3 className="text-xs font-bold text-[#7A1A22] dark:text-amber-300">
+                {T.bhavaBala}
+              </h3>
+              <div className="overflow-x-auto rounded-xl border border-amber-900/15 dark:border-amber-500/20 shadow-2xs">
+                <table className="w-full text-xs text-center border-collapse">
+                  <thead>
+                    <tr className="bg-amber-100/70 dark:bg-amber-900/30 text-[#7A1A22] dark:text-amber-200 font-bold border-b border-amber-900/15 dark:border-amber-500/20">
+                      <th className="py-2 px-3 text-left">{T.house}</th>
+                      {horoscope.shadbala.bhavaHeaders.map(bh => (
+                        <th key={bh} className="py-2 px-2 font-mono">{bh}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-amber-900/10 dark:divide-amber-500/15">
+                    {horoscope.shadbala.bhavaRows.map((row, rIdx) => {
+                      const isTot = row.isTotal;
+                      return (
+                        <tr
+                          key={rIdx}
+                          className={
+                            isTot
+                              ? 'bg-amber-200/50 dark:bg-amber-900/40 font-bold text-[#7A1A22] dark:text-amber-200'
+                              : 'hover:bg-amber-50/50 dark:hover:bg-amber-900/10 transition-colors'
+                          }
+                        >
+                          <td className="py-1.5 px-3 text-left font-semibold">
+                            {isTamil ? row.label : row.labelEn}
+                          </td>
+                          {row.vals.map((v, vIdx) => (
+                            <td key={vIdx} className="py-1.5 px-2 font-mono text-[11px]">
+                              {v}
+                            </td>
+                          ))}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
             </div>
           )}
         </div>
