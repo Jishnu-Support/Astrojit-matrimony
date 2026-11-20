@@ -84,11 +84,11 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
   const searchBoxRef = useRef(null);
 
   // Form State for Birth Details Intake
-  const [name, setName] = useState(initialClient?.name || 'Sample');
-  const [dob, setDob] = useState(initialClient?.dob || '2026-11-05');
+  const [name, setName] = useState(initialClient?.name || '');
+  const [dob, setDob] = useState(initialClient?.dob || '');
   const [mobile, setMobile] = useState(initialClient?.mobile || '');
   const [timeState, setTimeState] = useState(() =>
-    parse12HourTime(initialClient?.dobTime12 || initialClient?.dobTime || '21:04:00')
+    initialClient?.dobTime12 || initialClient?.dobTime ? parse12HourTime(initialClient.dobTime12 || initialClient.dobTime) : { hour: '12', minute: '00', second: '00', period: 'AM' }
   );
 
   const [country, setCountry] = useState(initialClient?.country || 'India');
@@ -108,10 +108,10 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
   // Active calculated client birth data passed into children
   const [calcKey, setCalcKey] = useState(1);
   const [activeBirthData, setActiveBirthData] = useState(() => ({
-    name: initialClient?.name || 'Sample',
-    dob: initialClient?.dob || '2026-11-05',
-    dobTime: '21:04:00',
-    dobTime12: '09:04:00 PM',
+    name: initialClient?.name || '',
+    dob: initialClient?.dob || '',
+    dobTime: initialClient?.dobTime || '',
+    dobTime12: initialClient?.dobTime12 || '',
     country: initialClient?.country || 'India',
     state: initialClient?.state || 'Tamil Nadu',
     placeName: 'Salem',
@@ -219,7 +219,7 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
     setSelectedClient(c);
     setName(c.name || '');
     setMobile(c.mobile || '');
-    setDob(c.dob || '2026-11-05');
+    setDob(c.dob || '');
 
     const rawTime = c.dobTime12 || c.dobTime || '21:04:00';
     const parsedTime = parse12HourTime(rawTime);
@@ -260,7 +260,7 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
 
     const newBirthData = {
       name: c.name || '',
-      dob: c.dob || '2026-11-05',
+      dob: c.dob || '',
       dobTime: time24,
       dobTime12: time12,
       country: cCountry,
@@ -433,7 +433,7 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
     const time24 = to24HourTime(timeState.hour, timeState.minute, timeState.second, timeState.period);
     const time12 = `${timeState.hour}:${timeState.minute}:${timeState.second} ${timeState.period}`;
     const syncedData = {
-      name: name.trim() || 'Sample',
+      name: name.trim() || '',
       dob,
       dobTime: time24,
       dobTime12: time12,
@@ -597,7 +597,7 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
                 placeholder={
                   isTa
                     ? 'வாடிக்கையாளர் மொபைல் எண் அல்லது பெயர் + பிறந்த தேதி + ஊர் உள்ளிடவும் (எ.கா: 9123456789 அல்லது Aarav Salem)...'
-                    : 'Enter Mobile No. OR Name + D.O.B + Place (e.g. 9123456789 or Aarav 1996 Salem)...'
+                    : 'Enter Mobile No. OR Name + D.O.B + Place...'
                 }
                 className="w-full bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 rounded-xl pl-9 pr-3 py-2 text-xs font-medium focus:outline-none focus:border-[#7A1A22] shadow-2xs"
               />
@@ -670,7 +670,7 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
                 type="text"
                 value={name}
                 onChange={e => setName(e.target.value)}
-                placeholder="e.g. Aarav Kumar"
+                placeholder={isTa ? "முழு பெயர் உள்ளிடவும்" : "Enter Full Name"}
                 required
                 className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-[#7A1A22]"
               />
@@ -863,7 +863,7 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
                 type="text"
                 value={father}
                 onChange={e => setFather(e.target.value)}
-                placeholder="ரமேஷ் குமார்"
+                placeholder={isTa ? "தந்தை பெயர் உள்ளிடவும்" : "Enter Father's Name"}
                 className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold"
               />
             </div>
@@ -873,7 +873,7 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
                 type="text"
                 value={mother}
                 onChange={e => setMother(e.target.value)}
-                placeholder="பிரியா"
+                placeholder={isTa ? "தாய் பெயர் உள்ளிடவும்" : "Enter Mother's Name"}
                 className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold"
               />
             </div>
@@ -883,7 +883,7 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
                 type="text"
                 value={nativePlace}
                 onChange={e => setNativePlace(e.target.value)}
-                placeholder="நாமக்கல்"
+                placeholder={isTa ? "பூர்வீகம் / சொந்த ஊர் உள்ளிடவும்" : "Enter Native Place / Town"}
                 className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold"
               />
             </div>
@@ -893,7 +893,7 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
                 type="tel"
                 value={mobile}
                 onChange={e => setMobile(e.target.value)}
-                placeholder="9876543210"
+                placeholder={isTa ? "10 இலக்க மொபைல் எண் உள்ளிடவும்" : "Enter 10-digit mobile number"}
                 className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-mono font-bold text-[#7A1A22] dark:text-amber-300"
               />
             </div>

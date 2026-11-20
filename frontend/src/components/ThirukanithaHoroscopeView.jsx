@@ -102,10 +102,10 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
 
   // Form State initialized from parent initialData
   const [form, setForm] = useState(() => ({
-    name: initialData?.name || 'Sample',
-    dob: initialData?.dob || '2026-11-05',
-    dobTime: initialData?.dobTime || '21:04:00',
-    dobTime12: initialData?.dobTime12 || '09:04:00 PM',
+    name: initialData?.name || '',
+    dob: initialData?.dob || '',
+    dobTime: initialData?.dobTime || '',
+    dobTime12: initialData?.dobTime12 || '',
     country: initialData?.country || 'India',
     state: initialData?.state || 'Tamil Nadu',
     placeName: initialData?.placeName || initialData?.city || 'Salem',
@@ -122,10 +122,10 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
   useEffect(() => {
     if (initialData) {
       setForm({
-        name: initialData.name || 'Sample',
-        dob: initialData.dob || '2026-11-05',
-        dobTime: initialData.dobTime || '21:04:00',
-        dobTime12: initialData.dobTime12 || '09:04:00 PM',
+        name: initialData.name || '',
+        dob: initialData.dob || '',
+        dobTime: initialData.dobTime || '',
+        dobTime12: initialData.dobTime12 || '',
         country: initialData.country || 'India',
         state: initialData.state || 'Tamil Nadu',
         placeName: initialData.placeName || initialData.city || 'Salem',

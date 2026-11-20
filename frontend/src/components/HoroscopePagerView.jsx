@@ -134,11 +134,11 @@ export default function HoroscopePagerView({ initialBirthData, astrologerProfile
 
   // Input form state for Thirukanitha calculation, initialized directly from above-entered details
   const [calcInputs, setCalcInputs] = useState(() => ({
-    name: initialBirthData?.name || 'Sample',
+    name: initialBirthData?.name || '',
     gender: initialBirthData?.gender || 'male',
-    dob: initialBirthData?.dob || '2026-11-05',
-    dobTime: initialBirthData?.dobTime || '21:04:00',
-    dobTime12: initialBirthData?.dobTime12 || '09:04:00 PM',
+    dob: initialBirthData?.dob || '',
+    dobTime: initialBirthData?.dobTime || '',
+    dobTime12: initialBirthData?.dobTime12 || '',
     country: initialBirthData?.country || 'India',
     state: initialBirthData?.state || 'Tamil Nadu',
     placeName: initialBirthData?.placeName || initialBirthData?.city || 'Salem',
@@ -161,11 +161,11 @@ export default function HoroscopePagerView({ initialBirthData, astrologerProfile
   useEffect(() => {
     if (initialBirthData) {
       const updatedInputs = {
-        name: initialBirthData.name || 'Sample',
+        name: initialBirthData.name || '',
         gender: initialBirthData.gender || 'male',
-        dob: initialBirthData.dob || '2026-11-05',
-        dobTime: initialBirthData.dobTime || '21:04:00',
-        dobTime12: initialBirthData.dobTime12 || '09:04:00 PM',
+        dob: initialBirthData.dob || '',
+        dobTime: initialBirthData.dobTime || '',
+        dobTime12: initialBirthData.dobTime12 || '',
         country: initialBirthData.country || 'India',
         state: initialBirthData.state || 'Tamil Nadu',
         placeName: initialBirthData.placeName || initialBirthData.city || 'Salem',
