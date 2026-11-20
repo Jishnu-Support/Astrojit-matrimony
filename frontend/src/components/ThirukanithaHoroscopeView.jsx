@@ -6737,7 +6737,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
 
 
         <div className="text-center text-[11px] text-stone-500 py-3 border-t border-amber-900/10 font-serif">
-          {T.title} • Thirukanitha Ephemeris Calculator • All rights reserved
+          Astrojit • {isTamil ? 'அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை' : 'All rights reserved'}
         </div>
       </div>
     </div>
