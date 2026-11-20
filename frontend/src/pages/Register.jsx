@@ -75,6 +75,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
     const formData = new FormData(e.target);
     const data = {
       name: formData.get('name'),
+      gender: formData.get('gender') || 'male',
       fatherName: formData.get('fatherName'),
       motherName: formData.get('motherName'),
       dob: formData.get('dob'),
@@ -302,8 +303,21 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
               </div>
             </div>
 
-            {/* DOB & Birth Time */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {/* Gender, DOB & Birth Time */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <div>
+                <label className="text-slate-700 font-bold block mb-1">Gender *</label>
+                <select
+                  name="gender"
+                  required
+                  defaultValue="male"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500 font-medium"
+                >
+                  <option value="male">Male (ஆண்)</option>
+                  <option value="female">Female (பெண்)</option>
+                </select>
+              </div>
+
               <div>
                 <label className="text-slate-700 font-bold block mb-1 flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5 text-amber-600" /> Date of Birth (D.O.B) *

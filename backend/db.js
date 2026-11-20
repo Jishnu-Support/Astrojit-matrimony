@@ -101,7 +101,7 @@ function seedInitialData() {
     }
   }
 
-  // 2. Production Hard-Clean: Wipe all legacy demo & junk data if any exist
+  // 2. Ensure all collections exist as arrays, but NEVER wipe existing client or user data!
   const collections = [
     'clients', 'astrologers', 'vendors', 'products', 'consultations',
     'matchmakingRequests', 'appointments', 'subscribers', 'familyMembers',
@@ -109,7 +109,7 @@ function seedInitialData() {
   ];
 
   for (const col of collections) {
-    if (Array.isArray(db[col]) && db[col].length > 0) {
+    if (!Array.isArray(db[col])) {
       db[col] = [];
       modified = true;
     }
@@ -117,7 +117,6 @@ function seedInitialData() {
 
   if (modified) {
     writeDb(db);
-    console.log('[Astrojit DB] Purged all demo/junk data. Only jit_admin retained.');
   }
 }
 
