@@ -539,9 +539,41 @@ app.put('/api/user/profile', authenticate, (req, res) => {
     if (role === 'astrologer') {
       const idx = db.astrologers.findIndex((a) => a.mobile === mobile || a.id === req.user.id);
       if (idx === -1) return res.status(404).json({ error: 'Astrologer not found' });
-      ['name', 'email', 'address', 'specializations'].forEach(field => {
+      
+      const allowedAstro = [
+        'name', 'email', 'address', 'specializations', 'experience', 'languages', 'bio',
+        'officeAddress', 'contactPerson', 'phone', 'mobile'
+      ];
+      allowedAstro.forEach(field => {
         if (updates[field] !== undefined) db.astrologers[idx][field] = updates[field];
       });
+
+      if (!db.astrologers[idx].pagerHeader) {
+        db.astrologers[idx].pagerHeader = {
+          line1: 'ஸ்ரீ பாலாஜி ஜோதிட நிலையம் • திருக்கணித பஞ்சாங்கம்',
+          line2: 'SAI BALAJI ASTROLOGICAL RESEARCH CENTRE',
+          address1: 'Salem, தமிழ்நாடு - 636001',
+          address2: 'சென்னை & பெங்களூரு கிளைகள்',
+          phoneEmail: 'தொலைபேசி: +91 98765 43210 | மின்னஞ்சல்: astro@astrojit.com'
+        };
+      }
+
+      if (updates.pagerHeader && typeof updates.pagerHeader === 'object') {
+        db.astrologers[idx].pagerHeader = {
+          line1: updates.pagerHeader.line1 !== undefined ? updates.pagerHeader.line1 : db.astrologers[idx].pagerHeader.line1,
+          line2: updates.pagerHeader.line2 !== undefined ? updates.pagerHeader.line2 : db.astrologers[idx].pagerHeader.line2,
+          address1: updates.pagerHeader.address1 !== undefined ? updates.pagerHeader.address1 : db.astrologers[idx].pagerHeader.address1,
+          address2: updates.pagerHeader.address2 !== undefined ? updates.pagerHeader.address2 : db.astrologers[idx].pagerHeader.address2,
+          phoneEmail: updates.pagerHeader.phoneEmail !== undefined ? updates.pagerHeader.phoneEmail : db.astrologers[idx].pagerHeader.phoneEmail
+        };
+      }
+
+      if (updates.brandLine1 !== undefined) db.astrologers[idx].pagerHeader.line1 = updates.brandLine1;
+      if (updates.brandLine2 !== undefined) db.astrologers[idx].pagerHeader.line2 = updates.brandLine2;
+      if (updates.address1 !== undefined) db.astrologers[idx].pagerHeader.address1 = updates.address1;
+      if (updates.address2 !== undefined) db.astrologers[idx].pagerHeader.address2 = updates.address2;
+      if (updates.phoneEmail !== undefined) db.astrologers[idx].pagerHeader.phoneEmail = updates.phoneEmail;
+
       db.astrologers[idx].updatedAt = new Date().toISOString();
       writeDb(db);
       const { passwordHash, ...safeUser } = db.astrologers[idx];

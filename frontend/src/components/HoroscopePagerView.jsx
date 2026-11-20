@@ -28,6 +28,8 @@ import {
   RASHIS
 } from '../utils/thirukanithaEngine';
 import { COUNTRIES, GEO_DATA, lookupCoordinates } from '../data/geoCoordinates';
+import { useAuth } from '../context/AuthContext';
+import { API } from '../api';
 
 function parseInitialTime(timeStr) {
   let raw = timeStr || '21:04:00';
@@ -100,7 +102,11 @@ const SIGN_LABELS_MAP = {
   10: { ta: 'கும்பம்', en: 'Aquarius', num: 11 }
 };
 
-export default function HoroscopePagerView({ initialBirthData, onClose }) {
+export default function HoroscopePagerView({ initialBirthData, astrologerProfile, onClose }) {
+  const { user, setUser } = useAuth();
+  const effectiveProfile = astrologerProfile || user?.pagerHeader || user;
+  const [isSavingHeader, setIsSavingHeader] = useState(false);
+  const [headerSavedMsg, setHeaderSavedMsg] = useState('');
   const [lang, setLang] = useState('ta'); // 'ta' or 'en'
   const isTa = lang === 'ta';
   const [theme, setTheme] = useState('light'); // 'light' or 'dark'
@@ -146,7 +152,7 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
   }));
 
   // Initial computed data for authentic 1-page Janana Jathagam A4 sheet
-  const [data, setData] = useState(() => computeHoroscopePagerData(calcInputs));
+  const [data, setData] = useState(() => computeHoroscopePagerData(calcInputs, effectiveProfile));
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [activeEditorTab, setActiveEditorTab] = useState('person');
   const [calcSuccessMsg, setCalcSuccessMsg] = useState('');
@@ -172,11 +178,55 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
         nativePlace: initialBirthData.nativePlace !== undefined ? initialBirthData.nativePlace : ''
       };
       setCalcInputs(updatedInputs);
-      setData(computeHoroscopePagerData(updatedInputs));
+      setData(computeHoroscopePagerData(updatedInputs, effectiveProfile));
     }
   }, [initialBirthData]);
 
   // Cascading place options
+  // Sync profile header changes directly into 1-pager
+  useEffect(() => {
+    const prof = astrologerProfile || user?.pagerHeader || user;
+    if (prof) {
+      const h = prof.pagerHeader || prof;
+      if (h.line1 || h.line2 || h.address1 || h.phoneEmail) {
+        setData(prev => ({
+          ...prev,
+          header: {
+            line1: h.line1 || prev.header.line1,
+            line2: h.line2 || prev.header.line2,
+            address1: h.address1 || prev.header.address1,
+            address2: h.address2 !== undefined ? h.address2 : prev.header.address2,
+            phoneEmail: h.phoneEmail || prev.header.phoneEmail
+          }
+        }));
+      }
+    }
+  }, [user, astrologerProfile]);
+
+  const handleSaveHeaderToProfile = async () => {
+    try {
+      setIsSavingHeader(true);
+      const res = await API.updateUserProfile({
+        pagerHeader: {
+          line1: data.header.line1,
+          line2: data.header.line2,
+          address1: data.header.address1,
+          address2: data.header.address2,
+          phoneEmail: data.header.phoneEmail
+        }
+      });
+      if (res?.user && setUser) {
+        setUser(res.user);
+      }
+      setHeaderSavedMsg(isTa ? 'சுயவிவரத்தில் வெற்றிகரமாக சேமிக்கப்பட்டது!' : 'Saved to profile successfully!');
+      setTimeout(() => setHeaderSavedMsg(''), 3000);
+    } catch (err) {
+      alert((isTa ? 'சேமிக்க முடியவில்லை: ' : 'Failed to save: ') + err.message);
+    } finally {
+      setIsSavingHeader(false);
+    }
+  };
+
   const availableStates = useMemo(() => {
     return Object.keys(GEO_DATA[selectedCountry] || {});
   }, [selectedCountry]);
@@ -1136,6 +1186,29 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
                     onChange={e => updateField('header', 'phoneEmail', e.target.value)}
                     className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs"
                   />
+                </div>
+
+                <div className="sm:col-span-2 p-3 bg-amber-50/60 dark:bg-stone-900/60 border border-amber-900/15 dark:border-stone-700 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="text-[11px] text-stone-600 dark:text-stone-300">
+                    <span className="font-bold text-[#7A1A22] dark:text-amber-300">💡 {isTa ? 'சுயவிவர இணைப்பு:' : 'Profile Sync:'}</span> {isTa ? 'இங்கு மாற்றிய தலைப்பு & முகவரியை உங்கள் சுயவிவரத்தில் நிரந்தரமாக சேமிக்கலாம்.' : 'Save these header details directly to your astrologer profile for all future 1-pagers.'}
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {headerSavedMsg && (
+                      <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                        <span>✓</span>
+                        <span>{headerSavedMsg}</span>
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      disabled={isSavingHeader}
+                      onClick={handleSaveHeaderToProfile}
+                      className="px-3.5 py-1.5 rounded-lg bg-[#7A1A22] text-amber-100 hover:bg-[#5f1319] text-xs font-bold cursor-pointer transition-colors flex items-center gap-1.5 shadow-2xs"
+                    >
+                      <span>💾</span>
+                      <span>{isSavingHeader ? (isTa ? 'சேமிக்கிறது...' : 'Saving...') : (isTa ? 'சுயவிவரத்தில் சேமிக்க' : 'Save Header to Profile')}</span>
+                    </button>
+                  </div>
                 </div>
 
                 <div>

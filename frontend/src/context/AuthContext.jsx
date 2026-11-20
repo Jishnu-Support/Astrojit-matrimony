@@ -87,6 +87,7 @@ export function AuthProvider({ children }) {
         registerAstrologer,
         registerVendor,
         logout,
+        setUser,
       }}
     >
       {children}

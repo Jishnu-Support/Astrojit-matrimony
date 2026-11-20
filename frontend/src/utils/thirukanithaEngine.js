@@ -3420,7 +3420,7 @@ export function computeTamilDate(sunLongitude, dobStr) {
   return res;
 }
 
-export function computeHoroscopePagerData(horoInput) {
+export function computeHoroscopePagerData(horoInput, astrologerProfile) {
   const horo = calculateThirukanithaHoroscope(horoInput);
   const empty = createEmptyHoroscopePagerData();
 
@@ -3687,13 +3687,20 @@ export function computeHoroscopePagerData(horoInput) {
   const nextBhukti = horo.dashaTable[0]?.bhuktis?.find(b => b.isOngoing) || horo.dashaTable[0]?.bhuktis?.[0];
   const nextMd = horo.dashaTable[0];
 
+    const profHeader = astrologerProfile?.pagerHeader || astrologerProfile?.header || horoInput?.pagerHeader || horoInput?.header || astrologerProfile;
+  const hLine1 = profHeader?.line1 || astrologerProfile?.brandLine1 || 'ஸ்ரீ பாலாஜி ஜோதிட நிலையம் • திருக்கணித பஞ்சாங்கம்';
+  const hLine2 = profHeader?.line2 || astrologerProfile?.brandLine2 || 'SAI BALAJI ASTROLOGICAL RESEARCH CENTRE';
+  const hAddr1 = profHeader?.address1 || astrologerProfile?.address1 || `${m.city || 'Salem'}, தமிழ்நாடு - 636001`;
+  const hAddr2 = profHeader?.address2 !== undefined ? profHeader?.address2 : (astrologerProfile?.address2 !== undefined ? astrologerProfile.address2 : 'சென்னை & பெங்களூரு கிளைகள்');
+  const hPhoneEmail = profHeader?.phoneEmail || astrologerProfile?.phoneEmail || 'தொலைபேசி: +91 98765 43210 | மின்னஞ்சல்: astro@astrojit.com';
+
   return {
     header: {
-      line1: 'ஸ்ரீ பாலாஜி ஜோதிட நிலையம் • திருக்கணித பஞ்சாங்கம்',
-      line2: 'SAI BALAJI ASTROLOGICAL RESEARCH CENTRE',
-      address1: `${m.city || 'சேலம்'}, தமிழ்நாடு - 636001`,
-      address2: 'சென்னை & பெங்களூரு கிளைகள்',
-      phoneEmail: 'தொலைபேசி: +91 98765 43210 | மின்னஞ்சல்: astro@astrojit.com'
+      line1: hLine1,
+      line2: hLine2,
+      address1: hAddr1,
+      address2: hAddr2,
+      phoneEmail: hPhoneEmail
     },
     credits: {
       software: 'Astrojit Thirukanitha Engine v2.0',

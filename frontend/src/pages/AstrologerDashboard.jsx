@@ -42,7 +42,7 @@ import HoroscopePagerView from '../components/HoroscopePagerView';
 import { MATCH_I18N } from '../matchmakingI18n';
 
 export default function AstrologerDashboard({ activeTab: propTab, onTabChange }) {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const { lang, t } = useLang();
   const [internalTab, setInternalTab] = useState('appointments');
   const activeTab = propTab || internalTab;
@@ -53,6 +53,78 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+
+  // Astrologer Profile & 1-Pager Header Form State
+  const [profileForm, setProfileForm] = useState({
+    name: user?.name || '',
+    email: user?.email || '',
+    mobile: user?.mobile || '',
+    experience: user?.experience || '',
+    languages: user?.languages || '',
+    bio: user?.bio || '',
+    address: user?.address || '',
+    pagerHeader: {
+      line1: user?.pagerHeader?.line1 || user?.brandLine1 || 'ஸ்ரீ பாலாஜி ஜோதிட நிலையம் • திருக்கணித பஞ்சாங்கம்',
+      line2: user?.pagerHeader?.line2 || user?.brandLine2 || 'SAI BALAJI ASTROLOGICAL RESEARCH CENTRE',
+      address1: user?.pagerHeader?.address1 || user?.address1 || 'Salem, தமிழ்நாடு - 636001',
+      address2: user?.pagerHeader?.address2 || user?.address2 || 'சென்னை & பெங்களூரு கிளைகள்',
+      phoneEmail: user?.pagerHeader?.phoneEmail || user?.phoneEmail || 'தொலைபேசி: +91 98765 43210 | மின்னஞ்சல்: astro@astrojit.com'
+    }
+  });
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileSuccessMsg, setProfileSuccessMsg] = useState('');
+
+  // Keep profileForm synced with logged in astrologer profile
+  useEffect(() => {
+    if (user) {
+      setProfileForm({
+        name: user.name || '',
+        email: user.email || '',
+        mobile: user.mobile || '',
+        experience: user.experience || '',
+        languages: user.languages || '',
+        bio: user.bio || '',
+        address: user.address || '',
+        pagerHeader: {
+          line1: user.pagerHeader?.line1 || user.brandLine1 || 'ஸ்ரீ பாலாஜி ஜோதிட நிலையம் • திருக்கணித பஞ்சாங்கம்',
+          line2: user.pagerHeader?.line2 || user.brandLine2 || 'SAI BALAJI ASTROLOGICAL RESEARCH CENTRE',
+          address1: user.pagerHeader?.address1 || user.address1 || 'Salem, தமிழ்நாடு - 636001',
+          address2: user.pagerHeader?.address2 || user.address2 || 'சென்னை & பெங்களூரு கிளைகள்',
+          phoneEmail: user.pagerHeader?.phoneEmail || user.phoneEmail || 'தொலைபேசி: +91 98765 43210 | மின்னஞ்சல்: astro@astrojit.com'
+        }
+      });
+    }
+  }, [user]);
+
+  const handleSaveProfile = async (e) => {
+    if (e) e.preventDefault();
+    setSavingProfile(true);
+    try {
+      const res = await API.updateUserProfile({
+        name: profileForm.name,
+        email: profileForm.email,
+        address: profileForm.address,
+        experience: profileForm.experience,
+        languages: profileForm.languages,
+        bio: profileForm.bio,
+        pagerHeader: profileForm.pagerHeader,
+        brandLine1: profileForm.pagerHeader.line1,
+        brandLine2: profileForm.pagerHeader.line2,
+        address1: profileForm.pagerHeader.address1,
+        address2: profileForm.pagerHeader.address2,
+        phoneEmail: profileForm.pagerHeader.phoneEmail
+      });
+      if (res?.user && setUser) {
+        setUser(res.user);
+      }
+      setProfileSuccessMsg(lang === 'ta' ? 'சுயவிவரம் மற்றும் 1-பேஜர் முகப்பு வெற்றிகரமாக சேமிக்கப்பட்டது!' : 'Profile & 1-Pager Header saved successfully!');
+      setTimeout(() => setProfileSuccessMsg(''), 4000);
+    } catch (err) {
+      alert((lang === 'ta' ? 'சுயவிவரம் சேமிக்க முடியவில்லை: ' : 'Failed to save profile: ') + err.message);
+    } finally {
+      setSavingProfile(false);
+    }
+  };
   const [selectedClientMobile, setSelectedClientMobile] = useState(null);
   const [clientProfile, setClientProfile] = useState(null);
   const [clientNotes, setClientNotes] = useState([]);
@@ -324,6 +396,18 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                 <Radio className={`w-3 h-3 ${isOnline ? 'text-emerald-600 animate-pulse' : 'text-slate-400'}`} />
                 {isOnline ? t('onlineAccepting') : t('offlineStatus')}
               </button>
+
+              <button
+                onClick={() => setActiveTab('profile')}
+                className={`text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full border flex items-center gap-1.5 transition-all cursor-pointer ${
+                  activeTab === 'profile'
+                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
+                    : 'bg-indigo-50/80 hover:bg-indigo-100 text-indigo-700 border-indigo-200'
+                }`}
+              >
+                <Edit3 className="w-3 h-3" />
+                <span>{lang === 'ta' ? 'சுயவிவரம் & 1-பேஜர் முகப்பு' : 'Edit Profile & 1-Pager Header'}</span>
+              </button>
             </div>
 
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
@@ -440,6 +524,17 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
             }`}
           >
             {t('tabReferred')} ({referredData.totalReferred})
+          </button>
+          <button
+            onClick={() => setActiveTab('profile')}
+            className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'profile'
+                ? 'bg-indigo-600 text-white shadow-xs'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            }`}
+          >
+            <Edit3 className="w-3.5 h-3.5" />
+            <span>{lang === 'ta' ? 'சுயவிவரம் & 1-பேஜர்' : 'Profile & 1-Pager'}</span>
           </button>
         </div>
       </div>
@@ -1391,6 +1486,293 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {/* TAB 4: Astrologer Profile & 1-Pager Letterhead Branding Settings */}
+      {activeTab === 'profile' && (
+        <div className="space-y-4 sm:space-y-6">
+          {/* Header Banner */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                <Edit3 className="w-5 h-5 text-indigo-600" />
+                <span>{lang === 'ta' ? 'ஜோதிடர் சுயவிவரம் & 1-பேஜர் லெட்டர்ஹெட் அமைப்புகள்' : 'Astrologer Profile & 1-Pager Letterhead Branding'}</span>
+              </h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                {lang === 'ta'
+                  ? 'இங்கு பதிவு செய்யும் ஜோதிட நிலையம், முகவரி & தொடர்பு விவரங்கள் அனைத்து 1-பேஜர் ஜாதகங்களிலும் தானாகவே புதுப்பிக்கப்படும்.'
+                  : 'Organization title, branches & contact details entered here will automatically update on every 1-pager horoscope.'}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setActiveTab('horoscope_pagers')}
+                className="px-3 py-1.5 rounded-xl border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>{lang === 'ta' ? '1-பேஜர் ஜாதகம் பார்க்க' : 'Open 1-Pager View'}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Form Grid */}
+          <form onSubmit={handleSaveProfile} className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
+            {/* LEFT COLUMN: 1-Pager Letterhead Details */}
+            <div className="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
+              <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
+                <div>
+                  <h3 className="font-bold text-sm sm:text-base text-slate-900 flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-amber-600" />
+                    <span>{lang === 'ta' ? '1-பேஜர் ஜாதக தலைப்பு & முகவரி (Letterhead)' : '1-Pager Letterhead Branding Details'}</span>
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    {lang === 'ta' ? 'A4 தாளில் அச்சிடப்படும் மேல் பகுதி கட்டத்தின் விவரங்கள்' : 'Header details printed on the top box of 1-page A4 sheets'}
+                  </p>
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
+                  {lang === 'ta' ? '1-பேஜர் இணைப்பு' : '1-Pager Synced'}
+                </span>
+              </div>
+
+              <div className="space-y-3.5 text-xs">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    {lang === 'ta' ? 'ஜோதிட நிலையம் / நிறுவனம் (Line 1 - Large Title)' : 'Organization / Center Name (Line 1 Large)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={profileForm.pagerHeader.line1}
+                    onChange={(e) => setProfileForm(prev => ({
+                      ...prev,
+                      pagerHeader: { ...prev.pagerHeader, line1: e.target.value }
+                    }))}
+                    placeholder="ஸ்ரீ பாலாஜி ஜோதிட நிலையம் • திருக்கணித பஞ்சாங்கம்"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-900 focus:bg-white focus:border-indigo-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    {lang === 'ta' ? 'துணைத் தலைப்பு / மையம் (Line 2 - Subtitle)' : 'Center Name / Subtitle (Line 2)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={profileForm.pagerHeader.line2}
+                    onChange={(e) => setProfileForm(prev => ({
+                      ...prev,
+                      pagerHeader: { ...prev.pagerHeader, line2: e.target.value }
+                    }))}
+                    placeholder="SAI BALAJI ASTROLOGICAL RESEARCH CENTRE"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800 focus:bg-white focus:border-indigo-500 transition-colors"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      {lang === 'ta' ? 'முதன்மை முகவரி & அஞ்சல் குறியீடு (Address Line 1)' : 'Primary Address & City (Address Line 1)'}
+                    </label>
+                    <input
+                      type="text"
+                      value={profileForm.pagerHeader.address1}
+                      onChange={(e) => setProfileForm(prev => ({
+                        ...prev,
+                        pagerHeader: { ...prev.pagerHeader, address1: e.target.value }
+                      }))}
+                      placeholder="Salem, தமிழ்நாடு - 636001"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      {lang === 'ta' ? 'கிளைகள் / கூடுதல் முகவரி (Address Line 2)' : 'Branches / Secondary Address (Address Line 2)'}
+                    </label>
+                    <input
+                      type="text"
+                      value={profileForm.pagerHeader.address2}
+                      onChange={(e) => setProfileForm(prev => ({
+                        ...prev,
+                        pagerHeader: { ...prev.pagerHeader, address2: e.target.value }
+                      }))}
+                      placeholder="சென்னை & பெங்களூரு கிளைகள்"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    {lang === 'ta' ? 'தொடர்பு விவரங்கள் (தொலைபேசி & மின்னஞ்சல்)' : 'Contact Details (Phone & Email Line)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={profileForm.pagerHeader.phoneEmail}
+                    onChange={(e) => setProfileForm(prev => ({
+                      ...prev,
+                      pagerHeader: { ...prev.pagerHeader, phoneEmail: e.target.value }
+                    }))}
+                    placeholder="தொலைபேசி: +91 98765 43210 | மின்னஞ்சல்: astro@astrojit.com"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 transition-colors font-mono"
+                  />
+                </div>
+
+                {/* REAL-TIME LIVE 1-PAGER HEADER PREVIEW BOX */}
+                <div className="pt-2">
+                  <span className="text-[10px] uppercase font-bold text-slate-500 block mb-1.5 flex items-center gap-1.5">
+                    <span>👁️</span>
+                    <span>{lang === 'ta' ? '1-பேஜர் தாளில் தோன்றும் நேரடி முன்தோற்றம் (Live Header Preview):' : 'Live Preview as Printed on 1-Pager Sheet:'}</span>
+                  </span>
+                  <div className="border border-black p-3 text-center rounded-xs bg-white text-black space-y-0.5 shadow-2xs font-serif">
+                    <div className="text-base sm:text-lg font-black tracking-tight" style={{ minHeight: '24px' }}>
+                      {profileForm.pagerHeader.line1 || <span className="opacity-0">&nbsp;</span>}
+                    </div>
+                    <div className="text-xs font-bold" style={{ minHeight: '16px' }}>
+                      {profileForm.pagerHeader.line2 || <span className="opacity-0">&nbsp;</span>}
+                    </div>
+                    <div className="text-[10.5px] text-stone-700 leading-tight" style={{ minHeight: '14px' }}>
+                      {profileForm.pagerHeader.address1 ? `${profileForm.pagerHeader.address1}${profileForm.pagerHeader.address2 ? ' • ' + profileForm.pagerHeader.address2 : ''}` : <span className="opacity-0">&nbsp;</span>}
+                    </div>
+                    <div className="text-[9.5px] font-mono font-semibold text-stone-800" style={{ minHeight: '12px' }}>
+                      {profileForm.pagerHeader.phoneEmail || <span className="opacity-0">&nbsp;</span>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* RIGHT COLUMN: Personal & Professional Profile */}
+            <div className="lg:col-span-5 bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
+              <div className="border-b border-slate-100 pb-3">
+                <h3 className="font-bold text-sm sm:text-base text-slate-900 flex items-center gap-2">
+                  <UserCheck className="w-4 h-4 text-indigo-600" />
+                  <span>{lang === 'ta' ? 'ஜோதிடர் சுயவிவரம் & அலுவலகம்' : 'Astrologer Professional Details'}</span>
+                </h3>
+                <p className="text-[11px] text-slate-500">
+                  {lang === 'ta' ? 'உங்கள் கணக்கு & வாடிக்கையாளர் ஆலோசனை விவரங்கள்' : 'Your personal profile and consultation details'}
+                </p>
+              </div>
+
+              <div className="space-y-3.5 text-xs">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    {lang === 'ta' ? 'ஜோதிடர் / நிறுவனப் பெயர்' : 'Astrologer / Firm Name'}
+                  </label>
+                  <input
+                    type="text"
+                    value={profileForm.name}
+                    onChange={(e) => setProfileForm(prev => ({ ...prev, name: e.target.value }))}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-900 focus:bg-white focus:border-indigo-500 transition-colors"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      {lang === 'ta' ? 'கைபேசி எண் (Mobile)' : 'Mobile (User ID)'}
+                    </label>
+                    <input
+                      type="text"
+                      disabled
+                      value={profileForm.mobile}
+                      className="w-full bg-slate-100 border border-slate-200 rounded-xl p-2.5 text-xs font-mono text-slate-600 cursor-not-allowed"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      {lang === 'ta' ? 'மின்னஞ்சல் (Email)' : 'Email'}
+                    </label>
+                    <input
+                      type="email"
+                      value={profileForm.email}
+                      onChange={(e) => setProfileForm(prev => ({ ...prev, email: e.target.value }))}
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-900 focus:bg-white focus:border-indigo-500 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      {lang === 'ta' ? 'அனுபவம் (Experience)' : 'Experience'}
+                    </label>
+                    <input
+                      type="text"
+                      value={profileForm.experience}
+                      onChange={(e) => setProfileForm(prev => ({ ...prev, experience: e.target.value }))}
+                      placeholder="22 Years"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-900 focus:bg-white focus:border-indigo-500 transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      {lang === 'ta' ? 'பேசும் மொழிகள் (Languages)' : 'Languages Spoken'}
+                    </label>
+                    <input
+                      type="text"
+                      value={profileForm.languages}
+                      onChange={(e) => setProfileForm(prev => ({ ...prev, languages: e.target.value }))}
+                      placeholder="Tamil, English, Hindi"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-900 focus:bg-white focus:border-indigo-500 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    {lang === 'ta' ? 'அலுவலக முகவரி (Office Address)' : 'Office / Chamber Address'}
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={profileForm.address}
+                    onChange={(e) => setProfileForm(prev => ({ ...prev, address: e.target.value }))}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-900 focus:bg-white focus:border-indigo-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    {lang === 'ta' ? 'சுயவிவரக் குறிப்பு (Bio)' : 'Professional Bio'}
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={profileForm.bio}
+                    onChange={(e) => setProfileForm(prev => ({ ...prev, bio: e.target.value }))}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-900 focus:bg-white focus:border-indigo-500 transition-colors"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* FULL WIDTH ACTION FOOTER */}
+            <div className="lg:col-span-12 bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                {profileSuccessMsg && (
+                  <span className="text-xs sm:text-sm font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <span>{profileSuccessMsg}</span>
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 self-end sm:self-auto">
+                <button
+                  type="submit"
+                  disabled={savingProfile}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs sm:text-sm transition-all cursor-pointer flex items-center gap-2 shadow-xs disabled:opacity-50"
+                >
+                  <Check className="w-4 h-4" />
+                  <span>
+                    {savingProfile
+                      ? (lang === 'ta' ? 'சேமிக்கிறது...' : 'Saving...')
+                      : (lang === 'ta' ? 'சுயவிவரம் & 1-பேஜர் சேமிக்க' : 'Save Profile & 1-Pager Header')}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
       )}
 
