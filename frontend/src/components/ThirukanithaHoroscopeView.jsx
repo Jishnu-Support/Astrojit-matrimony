@@ -150,11 +150,11 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
   };
 
   const expandAllSections = () => {
-    setOpenSections({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true, 11: true, 12: true, 13: true, 14: true, 15: true, 16: true, 17: true, 18: true, 19: true });
+    setOpenSections({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true, 11: true, 12: true, 13: true, 14: true, 15: true, 16: true, 17: true, 18: true, 19: true, 20: true });
   };
 
   const collapseAllSections = () => {
-    setOpenSections({ 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false, 10: false, 11: false, 12: false, 13: false, 14: false, 15: false, 16: false, 17: false, 18: false, 19: false });
+    setOpenSections({ 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false, 10: false, 11: false, 12: false, 13: false, 14: false, 15: false, 16: false, 17: false, 18: false, 19: false, 20: false });
   };
 
   const jumpToSection = (secNum) => {
@@ -174,7 +174,8 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
   const [section15Tab, setSection15Tab] = useState('all'); // 'all' | 'profile' | 'schedule' | 'live'
   const [section16Tab, setSection16Tab] = useState('all'); // 'all' | 'pasakar' | 'tara'
   const [section17Tab, setSection17Tab] = useState('all'); // 'all' | 'dignities' | 'aspects'
-  const [section19Tab, setSection19Tab] = useState('present'); // 'present' | 'all' | 'raja' | 'mahapurusha' | 'dhana' | 'lunar_solar' | 'viparita'
+  const [section19Tab, setSection19Tab] = useState('present');
+  const [section20Tab, setSection20Tab] = useState('all'); // 'all' | 'formula' | 'timeline' | 'phalam' // 'present' | 'all' | 'raja' | 'mahapurusha' | 'dhana' | 'lunar_solar' | 'viparita'
   const [gocharaDate, setGocharaDate] = useState(() => new Date().toISOString().split('T')[0]);
 
   // Compute Horoscope (All client-side)
@@ -733,7 +734,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               }}
               className="bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-1.5 text-xs font-bold text-stone-800 dark:text-stone-200 focus:outline-none focus:border-[#7A1A22] cursor-pointer w-full max-w-sm shadow-2xs"
             >
-              <option value="">{isTamil ? '-- 19 பிரிவுகள் பட்டியல் (தேர்வு செய்க) --' : '-- Select Section to Jump (1 to 19) --'}</option>
+              <option value="">{isTamil ? '-- 20 பிரிவுகள் பட்டியல் (தேர்வு செய்க) --' : '-- Select Section to Jump (1 to 20) --'}</option>
               <option value="1">1. ஜனன விவரக் குறிப்பு</option>
               <option value="2">2. வர்க்கச் சக்கரங்கள் (16 Shodashavarga Charts)</option>
               <option value="3">3. கிரக நிலைகள் அட்டவணை (நிராயண)</option>
@@ -753,6 +754,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               <option value="17">17. ஜாதகத்தில் கிரகங்களின் நிலை & கிரகங்களின் பார்வை, சேர்க்கை நிலை.</option>
               <option value="18">18. எண் கணிதம் (நியூமராலஜி - சாலடியன் முறை).</option>
               <option value="19">19. ஜாதக யோகங்கள் (Jathaga Yogas - 16 Classical Combinations).</option>
+              <option value="20">20. விம்சோத்தரி மகாதிசைகள் & இருப்பு விரிவான கணக்கீடு (Vimshottari Maha Dashas & Balance Calculations).</option>
             </select>
           </div>
 
@@ -6318,6 +6320,313 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     );
                   })}
               </div>
+            </div>
+          )}
+        </div>
+
+
+        {/* ======================================================== */}
+        {/* SECTION 20: மகாதிசைகள் & இருப்பு விரிவான கணிதம் (MAHA DASHAS & BALANCE DETAILED CALCULATIONS) */}
+        {/* ======================================================== */}
+        <div id="horoscope-section-20" className="bg-white/95 dark:bg-[#251E1A] p-4 sm:p-6 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
+          <div className="flex items-center justify-between border-b border-amber-900/15 dark:border-amber-500/20 pb-3">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">🪐</span>
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-[#7A1A22] dark:text-amber-300">
+                  {isTamil ? '20. விம்சோத்தரி மகாதிசைகள் & இருப்பு விரிவான கணிதம் (Maha Dasha & Balance Mathematical Formulas)' : '20. Vimshottari Maha Dashas & Balance Mathematical Formulations'}
+                </h2>
+                <p className="text-[11px] text-stone-500 dark:text-stone-400">
+                  {isTamil
+                    ? 'சந்திரனின் நின்ற நட்சத்திரப் பாகை, சென்ற/இருப்பு பாகை கணிதம், 120 ஆண்டுகளுக்கான 9 மகாதிசைகள், புக்திகள் & பலன் விபரங்கள்'
+                    : 'Moon Nirayana Longitude, Exact Nakshatra Traversal Fraction, Dasha Balance at Birth, 120-Year Parashara Cycle & Significations'}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => toggleSection(20)}
+              className="p-1 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500 transition-colors"
+            >
+              {openSections[20] ? '▲' : '▼'}
+            </button>
+          </div>
+
+          {openSections[20] && (
+            <div className="space-y-4">
+              {/* Filter Pills */}
+              <div className="flex flex-wrap items-center gap-2 border-b border-amber-900/10 dark:border-amber-500/15 pb-2 text-xs">
+                {[
+                  { key: 'all', labelTa: 'அனைத்தும் (Overview)', labelEn: 'All (Overview)' },
+                  { key: 'formula', labelTa: 'இருப்பு கணித சூத்திரம் (Birth Balance)', labelEn: 'Balance Mathematics' },
+                  { key: 'timeline', labelTa: '120 ஆண்டு தசா கால அட்டவணை', labelEn: '120-Year Timeline' },
+                  { key: 'phalam', labelTa: '9 கிரக மகாதிசை பலன்கள்', labelEn: '9 Dasha Significations' }
+                ].map(tab => (
+                  <button
+                    key={tab.key}
+                    type="button"
+                    onClick={() => setSection20Tab(tab.key)}
+                    className={`px-3 py-1.5 rounded-xl font-bold cursor-pointer transition-all ${
+                      section20Tab === tab.key
+                        ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
+                        : 'bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300'
+                    }`}
+                  >
+                    {isTamil ? tab.labelTa : tab.labelEn}
+                  </button>
+                ))}
+              </div>
+
+              {/* KPI Status Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
+                <div className="p-3 rounded-xl bg-amber-50/70 dark:bg-stone-800/60 border border-amber-900/10 dark:border-amber-500/20">
+                  <span className="text-[10px] uppercase font-bold text-stone-500 block">
+                    {isTamil ? 'சந்திரனின் நின்ற நட்சத்திரம்' : 'Birth Nakshatra'}
+                  </span>
+                  <span className="text-sm font-bold text-[#7A1A22] dark:text-amber-300 block mt-0.5">
+                    {isTamil ? horoscope?.dashaSection20Data?.moonCoordinates?.nakNameTa : horoscope?.dashaSection20Data?.moonCoordinates?.nakNameEn} ({horoscope?.dashaSection20Data?.moonCoordinates?.pada} {isTamil ? 'பாதம்' : 'Pada'})
+                  </span>
+                  <span className="text-[10.5px] font-mono text-stone-500">
+                    {horoscope?.dashaSection20Data?.moonCoordinates?.degInSign} ({isTamil ? horoscope?.dashaSection20Data?.moonCoordinates?.rasiNameTa : horoscope?.dashaSection20Data?.moonCoordinates?.rasiNameEn})
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-amber-50/70 dark:bg-stone-800/60 border border-amber-900/10 dark:border-amber-500/20">
+                  <span className="text-[10px] uppercase font-bold text-stone-500 block">
+                    {isTamil ? 'பிறந்த திசை நாதன்' : 'Birth Dasha Lord'}
+                  </span>
+                  <span className="text-sm font-bold text-[#7A1A22] dark:text-amber-300 block mt-0.5">
+                    {isTamil ? horoscope?.dashaSection20Data?.moonCoordinates?.rulingLordTa : horoscope?.dashaSection20Data?.moonCoordinates?.rulingLordEn} ({horoscope?.dashaSection20Data?.birthBalanceMathematics?.birthLordYears} {isTamil ? 'ஆண்டுகள்' : 'Years'})
+                  </span>
+                  <span className="text-[10.5px] font-mono text-stone-500">
+                    {horoscope?.dashaSection20Data?.birthBalanceMathematics?.totalSpanDeg}
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-amber-50/70 dark:bg-stone-800/60 border border-amber-900/10 dark:border-amber-500/20">
+                  <span className="text-[10px] uppercase font-bold text-stone-500 block">
+                    {isTamil ? 'பிறந்த திசை இருப்பு' : 'Dasha Balance at Birth'}
+                  </span>
+                  <span className="text-sm font-bold text-emerald-800 dark:text-emerald-300 block mt-0.5">
+                    {isTamil ? horoscope?.dashaSection20Data?.birthBalanceMathematics?.calculatedBalance?.textTa : horoscope?.dashaSection20Data?.birthBalanceMathematics?.calculatedBalance?.textEn}
+                  </span>
+                  <span className="text-[10.5px] font-mono text-stone-500">
+                    {horoscope?.dashaSection20Data?.birthBalanceMathematics?.remainingFractionPct}% {isTamil ? 'இருப்பு' : 'Remaining'}
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-amber-50/70 dark:bg-stone-800/60 border border-amber-900/10 dark:border-amber-500/20">
+                  <span className="text-[10px] uppercase font-bold text-stone-500 block">
+                    {isTamil ? 'விம்சோத்தரி சுழற்சி' : 'Vimshottari Full Span'}
+                  </span>
+                  <span className="text-sm font-bold text-indigo-800 dark:text-indigo-300 block mt-0.5">
+                    120 {isTamil ? 'ஆண்டுகள் (9 திசைகள்)' : 'Years (9 Dashas)'}
+                  </span>
+                  <span className="text-[10.5px] font-mono text-stone-500">
+                    81 {isTamil ? 'புக்திகள்' : 'Bhuktis'} • 729 {isTamil ? 'அந்தரங்கள்' : 'Antaras'}
+                  </span>
+                </div>
+              </div>
+
+              {/* TAB 1: FORMULA & MATHEMATICAL STEP-BY-STEP BREAKDOWN */}
+              {(section20Tab === 'all' || section20Tab === 'formula') && (
+                <div className="p-4 rounded-xl bg-[#FAF6EF]/80 dark:bg-stone-900/40 border border-amber-900/15 dark:border-amber-500/20 space-y-3">
+                  <div className="flex items-center gap-2 border-b border-amber-900/10 pb-2">
+                    <span className="text-base">📐</span>
+                    <h3 className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300">
+                      {isTamil ? 'பிறந்த திசை இருப்பு கணித வழிமுறை (Mathematical Step-by-Step Derivation)' : 'Mathematical Step-by-Step Balance Derivation'}
+                    </h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                    {/* Step 1 & 2 */}
+                    <div className="p-3 rounded-lg bg-white/90 dark:bg-stone-900 border border-amber-900/10 space-y-1.5">
+                      <span className="text-[10px] font-bold text-stone-500 uppercase">
+                        {isTamil ? 'படி 1 & 2: சந்திரன் நின்ற நட்சத்திர வீச்சு & சென்ற பாகை' : 'Step 1 & 2: Moon Coordinate & Elapsed Arc'}
+                      </span>
+                      <div className="font-mono text-[11px] text-stone-700 dark:text-stone-300 space-y-1">
+                        <div>• {isTamil ? 'சந்திரன் நிராயண பாகை' : 'Moon Longitude'}: <span className="font-bold text-[#7A1A22] dark:text-amber-300">{horoscope?.dashaSection20Data?.moonCoordinates?.dms}</span></div>
+                        <div>• {isTamil ? 'நட்சத்திர துவக்கம்' : 'Nakshatra Start'}: <span className="font-semibold">{horoscope?.dashaSection20Data?.moonCoordinates?.nakStartDms}</span></div>
+                        <div>• {isTamil ? 'நட்சத்திர முடிவு' : 'Nakshatra End'}: <span className="font-semibold">{horoscope?.dashaSection20Data?.moonCoordinates?.nakEndDms}</span></div>
+                        <div>• {isTamil ? 'சென்ற பாகை (Elapsed)' : 'Elapsed Arc'}: <span className="font-bold text-amber-700 dark:text-amber-300">{horoscope?.dashaSection20Data?.birthBalanceMathematics?.passedDegDms} ({horoscope?.dashaSection20Data?.birthBalanceMathematics?.passedArcMinutes}′)</span></div>
+                        <div>• {isTamil ? 'சென்ற பின்னம்' : 'Elapsed Fraction'}: <span className="font-bold">{horoscope?.dashaSection20Data?.birthBalanceMathematics?.elapsedFractionPct}%</span></div>
+                      </div>
+                    </div>
+
+                    {/* Step 3 & 4 */}
+                    <div className="p-3 rounded-lg bg-white/90 dark:bg-stone-900 border border-amber-900/10 space-y-1.5">
+                      <span className="text-[10px] font-bold text-stone-500 uppercase">
+                        {isTamil ? 'படி 3 & 4: இருப்பு பாகை & இருப்பு கணிதம்' : 'Step 3 & 4: Remaining Arc & Balance Calculation'}
+                      </span>
+                      <div className="font-mono text-[11px] text-stone-700 dark:text-stone-300 space-y-1">
+                        <div>• {isTamil ? 'மொத்த நட்சத்திர வீச்சு' : 'Total Span'}: <span className="font-semibold">13° 20′ 00″ = 800′ (Arcminutes)</span></div>
+                        <div>• {isTamil ? 'இருப்பு பாகை (Remaining)' : 'Remaining Arc'}: <span className="font-bold text-emerald-700 dark:text-emerald-300">{horoscope?.dashaSection20Data?.birthBalanceMathematics?.remainingDegDms} ({horoscope?.dashaSection20Data?.birthBalanceMathematics?.remainingArcMinutes}′)</span></div>
+                        <div>• {isTamil ? 'இருப்பு பின்னம் (Fraction)' : 'Balance Fraction'}: <span className="font-bold">{horoscope?.dashaSection20Data?.birthBalanceMathematics?.remainingFractionPct}%</span></div>
+                        <div>• {isTamil ? 'சூத்திரம்' : 'Formula'}: <span className="font-semibold text-indigo-700 dark:text-indigo-300">(இருப்பு கலைகள் ÷ 800) × {horoscope?.dashaSection20Data?.birthBalanceMathematics?.birthLordYears} ஆண்டுகள்</span></div>
+                        <div className="pt-1 border-t border-stone-200 dark:border-stone-800">
+                          • {isTamil ? 'இறுதி இருப்பு' : 'Final Balance'}: <span className="font-black text-emerald-800 dark:text-emerald-300 text-xs">{horoscope?.dashaSection20Data?.birthBalanceMathematics?.calculatedBalance?.textTa}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bhukti & Antara Formula Info Box */}
+                  <div className="p-2.5 rounded-lg bg-amber-100/60 dark:bg-stone-800/80 border border-amber-900/15 text-[11px] text-stone-800 dark:text-stone-200">
+                    <span className="font-bold text-[#7A1A22] dark:text-amber-300 block mb-0.5">
+                      💡 {isTamil ? 'புக்தி & அந்தர கணித விதிமுறைகள் (Sub-period Calculation Rules):' : 'Bhukti & Antara Calculation Rules:'}
+                    </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
+                      <div>
+                        <span className="font-bold">1. {isTamil ? 'புக்தி சூத்திரம் (Bhukti)' : 'Bhukti Formula'}:</span>
+                        <div className="font-mono text-[10.5px] mt-0.5 text-stone-700 dark:text-stone-300">
+                          {isTamil ? 'கால அளவு (ஆண்டுகள்) = (மகாதிசை ஆண்டுகள் × புக்தி ஆண்டுகள்) ÷ 120' : 'Duration (Years) = (MD Years × Bhukti Years) ÷ 120'}
+                        </div>
+                      </div>
+                      <div>
+                        <span className="font-bold">2. {isTamil ? 'அந்தர சூத்திரம் (Antara)' : 'Antara Formula'}:</span>
+                        <div className="font-mono text-[10.5px] mt-0.5 text-stone-700 dark:text-stone-300">
+                          {isTamil ? 'கால அளவு (நாட்கள்) = (MD × BD × AD × 365.25) ÷ 14400' : 'Duration (Days) = (MD × BD × AD × 365.25) ÷ 14400'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: 120-YEAR MAHA DASHA TIMELINE TABLE */}
+              {(section20Tab === 'all' || section20Tab === 'timeline') && (
+                <div className="overflow-x-auto rounded-xl border border-amber-900/15 dark:border-amber-500/20 shadow-2xs">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="bg-amber-900/10 dark:bg-stone-800/80 text-[#7A1A22] dark:text-amber-300 border-b border-amber-900/15 font-bold">
+                        <th className="py-2.5 px-3">#</th>
+                        <th className="py-2.5 px-3">{isTamil ? 'மகாதிசை கிரகம்' : 'Maha Dasha Lord'}</th>
+                        <th className="py-2.5 px-3">{isTamil ? 'மொத்த காலம்' : 'Full Span'}</th>
+                        <th className="py-2.5 px-3">{isTamil ? 'துவக்கத் தேதி' : 'Start Date'}</th>
+                        <th className="py-2.5 px-3">{isTamil ? 'முடிவுத் தேதி' : 'End Date'}</th>
+                        <th className="py-2.5 px-3">{isTamil ? 'முடிவு வயது' : 'Age at End'}</th>
+                        <th className="py-2.5 px-3">{isTamil ? 'நிலை' : 'Status'}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-amber-900/10 dark:divide-stone-800 font-mono text-[11px]">
+                      {horoscope?.dashaSection20Data?.dashaAnalytics?.map((md, idx) => {
+                        let rowClass = 'hover:bg-amber-50/50 dark:hover:bg-stone-800/40 transition-colors';
+                        if (md.isOngoingToday) rowClass = 'bg-emerald-50 dark:bg-emerald-950/30 font-bold';
+                        else if (md.isBirthDasha) rowClass = 'bg-amber-100/40 dark:bg-amber-950/20 font-semibold';
+
+                        return (
+                          <tr key={md.lordId} className={rowClass}>
+                            <td className="py-2 px-3 text-stone-500 font-sans">{idx + 1}</td>
+                            <td className="py-2 px-3 font-sans font-bold text-[#7A1A22] dark:text-amber-300">
+                              {isTamil ? md.lordNameTa : md.lordNameEn} {isTamil ? 'திசை' : 'Dasha'}
+                            </td>
+                            <td className="py-2 px-3 text-stone-700 dark:text-stone-300">
+                              {md.fullYears} {isTamil ? 'ஆண்டுகள்' : 'Years'}
+                            </td>
+                            <td className="py-2 px-3">{md.startDate}</td>
+                            <td className="py-2 px-3">{md.endDate}</td>
+                            <td className="py-2 px-3 text-stone-600 dark:text-stone-400">
+                              {isTamil ? md.ageAtEnd?.textTa : md.ageAtEnd?.textEn}
+                            </td>
+                            <td className="py-2 px-3 font-sans">
+                              {md.isOngoingToday ? (
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-600 text-white shadow-2xs">
+                                  🌟 {isTamil ? 'நடப்பு திசை' : 'Active Today'}
+                                </span>
+                              ) : md.isBirthDasha ? (
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-200 dark:bg-amber-900 text-amber-900 dark:text-amber-200">
+                                  👶 {isTamil ? 'பிறந்த திசை' : 'Birth Dasha'}
+                                </span>
+                              ) : md.isPastToday ? (
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-400">
+                                  ✓ {isTamil ? 'முடிந்தது' : 'Completed'}
+                                </span>
+                              ) : (
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-stone-100 dark:bg-stone-800/40 text-stone-500">
+                                  ⏳ {isTamil ? 'எதிர்காலம்' : 'Upcoming'}
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* TAB 3: 9 DASHA PHALAM & SIGNIFICATIONS CARDS */}
+              {(section20Tab === 'all' || section20Tab === 'phalam') && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 border-b border-amber-900/10 pb-2">
+                    <span className="text-base">📜</span>
+                    <h3 className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300">
+                      {isTamil ? '9 கிரக மகாதிசை இயல்பு, காரகத்துவம் & பலன்கள் (Parashara Dasha Significations)' : '9 Planetary Dasha Significations & Classical Manifestations'}
+                    </h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {horoscope?.dashaSection20Data?.dashaAnalytics?.map((md) => {
+                      const isLive = md.isOngoingToday;
+                      const p = md.phalam;
+
+                      return (
+                        <div
+                          key={md.lordId}
+                          className={`p-3.5 rounded-xl border space-y-2 transition-all ${
+                            isLive
+                              ? 'border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/30 ring-1 ring-emerald-500/50 shadow-xs'
+                              : 'border-amber-900/15 dark:border-stone-800 bg-white/90 dark:bg-stone-900/50 hover:border-amber-900/30'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="w-6 h-6 rounded-lg bg-amber-900/10 dark:bg-amber-500/20 text-[#7A1A22] dark:text-amber-300 font-bold flex items-center justify-center text-xs">
+                                {md.index}
+                              </span>
+                              <span className="font-bold text-sm text-[#7A1A22] dark:text-amber-300">
+                                {isTamil ? md.lordNameTa : md.lordNameEn} {isTamil ? 'திசை' : 'Dasha'} ({md.fullYears} {isTamil ? 'ஆண்டுகள்' : 'Yrs'})
+                              </span>
+                            </div>
+
+                            {isLive && (
+                              <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-600 text-white shadow-2xs">
+                                🌟 {isTamil ? 'நடப்பு' : 'Live'}
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="text-xs space-y-1.5">
+                            <div>
+                              <span className="text-[10px] font-bold text-stone-500 uppercase block">
+                                {isTamil ? 'காரகத்துவம் & இயல்பு:' : 'Signification:'}
+                              </span>
+                              <p className="text-stone-700 dark:text-stone-300 font-semibold text-[11px] leading-tight">
+                                {isTamil ? p.natureTa : p.natureEn}
+                              </p>
+                            </div>
+
+                            <div className="p-2 rounded-lg bg-amber-50/70 dark:bg-stone-800/60 border border-amber-900/10 text-[11px]">
+                              <span className="text-[10px] font-bold text-[#7A1A22] dark:text-amber-300 uppercase block mb-0.5">
+                                🎁 {isTamil ? 'திசை பொதுப் பலன்:' : 'General Result:'}
+                              </span>
+                              <p className="text-stone-800 dark:text-stone-200 leading-snug">
+                                {isTamil ? p.phalanTa : p.phalanEn}
+                              </p>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-1.5 pt-1 text-[10px] font-mono text-stone-600 dark:text-stone-400">
+                              <div>• {isTamil ? 'ரத்தினம்' : 'Gem'}: <span className="font-bold text-stone-800 dark:text-stone-200">{isTamil ? p.gemstoneTa : p.gemstoneEn}</span></div>
+                              <div>• {isTamil ? 'தெய்வம்' : 'Deity'}: <span className="font-bold text-stone-800 dark:text-stone-200">{isTamil ? p.deityTa : p.deityEn}</span></div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

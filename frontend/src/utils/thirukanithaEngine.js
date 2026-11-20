@@ -2996,7 +2996,20 @@ export function calculateThirukanithaHoroscope({
       isMrM
     ),
     numerologyData: computeChaldeanNumerology(name, dob),
-    jathagaYogasSection19Data: computeJathagaYogasSection19(allPlanetRows, lagnaRasi)
+    jathagaYogasSection19Data: computeJathagaYogasSection19(allPlanetRows, lagnaRasi),
+    dashaSection20Data: computeDashaCalculationsSection20(
+      allPlanetRows.find(p => p.id === 'moon'),
+      dashaTable,
+      {
+        lord: DASHA_LORDS[i0],
+        years: balY,
+        months: balM,
+        days: balD,
+        textEn: DASHA_LORDS[i0].nameEn + ' balance ' + balY + 'y ' + balM + 'm ' + balD + 'd',
+        textTa: DASHA_LORDS[i0].nameTa + ' இருப்பு ' + balY + 'ஆ ' + balM + 'மா ' + balD + 'நா'
+      },
+      dashaTable.find(d => d.isOngoingToday) ? { mahadasha: dashaTable.find(d => d.isOngoingToday).lord, bhukti: dashaTable.find(d => d.isOngoingToday).bhuktis.find(b => b.isOngoingToday)?.bhuktiLord || null } : null
+    )
   };
 }
 
@@ -8981,6 +8994,229 @@ export function computeDignitiesAspectsSection17(horoInput = {}, allPlanetRows =
  * Neechabhanga Raja Yoga, Viparita Raja Yogas, Chandra-Mangala, Amala, Parivartana Maha Yoga.
  * =========================================================================
  */
+/**
+ * =========================================================================
+ * SECTION 20: MAHA DASHA DETAILED MATHEMATICAL CALCULATIONS (மகாதிசை விரிவான கணக்கீடுகள்)
+ * Exact Parashara mathematical formulation of Vimshottari Dasha, Bhukti & Antara:
+ * 1. Moon Nirayana Longitude & Nakshatra coordinates
+ * 2. Balance of Birth Dasha (இருப்பு கணிதம்) with exact elapsed/remaining arc & fractions
+ * 3. 120-Year Vimshottari Cycle with 9 Maha Dashas, 81 Bhuktis, and 729 Antaras
+ * 4. Classical Dasha Phalam rules & planetary signification
+ * =========================================================================
+ */
+export function computeDashaCalculationsSection20(moonRow, dashaTable = [], dashaBalance = null, currentDashaToday = null) {
+  const ZODIAC_SIGNS_TA = [
+    'மேஷம்', 'ரிஷபம்', 'மிதுனம்', 'கடகம்', 'சிம்மம்', 'கன்னி',
+    'துலாம்', 'விருச்சிகம்', 'தனுசு', 'மகரம்', 'கும்பம்', 'மீனம்'
+  ];
+  const ZODIAC_SIGNS_EN = [
+    'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
+    'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
+  ];
+
+  const moonLon = moonRow?.longitude || 0;
+  const moonRasi = moonRow?.rasi !== undefined ? moonRow.rasi : Math.floor(moonLon / 30);
+  const nakIndex = moonRow?.nakshatra !== undefined ? moonRow.nakshatra : Math.floor(moonLon / (40 / 3));
+  const pada = moonRow?.pada || (Math.floor((moonLon % (40 / 3)) / (10 / 3)) + 1);
+
+  const nakInfo = NAKSHATRAS[nakIndex] || { en: 'Ashwini', ta: 'அஸ்வினி', lord: 'Ketu' };
+  const dashaLordObj = DASHA_LORDS.find(l => l.nameEn.toLowerCase() === (nakInfo.lord || '').toLowerCase()) || DASHA_LORDS[0];
+
+  const nakStartDeg = nakIndex * (40 / 3);
+  const nakEndDeg = (nakIndex + 1) * (40 / 3);
+  const passedDeg = moonLon - nakStartDeg;
+  const remDeg = nakEndDeg - moonLon;
+
+  const passedMin = passedDeg * 60;
+  const remMin = remDeg * 60;
+  const totalMin = 800; // 13 deg 20 min = 800 arcminutes
+
+  const elapsedFrac = Math.max(0, Math.min(1, passedMin / totalMin));
+  const remainingFrac = Math.max(0, Math.min(1, remMin / totalMin));
+
+  const totalDashaYears = dashaLordObj.years;
+  const rawBalYears = remainingFrac * totalDashaYears;
+  const balY = Math.floor(rawBalYears);
+  const balMDec = (rawBalYears - balY) * 12;
+  const balM = Math.floor(balMDec);
+  const balD = Math.round((balMDec - balM) * 30);
+
+  // Classical Phalam definitions for 9 Maha Dashas
+  const DASHA_PHALAM = {
+    ketu: {
+      natureEn: 'Spiritual, Detachment, Intuition, Moksha Karaka',
+      natureTa: 'ஞானகாரகன், மோட்சம், ஆன்மீகம், திடீர் யோகம் மற்றும் வைராக்கியம்',
+      phalanEn: 'Auspicious for spiritual sadhana, foreign travels, intuition, and research. Requires care in health, skin, and sudden changes.',
+      phalanTa: 'ஆன்மீக நாட்டம், புனிதப் பயணங்கள், தியானம், யோகம் மற்றும் தீட்சை பெற சிறந்த காலம். நரம்பு, சரும பாதுகாப்பு மற்றும் அலைச்சல் குறைப்பது நன்று.',
+      favorableHousesEn: '3, 6, 11 (Upachaya sthanas) & 9, 12 (Dharma & Moksha sthanas)',
+      favorableHousesTa: '3, 6, 11 (உபசய ஸ்தானங்கள்) மற்றும் 9, 12 (தர்ம-மோட்ச ஸ்தானங்கள்)',
+      gemstoneEn: "Cat's Eye (Vaidooryam)",
+      gemstoneTa: 'வைடூரியம்',
+      deityEn: 'Lord Ganesha',
+      deityTa: 'ஸ்ரீ மகா கணபதி'
+    },
+    venus: {
+      natureEn: 'Luxury, Vehicle, Arts, Marriage, Kalathra Karaka',
+      natureTa: 'களத்திரகாரகன், கலை, சுகபோகம், சுபகாரியம், வாகனம், செல்வ செழிப்பு',
+      phalanEn: 'Excellent period for marriage, purchasing property/vehicles, artistic prosperity, happy family life, and business expansion.',
+      phalanTa: 'திருமண சுபகாரியம், சொத்து-வாகன சேர்க்கை, கலை-தொழில் வளர்ச்சி, இல்லற சுகம் மற்றும் ஆடை-ஆபரண சேர்க்கை அருளும் பொற்காலம்.',
+      favorableHousesEn: '1, 2, 4, 5, 9, 10, 11',
+      favorableHousesTa: '1, 2, 4, 5, 9, 10, 11 (கேந்திர, திரிகோண மற்றும் தன ஸ்தானங்கள்)',
+      gemstoneEn: 'Diamond / White Zircon',
+      gemstoneTa: 'வைரம் / வெள்ளிக் கல்',
+      deityEn: 'Goddess Mahalakshmi',
+      deityTa: 'ஸ்ரீ மகாலட்சுமி'
+    },
+    sun: {
+      natureEn: 'Soul, Authority, Father, Government, Atma Karaka',
+      natureTa: 'ஆத்மகாரகன், பித்ருகாரகன், அரசு அனுகூலம், தலைமைப் பதவி, கௌரவம்',
+      phalanEn: 'Brings high executive power, government honors, leadership positions, paternal support, and administrative victory.',
+      phalanTa: 'அரசு அனுகூலம், உத்தியோக உயர்வு, தலைமைப் பொறுப்பு, பித்ருக்களின் ஆசி மற்றும் சமூகத்தில் உயரிய கௌரவம் கூடும் காலம்.',
+      favorableHousesEn: '1, 3, 6, 9, 10, 11',
+      favorableHousesTa: '1, 3, 6, 9, 10, 11 (கேந்திர, திரிகோண, உபசய ஸ்தானங்கள்)',
+      gemstoneEn: 'Ruby (Manikkam)',
+      gemstoneTa: 'மாணிக்கம்',
+      deityEn: 'Lord Shiva / Surya Narayana',
+      deityTa: 'ஸ்ரீ சூரிய நாராயணர் / சிவபெருமான்'
+    },
+    moon: {
+      natureEn: 'Mind, Mother, Emotion, Creativity, Matru Karaka',
+      natureTa: 'மனோகாரகன், மாத்ருகாரகன், அமைதி, விவசாயம், கலை, நீர் வளம்',
+      phalanEn: 'Blessings from mother, mental clarity, popularity, creative ventures, overseas travel, and agricultural/liquid asset prosperity.',
+      phalanTa: 'தாயாரின் அன்பு, மன அமைதி, பொதுமக்களின் ஆதரவு, கலை-வியாபார வெற்றி, திரவப் பொருட்கள் மற்றும் சொத்து லாபம் ஏற்படும் காலம்.',
+      favorableHousesEn: '1, 2, 4, 5, 9, 10, 11',
+      favorableHousesTa: '1, 2, 4, 5, 9, 10, 11',
+      gemstoneEn: 'Pearl (Muthu)',
+      gemstoneTa: 'முத்து',
+      deityEn: 'Goddess Parvati',
+      deityTa: 'ஸ்ரீ பார்வதி தேவி'
+    },
+    mars: {
+      natureEn: 'Courage, Land, Siblings, Blood, Bhratru Karaka',
+      natureTa: 'தைரியகாரகன், பூமிகாரகன், உடன்பிறப்பு, ரியல் எஸ்டேட், வீரம், அதிகாரம்',
+      phalanEn: 'Acquisition of landed properties, victory in competitive exams/litigation, technical-engineering prowess, and martial success.',
+      phalanTa: 'பூமி லாபம், மனை-வீடு கட்டுதல், வழக்கு வெற்றி, சகோதர ஆதரவு, காவல்-ராணுவம் மற்றும் தொழில் நுட்பத் துறையில் மகத்தான வெற்றி.',
+      favorableHousesEn: '1, 3, 6, 10, 11',
+      favorableHousesTa: '1, 3, 6, 10, 11 (உபசய மற்றும் கேந்திர ஸ்தானங்கள்)',
+      gemstoneEn: 'Red Coral (Pavazham)',
+      gemstoneTa: 'பவளம்',
+      deityEn: 'Lord Murugan / Subrahmanya',
+      deityTa: 'ஸ்ரீ முருகப்பெருமான் / சுப்பிரமணியர்'
+    },
+    rahu: {
+      natureEn: 'Material ambition, Foreign success, Technology, Maya Karaka',
+      natureTa: 'மாயாகாரகன், திடீர் ராஜயோகம், அந்நிய தேச யோகம், நவீன தொழில்நுட்பம்',
+      phalanEn: 'Gives immense sudden wealth, high political/corporate elevation, foreign settlement, and breakthrough innovations when well-placed.',
+      phalanTa: 'திடீர் தன யோகம், வெளிநாட்டுப் பயணம், தகவல் தொழில் நுட்பம், அரசியல்-தொழில் செல்வாக்கு மற்றும் எதிர்பாராத அசுர வளர்ச்சி அளிக்கும் காலம்.',
+      favorableHousesEn: '3, 6, 10, 11 (Upachaya sthanas)',
+      favorableHousesTa: '3, 6, 10, 11 (உபசய ஸ்தானங்கள்)',
+      gemstoneEn: 'Hessonite (Gomedhikam)',
+      gemstoneTa: 'கோமேதகம்',
+      deityEn: 'Goddess Durga',
+      deityTa: 'ஸ்ரீ துர்க்கை அம்மன்'
+    },
+    jupiter: {
+      natureEn: 'Wisdom, Children, Wealth, Dharma, Putra/Guru Karaka',
+      natureTa: 'ஞானகாரகன், புத்திரகாரகன், தனகாரகன், பிரகஸ்பதி, ஆன்மீக மேன்மை',
+      phalanEn: 'Supreme auspicious period for child birth, divine knowledge, wealth accumulation, higher education, and universal respect.',
+      phalanTa: 'மழலைச் செல்வம், குருவின் அருள், உயர்ந்த கல்வி, நீதி-தர்ம நெறி, ஆலயத் திருப்பணி மற்றும் இல்லத்தில் அஷ்டலட்சுமி கடாட்சம் பொங்கும் காலம்.',
+      favorableHousesEn: '1, 2, 5, 9, 10, 11',
+      favorableHousesTa: '1, 2, 5, 9, 10, 11 (தர்ம, திரிகோண, கேந்திர ஸ்தானங்கள்)',
+      gemstoneEn: 'Yellow Sapphire (Pushparagam)',
+      gemstoneTa: 'மஞ்சள் புஷ்பராகம்',
+      deityEn: 'Lord Dakshinamurthy',
+      deityTa: 'ஸ்ரீ தட்சிணாமூர்த்தி'
+    },
+    saturn: {
+      natureEn: 'Discipline, Karma, Longevity, Justice, Ayur Karaka',
+      natureTa: 'ஆயுள்காரகன், கர்மகாரகன், உழைப்பு, நீதி, நீண்ட ஆயுள், நிலைத்த சொத்து',
+      phalanEn: 'Rewards sincere hard work, grants enduring reputation, long lifespan, judicial/mining/industrial triumph, and spiritual endurance.',
+      phalanTa: 'நீண்ட ஆயுள், உழைப்பிற்கு ஏற்ற நிலையான சொத்துக்கள், தொழிற்சாலை-வியாபார விஸ்தரிப்பு, மக்கள் ஆதரவு மற்றும் கர்ம வினைகளைத் தீர்க்கும் காலம்.',
+      favorableHousesEn: '3, 6, 11 (Upachaya sthanas) & 1, 4, 7, 10 (Sasa Yoga if exalted/own)',
+      favorableHousesTa: '3, 6, 11 (உபசய ஸ்தானங்கள்) மற்றும் கேந்திரங்களில் சச யோகம்',
+      gemstoneEn: 'Blue Sapphire (Neelam)',
+      gemstoneTa: 'நீலக்கல்',
+      deityEn: 'Lord Sastha / Venkateshwara',
+      deityTa: 'ஸ்ரீ சனீஸ்வர பகவான் / அய்யப்பன்'
+    },
+    mercury: {
+      natureEn: 'Intellect, Speech, Commerce, Writing, Vidya Karaka',
+      natureTa: 'புத்திகாரகன், வித்யாகாரகன், வணிகம், கணிதம், வாக்குவன்மை, சாதுர்யம்',
+      phalanEn: 'Brings extraordinary business acumen, proficiency in mathematics/IT, eloquence in speech, literary awards, and wealth through commerce.',
+      phalanTa: 'வணிக லாபம், கணிதம்-மென்பொருள் துறையில் அபார வளர்ச்சி, வாக்கு வன்மை, பத்திரிகை-எழுத்துத் துறை வெற்றி மற்றும் புத்திக் கூர்மை அளிக்கும் காலம்.',
+      favorableHousesEn: '1, 2, 4, 5, 9, 10, 11',
+      favorableHousesTa: '1, 2, 4, 5, 9, 10, 11 (கேந்திர, திரிகோண ஸ்தானங்கள்)',
+      gemstoneEn: 'Emerald (Maragatham)',
+      gemstoneTa: 'மரகதப் பச்சை',
+      deityEn: 'Lord Maha Vishnu',
+      deityTa: 'ஸ்ரீ மகா விஷ்ணு'
+    }
+  };
+
+  // Build the complete analytical dasha cards
+  const dashaAnalytics = dashaTable.map((md, idx) => {
+    const phalam = DASHA_PHALAM[md.lord.id] || DASHA_PHALAM.ketu;
+    return {
+      index: idx + 1,
+      lordId: md.lord.id,
+      lordNameEn: md.lord.nameEn,
+      lordNameTa: md.lord.nameTa,
+      fullYears: md.lord.years,
+      startDate: md.startDate,
+      endDate: md.endDate,
+      ageAtEnd: md.ageAtEnd,
+      isBirthDasha: md.isBirthDasha,
+      balanceAtBirth: md.balanceAtBirth,
+      isOngoingToday: md.isOngoingToday,
+      isPastToday: md.isPastToday,
+      bhuktisCount: md.bhuktis?.length || 9,
+      phalam
+    };
+  });
+
+  return {
+    moonCoordinates: {
+      longitude: moonLon,
+      dms: formatDMS(moonLon),
+      rasiIndex: moonRasi,
+      rasiNameTa: ZODIAC_SIGNS_TA[moonRasi] || "",
+      rasiNameEn: ZODIAC_SIGNS_EN[moonRasi] || "",
+      degInSign: formatDegInSign(moonLon),
+      nakIndex,
+      nakNameTa: nakInfo.ta,
+      nakNameEn: nakInfo.en,
+      pada,
+      rulingLordEn: nakInfo.lord,
+      rulingLordTa: dashaLordObj.nameTa,
+      nakStartDms: formatDMS(nakStartDeg),
+      nakEndDms: formatDMS(nakEndDeg)
+    },
+    birthBalanceMathematics: {
+      totalSpanDeg: "13° 20′ 00″ (800′)",
+      passedDegDms: formatDMS(passedDeg),
+      passedArcMinutes: passedMin.toFixed(2),
+      remainingDegDms: formatDMS(remDeg),
+      remainingArcMinutes: remMin.toFixed(2),
+      elapsedFractionPct: (elapsedFrac * 100).toFixed(2),
+      remainingFractionPct: (remainingFrac * 100).toFixed(2),
+      birthLordYears: totalDashaYears,
+      calculatedBalance: {
+        years: balY,
+        months: balM,
+        days: balD,
+        textTa: balY + "ஆ " + balM + "மா " + balD + "நா",
+        textEn: balY + "y " + balM + "m " + balD + "d"
+      },
+      engineBalance: dashaBalance
+    },
+    cycleTotalYears: 120,
+    totalMahaDashas: dashaAnalytics.length,
+    totalBhuktis: dashaAnalytics.length * 9,
+    dashaAnalytics,
+    currentLiveTracker: currentDashaToday
+  };
+}
+
 export function computeJathagaYogasSection19(allPlanetRows = [], lagnaRasiIdx = 8) {
   const SIGN_LORDS = ['mars', 'venus', 'mercury', 'moon', 'sun', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'saturn', 'jupiter'];
   const RASHIS_TA = ['மேஷம்', 'ரிஷபம்', 'மிதுனம்', 'கடகம்', 'சிம்மம்', 'கன்னி', 'துலாம்', 'விருச்சிகம்', 'தனுசு', 'மகரம்', 'கும்பம்', 'மீனம்'];
