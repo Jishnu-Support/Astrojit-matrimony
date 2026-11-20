@@ -100,9 +100,9 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
   const [lon, setLon] = useState(initialClient?.lon || 78.1460);
   const [utcOffset, setUtcOffset] = useState(initialClient?.utcOffset || '05:30 UTC');
 
-  const [father, setFather] = useState(initialClient?.fatherName || initialClient?.father || 'ரமேஷ் குமார்');
-  const [mother, setMother] = useState(initialClient?.motherName || initialClient?.mother || 'பிரியா');
-  const [nativePlace, setNativePlace] = useState(initialClient?.nativePlace || 'நாமக்கல்');
+  const [father, setFather] = useState(initialClient?.fatherName || initialClient?.father || '');
+  const [mother, setMother] = useState(initialClient?.motherName || initialClient?.mother || '');
+  const [nativePlace, setNativePlace] = useState(initialClient?.nativePlace || '');
   const [gender, setGender] = useState(initialClient?.gender || 'male');
 
   // Active calculated client birth data passed into children
@@ -119,9 +119,9 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
     lat: 11.6643,
     lon: 78.1460,
     utcOffset: '05:30 UTC',
-    father: 'ரமேஷ் குமார்',
-    mother: 'பிரியா',
-    nativePlace: 'நாமக்கல்',
+    father: initialClient?.fatherName || initialClient?.father || '',
+    mother: initialClient?.motherName || initialClient?.mother || '',
+    nativePlace: initialClient?.nativePlace || '',
     mobile: initialClient?.mobile || '',
     gender: 'male'
   }));

@@ -64,11 +64,11 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
     bio: user?.bio || '',
     address: user?.address || '',
     pagerHeader: {
-      line1: user?.pagerHeader?.line1 || user?.brandLine1 || 'ஸ்ரீ பாலாஜி ஜோதிட நிலையம் • திருக்கணித பஞ்சாங்கம்',
-      line2: user?.pagerHeader?.line2 || user?.brandLine2 || 'SAI BALAJI ASTROLOGICAL RESEARCH CENTRE',
-      address1: user?.pagerHeader?.address1 || user?.address1 || 'Salem, தமிழ்நாடு - 636001',
-      address2: user?.pagerHeader?.address2 || user?.address2 || 'சென்னை & பெங்களூரு கிளைகள்',
-      phoneEmail: user?.pagerHeader?.phoneEmail || user?.phoneEmail || 'தொலைபேசி: +91 98765 43210 | மின்னஞ்சல்: astro@astrojit.com'
+      line1: user?.pagerHeader?.line1 || user?.brandLine1 || '',
+      line2: user?.pagerHeader?.line2 || user?.brandLine2 || '',
+      address1: user?.pagerHeader?.address1 || user?.address1 || '',
+      address2: user?.pagerHeader?.address2 || user?.address2 || '',
+      phoneEmail: user?.pagerHeader?.phoneEmail || user?.phoneEmail || ''
     }
   });
   const [savingProfile, setSavingProfile] = useState(false);
@@ -1549,7 +1549,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                       ...prev,
                       pagerHeader: { ...prev.pagerHeader, line1: e.target.value }
                     }))}
-                    placeholder="ஸ்ரீ பாலாஜி ஜோதிட நிலையம் • திருக்கணித பஞ்சாங்கம்"
+                    placeholder="Organization / Center Name (Optional)"
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-900 focus:bg-white focus:border-indigo-500 transition-colors"
                   />
                 </div>
@@ -1565,7 +1565,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                       ...prev,
                       pagerHeader: { ...prev.pagerHeader, line2: e.target.value }
                     }))}
-                    placeholder="SAI BALAJI ASTROLOGICAL RESEARCH CENTRE"
+                    placeholder="Center Name / Subtitle (Optional)"
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800 focus:bg-white focus:border-indigo-500 transition-colors"
                   />
                 </div>
@@ -1597,7 +1597,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                         ...prev,
                         pagerHeader: { ...prev.pagerHeader, address2: e.target.value }
                       }))}
-                      placeholder="சென்னை & பெங்களூரு கிளைகள்"
+                      placeholder="Branches / Secondary Address (Optional)"
                       className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 transition-colors"
                     />
                   </div>
@@ -1614,7 +1614,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                       ...prev,
                       pagerHeader: { ...prev.pagerHeader, phoneEmail: e.target.value }
                     }))}
-                    placeholder="தொலைபேசி: +91 98765 43210 | மின்னஞ்சல்: astro@astrojit.com"
+                    placeholder="Phone & Email Line (Optional)"
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:bg-white focus:border-indigo-500 transition-colors font-mono"
                   />
                 </div>
@@ -1625,19 +1625,32 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                     <span>👁️</span>
                     <span>{lang === 'ta' ? '1-பேஜர் தாளில் தோன்றும் நேரடி முன்தோற்றம் (Live Header Preview):' : 'Live Preview as Printed on 1-Pager Sheet:'}</span>
                   </span>
-                  <div className="border border-black p-3 text-center rounded-xs bg-white text-black space-y-0.5 shadow-2xs font-serif">
-                    <div className="text-base sm:text-lg font-black tracking-tight" style={{ minHeight: '24px' }}>
-                      {profileForm.pagerHeader.line1 || <span className="opacity-0">&nbsp;</span>}
-                    </div>
-                    <div className="text-xs font-bold" style={{ minHeight: '16px' }}>
-                      {profileForm.pagerHeader.line2 || <span className="opacity-0">&nbsp;</span>}
-                    </div>
-                    <div className="text-[10.5px] text-stone-700 leading-tight" style={{ minHeight: '14px' }}>
-                      {profileForm.pagerHeader.address1 ? `${profileForm.pagerHeader.address1}${profileForm.pagerHeader.address2 ? ' • ' + profileForm.pagerHeader.address2 : ''}` : <span className="opacity-0">&nbsp;</span>}
-                    </div>
-                    <div className="text-[9.5px] font-mono font-semibold text-stone-800" style={{ minHeight: '12px' }}>
-                      {profileForm.pagerHeader.phoneEmail || <span className="opacity-0">&nbsp;</span>}
-                    </div>
+                  <div className="border border-black p-3 text-center rounded-xs bg-white text-black space-y-0.5 shadow-2xs font-serif min-h-[50px] flex flex-col justify-center">
+                    {profileForm.pagerHeader.line1 && (
+                      <div className="text-base sm:text-lg font-black tracking-tight">
+                        {profileForm.pagerHeader.line1}
+                      </div>
+                    )}
+                    {profileForm.pagerHeader.line2 && (
+                      <div className="text-xs font-bold">
+                        {profileForm.pagerHeader.line2}
+                      </div>
+                    )}
+                    {(profileForm.pagerHeader.address1 || profileForm.pagerHeader.address2) && (
+                      <div className="text-[10.5px] text-stone-700 leading-tight">
+                        {profileForm.pagerHeader.address1}{profileForm.pagerHeader.address1 && profileForm.pagerHeader.address2 ? ' • ' : ''}{profileForm.pagerHeader.address2}
+                      </div>
+                    )}
+                    {profileForm.pagerHeader.phoneEmail && (
+                      <div className="text-[9.5px] font-mono font-semibold text-stone-800">
+                        {profileForm.pagerHeader.phoneEmail}
+                      </div>
+                    )}
+                    {!profileForm.pagerHeader.line1 && !profileForm.pagerHeader.line2 && !profileForm.pagerHeader.address1 && !profileForm.pagerHeader.address2 && !profileForm.pagerHeader.phoneEmail && (
+                      <div className="text-xs text-stone-400 italic py-2">
+                        {lang === 'ta' ? '(விவரங்கள் எதுவும் உள்ளிடப்படவில்லை - வெற்றுத் தாள்)' : '(No letterhead details entered - will be blank)'}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

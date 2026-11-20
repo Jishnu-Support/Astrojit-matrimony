@@ -550,11 +550,11 @@ app.put('/api/user/profile', authenticate, (req, res) => {
 
       if (!db.astrologers[idx].pagerHeader) {
         db.astrologers[idx].pagerHeader = {
-          line1: 'ஸ்ரீ பாலாஜி ஜோதிட நிலையம் • திருக்கணித பஞ்சாங்கம்',
-          line2: 'SAI BALAJI ASTROLOGICAL RESEARCH CENTRE',
-          address1: 'Salem, தமிழ்நாடு - 636001',
-          address2: 'சென்னை & பெங்களூரு கிளைகள்',
-          phoneEmail: 'தொலைபேசி: +91 98765 43210 | மின்னஞ்சல்: astro@astrojit.com'
+          line1: '',
+          line2: '',
+          address1: '',
+          address2: '',
+          phoneEmail: ''
         };
       }
 

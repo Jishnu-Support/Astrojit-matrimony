@@ -3688,19 +3688,19 @@ export function computeHoroscopePagerData(horoInput, astrologerProfile) {
   const nextMd = horo.dashaTable[0];
 
     const profHeader = astrologerProfile?.pagerHeader || astrologerProfile?.header || horoInput?.pagerHeader || horoInput?.header || astrologerProfile;
-  const hLine1 = profHeader?.line1 || astrologerProfile?.brandLine1 || 'ஸ்ரீ பாலாஜி ஜோதிட நிலையம் • திருக்கணித பஞ்சாங்கம்';
-  const hLine2 = profHeader?.line2 || astrologerProfile?.brandLine2 || 'SAI BALAJI ASTROLOGICAL RESEARCH CENTRE';
-  const hAddr1 = profHeader?.address1 || astrologerProfile?.address1 || `${m.city || 'Salem'}, தமிழ்நாடு - 636001`;
-  const hAddr2 = profHeader?.address2 !== undefined ? profHeader?.address2 : (astrologerProfile?.address2 !== undefined ? astrologerProfile.address2 : 'சென்னை & பெங்களூரு கிளைகள்');
-  const hPhoneEmail = profHeader?.phoneEmail || astrologerProfile?.phoneEmail || 'தொலைபேசி: +91 98765 43210 | மின்னஞ்சல்: astro@astrojit.com';
+  const hLine1 = profHeader?.line1 !== undefined ? profHeader.line1 : (astrologerProfile?.brandLine1 !== undefined ? astrologerProfile.brandLine1 : '');
+  const hLine2 = profHeader?.line2 !== undefined ? profHeader.line2 : (astrologerProfile?.brandLine2 !== undefined ? astrologerProfile.brandLine2 : '');
+  const hAddr1 = profHeader?.address1 !== undefined ? profHeader.address1 : (astrologerProfile?.address1 !== undefined ? astrologerProfile.address1 : '');
+  const hAddr2 = profHeader?.address2 !== undefined ? profHeader.address2 : (astrologerProfile?.address2 !== undefined ? astrologerProfile.address2 : '');
+  const hPhoneEmail = profHeader?.phoneEmail !== undefined ? profHeader.phoneEmail : (astrologerProfile?.phoneEmail !== undefined ? astrologerProfile.phoneEmail : '');
 
   return {
     header: {
-      line1: hLine1,
-      line2: hLine2,
-      address1: hAddr1,
-      address2: hAddr2,
-      phoneEmail: hPhoneEmail
+      line1: hLine1 || '',
+      line2: hLine2 || '',
+      address1: hAddr1 || '',
+      address2: hAddr2 || '',
+      phoneEmail: hPhoneEmail || ''
     },
     credits: {
       software: 'Astrojit Thirukanitha Engine v2.0',
@@ -3710,9 +3710,9 @@ export function computeHoroscopePagerData(horoInput, astrologerProfile) {
     person: {
       title: 'ஜனன ஜாதகம்',
       name: m.name || '',
-      father: horoInput.father !== undefined ? horoInput.father : 'ரமேஷ் குமார்',
-      mother: horoInput.mother !== undefined ? horoInput.mother : 'பிரியா',
-      nativePlace: horoInput.nativePlace !== undefined ? horoInput.nativePlace : (m.city || 'சேலம்'),
+      father: horoInput.father || '',
+      mother: horoInput.mother || '',
+      nativePlace: horoInput.nativePlace || '',
       lagna: RASHIS[p.lagnaRasi]?.ta || '',
       rasi: `${RASHIS[p.moonRasi]?.ta || ''}`,
       rasiGlyph: RASHI_GLYPHS[p.moonRasi] || '',

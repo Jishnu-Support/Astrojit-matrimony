@@ -1354,20 +1354,30 @@ export default function HoroscopePagerView({ initialBirthData, astrologerProfile
           >
             <div className="space-y-2">
               {/* 1. Header box, centred, thin border */}
-              <div className="border border-black p-2 text-center rounded-xs space-y-0.5" style={{ minHeight: '52px' }}>
-                <div className="text-base sm:text-lg font-black tracking-tight" style={{ minHeight: '24px' }}>
-                  {data.header.line1 || <span className="opacity-0">&nbsp;</span>}
+              {(data.header.line1 || data.header.line2 || data.header.address1 || data.header.address2 || data.header.phoneEmail) ? (
+                <div className="border border-black p-2 text-center rounded-xs space-y-0.5">
+                  {data.header.line1 && (
+                    <div className="text-base sm:text-lg font-black tracking-tight">
+                      {data.header.line1}
+                    </div>
+                  )}
+                  {data.header.line2 && (
+                    <div className="text-xs font-bold">
+                      {data.header.line2}
+                    </div>
+                  )}
+                  {(data.header.address1 || data.header.address2) && (
+                    <div className="text-[10px] text-stone-700 leading-tight">
+                      {data.header.address1}{data.header.address1 && data.header.address2 ? ' • ' : ''}{data.header.address2}
+                    </div>
+                  )}
+                  {data.header.phoneEmail && (
+                    <div className="text-[9px] font-mono font-semibold text-stone-800">
+                      {data.header.phoneEmail}
+                    </div>
+                  )}
                 </div>
-                <div className="text-xs font-bold" style={{ minHeight: '16px' }}>
-                  {data.header.line2 || <span className="opacity-0">&nbsp;</span>}
-                </div>
-                <div className="text-[10px] text-stone-700 leading-tight" style={{ minHeight: '14px' }}>
-                  {data.header.address1 ? `${data.header.address1}${data.header.address2 ? ' • ' + data.header.address2 : ''}` : <span className="opacity-0">&nbsp;</span>}
-                </div>
-                <div className="text-[9px] font-mono font-semibold text-stone-800" style={{ minHeight: '12px' }}>
-                  {data.header.phoneEmail || <span className="opacity-0">&nbsp;</span>}
-                </div>
-              </div>
+              ) : null}
 
               {/* 2. Software credit (left) & Invocation verse (center) */}
               <div className="flex justify-between items-center text-[9px] px-1" style={{ minHeight: '22px' }}>
