@@ -1302,8 +1302,8 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
                   {data.credits.software || <span className="opacity-0">&nbsp;</span>}
                 </div>
                 <div className="text-center font-bold text-[#7A1A22] w-2/4 leading-tight">
-                  <div>{data.credits.verseLine1 || <span className="opacity-0">&nbsp;</span>}</div>
-                  <div>{data.credits.verseLine2 || <span className="opacity-0">&nbsp;</span>}</div>
+                  <div>{(isTa ? data.credits.verseLine1 : (data.credits.verseLine1 === 'ஜனனீ ஜன்ம ஸௌக்யானாம் வர்த்தனீ குலஸம்பதாம்' ? 'Janani Janma Saukhyanam Vardhani Kulasampadam' : data.credits.verseLine1)) || <span className="opacity-0">&nbsp;</span>}</div>
+                  <div>{(isTa ? data.credits.verseLine2 : (data.credits.verseLine2 === 'பதவீ பூர்வ புண்யானாம் லிக்யதே ஜன்ம பத்ரிகா.' ? 'Padavi Poorva Punyanam Likhyate Janma Patrika.' : data.credits.verseLine2)) || <span className="opacity-0">&nbsp;</span>}</div>
                 </div>
                 <div className="w-1/4 text-right opacity-0">&nbsp;</div>
               </div>

@@ -3617,8 +3617,8 @@ export function computeHoroscopePagerData(horoInput) {
     },
     credits: {
       software: 'Astrojit Thirukanitha Engine v2.0',
-      verseLine1: 'வேலன் துணையிருக்க வெல்லாத வினைகளுண்டோ',
-      verseLine2: 'ஞாலம் புகழும் நற்புகழ் தந்து நலம் பயக்கவே'
+      verseLine1: 'ஜனனீ ஜன்ம ஸௌக்யானாம் வர்த்தனீ குலஸம்பதாம்',
+      verseLine2: 'பதவீ பூர்வ புண்யானாம் லிக்யதே ஜன்ம பத்ரிகா.'
     },
     person: {
       title: 'ஜனன ஜாதகம்',
