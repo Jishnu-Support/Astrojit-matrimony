@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   User,
   Compass,
@@ -23,14 +23,11 @@ import { API } from '../api';
 import Logo from '../components/Logo';
 
 export default function Login({ onSwitchToRegister }) {
-  const { login, loginWithOtp } = useAuth();
+  const { login } = useAuth();
   const { lang, t } = useLang();
 
   // Mode: 'login' | 'forgot'
   const [viewMode, setViewMode] = useState('login');
-
-  // Auth Method: 'otp' | 'password'
-  const [authMethod, setAuthMethod] = useState('otp');
 
   // Login form state
   const [selectedRole, setSelectedRole] = useState('client');
@@ -39,23 +36,6 @@ export default function Login({ onSwitchToRegister }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
-  // OTP Login workflow state
-  const [loginOtp, setLoginOtp] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
-  const [demoOtp, setDemoOtp] = useState('');
-  const [otpCountdown, setOtpCountdown] = useState(0);
-  const [otpSending, setOtpSending] = useState(false);
-  const [otpSuccessMsg, setOtpSuccessMsg] = useState('');
-
-  // Countdown timer for login OTP resend
-  useEffect(() => {
-    if (otpCountdown <= 0) return;
-    const timer = setInterval(() => {
-      setOtpCountdown((prev) => prev - 1);
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [otpCountdown]);
 
   // Forgot password workflow state
   const [forgotStep, setForgotStep] = useState(1); // 1: Verify Mobile, 2: OTP & New Password, 3: Success
@@ -88,48 +68,6 @@ export default function Login({ onSwitchToRegister }) {
       await login(selectedRole, mobile, password);
     } catch (err) {
       setError(err.message || tr('Login failed. Please check your credentials.', 'உள்நுழைவு தோல்வி. உங்கள் விவரங்களை சரிபார்க்கவும்.'));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSendLoginOtp = async () => {
-    if (!mobile.trim()) {
-      setError(
-        selectedRole === 'company'
-          ? tr('Please enter jit_admin username first.', 'முதலில் jit_admin பயனர்பெயரை உள்ளிடவும்.')
-          : tr('Please enter your 10-digit mobile number / username first.', 'முதலில் உங்கள் 10-இலக்க மொபைல் எண் / பயனர்பெயரை உள்ளிடவும்.')
-      );
-      return;
-    }
-    setOtpSending(true);
-    setError('');
-    setOtpSuccessMsg('');
-    try {
-      const res = await API.sendLoginOtp({ role: selectedRole, mobile: mobile.trim() });
-      setOtpSent(true);
-      setDemoOtp(res.demoOtp || '');
-      setOtpCountdown(60);
-      setOtpSuccessMsg(res.message || tr('Login OTP sent successfully!', 'உள்நுழைவு ஓடிபி வெற்றிகரமாக அனுப்பப்பட்டது!'));
-    } catch (err) {
-      setError(err.message || tr('Failed to send login OTP.', 'உள்நுழைவு ஓடிபி அனுப்புவதில் தோல்வி.'));
-    } finally {
-      setOtpSending(false);
-    }
-  };
-
-  const handleOtpLoginSubmit = async (e) => {
-    e.preventDefault();
-    if (!loginOtp.trim()) {
-      setError(tr('Please enter the OTP.', 'ஓடிபி குறியீட்டை உள்ளிடவும்.'));
-      return;
-    }
-    setIsLoading(true);
-    setError('');
-    try {
-      await loginWithOtp(selectedRole, mobile.trim(), loginOtp.trim());
-    } catch (err) {
-      setError(err.message || tr('OTP login failed. Invalid or expired OTP.', 'ஓடிபி உள்நுழைவு தோல்வியடைந்தது.'));
     } finally {
       setIsLoading(false);
     }
@@ -266,49 +204,16 @@ export default function Login({ onSwitchToRegister }) {
 
           {/* Login Box */}
           <div className="bg-white border border-amber-200/80 rounded-2xl p-5 sm:p-7 shadow-xs relative overflow-hidden">
-            <div className="flex items-center justify-between mb-3 pb-2.5 border-b border-slate-100">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
                 <span>{tr('Sign in as', 'உள்நுழைக:')}</span>
                 <span className="text-amber-700 capitalize font-extrabold">{selectedRole}</span>
               </h3>
               <span className="text-[11px] text-slate-500 font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                {tr('Username = Mobile', 'பயனர்பெயர் = மொபைல்')}
+                {selectedRole === 'company'
+                  ? tr('Username = jit_admin', 'பயனர்பெயர் = jit_admin')
+                  : tr('Username = Mobile Number', 'பயனர்பெயர் = மொபைல் எண்')}
               </span>
-            </div>
-
-            {/* Authentication Method Tabs: OTP vs Password */}
-            <div className="flex items-center p-1 bg-slate-100 rounded-xl mb-4 border border-slate-200">
-              <button
-                type="button"
-                onClick={() => {
-                  setAuthMethod('otp');
-                  setError('');
-                }}
-                className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                  authMethod === 'otp'
-                    ? 'bg-amber-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <Phone className="w-3.5 h-3.5" />
-                <span>{tr('OTP Login', 'ஓடிபி உள்நுழைவு')}</span>
-                <span className="text-[10px] bg-amber-500/80 text-white px-1.5 py-0.2 rounded-full font-bold">Fast</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setAuthMethod('password');
-                  setError('');
-                }}
-                className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                  authMethod === 'password'
-                    ? 'bg-amber-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <Lock className="w-3.5 h-3.5" />
-                <span>{tr('Password Login', 'கடவுச்சொல் உள்நுழைவு')}</span>
-              </button>
             </div>
 
             {error && (
@@ -318,167 +223,72 @@ export default function Login({ onSwitchToRegister }) {
               </div>
             )}
 
-            {otpSuccessMsg && authMethod === 'otp' && (
-              <div className="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs p-3 rounded-xl font-medium flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>{otpSuccessMsg}</span>
+            <form onSubmit={handleLoginSubmit} className="space-y-3.5 text-xs">
+              <div>
+                <label className="text-slate-700 font-bold block mb-1">
+                  {selectedRole === 'company'
+                    ? tr('Username (jit_admin) *', 'பயனர்பெயர் (jit_admin) *')
+                    : tr('Mobile Number (Username) *', 'மொபைல் எண் (பயனர்பெயர்) *')}
+                </label>
+                <div className="relative">
+                  <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                  <input
+                    type="text"
+                    required
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                    placeholder={selectedRole === 'company' ? 'jit_admin' : 'Enter 10-digit mobile number'}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
+                  />
+                </div>
               </div>
-            )}
 
-            {/* TAB 1: OTP LOGIN (CONSIDER OTP AS AUTHENTICATION / USERNAME CREDENTIAL) */}
-            {authMethod === 'otp' ? (
-              <form onSubmit={handleOtpLoginSubmit} className="space-y-3.5 text-xs">
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-slate-700 font-bold block">
-                      {selectedRole === 'company'
-                        ? tr('Username (jit_admin) *', 'பயனர்பெயர் (jit_admin) *')
-                        : tr('Mobile Number (Username) *', 'மொபைல் எண் (பயனர்பெயர்) *')}
-                    </label>
-                    <span className="text-[10px] text-amber-700 font-semibold">
-                      {tr('OTP is your login credential', 'ஓடிபி உள்நுழைவு குறியீடு')}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="relative flex-1">
-                      <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                      <input
-                        type="text"
-                        required
-                        value={mobile}
-                        onChange={(e) => {
-                          setMobile(e.target.value);
-                          if (otpSent) {
-                            setOtpSent(false);
-                            setLoginOtp('');
-                            setOtpSuccessMsg('');
-                          }
-                        }}
-                        placeholder={selectedRole === 'company' ? 'jit_admin' : 'Enter 10-digit mobile number'}
-                        className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleSendLoginOtp}
-                      disabled={otpSending || otpCountdown > 0 || !mobile.trim()}
-                      className="px-3.5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs transition-all shadow-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
-                    >
-                      {otpSending ? (
-                        tr('Sending...', 'அனுப்புகிறது...')
-                      ) : otpCountdown > 0 ? (
-                        `${otpCountdown}s`
-                      ) : otpSent ? (
-                        tr('Resend OTP', 'மீண்டும் அனுப்புக')
-                      ) : (
-                        tr('Send OTP', 'ஓடிபி அனுப்பு')
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                {otpSent && (
-                  <div className="p-3.5 bg-amber-50/70 border border-amber-200 rounded-xl space-y-2 animate-in fade-in duration-150">
-                    <div className="flex items-center justify-between">
-                      <label className="text-slate-800 font-bold flex items-center gap-1.5">
-                        <KeyRound className="w-3.5 h-3.5 text-amber-700" />
-                        <span>{tr('Enter Verification OTP *', 'சரிபார்ப்பு ஓடிபி உள்ளிடவும் *')}</span>
-                      </label>
-                      {demoOtp && (
-                        <span className="text-[10px] font-mono font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded border border-amber-200">
-                          OTP: {demoOtp}
-                        </span>
-                      )}
-                    </div>
-                    <input
-                      type="text"
-                      required
-                      value={loginOtp}
-                      onChange={(e) => setLoginOtp(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
-                      placeholder={tr('Enter 6-digit OTP code', '6-இலக்க ஓடிபி உள்ளிடவும்')}
-                      className="w-full bg-white border border-amber-300 rounded-xl px-3 py-2.5 text-slate-900 font-mono font-bold tracking-widest text-center text-sm focus:outline-hidden focus:ring-2 focus:ring-amber-500"
-                    />
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={isLoading || !otpSent || !loginOtp.trim()}
-                  className="w-full bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-black py-2.5 rounded-xl transition-all shadow-md shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? <Sparkles className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                  <span>{tr('Sign In with OTP', 'ஓடிபி மூலம் உள்நுழைக')}</span>
-                </button>
-              </form>
-            ) : (
-              /* TAB 2: STANDARD PASSWORD LOGIN */
-              <form onSubmit={handleLoginSubmit} className="space-y-3.5 text-xs">
-                <div>
-                  <label className="text-slate-700 font-bold block mb-1">
-                    {selectedRole === 'company'
-                      ? tr('Username (jit_admin) *', 'பயனர்பெயர் (jit_admin) *')
-                      : tr('Mobile Number (Username) *', 'மொபைல் எண் (பயனர்பெயர்) *')}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-slate-700 font-bold">
+                    {tr('Password *', 'கடவுச்சொல் *')}
                   </label>
-                  <div className="relative">
-                    <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                    <input
-                      type="text"
-                      required
-                      value={mobile}
-                      onChange={(e) => setMobile(e.target.value)}
-                      placeholder={selectedRole === 'company' ? 'jit_admin' : 'Enter 10-digit mobile number'}
-                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
-                    />
-                  </div>
+                  {/* FORGOT PASSWORD LINK */}
+                  <button
+                    type="button"
+                    onClick={handleOpenForgot}
+                    className="text-[11px] font-bold text-amber-700 hover:text-amber-900 hover:underline inline-flex items-center gap-1 cursor-pointer transition-colors"
+                  >
+                    <KeyRound className="w-3 h-3 text-amber-600" />
+                    <span>{tr('Forgot Password?', 'கடவுச்சொல் மறந்துவிட்டதா?', 'पासवर्ड भूल गए?')}</span>
+                  </button>
                 </div>
 
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-slate-700 font-bold">
-                      {tr('Password *', 'கடவுச்சொல் *')}
-                    </label>
-                    {/* FORGOT PASSWORD LINK */}
-                    <button
-                      type="button"
-                      onClick={handleOpenForgot}
-                      className="text-[11px] font-bold text-amber-700 hover:text-amber-900 hover:underline inline-flex items-center gap-1 cursor-pointer transition-colors"
-                    >
-                      <KeyRound className="w-3 h-3 text-amber-600" />
-                      <span>{tr('Forgot Password?', 'கடவுச்சொல் மறந்துவிட்டதா?', 'पासवर्ड भूल गए?')}</span>
-                    </button>
-                  </div>
-
-                  <div className="relative">
-                    <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder={tr('Enter password', 'கடவுச்சொல்லை உள்ளிடவும்')}
-                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-10 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 cursor-pointer"
-                      title={showPassword ? 'Hide password' : 'Show password'}
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={tr('Enter password', 'கடவுச்சொல்லை உள்ளிடவும்')}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-10 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    title={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
+              </div>
 
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-black py-2.5 rounded-xl transition-all shadow-md shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer text-sm"
-                >
-                  {isLoading ? <Sparkles className="w-4 h-4 animate-spin" /> : null}
-                  <span>{tr('Sign In with Password', 'கடவுச்சொல் மூலம் உள்நுழைக')}</span>
-                </button>
-              </form>
-            )}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-black py-2.5 rounded-xl transition-all shadow-md shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer text-sm"
+              >
+                {isLoading ? <Sparkles className="w-4 h-4 animate-spin" /> : null}
+                <span>{tr('Sign In to Astrojit', 'அஸ்ட்ரோஜித்தில் உள்நுழைக')}</span>
+              </button>
+            </form>
 
             {selectedRole !== 'company' && (
               <div className="mt-5 pt-4 border-t border-slate-100 text-center text-xs text-slate-500">

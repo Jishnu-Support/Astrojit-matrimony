@@ -206,7 +206,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
           Create Your <span className="text-amber-600">Astrojit</span> Account
         </h2>
         <p className="text-xs text-slate-500">
-          Mobile Number verified via OTP is considered your Username for login
+          Mobile Number is your Username (verified via OTP for security)
         </p>
       </div>
 

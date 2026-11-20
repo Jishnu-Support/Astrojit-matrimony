@@ -111,11 +111,11 @@ export default function OtpMobileInput({
           </label>
           {isVerified ? (
             <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Verified Username
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Verified (Username)
             </span>
           ) : (
-            <span className="text-[10px] text-slate-400 font-medium">
-              OTP Verified Username
+            <span className="text-[10px] text-amber-700 font-medium">
+              Mobile Number = Username
             </span>
           )}
         </div>
@@ -131,7 +131,7 @@ export default function OtpMobileInput({
               value={mobile}
               onChange={handleMobileChange}
               required={required}
-              placeholder="10-digit mobile number"
+              placeholder="10-digit mobile number (Username)"
               className={`w-full bg-slate-50 border border-slate-300 rounded-xl pl-11 pr-3 py-2 text-slate-900 font-mono font-bold focus:outline-none ${borderFocusClass}`}
             />
           </div>
