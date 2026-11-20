@@ -3,7 +3,7 @@
  */
 
 const API_BASE = import.meta.env?.VITE_API_BASE || (
-  typeof window !== 'undefined' && (window.location.port === '5173' || window.location.port === '3000')
+  typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.port !== '5000')
     ? `http://${window.location.hostname}:5000/api`
     : '/api'
 );
@@ -28,10 +28,17 @@ export async function apiRequest(endpoint, method = 'GET', data = null, customTo
   }
 
   const res = await fetch(`${API_BASE}${endpoint}`, config);
-  const result = await res.json();
+  
+  let result = {};
+  const text = await res.text();
+  try {
+    result = text ? JSON.parse(text) : {};
+  } catch (err) {
+    result = { error: text || `Server error (${res.status})` };
+  }
 
   if (!res.ok) {
-    throw new Error(result.error || result.message || 'API request failed');
+    throw new Error(result.error || result.message || `API request failed with status ${res.status}`);
   }
 
   return result;
