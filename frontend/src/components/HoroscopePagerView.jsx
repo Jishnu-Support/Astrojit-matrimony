@@ -709,12 +709,12 @@ export default function HoroscopePagerView({ initialBirthData, astrologerProfile
               <div className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                   <div>
-                    <label className="block font-bold mb-1 opacity-80">{isTa ? 'பெயர் (Name)' : 'Full Name'}</label>
+                    <label className="block font-bold mb-1 opacity-80">{isTa ? 'பெயர்' : 'Full Name'}</label>
                     <input
                       type="text"
                       value={data.person.name}
                       onChange={e => updateField('person', 'name', e.target.value)}
-                      placeholder="e.g. Aarav Kumar"
+                      placeholder={isTa ? 'பெயர் உள்ளிடவும்' : 'Enter Full Name'}
                       className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs"
                     />
                   </div>

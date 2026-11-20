@@ -147,17 +147,17 @@ export default function KundliMatchmaking() {
 
   // Boy & Girl Form
   const [boy, setBoy] = useState({
-    name: user?.name || 'Aarav Kumar Sharma',
-    dob: user?.dob || '1996-08-15',
-    dobTime: user?.dobTime || '06:30',
-    dobPlace: user?.dobPlace || 'New Delhi, India',
+    name: user?.name || '',
+    dob: user?.dob || '',
+    dobTime: user?.dobTime || '',
+    dobPlace: user?.dobPlace || '',
   });
 
   const [girl, setGirl] = useState({
-    name: 'Pooja Iyer',
-    dob: '1998-11-23',
-    dobTime: '17:45',
-    dobPlace: 'Chennai, Tamil Nadu',
+    name: '',
+    dob: '',
+    dobTime: '',
+    dobPlace: '',
   });
 
   // Astrologer Selection & Client Query
@@ -414,6 +414,7 @@ export default function KundliMatchmaking() {
             <input
               type="text"
               required
+              placeholder={MATCH_I18N.fullName[lang] || "Enter Groom's Full Name"}
               value={boy.name}
               onChange={(e) => setBoy({ ...boy, name: e.target.value })}
               className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
@@ -455,6 +456,7 @@ export default function KundliMatchmaking() {
             <input
               type="text"
               required
+              placeholder={MATCH_I18N.pob[lang] || 'City / Place of Birth'}
               value={boy.dobPlace}
               onChange={(e) => setBoy({ ...boy, dobPlace: e.target.value })}
               className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
@@ -475,6 +477,7 @@ export default function KundliMatchmaking() {
             <input
               type="text"
               required
+              placeholder={MATCH_I18N.fullName[lang] || "Enter Bride's Full Name"}
               value={girl.name}
               onChange={(e) => setGirl({ ...girl, name: e.target.value })}
               className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-rose-500"
@@ -516,6 +519,7 @@ export default function KundliMatchmaking() {
             <input
               type="text"
               required
+              placeholder={MATCH_I18N.pob[lang] || 'City / Place of Birth'}
               value={girl.dobPlace}
               onChange={(e) => setGirl({ ...girl, dobPlace: e.target.value })}
               className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-rose-500"

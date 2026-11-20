@@ -122,124 +122,124 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
     // 1. Basic Profile Information
     profileCreatedBy: 'Self',
     profileType: 'Groom',
-    name: user?.name || 'Aarav Kumar Sharma',
+    name: user?.name || '',
     gender: 'Male',
-    dob: user?.dob || '1996-08-15',
-    age: 30,
-    height: "5'10\"",
-    weight: '72 kg',
+    dob: user?.dob || '',
+    age: '',
+    height: '',
+    weight: '',
     maritalStatus: 'Never Married',
     physicalStatus: 'Normal',
-    bloodGroup: 'B+ Positive',
-    motherTongue: 'Tamil',
-    aboutMe: 'Software professional with traditional Vedic values, respectful of elders and passionate about culture and spirituality.',
+    bloodGroup: '',
+    motherTongue: '',
+    aboutMe: '',
 
     // 2. Personal & Lifestyle
     religion: 'Hindu',
-    caste: 'Brahmin - Iyer',
-    subCaste: 'Vadama',
-    community: 'South Indian Brahmin',
-    sect: 'Smartha',
-    gotra: 'Kaundinya',
-    manglikDosha: 'No Chevvai Dosha',
-    eatingHabits: 'Vegetarian',
+    caste: '',
+    subCaste: '',
+    community: '',
+    sect: '',
+    gotra: '',
+    manglikDosha: 'No',
+    eatingHabits: '',
     drinkingHabits: 'No',
     smokingHabits: 'No',
-    hobbies: 'Carnatic music, Vedic chanting, traveling, chess',
-    personality: 'Calm, thoughtful, family-centric and ambitious',
-    languagesKnown: 'Tamil, English, Hindi',
+    hobbies: '',
+    personality: '',
+    languagesKnown: '',
 
     // 3. Religious & Horoscope
-    starNakshatra: 'Magha',
-    rasiMoonSign: 'Simha (Leo)',
-    lagnamAscendant: 'Simha (Leo)',
-    padam: 4,
-    doshamDetails: 'None / Chevvai Dosham Cancelled',
-    birthTime: user?.dobTime || '06:30',
-    birthPlace: user?.dobPlace || 'New Delhi, India',
+    starNakshatra: '',
+    rasiMoonSign: '',
+    lagnamAscendant: '',
+    padam: '',
+    doshamDetails: '',
+    birthTime: user?.dobTime || '',
+    birthPlace: user?.dobPlace || '',
     horoscopeMatchingPreference: 'Must Match',
     horoscopeDocUrl: '',
 
     // 4. Education
-    highestEducation: 'B.Tech / M.Tech in Computer Science',
-    degree: 'B.Tech Computer Science',
-    specialization: 'Artificial Intelligence & Software Systems',
-    college: 'IIT Madras / Anna University',
-    passingYear: '2018',
-    additionalQualifications: 'AWS Certified Solutions Architect',
-    certifications: 'Vedic Astrology Basics Certification',
-    educationDescription: 'Completed engineering with distinction from premier institution.',
+    highestEducation: '',
+    degree: '',
+    specialization: '',
+    college: '',
+    passingYear: '',
+    additionalQualifications: '',
+    certifications: '',
+    educationDescription: '',
 
     // 5. Career & Employment
-    employmentStatus: 'Employed in Private Sector',
-    occupation: 'Lead AI Engineer',
-    jobTitle: 'Senior Software Engineer',
-    companyName: 'Top Global Tech Corporation',
-    industry: 'Information Technology / AI',
+    employmentStatus: '',
+    occupation: '',
+    jobTitle: '',
+    companyName: '',
+    industry: '',
     workLocationCountry: 'India',
-    workLocationState: 'Tamil Nadu',
-    workLocationCity: 'Chennai',
-    annualIncome: '₹ 28,00,000 / annum (28 LPA)',
-    monthlyIncome: '₹ 2,30,000 / month',
-    workExperience: '8+ Years',
-    careerDescription: 'Leading a core AI development team with strong career growth prospects.',
+    workLocationState: '',
+    workLocationCity: '',
+    annualIncome: '',
+    monthlyIncome: '',
+    workExperience: '',
+    careerDescription: '',
 
     // 6. Family Background
-    fatherName: user?.fatherName || 'Vikram Sharma',
-    fatherOccupation: 'Retired Bank Chief Manager (SBI)',
-    motherName: user?.motherName || 'Sunita Sharma',
-    motherOccupation: 'Homemaker / Carnatic Singer',
-    brothersCount: 1,
+    fatherName: user?.fatherName || '',
+    fatherOccupation: '',
+    motherName: user?.motherName || '',
+    motherOccupation: '',
+    brothersCount: 0,
     brothersMarried: 0,
     sistersCount: 0,
     sistersMarried: 0,
     familyType: 'Nuclear',
-    familyStatus: 'Upper Middle Class',
-    familyValues: 'Traditional with modern outlook',
-    nativePlace: 'Thanjavur, Tamil Nadu',
-    familyOrigin: 'Tamil Brahmin heritage',
-    familyDescription: 'Close-knit, spiritually inclined, loving family rooted in Vedic culture.',
+    familyStatus: 'Middle Class',
+    familyValues: 'Traditional',
+    nativePlace: '',
+    familyOrigin: '',
+    familyDescription: '',
 
     // 7. Location Details
     country: 'India',
-    state: 'Tamil Nadu',
-    district: 'Chennai',
-    city: 'Chennai',
-    currentResidence: 'Mylapore, Chennai',
+    state: '',
+    district: '',
+    city: '',
+    currentResidence: '',
     citizenship: 'Indian',
     residentialStatus: 'Citizen',
 
     // 8. Physical Appearance
-    bodyType: 'Athletic / Average',
-    complexion: 'Wheatish Fair',
+    bodyType: '',
+    complexion: '',
     physicalDisability: 'None',
-    primaryPhotoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&fit=crop',
+    primaryPhotoUrl: '',
 
     // 9. Partner Preferences
-    partnerAgeMin: 23,
-    partnerAgeMax: 29,
-    partnerHeightMin: "5'2\"",
-    partnerHeightMax: "5'8\"",
+    partnerAgeMin: '',
+    partnerAgeMax: '',
+    partnerHeightMin: '',
+    partnerHeightMax: '',
     partnerMaritalStatus: 'Never Married',
     partnerReligion: 'Hindu',
-    partnerCaste: 'Brahmin (Iyer / Iyengar / Open)',
-    partnerMotherTongue: 'Tamil / Telugu',
-    partnerEducation: 'Engineering / Masters / Professional',
-    partnerOccupation: 'Software / Corporate / Academic / Any',
-    partnerIncome: '₹ 10 LPA and above / Open',
-    partnerLocationCountry: 'India / Abroad',
-    partnerDiet: 'Vegetarian',
+    partnerCaste: '',
+    partnerMotherTongue: '',
+    partnerEducation: '',
+    partnerOccupation: '',
+    partnerIncome: '',
+    partnerLocationCountry: 'India',
+    partnerDiet: '',
     partnerHoroscopeMatch: 'Must Match',
-    partnerDoshaPreference: 'No Dosha / Matching Dosha',
-    partnerExpectations: 'Looking for an understanding, cultured life partner with traditional values and mutual respect.',
+    partnerDoshaPreference: '',
+    partnerExpectations: '',
 
     // 10. Contact Information
-    mobile: user?.mobile || '9123456789',
-    altMobile: '9840123456',
-    email: 'aarav.sharma@example.com',
-    whatsappNumber: user?.mobile || '9123456789',
-    contactPerson: 'Vikram Sharma (Father)',
-    contactPersonRelation: 'Father',
+    mobile: user?.mobile || '',
+    altMobile: '',
+    email: '',
+    whatsappNumber: user?.mobile || '',
+    contactPerson: user?.name || '',
+    contactPersonRelation: 'Self',
     preferredContactMethod: 'WhatsApp & Direct Call',
     contactVisibility: 'Public',
 
@@ -247,10 +247,10 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
     photoGallery: [],
 
     // 12. Account & Security Details
-    loginMobile: user?.mobile || '9123456789',
+    loginMobile: user?.mobile || '',
     profileVisibility: 'Public',
-    termsAccepted: true,
-    privacyAccepted: true,
+    termsAccepted: false,
+    privacyAccepted: false,
   });
 
   // Calculate age automatically whenever DOB changes
@@ -990,7 +990,7 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
                     className="bg-white border border-rose-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 focus:outline-hidden"
                   >
                     <option value="client-self">
-                      {user?.name || 'Aarav Kumar Sharma'} ({tr('Self', 'சுய விவரம்', 'ಸ್ವತಃ', 'स्वयं')})
+                      {user?.name || tr('Primary Account', 'முதன்மை கணக்கு')} ({tr('Self', 'சுய விவரம்', 'ಸ್ವತಃ', 'स्वयं')})
                     </option>
                     {(autofillSources?.familyMembers || []).map((fm) => {
                       const isFmBride = fm.gender === 'Bride' || fm.gender === 'female' || (fm.relation || '').toLowerCase().includes('sister') || (fm.relation || '').toLowerCase().includes('daughter');
@@ -2408,14 +2408,13 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
                 <span className="text-[10px] font-black uppercase bg-amber-500 text-white px-2.5 py-0.5 rounded-full">
                   {tr('Primary Client (Self)', 'முதன்மைப் பயனர் (சுய விவரம்)', 'ಮುಖ್ಯ ಕ್ಲೈಂಟ್ (ಸ್ವತಃ)', 'मुख्य सदस्य (स्वयं)')}
                 </span>
-                <span className="text-xs font-bold text-amber-900">Aarav Kumar Sharma</span>
+                <span className="text-xs font-bold text-amber-900">{user?.name || tr('Self Account', 'சுய கணக்கு')}</span>
               </div>
 
               <div className="space-y-1 text-xs text-slate-700">
-                <p><strong>{tr('DOB', 'பிறந்த தேதி', 'ಹುಟ್ಟಿದ ದಿನಾಂಕ', 'जन्म तिथि')}:</strong> 15 Aug 1996 ({tr('Age', 'வயது', 'ವಯಸ್ಸು', 'आयु')}: 30)</p>
-                <p><strong>{tr('Birth Place', 'பிறந்த இடம்', 'ಜನನ ಸ್ಥಳ', 'जन्म स्थान')}:</strong> New Delhi, India (06:30 AM)</p>
-                <p><strong>{tr('Star / Nakshatra', 'நட்சத்திரம்', 'ನಕ್ಷತ್ರ', 'नक्षत्र')}:</strong> Magha ({tr('Pada 4', '4 ஆம் பாதம்', 'ಪಾದ 4', 'चरण 4')}) • Simha Rasi</p>
-                <p><strong>{tr('Chevvai Dosha', 'செவ்வாய் தோஷம்', 'ಕುಜ ದೋಷ', 'मंगल दोष')}:</strong> {tr('Cancelled', 'நிவர்த்தி', 'ನಿವಾರಣೆ', 'दोष निवारण')}</p>
+                <p><strong>{tr('DOB', 'பிறந்த தேதி', 'ಹುಟ್ಟಿದ ದಿನಾಂಕ', 'जन्म तिथि')}:</strong> {user?.dob || '-'}</p>
+                <p><strong>{tr('Birth Place', 'பிறந்த இடம்', 'ಜನನ ಸ್ಥಳ', 'जन्म स्थान')}:</strong> {user?.dobPlace || '-'} {user?.dobTime ? `(${user?.dobTime})` : ''}</p>
+                <p><strong>{tr('Mobile', 'மொபைல்', 'ಮೊಬೈಲ್', 'मोबाइल')}:</strong> {user?.mobile || '-'}</p>
               </div>
 
               <button
@@ -2427,7 +2426,7 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
                 className="w-full py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                {tr('Register Profile for Aarav', 'ஆரவ் அவர்களுக்கு வரன் பதிவு', 'ಆರವ್ ಅವರಿಗೆ ನೋಂದಾಯಿಸಿ', 'आरव के लिए प्रोफाइल बनाएं')}
+                {tr('Register Matrimony Profile', 'வரன் பதிவு செய்க', 'ಪ್ರೊಫೈಲ್ ನೋಂದಾಯಿಸಿ', 'प्रोफाइल बनाएं')}
               </button>
             </div>
 

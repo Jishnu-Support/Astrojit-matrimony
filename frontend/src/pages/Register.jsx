@@ -274,7 +274,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                 type="text"
                 name="name"
                 required
-                placeholder="e.g. Aarav Kumar Sharma"
+                placeholder="Enter Full Name"
                 className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500 font-medium"
               />
             </div>
@@ -286,7 +286,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                 <input
                   type="text"
                   name="fatherName"
-                  placeholder="e.g. Vikram Sharma"
+                  placeholder="Enter Father's Name"
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500"
                 />
               </div>
@@ -296,7 +296,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                 <input
                   type="text"
                   name="motherName"
-                  placeholder="e.g. Sunita Sharma"
+                  placeholder="Enter Mother's Name"
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500"
                 />
               </div>
@@ -481,7 +481,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                   type="text"
                   name="name"
                   required
-                  placeholder={astroType === 'company' ? 'e.g. AstroVeda Consultancy LLP' : 'e.g. Pandit Rajesh Sharma'}
+                  placeholder={astroType === 'company' ? 'Enter Firm / Company Name' : 'Enter Astrologer Full Name'}
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500 font-medium"
                 />
               </div>
@@ -495,7 +495,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                     type="text"
                     name="contactPerson"
                     required
-                    placeholder="e.g. Dr. Meenakshi Sundaram"
+                    placeholder="Enter Contact Person Name"
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
                   />
                 </div>
@@ -679,7 +679,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                   type="text"
                   name="shopName"
                   required
-                  placeholder="e.g. Shree Kashi Divine Samagri"
+                  placeholder="Enter Shop / Business Name"
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500 font-medium"
                 />
               </div>
@@ -690,7 +690,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                   type="text"
                   name="contactPerson"
                   required
-                  placeholder="e.g. Suresh Agarwal"
+                  placeholder="Enter Proprietor / Contact Person Name"
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
                 />
               </div>

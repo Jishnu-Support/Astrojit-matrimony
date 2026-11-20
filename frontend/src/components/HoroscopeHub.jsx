@@ -606,7 +606,7 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
                 }}
                 placeholder={
                   isTa
-                    ? 'வாடிக்கையாளர் மொபைல் எண் அல்லது பெயர் + பிறந்த தேதி + ஊர் உள்ளிடவும் (எ.கா: 9123456789 அல்லது Aarav Salem)...'
+                    ? 'வாடிக்கையாளர் மொபைல் எண் அல்லது பெயர் + பிறந்த தேதி + ஊர் உள்ளிடவும்...'
                     : 'Enter Mobile No. OR Name + D.O.B + Place...'
                 }
                 className="w-full bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 rounded-xl pl-9 pr-3 py-2 text-xs font-medium focus:outline-none focus:border-[#7A1A22] shadow-2xs"

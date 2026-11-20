@@ -891,31 +891,6 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                 {t('searchBtn')}
               </button>
             </form>
-
-            <div className="mt-2.5 flex items-center gap-2 text-xs text-slate-500 flex-wrap">
-              <span>{t('quickTestLabel')}</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchQuery('9123456789');
-                  API.searchClients('9123456789').then((res) => setSearchResults(res.clients || []));
-                }}
-                className="text-indigo-600 font-semibold hover:underline cursor-pointer"
-              >
-                9123456789 (Aarav)
-              </button>
-              <span>•</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchQuery('9345678901');
-                  API.searchClients('9345678901').then((res) => setSearchResults(res.clients || []));
-                }}
-                className="text-indigo-600 font-semibold hover:underline cursor-pointer"
-              >
-                9345678901 (Pooja)
-              </button>
-            </div>
           </div>
 
           {searchResults.length > 0 && !selectedClientMobile && (
