@@ -776,6 +776,14 @@ app.get('/api/auth/me', authenticate, (req, res) => {
         name: db.company.name,
         mobile: db.company.mobile,
         email: db.company.email,
+        fatherName: db.company.fatherName || '',
+        motherName: db.company.motherName || '',
+        dob: db.company.dob || '',
+        dobTime: db.company.dobTime || '',
+        dobPlace: db.company.dobPlace || '',
+        city: db.company.city || '',
+        state: db.company.state || '',
+        country: db.company.country || 'India',
         role: 'company',
       },
     });
@@ -885,8 +893,9 @@ app.put('/api/user/profile', authenticate, (req, res) => {
     }
 
     if (role === 'company') {
-      if (updates.name) db.company.name = updates.name;
-      if (updates.email) db.company.email = updates.email;
+      ['name', 'email', 'fatherName', 'motherName', 'dob', 'dobTime', 'dobPlace', 'city', 'state', 'country', 'caste', 'gotra', 'religion'].forEach(field => {
+        if (updates[field] !== undefined) db.company[field] = updates[field];
+      });
       writeDb(db);
       return res.json({ message: 'Company settings updated', user: { ...db.company, role: 'company' } });
     }
@@ -2236,6 +2245,27 @@ app.get('/api/matrimony/autofill-sources', (req, res) => {
       try {
         const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
         client = db.clients.find(c => c.id === decoded.id || c.mobile === decoded.mobile);
+        if (!client && decoded.role === 'company') {
+          client = {
+            id: 'company-jit',
+            name: db.company.name,
+            mobile: db.company.mobile,
+            email: db.company.email,
+            fatherName: db.company.fatherName || '',
+            motherName: db.company.motherName || '',
+            dob: db.company.dob || '',
+            dobTime: db.company.dobTime || '',
+            dobPlace: db.company.dobPlace || '',
+            country: db.company.country || 'India',
+            state: db.company.state || '',
+            city: db.company.city || '',
+            caste: db.company.caste || '',
+            gotra: db.company.gotra || '',
+            religion: db.company.religion || 'Hindu',
+            lat: db.company.lat,
+            lon: db.company.lon,
+          };
+        }
       } catch (e) {
         // ignore token error
       }
@@ -2249,29 +2279,42 @@ app.get('/api/matrimony/autofill-sources', (req, res) => {
       client = db.clients.find(c => c.mobile === req.query.mobile.trim());
     }
 
+    // 3. Fallback to existing client in db if available
+    if (!client && db.clients && db.clients.length > 0) {
+      client = db.clients[0];
+    }
+
     let clientData = null;
     if (client) {
       clientData = {
         id: client.id,
         name: client.name,
         gender: (client.gender === 'female' || client.profileType === 'Bride') ? 'Bride' : 'Groom',
-        dob: client.dob,
-        age: calculateMatrimonyAge(client.dob),
-        dobTime: client.dobTime,
+        dob: client.dob || '',
+        age: client.dob ? calculateMatrimonyAge(client.dob) : (client.age || ''),
+        dobTime: client.dobTime || '',
         dobPlace: client.dobPlace || client.city || '',
         country: client.country || 'India',
         state: client.state || '',
-        city: client.city || client.dobPlace || '',
-        lat: client.lat,
-        lon: client.lon,
+        city: client.city || (client.dobPlace ? client.dobPlace.split(',')[0].trim() : ''),
+        nativePlace: client.nativePlace || client.city || client.dobPlace || '',
+        currentResidence: client.currentResidence || client.city || client.dobPlace || '',
+        lat: client.lat || client.latitude,
+        lon: client.lon || client.longitude,
         fatherName: client.fatherName || '',
         motherName: client.motherName || '',
-        mobile: client.mobile,
+        mobile: client.mobile || '',
         email: client.email || '',
         caste: client.caste || '',
+        subCaste: client.subCaste || '',
         gotra: client.gotra || '',
         religion: client.religion || 'Hindu',
-        horoscope: client.horoscope || null,
+        motherTongue: client.motherTongue || '',
+        maritalStatus: client.maritalStatus || 'Never Married',
+        highestEducation: client.highestEducation || client.education || '',
+        occupation: client.occupation || '',
+        annualIncome: client.annualIncome || '',
+        horoscope: client.horoscope || client.astrologicalSnapshot || null,
       };
     }
 
@@ -2282,9 +2325,26 @@ app.get('/api/matrimony/autofill-sources', (req, res) => {
       horoscope: fm.horoscope || null,
     }));
 
+    // Registered clients list for quick selection
+    const clientsList = (db.clients || []).map(c => ({
+      id: c.id,
+      name: c.name,
+      mobile: c.mobile,
+      gender: (c.gender === 'female' || c.profileType === 'Bride') ? 'Bride' : 'Groom',
+      dob: c.dob,
+      dobTime: c.dobTime,
+      dobPlace: c.dobPlace || c.city,
+      fatherName: c.fatherName,
+      motherName: c.motherName,
+      caste: c.caste,
+      gotra: c.gotra,
+      religion: c.religion,
+    }));
+
     res.json({
       client: clientData,
       familyMembers,
+      clientsList,
     });
   } catch (error) {
     console.error('autofill-sources error:', error);

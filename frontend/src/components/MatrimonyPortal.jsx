@@ -97,6 +97,39 @@ export function getHoroscopeDetailsFromProfile(p) {
   };
 }
 
+export function formatTimeForInput(val) {
+  if (!val) return '';
+  const str = String(val).trim();
+  const m24 = str.match(/^([01]?\d|2[0-3]):([0-5]\d)$/);
+  if (m24) {
+    return `${m24[1].padStart(2, '0')}:${m24[2]}`;
+  }
+  const m12 = str.match(/^(\d{1,2}):(\d{2})\s*(am|pm)?$/i);
+  if (m12) {
+    let h = parseInt(m12[1], 10);
+    const m = m12[2];
+    const isPm = (m12[3] || '').toLowerCase() === 'pm';
+    const isAm = (m12[3] || '').toLowerCase() === 'am';
+    if (isPm && h < 12) h += 12;
+    if (isAm && h === 12) h = 0;
+    return `${String(h).padStart(2, '0')}:${m}`;
+  }
+  return str;
+}
+
+export function calculateAgeFromDob(dob) {
+  if (!dob) return '';
+  const birth = new Date(dob);
+  if (isNaN(birth.getTime())) return '';
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return Math.max(18, age);
+}
+
 export default function MatrimonyPortal({ isModal = false, onClose, defaultTab = 'browse', hideHeroBanner = false }) {
   const { lang, t } = useLang();
   const { user } = useAuth();
@@ -427,60 +460,114 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
     setSelectedPersonId(personId);
     setActiveTab('register');
 
-    if (personId === 'client-self') {
-      const c = autofillSources?.client || user;
-      if (!c) return;
+    const isSelf = personId === 'client-self';
+    const foundClient = !isSelf && (autofillSources?.clientsList || []).find(cl => cl.id === personId);
+    const fm = !isSelf && !foundClient && (autofillSources?.familyMembers || []).find(m => m.id === personId);
 
+    const c = isSelf ? (autofillSources?.client || user) : (foundClient || null);
+
+    if (c) {
       const horoDetails = getHoroscopeDetailsFromProfile(c);
+      const targetDob = c.dob || user?.dob || '';
+      const calculatedAge = c.age || calculateAgeFromDob(targetDob) || '';
+      const birthTimeVal = formatTimeForInput(c.dobTime || c.birthTime || user?.dobTime || '');
+      const birthPlaceStr = c.dobPlace || c.city || user?.dobPlace || user?.city || '';
+      const cityStr = c.city || user?.city || (birthPlaceStr ? birthPlaceStr.split(',')[0].trim() : '');
+      const stateStr = c.state || user?.state || (birthPlaceStr && birthPlaceStr.includes(',') ? birthPlaceStr.split(',')[1].trim() : 'Tamil Nadu');
+      const countryStr = c.country || user?.country || 'India';
+      const isBride = (c.gender === 'female' || c.gender === 'Female' || c.profileType === 'Bride');
 
       setFormData(prev => ({
         ...prev,
-        profileCreatedBy: 'Self',
-        profileType: (c.gender === 'female' || c.profileType === 'Bride') ? 'Bride' : 'Groom',
-        name: c.name || '',
-        gender: (c.gender === 'female' || c.profileType === 'Bride') ? 'Female' : 'Male',
-        dob: c.dob || '',
-        age: c.age || '',
-        birthTime: c.dobTime || '',
-        birthPlace: c.dobPlace || c.city || '',
-        country: c.country || 'India',
-        state: c.state || '',
-        city: c.city || c.dobPlace || '',
-        fatherName: c.fatherName || '',
-        motherName: c.motherName || '',
-        mobile: c.mobile || '',
-        whatsappNumber: c.mobile || '',
-        loginMobile: c.mobile || '',
-        email: c.email || '',
-        contactPerson: `${c.name || ''}`,
-        contactPersonRelation: 'Self',
-        caste: c.caste || '',
-        gotra: c.gotra || '',
-        religion: c.religion || 'Hindu',
-        starNakshatra: horoDetails.starNakshatra || c.horoscope?.nakshatra || '',
-        rasiMoonSign: horoDetails.rasiMoonSign || c.horoscope?.rasi || '',
-        lagnamAscendant: horoDetails.lagnamAscendant || c.horoscope?.lagna || '',
-        padam: horoDetails.padam || c.horoscope?.pada || '',
-        manglikDosha: horoDetails.manglikDosha || c.horoscope?.chevvaiDosha || 'No Chevvai Dosha',
+        // 1. Basic Profile Information
+        profileCreatedBy: isSelf ? 'Self' : 'Astrologer / Manager',
+        profileType: isBride ? 'Bride' : 'Groom',
+        name: c.name || user?.name || prev.name || '',
+        gender: isBride ? 'Female' : 'Male',
+        dob: targetDob || prev.dob || '',
+        age: calculatedAge || prev.age || '',
+        maritalStatus: c.maritalStatus || prev.maritalStatus || 'Never Married',
+        motherTongue: c.motherTongue || prev.motherTongue || (lang === 'ta' ? 'Tamil' : lang === 'kn' ? 'Kannada' : lang === 'hi' ? 'Hindi' : 'Tamil'),
+        physicalStatus: c.physicalStatus || prev.physicalStatus || 'Normal',
+
+        // 2. Personal & Lifestyle
+        religion: c.religion || user?.religion || prev.religion || 'Hindu',
+        caste: c.caste || user?.caste || prev.caste || '',
+        subCaste: c.subCaste || user?.subCaste || prev.subCaste || '',
+        gotra: c.gotra || user?.gotra || prev.gotra || '',
+
+        // 3. Religious & Horoscope
+        starNakshatra: horoDetails.starNakshatra || c.horoscope?.nakshatra || prev.starNakshatra || '',
+        rasiMoonSign: horoDetails.rasiMoonSign || c.horoscope?.rasi || prev.rasiMoonSign || '',
+        lagnamAscendant: horoDetails.lagnamAscendant || c.horoscope?.lagna || prev.lagnamAscendant || '',
+        padam: horoDetails.padam || c.horoscope?.pada || prev.padam || '',
+        manglikDosha: horoDetails.manglikDosha || c.horoscope?.chevvaiDosha || prev.manglikDosha || 'No Chevvai Dosha',
+        birthTime: birthTimeVal || prev.birthTime || '',
+        birthPlace: birthPlaceStr || prev.birthPlace || '',
+        horoscopeMatchingPreference: 'Must Match',
+
+        // 4. Education & Career
+        highestEducation: c.highestEducation || c.education || user?.highestEducation || user?.education || prev.highestEducation || '',
+        degree: c.degree || c.highestEducation || c.education || prev.degree || '',
+        occupation: c.occupation || user?.occupation || prev.occupation || '',
+        jobTitle: c.jobTitle || c.occupation || user?.occupation || prev.jobTitle || '',
+        annualIncome: c.annualIncome || user?.annualIncome || prev.annualIncome || '',
+        workLocationCity: cityStr || prev.workLocationCity || '',
+        workLocationState: stateStr || prev.workLocationState || '',
+        workLocationCountry: countryStr || prev.workLocationCountry || 'India',
+
+        // 5. Family Background
+        fatherName: c.fatherName || user?.fatherName || prev.fatherName || '',
+        motherName: c.motherName || user?.motherName || prev.motherName || '',
+        nativePlace: c.nativePlace || cityStr || birthPlaceStr || prev.nativePlace || '',
+
+        // 6. Location Details
+        country: countryStr,
+        state: stateStr,
+        city: cityStr,
+        district: c.district || cityStr || prev.district || '',
+        currentResidence: c.currentResidence || cityStr || birthPlaceStr || prev.currentResidence || '',
+        citizenship: 'Indian',
+        residentialStatus: 'Citizen',
+
+        // 7. Contact Information
+        mobile: c.mobile || user?.mobile || prev.mobile || '',
+        whatsappNumber: c.whatsappNumber || c.mobile || user?.mobile || prev.whatsappNumber || '',
+        loginMobile: c.mobile || user?.mobile || prev.loginMobile || '',
+        email: c.email || user?.email || prev.email || '',
+        contactPerson: `${c.name || user?.name || prev.contactPerson || ''}`,
+        contactPersonRelation: isSelf ? 'Self' : 'Astrologer / Manager',
+        preferredContactMethod: 'WhatsApp & Direct Call',
+        contactVisibility: 'Public',
+
+        // 8. Security & Account
+        profileVisibility: 'Public',
+        termsAccepted: true,
+        privacyAccepted: true,
       }));
 
       const starLabel = horoDetails.starNakshatra || c.horoscope?.nakshatra;
       const rasiLabel = horoDetails.rasiMoonSign || c.horoscope?.rasi;
       setAutofillSuccessMsg(
         tr(
-          `Successfully gathered details from Astrojit profile for ${c.name}!${starLabel ? ` Star: ${starLabel}, Rasi: ${rasiLabel}.` : ''}`,
-          `Astrojit சுயவிவரத்திலிருந்து ${c.name} அவர்களின் விவரங்கள் பெறப்பட்டன!${starLabel ? ` நட்சத்திரம்: ${starLabel}, ராசி: ${rasiLabel}.` : ''}`,
-          `Astrojit ಪ್ರೊಫೈಲ್‌ನಿಂದ ${c.name} ವಿವರಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಪಡೆಯಲಾಗಿದೆ!`,
-          `Astrojit प्रोफाइल से ${c.name} के विवरण सफलतापूर्वक प्राप्त किए गए!`
+          `Successfully gathered Astrojit details for ${c.name}!${starLabel ? ` Star: ${starLabel}, Rasi: ${rasiLabel}.` : ''}`,
+          `Astrojit சுயவிவரத்திலிருந்து ${c.name} அவர்களின் விவரங்கள் வெற்றிகரமாக நிரப்பப்பட்டன!${starLabel ? ` நட்சத்திரம்: ${starLabel}, ராசி: ${rasiLabel}.` : ''}`,
+          `Astrojit ಪ್ರೊಫೈಲ್‌ನಿಂದ ${c.name} ವಿವರಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಭರ್ತಿ ಮಾಡಲಾಗಿದೆ!`,
+          `Astrojit प्रोफाइल से ${c.name} के संबंधित विवरण सफलतापूर्वक भर दिए गए हैं!`
         )
       );
       setTimeout(() => setAutofillSuccessMsg(''), 6000);
-    } else {
-      const fm = (autofillSources?.familyMembers || []).find(m => m.id === personId);
-      if (!fm) return;
+      return;
+    }
 
+    if (fm) {
       const isBride = (fm.gender || '').toLowerCase().includes('bride') || (fm.relation || '').toLowerCase().includes('sister') || (fm.relation || '').toLowerCase().includes('daughter');
       const horoDetails = getHoroscopeDetailsFromProfile(fm);
+      const calculatedAge = fm.age || calculateAgeFromDob(fm.dob) || '';
+      const birthTimeVal = formatTimeForInput(fm.dobTime || '');
+      const birthPlaceStr = fm.dobPlace || '';
+      const cityStr = (birthPlaceStr ? birthPlaceStr.split(',')[0].trim() : '') || 'Chennai';
+      const stateStr = (birthPlaceStr && birthPlaceStr.includes(',') ? birthPlaceStr.split(',')[1].trim() : 'Tamil Nadu');
 
       setFormData(prev => ({
         ...prev,
@@ -489,16 +576,19 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
         name: fm.name || '',
         gender: isBride ? 'Female' : 'Male',
         dob: fm.dob || '',
-        age: fm.age || '',
-        birthTime: fm.dobTime || '',
-        birthPlace: fm.dobPlace || '',
-        country: fm.country || 'India',
-        state: fm.state || '',
-        city: fm.city || fm.dobPlace || '',
+        age: calculatedAge,
+        birthTime: birthTimeVal,
+        birthPlace: birthPlaceStr,
+        country: 'India',
+        state: stateStr,
+        city: cityStr,
+        nativePlace: cityStr,
+        currentResidence: cityStr,
         fatherName: fm.fatherName || user?.fatherName || '',
         motherName: fm.motherName || user?.motherName || '',
         mobile: fm.mobile || user?.mobile || '',
         whatsappNumber: fm.mobile || user?.mobile || '',
+        loginMobile: user?.mobile || '',
         email: fm.email || '',
         occupation: fm.occupation || '',
         maritalStatus: fm.maritalStatus || 'Never Married',
@@ -511,6 +601,8 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
         padam: horoDetails.padam || fm.horoscope?.pada || '',
         manglikDosha: horoDetails.manglikDosha || fm.horoscope?.chevvaiDosha || 'No Chevvai Dosha',
         primaryPhotoUrl: fm.photoUrl || '',
+        termsAccepted: true,
+        privacyAccepted: true,
       }));
 
       setAutofillSuccessMsg(
@@ -1131,14 +1223,29 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
                     <option value="client-self">
                       {user?.name || tr('Primary Account', 'முதன்மை கணக்கு')} ({tr('Self', 'சுய விவரம்', 'ಸ್ವತಃ', 'स्वयं')})
                     </option>
-                    {(autofillSources?.familyMembers || []).map((fm) => {
-                      const isFmBride = fm.gender === 'Bride' || fm.gender === 'female' || (fm.relation || '').toLowerCase().includes('sister') || (fm.relation || '').toLowerCase().includes('daughter');
-                      return (
-                        <option key={fm.id} value={fm.id}>
-                          {fm.name} ({tr(fm.relation, fm.relation === 'Sister' ? 'சகோதரி' : fm.relation === 'Brother' ? 'சகோதரன்' : fm.relation === 'Son' ? 'மகன்' : fm.relation === 'Daughter' ? 'மகள்' : 'உறவினர்')} - {isFmBride ? tr('Bride', 'மணமகள்', 'ವಧು', 'वधू') : tr('Groom', 'மணமகன்', 'ವರ', 'वर')})
-                        </option>
-                      );
-                    })}
+                    {(autofillSources?.clientsList || []).filter(cl => cl.id !== user?.id && cl.mobile !== user?.mobile).length > 0 && (
+                      <optgroup label={tr('Registered Astrojit Clients', 'பதிவுசெய்த பயனர்கள்', 'ನೋಂದಾಯಿತ ಕ್ಲೈಂಟ್‌ಗಳು', 'पंजीकृत सदस्य')}>
+                        {(autofillSources.clientsList || [])
+                          .filter(cl => cl.id !== user?.id && cl.mobile !== user?.mobile)
+                          .map((cl) => (
+                            <option key={cl.id} value={cl.id}>
+                              {cl.name} ({cl.gender === 'Bride' ? tr('Bride', 'மணமகள்') : tr('Groom', 'மணமகன்')} • {cl.mobile})
+                            </option>
+                          ))}
+                      </optgroup>
+                    )}
+                    {(autofillSources?.familyMembers || []).length > 0 && (
+                      <optgroup label={tr('Family Members', 'குடும்ப உறுப்பினர்கள்', 'ಕುಟುಂಬ ಸದಸ್ಯರು', 'पारिवारिक सदस्य')}>
+                        {(autofillSources?.familyMembers || []).map((fm) => {
+                          const isFmBride = fm.gender === 'Bride' || fm.gender === 'female' || (fm.relation || '').toLowerCase().includes('sister') || (fm.relation || '').toLowerCase().includes('daughter');
+                          return (
+                            <option key={fm.id} value={fm.id}>
+                              {fm.name} ({tr(fm.relation, fm.relation === 'Sister' ? 'சகோதரி' : fm.relation === 'Brother' ? 'சகோதரன்' : fm.relation === 'Son' ? 'மகன்' : fm.relation === 'Daughter' ? 'மகள்' : 'உறவினர்')} - {isFmBride ? tr('Bride', 'மணமகள்', 'ವಧು', 'वधू') : tr('Groom', 'மணமகன்', 'ವರ', 'वर')})
+                            </option>
+                          );
+                        })}
+                      </optgroup>
+                    )}
                   </select>
                 </div>
 
