@@ -3606,7 +3606,7 @@ export function computeHoroscopePagerData(horoInput) {
       lmtCorr,
       dateWeekday: `${formatDobDDMMYYYY(m.dob)} (${p.weekday?.ta || ''})`,
       time: m.dobTime12 || m.dobTime || '',
-      tamilDate: computeTamilDate(sunLong, m.dob),
+      tamilDate: (() => { const td = computeTamilDate(sunLong, m.dob); return (typeof td === 'object' && td !== null) ? td.ta : String(td || ''); })(),
       udayadiNazhigai,
       country: m.country || 'இந்தியா',
       placeLine1: `${m.city || ''}, ${m.state || ''}`,

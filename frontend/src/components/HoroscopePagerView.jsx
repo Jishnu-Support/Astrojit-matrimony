@@ -1087,7 +1087,7 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
                     <label className="block font-bold mb-1 opacity-80">{L.tamilDate}</label>
                     <input
                       type="text"
-                      value={data.person.tamilDate}
+                      value={typeof data.person.tamilDate === 'object' ? (data.person.tamilDate?.ta || '') : (data.person.tamilDate || '')}
                       onChange={e => updateField('person', 'tamilDate', e.target.value)}
                       className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs"
                     />
@@ -1624,7 +1624,7 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
                   <div className="flex"><span className="w-36 font-bold shrink-0">{L.dateWeekday}</span><span className="mr-1">:</span><span className="font-bold truncate text-[#7A1A22]">{data.person.dateWeekday || <span className="opacity-0">&nbsp;</span>}</span></div>
                   <div className="flex"><span className="w-36 font-bold shrink-0">{L.age}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.age || <span className="opacity-0">&nbsp;</span>}</span></div>
                   <div className="flex"><span className="w-36 font-bold shrink-0">{L.time}</span><span className="mr-1">:</span><span className="font-mono font-bold truncate">{data.person.time || <span className="opacity-0">&nbsp;</span>}</span></div>
-                  <div className="flex"><span className="w-36 font-bold shrink-0">{L.tamilDate}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.tamilDate || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-36 font-bold shrink-0">{L.tamilDate}</span><span className="mr-1">:</span><span className="font-semibold truncate">{(typeof data.person.tamilDate === 'object' ? (isTa ? data.person.tamilDate?.ta : data.person.tamilDate?.en) : data.person.tamilDate) || <span className="opacity-0">&nbsp;</span>}</span></div>
                   <div className="flex"><span className="w-36 font-bold shrink-0">{L.udayadiNazhigai}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.udayadiNazhigai || <span className="opacity-0">&nbsp;</span>}</span></div>
                   <div className="flex"><span className="w-36 font-bold shrink-0">{L.sunriseSunset}</span><span className="mr-1">:</span><span className="font-mono text-[9px] truncate">{data.person.sunriseSunset || <span className="opacity-0">&nbsp;</span>}</span></div>
                   <div className="flex flex-col"><div className="flex"><span className="w-36 font-bold shrink-0">{L.place}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.placeLine1 || <span className="opacity-0">&nbsp;</span>}</span></div>{data.person.placeLine2 && <div className="pl-38 text-xs font-black tracking-tight">{data.person.placeLine2}</div>}</div>
