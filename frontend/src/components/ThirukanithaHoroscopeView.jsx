@@ -387,7 +387,11 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
     upcomingStatus: isTamil ? 'எதிர்காலம்' : 'Upcoming',
     printPdf: isTamil ? 'அச்சு / PDF சேமிக்க' : 'Save as PDF / Print',
     close: isTamil ? 'மூடுக' : 'Close',
-    darkToggle: isTamil ? (theme === 'dark' ? '☀️ பகல் முறை' : '🌙 இரவு முறை') : (theme === 'dark' ? '☀️ Light' : '🌙 Dark')
+    darkToggle: isTamil ? (theme === 'dark' ? '☀️ பகல் முறை' : '🌙 இரவு முறை') : (theme === 'dark' ? '☀️ Light' : '🌙 Dark'),
+    expandState: isTamil ? 'விரிவாக்கப்பட்டது' : 'Expanded',
+    collapseState: isTamil ? 'சுருக்கப்பட்டது' : 'Collapsed',
+    omHeader: isTamil ? 'ॐ ஸ்ரீ கணபதயே நமஹ • ஶுபம் பவது' : 'OM SRI GANESHAYA NAMAHA • SUBHAM BHAVATU',
+    subhamText: isTamil ? 'சுபம்.' : 'Subham (Auspicious).'
   };
 
   const isDark = theme === 'dark';
@@ -426,7 +430,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                   isTamil ? 'bg-[#7A1A22] text-amber-100 shadow-xs' : 'text-stone-700 dark:text-stone-300 hover:text-stone-900'
                 }`}
               >
-                தமிழ்
+                {isTamil ? 'தமிழ்' : 'Tamil'}
               </button>
               <button
                 type="button"
@@ -435,7 +439,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                   !isTamil ? 'bg-[#7A1A22] text-amber-100 shadow-xs' : 'text-stone-700 dark:text-stone-300 hover:text-stone-900'
                 }`}
               >
-                English
+                {isTamil ? 'ஆங்கிலம்' : 'English'}
               </button>
             </div>
 
@@ -706,7 +710,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
         {/* PRINT HEADER (Shown in Print Mode / Clean Official Header) */}
         <div className="text-center pb-2 border-b-2 border-[#7A1A22] space-y-1">
           <div className="text-xs uppercase tracking-widest text-[#B8860B] dark:text-[#E5C158] font-black">
-            ॐ ஸ்ரீ கணபதயே நமஹ • ஶுபம் பவது
+            {T.omHeader}
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-[#7A1A22] dark:text-[#E8838B] tracking-tight">
             {T.title}
@@ -735,26 +739,26 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               className="bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-1.5 text-xs font-bold text-stone-800 dark:text-stone-200 focus:outline-none focus:border-[#7A1A22] cursor-pointer w-full max-w-sm shadow-2xs"
             >
               <option value="">{isTamil ? '-- 20 பிரிவுகள் பட்டியல் (தேர்வு செய்க) --' : '-- Select Section to Jump (1 to 20) --'}</option>
-              <option value="1">1. ஜனன விவரக் குறிப்பு</option>
-              <option value="2">2. வர்க்கச் சக்கரங்கள் (16 Shodashavarga Charts)</option>
-              <option value="3">3. கிரக நிலைகள் அட்டவணை (நிராயண)</option>
-              <option value="4">4. ஸ்ரீபதி பாவ ஆரம்பம், மத்திமம், முடிவு</option>
-              <option value="5">5. ஜாதகத்தில் ஷட்பலம் & பாவக பலம் ஆய்வு</option>
-              <option value="6">6. விம்சோத்தரி திசா புக்தி விபரம் (120 ஆண்டுகள்)</option>
-              <option value="7">7. ஜாதகத்தில் கிரகங்களின் தசவர்க்கமும் பலமும்</option>
-              <option value="8">8. ஜாதகத்தில் அஷ்டகவர்க்கம் & சர்வாஷ்டகவர்க்கம் (337 பரல்கள்)</option>
-              <option value="9">9. ஜாதகத்தில் கோச்சாரப் பலன்கள் (தற்போதைய கிரக சஞ்சாரம்)</option>
-              <option value="10">10. ஜாதகத்தில் ஹோரை (ஓரை) கணிதம்</option>
-              <option value="11">11. உபகிரகங்கள் - குளிகாதி ஐவர் விபரங்கள்.</option>
-              <option value="12">12. உப கிரகங்கள் - முக்கிய ஸ்புடங்கள் - லக்ன பாகைகள்.</option>
-              <option value="13">13. கிரகங்களின் நைசர்கிக, தற்கால, பஞ்சதா நட்பு & அவஸ்தா - மண்டல நிலைகள்.</option>
-              <option value="14">14. கிரகங்களுக்கான பார்வை கோணங்கள் & பாவக-கிரகங்களிடையே பார்வை கோணங்கள்.</option>
-              <option value="15">15. பஞ்ச பட்சி விபரம்.</option>
-              <option value="16">16. கிரகங்களின் பாசகர்- போதகர்- காரகர்- வேதகர் & தாரா பலமுள்ள நட்சத்திரங்கள்.</option>
-              <option value="17">17. ஜாதகத்தில் கிரகங்களின் நிலை & கிரகங்களின் பார்வை, சேர்க்கை நிலை.</option>
-              <option value="18">18. எண் கணிதம் (நியூமராலஜி - சாலடியன் முறை).</option>
-              <option value="19">19. ஜாதக யோகங்கள் (Jathaga Yogas - 16 Classical Combinations).</option>
-              <option value="20">20. விம்சோத்தரி மகாதிசைகள் & இருப்பு விரிவான கணக்கீடு (Vimshottari Maha Dashas & Balance Calculations).</option>
+              <option value="1">{isTamil ? '1. ஜனன விவரக் குறிப்பு' : '1. Birth Summary Details'}</option>
+              <option value="2">{isTamil ? '2. வர்க்கச் சக்கரங்கள் (16 Shodashavarga Charts)' : '2. Divisional Charts (16 Shodashavarga)'}</option>
+              <option value="3">{isTamil ? '3. கிரக நிலைகள் அட்டவணை (நிராயண)' : '3. Nirayana Planetary Positions Table'}</option>
+              <option value="4">{isTamil ? '4. ஸ்ரீபதி பாவ ஆரம்பம், மத்திமம், முடிவு' : '4. Sripati Bhava Sphutam Table'}</option>
+              <option value="5">{isTamil ? '5. ஜாதகத்தில் ஷட்பலம் & பாவக பலம் ஆய்வு' : '5. Shadbala & Bhava Bala Analysis'}</option>
+              <option value="6">{isTamil ? '6. விம்சோத்தரி திசா புக்தி விபரம் (120 ஆண்டுகள்)' : '6. Vimshottari Dasha & Bhukti Table (120 Years)'}</option>
+              <option value="7">{isTamil ? '7. ஜாதகத்தில் கிரகங்களின் தசவர்க்கமும் பலமும்' : '7. Planetary Dasavarga & Dignity Strength Matrix'}</option>
+              <option value="8">{isTamil ? '8. ஜாதகத்தில் அஷ்டகவர்க்கம் & சர்வாஷ்டகவர்க்கம் (337 பரல்கள்)' : '8. Ashtakavarga & Sarvashtakavarga (337 Bindus)'}</option>
+              <option value="9">{isTamil ? '9. ஜாதகத்தில் கோச்சாரப் பலன்கள் (தற்போதைய கிரக சஞ்சாரம்)' : '9. Real-Time Gocharam (Planetary Transit) Analysis'}</option>
+              <option value="10">{isTamil ? '10. ஜாதகத்தில் ஹோரை (ஓரை) கணிதம்' : '10. Planetary Hora (Orai) Analysis'}</option>
+              <option value="11">{isTamil ? '11. உபகிரகங்கள் - குளிகாதி ஐவர் விபரங்கள்.' : '11. Upagrahas - Gulikadi Five Details'}</option>
+              <option value="12">{isTamil ? '12. உப கிரகங்கள் - முக்கிய ஸ்புடங்கள் - லக்ன பாகைகள்.' : '12. Upagrahas - Special Sphutas - Lagna Degrees'}</option>
+              <option value="13">{isTamil ? '13. கிரகங்களின் நைசர்கிக, தற்கால, பஞ்சதா நட்பு & அவஸ்தா - மண்டல நிலைகள்.' : '13. Planetary Friendships & Avasthas - Mandalam'}</option>
+              <option value="14">{isTamil ? '14. கிரகங்களுக்கான பார்வை கோணங்கள் & பாவக-கிரகங்களிடையே பார்வை கோணங்கள்.' : '14. Planetary Aspect Angles & Bhava Aspect Angles'}</option>
+              <option value="15">{isTamil ? '15. பஞ்ச பட்சி விபரம்.' : '15. Pancha Pakshi Details (Ancient Tamil Siddha System)'}</option>
+              <option value="16">{isTamil ? '16. கிரகங்களின் பாசகர்- போதகர்- காரகர்- வேதகர் & தாரா பலமுள்ள நட்சத்திரங்கள்.' : '16. Graha Pasakar - Bodhakar - Karagar - Vedhagar & Tara Bala'}</option>
+              <option value="17">{isTamil ? '17. ஜாதகத்தில் கிரகங்களின் நிலை & கிரகங்களின் பார்வை, சேர்க்கை நிலை.' : '17. Planetary Dignities & Aspects, Conjunctions Table'}</option>
+              <option value="18">{isTamil ? '18. எண் கணிதம் (நியூமராலஜி - சாலடியன் முறை).' : '18. Astro-Numerology (Chaldean System)'}</option>
+              <option value="19">{isTamil ? '19. ஜாதக யோகங்கள் (Jathaga Yogas - 16 Classical Combinations).' : '19. Jathaga Yogas (16 Classical Combinations)'}</option>
+              <option value="20">{isTamil ? '20. விம்சோத்தரி மகாதிசைகள் & இருப்பு விரிவான கணக்கீடு' : '20. Vimshottari Maha Dashas & Balance Calculations'}</option>
             </select>
           </div>
 
@@ -1995,17 +1999,17 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                       <tr className="bg-amber-100/80 dark:bg-amber-950/40 text-[#7A1A22] dark:text-amber-200 font-bold border-b border-amber-900/15 text-[11px]">
                         <th className="py-2.5 px-3 text-left">{isTamil ? 'வர்க்கம்' : 'Varga'}</th>
                         <th className="py-2.5 px-2 text-left hidden sm:table-cell">{isTamil ? 'காரகத்துவம்' : 'Domain'}</th>
-                        <th className="py-2.5 px-1 text-center text-[#7A1A22] dark:text-amber-300 font-bold">லக்</th>
-                        <th className="py-2.5 px-1 text-center">சூரி</th>
-                        <th className="py-2.5 px-1 text-center">சந்</th>
-                        <th className="py-2.5 px-1 text-center">செவ்</th>
-                        <th className="py-2.5 px-1 text-center">புத</th>
-                        <th className="py-2.5 px-1 text-center">குரு</th>
-                        <th className="py-2.5 px-1 text-center">சுக்</th>
-                        <th className="py-2.5 px-1 text-center">சனி</th>
-                        <th className="py-2.5 px-1 text-center">ராகு</th>
-                        <th className="py-2.5 px-1 text-center">கேது</th>
-                        <th className="py-2.5 px-1 text-center text-stone-500">மாந்</th>
+                        <th className="py-2.5 px-1 text-center text-[#7A1A22] dark:text-amber-300 font-bold">{isTamil ? 'லக்' : 'Lag'}</th>
+                        <th className="py-2.5 px-1 text-center">{isTamil ? 'சூரி' : 'Sun'}</th>
+                        <th className="py-2.5 px-1 text-center">{isTamil ? 'சந்' : 'Moo'}</th>
+                        <th className="py-2.5 px-1 text-center">{isTamil ? 'செவ்' : 'Mar'}</th>
+                        <th className="py-2.5 px-1 text-center">{isTamil ? 'புத' : 'Mer'}</th>
+                        <th className="py-2.5 px-1 text-center">{isTamil ? 'குரு' : 'Jup'}</th>
+                        <th className="py-2.5 px-1 text-center">{isTamil ? 'சுக்' : 'Ven'}</th>
+                        <th className="py-2.5 px-1 text-center">{isTamil ? 'சனி' : 'Sat'}</th>
+                        <th className="py-2.5 px-1 text-center">{isTamil ? 'ராகு' : 'Rah'}</th>
+                        <th className="py-2.5 px-1 text-center">{isTamil ? 'கேது' : 'Ket'}</th>
+                        <th className="py-2.5 px-1 text-center text-stone-500">{isTamil ? 'மாந்' : 'Man'}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-amber-900/10 dark:divide-stone-800 text-[11px]">
@@ -2047,7 +2051,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                                   </span>
                                   {pl.dignityTa && (
                                     <span className={`text-[8.5px] ml-0.5 px-0.8 py-0.2 rounded ${dignityClass}`}>
-                                      {pl.dignityTa}
+                                      {isTamil ? pl.dignityTa : (pl.dignityEn || (pl.dignityTa === 'உ' ? 'Ex' : pl.dignityTa === 'ஆ' ? 'Own' : pl.dignityTa === 'ந' ? 'Fr' : pl.dignityTa === 'ச' ? 'Neu' : pl.dignityTa === 'ப' ? 'En' : pl.dignityTa === 'நீ' ? 'Db' : pl.dignityTa))}
                                     </span>
                                   )}
                                 </td>
@@ -2065,12 +2069,12 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               <div className="flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-amber-900/10 text-[10.5px]">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-bold text-stone-600 dark:text-stone-400">{isTamil ? 'பலம் குறியீடுகள்:' : 'Dignity Key:'}</span>
-                  <span className="px-1.5 py-0.5 rounded bg-red-700 text-white font-bold text-[9.5px]">உ - உச்சம்</span>
-                  <span className="px-1.5 py-0.5 rounded bg-emerald-600 text-white font-bold text-[9.5px]">ஆ - ஆட்சி</span>
-                  <span className="px-1.5 py-0.5 rounded bg-blue-600 text-white text-[9.5px]">ந - நட்பு</span>
-                  <span className="px-1.5 py-0.5 rounded bg-stone-400 text-stone-900 text-[9.5px]">ச - சமம்</span>
-                  <span className="px-1.5 py-0.5 rounded bg-amber-600 text-white text-[9.5px]">ப - பகை</span>
-                  <span className="px-1.5 py-0.5 rounded bg-rose-900 text-white font-bold text-[9.5px]">நீ - நீசம்</span>
+                  <span className="px-1.5 py-0.5 rounded bg-red-700 text-white font-bold text-[9.5px]">{isTamil ? 'உ - உச்சம்' : 'Ex - Exalted'}</span>
+                  <span className="px-1.5 py-0.5 rounded bg-emerald-600 text-white font-bold text-[9.5px]">{isTamil ? 'ஆ - ஆட்சி' : 'Own - Own Sign'}</span>
+                  <span className="px-1.5 py-0.5 rounded bg-blue-600 text-white text-[9.5px]">{isTamil ? 'ந - நட்பு' : 'Fr - Friend'}</span>
+                  <span className="px-1.5 py-0.5 rounded bg-stone-400 text-stone-900 text-[9.5px]">{isTamil ? 'ச - சமம்' : 'Neu - Neutral'}</span>
+                  <span className="px-1.5 py-0.5 rounded bg-amber-600 text-white text-[9.5px]">{isTamil ? 'ப - பகை' : 'En - Enemy'}</span>
+                  <span className="px-1.5 py-0.5 rounded bg-rose-900 text-white font-bold text-[9.5px]">{isTamil ? 'நீ - நீசம்' : 'Db - Debilitated'}</span>
                 </div>
                 <div className="text-[10px] text-stone-500 font-mono">
                   {isTamil ? 'சுப பலம்: (உ, ஆ, ந, ச) • அசுப பலம்: (ப, நீ)' : 'Subha: (Exalt, Own, Friend, Neutral) • Asubha: (Enemy, Debil)'}
@@ -2740,7 +2744,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                 <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5">
                   {isTamil
                     ? `ஜென்ம ராசி (${horoscope.gocharam.birthMoonRasiTa}) மற்றும் லக்னம் (${horoscope.gocharam.birthLagnaRasiTa}) அடிப்படையில் கோச்சார கிரக சஞ்சார பலன்கள்`
-                    : `Planetary transits relative to birth Moon (${horoscope.gocharam.birthMoonRasiTa}) and Lagna (${horoscope.gocharam.birthLagnaRasiTa})`}
+                    : `Planetary transits relative to birth Moon (${horoscope.gocharam.birthMoonRasiEn || horoscope.gocharam.birthMoonRasiTa}) and Lagna (${horoscope.gocharam.birthLagnaRasiEn || horoscope.gocharam.birthLagnaRasiTa})`}
                 </p>
               </div>
 
@@ -2956,10 +2960,10 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                               <div className="text-[10px] text-stone-500 font-mono">{p.degInSign}</div>
                             </td>
                             <td className="py-2 px-2 text-center font-bold text-amber-900 dark:text-amber-200">
-                              {p.houseFromMoon}-ஆம் இடம்
+                              {isTamil ? `${p.houseFromMoon}-ஆம் இடம்` : `House ${p.houseFromMoon}`}
                             </td>
                             <td className="py-2 px-2 text-center text-stone-600 dark:text-stone-400">
-                              {p.houseFromLagna}-ஆம் இடம்
+                              {isTamil ? `${p.houseFromLagna}-ஆம் இடம்` : `House ${p.houseFromLagna}`}
                             </td>
                             <td className="py-2 px-2 text-center whitespace-nowrap">
                               <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${badgeClass}`}>
@@ -3544,9 +3548,9 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                         </p>
                       </div>
                       <div className="shrink-0 font-mono text-[11px] bg-white dark:bg-stone-900 px-3 py-2 rounded-lg border border-emerald-500/20 shadow-2xs space-y-0.5">
-                        <div className="text-stone-600 dark:text-stone-400">உபகேது: <span className="font-bold text-stone-800 dark:text-stone-200">{horoscope.upagrahas.verificationRule.upaketuDeg}</span></div>
+                        <div className="text-stone-600 dark:text-stone-400">{isTamil ? "உபகேது:" : "Upaketu:"} <span className="font-bold text-stone-800 dark:text-stone-200">{horoscope.upagrahas.verificationRule.upaketuDeg}</span></div>
                         <div className="text-stone-600 dark:text-stone-400">+ 30° = <span className="font-bold text-emerald-700 dark:text-emerald-300">{horoscope.upagrahas.verificationRule.plus30Deg}</span></div>
-                        <div className="text-stone-600 dark:text-stone-400">சூரியன்: <span className="font-bold text-[#7A1A22] dark:text-amber-300">{horoscope.upagrahas.verificationRule.sunDeg}</span></div>
+                        <div className="text-stone-600 dark:text-stone-400">{isTamil ? "சூரியன்:" : "Sun:"} <span className="font-bold text-[#7A1A22] dark:text-amber-300">{horoscope.upagrahas.verificationRule.sunDeg}</span></div>
                       </div>
                     </div>
                   )}
@@ -3892,8 +3896,8 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     {/* 22nd Drekkana */}
                     <div className="p-3 rounded-xl bg-white/70 dark:bg-stone-900/60 border border-amber-900/15 dark:border-amber-500/20 shadow-2xs space-y-1">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-stone-800 dark:text-stone-200">⚔️ 22-ம் திரேக்காணம்</span>
-                        <span className="font-bold text-[#7A1A22] dark:text-amber-300 font-mono">{horoscope.specialLagnas?.karmicPoints?.drekkana22?.rasiTa}</span>
+                        <span className="font-bold text-stone-800 dark:text-stone-200">{isTamil ? "⚔️ 22-ம் திரேக்காணம்" : "⚔️ 22nd Drekkana (Khara)"}</span>
+                        <span className="font-bold text-[#7A1A22] dark:text-amber-300 font-mono">{isTamil ? horoscope.specialLagnas?.karmicPoints?.drekkana22?.rasiTa : horoscope.specialLagnas?.karmicPoints?.drekkana22?.rasiEn}</span>
                       </div>
                       <div className="text-[10px] text-stone-500">{isTamil ? `அதிபதி: ${horoscope.specialLagnas?.karmicPoints?.drekkana22?.lordTa}` : `Lord: ${horoscope.specialLagnas?.karmicPoints?.drekkana22?.lordEn}`}</div>
                       <p className="text-[9px] text-stone-600 dark:text-stone-400 leading-tight">
@@ -3904,8 +3908,8 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     {/* 64th Navamsha */}
                     <div className="p-3 rounded-xl bg-white/70 dark:bg-stone-900/60 border border-amber-900/15 dark:border-amber-500/20 shadow-2xs space-y-1">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-stone-800 dark:text-stone-200">🛡️ 64-ம் நவாம்சம்</span>
-                        <span className="font-bold text-[#7A1A22] dark:text-amber-300 font-mono">{horoscope.specialLagnas?.karmicPoints?.navamsha64?.rasiTa}</span>
+                        <span className="font-bold text-stone-800 dark:text-stone-200">{isTamil ? "🛡️ 64-ம் நவாம்சம்" : "🛡️ 64th Navamsha"}</span>
+                        <span className="font-bold text-[#7A1A22] dark:text-amber-300 font-mono">{isTamil ? horoscope.specialLagnas?.karmicPoints?.navamsha64?.rasiTa : horoscope.specialLagnas?.karmicPoints?.navamsha64?.rasiEn}</span>
                       </div>
                       <div className="text-[10px] text-stone-500">{isTamil ? `அதிபதி: ${horoscope.specialLagnas?.karmicPoints?.navamsha64?.lordTa}` : `Lord: ${horoscope.specialLagnas?.karmicPoints?.navamsha64?.lordEn}`}</div>
                       <p className="text-[9px] text-stone-600 dark:text-stone-400 leading-tight">
@@ -3916,8 +3920,8 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     {/* Sarpa Drekkana */}
                     <div className="p-3 rounded-xl bg-white/70 dark:bg-stone-900/60 border border-amber-900/15 dark:border-amber-500/20 shadow-2xs space-y-1">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-stone-800 dark:text-stone-200">🐍 சர்ப்ப திரேக்காணம்</span>
-                        <span className="font-bold text-emerald-700 dark:text-emerald-300 font-mono">{horoscope.specialLagnas?.karmicPoints?.sarpaDrekkana?.planetTa}</span>
+                        <span className="font-bold text-stone-800 dark:text-stone-200">{isTamil ? "🐍 சர்ப்ப திரேக்காணம்" : "🐍 Sarpa Drekkana"}</span>
+                        <span className="font-bold text-emerald-700 dark:text-emerald-300 font-mono">{isTamil ? horoscope.specialLagnas?.karmicPoints?.sarpaDrekkana?.planetTa : horoscope.specialLagnas?.karmicPoints?.sarpaDrekkana?.planetEn}</span>
                       </div>
                       <div className="text-[10px] text-stone-500">{isTamil ? 'அமைந்துள்ள கிரகம்' : 'Occupying Planet'}</div>
                       <p className="text-[9px] text-stone-600 dark:text-stone-400 leading-tight">
@@ -3928,7 +3932,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     {/* Andhakamsa */}
                     <div className="p-3 rounded-xl bg-white/70 dark:bg-stone-900/60 border border-amber-900/15 dark:border-amber-500/20 shadow-2xs space-y-1">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-stone-800 dark:text-stone-200">👁️ அந்தகாம்சம்</span>
+                        <span className="font-bold text-stone-800 dark:text-stone-200">{isTamil ? "👁️ அந்தகாம்சம்" : "👁️ Andhakamsa"}</span>
                         <span className="font-bold text-indigo-700 dark:text-indigo-300 font-mono">{horoscope.specialLagnas?.karmicPoints?.andhakamsa?.planetsTa}</span>
                       </div>
                       <div className="text-[10px] text-stone-500">{isTamil ? 'அமைந்துள்ள கிரகம்' : 'Occupying Planet'}</div>
@@ -3940,7 +3944,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     {/* Pushkaramsha */}
                     <div className="p-3 rounded-xl bg-white/70 dark:bg-stone-900/60 border border-amber-900/15 dark:border-amber-500/20 shadow-2xs space-y-1">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-stone-800 dark:text-stone-200">✨ புஷ்கராம்சம்</span>
+                        <span className="font-bold text-stone-800 dark:text-stone-200">{isTamil ? "✨ புஷ்கராம்சம்" : "✨ Pushkaramsha"}</span>
                         <span className="font-bold text-stone-500 font-mono">{horoscope.specialLagnas?.karmicPoints?.pushkaramsha?.planetsTa}</span>
                       </div>
                       <p className="text-[9px] text-stone-600 dark:text-stone-400 leading-tight">
@@ -3951,7 +3955,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     {/* Mrityu Bhaga */}
                     <div className="p-3 rounded-xl bg-white/70 dark:bg-stone-900/60 border border-amber-900/15 dark:border-amber-500/20 shadow-2xs space-y-1">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-stone-800 dark:text-stone-200">🛡️ மிருத்யு பாகை</span>
+                        <span className="font-bold text-stone-800 dark:text-stone-200">{isTamil ? "🛡️ மிருத்யு பாகை" : "🛡️ Mrityu Bhaga"}</span>
                         <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono text-[10px]">{horoscope.specialLagnas?.karmicPoints?.mrityuBhaga?.planetsTa}</span>
                       </div>
                       <p className="text-[9px] text-stone-600 dark:text-stone-400 leading-tight">
@@ -3962,7 +3966,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     {/* Avamrityu Nakshatra */}
                     <div className="p-3 rounded-xl bg-white/70 dark:bg-stone-900/60 border border-amber-900/15 dark:border-amber-500/20 shadow-2xs space-y-1 sm:col-span-2">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-stone-800 dark:text-stone-200">⚕️ அவமிருத்யு நட்சத்திரம்</span>
+                        <span className="font-bold text-stone-800 dark:text-stone-200">{isTamil ? "⚕️ அவமிருத்யு நட்சத்திரம்" : "⚕️ Avamrityu Nakshatra"}</span>
                         <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono text-[10px]">{horoscope.specialLagnas?.karmicPoints?.avamrityuNak?.planetsTa}</span>
                       </div>
                       <p className="text-[9px] text-stone-600 dark:text-stone-400 leading-tight">
@@ -4270,24 +4274,24 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                   {/* 5 Levels Formula Bar */}
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 text-center text-[10px] font-sans">
                     <div className="p-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-400 text-emerald-900 dark:text-emerald-300 font-bold">
-                      <div>அதி மித்துரு (+2)</div>
-                      <div className="text-[9px] font-normal text-emerald-700 dark:text-emerald-400">நட்பு + தற்கால நட்பு</div>
+                      <div>{isTamil ? "அதி மித்துரு (+2)" : "Great Friend (+2)"}</div>
+                      <div className="text-[9px] font-normal text-emerald-700 dark:text-emerald-400">{isTamil ? "நட்பு + தற்கால நட்பு" : "Permanent + Temporal Friend"}</div>
                     </div>
                     <div className="p-1.5 rounded-lg bg-green-50 dark:bg-green-950/40 border border-green-300 text-green-800 dark:text-green-300 font-semibold">
-                      <div>மித்துரு (+1)</div>
-                      <div className="text-[9px] font-normal text-green-700 dark:text-green-400">சமம் + தற்கால நட்பு</div>
+                      <div>{isTamil ? "மித்துரு (+1)" : "Friend (+1)"}</div>
+                      <div className="text-[9px] font-normal text-green-700 dark:text-green-400">{isTamil ? "சமம் + தற்கால நட்பு" : "Neutral + Temporal Friend"}</div>
                     </div>
                     <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-300 text-amber-800 dark:text-amber-300 font-medium">
-                      <div>சமம் (0)</div>
-                      <div className="text-[9px] font-normal text-amber-700 dark:text-amber-400">நட்பு+பகை / சமம்+சமம்</div>
+                      <div>{isTamil ? "சமம் (0)" : "Neutral (0)"}</div>
+                      <div className="text-[9px] font-normal text-amber-700 dark:text-amber-400">{isTamil ? "நட்பு+பகை / சமம்+சமம்" : "Friend+Enemy / Neutral+Neutral"}</div>
                     </div>
                     <div className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-300 text-rose-800 dark:text-rose-300 font-semibold">
-                      <div>சத்துரு (-1)</div>
-                      <div className="text-[9px] font-normal text-rose-700 dark:text-rose-400">சமம் + தற்கால பகை</div>
+                      <div>{isTamil ? "சத்துரு (-1)" : "Enemy (-1)"}</div>
+                      <div className="text-[9px] font-normal text-rose-700 dark:text-rose-400">{isTamil ? "சமம் + தற்கால பகை" : "Neutral + Temporal Enemy"}</div>
                     </div>
                     <div className="col-span-2 sm:col-span-1 p-1.5 rounded-lg bg-rose-100 dark:bg-rose-900/60 border border-rose-500 text-rose-950 dark:text-rose-200 font-bold">
-                      <div>அதி சத்துரு (-2)</div>
-                      <div className="text-[9px] font-normal text-rose-800 dark:text-rose-300">பகை + தற்கால பகை</div>
+                      <div>{isTamil ? "அதி சத்துரு (-2)" : "Great Enemy (-2)"}</div>
+                      <div className="text-[9px] font-normal text-rose-800 dark:text-rose-300">{isTamil ? "பகை + தற்கால பகை" : "Permanent + Temporal Enemy"}</div>
                     </div>
                   </div>
 
@@ -4359,7 +4363,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                         <thead>
                           <tr className="bg-amber-900/10 dark:bg-amber-950/40 text-[#7A1A22] dark:text-amber-300 border-b border-amber-900/15 dark:border-amber-500/20">
                             <th className="p-1.5 font-bold text-left">{isTamil ? 'கிரகம்' : 'Planet'}</th>
-                            {['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி', 'ராகு', 'கேது'].map((pName, i) => (
+                            {(isTamil ? ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி', 'ராகு', 'கேது'] : ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu']).map((pName, i) => (
                               <th key={i} className="p-1.5 font-bold">{pName}</th>
                             ))}
                           </tr>
@@ -4527,40 +4531,40 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-sans">
                       <div className="p-1.5 rounded bg-white/70 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700">
-                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">1. சயனம்:</span> சுகபோகம், அமைதி
+                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">{isTamil ? "1. சயனம்:" : "1. Shayana:"}</span> {isTamil ? "சுகபோகம், அமைதி" : "Comfort, Relaxation, Peace"}
                       </div>
                       <div className="p-1.5 rounded bg-white/70 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700">
-                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">2. உபவேஷனம்:</span> கல்வி, கௌரவம்
+                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">{isTamil ? "2. உபவேஷனம்:" : "2. Upaveshana:"}</span> {isTamil ? "கல்வி, கௌரவம்" : "Learning, Status, Dignity"}
                       </div>
                       <div className="p-1.5 rounded bg-white/70 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700">
-                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">3. நேத்ரபாணி:</span> பார்வை கவனம், அலைச்சல்
+                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">{isTamil ? "3. நேத்ரபாணி:" : "3. Netrapani:"}</span> {isTamil ? "பார்வை கவனம், அலைச்சல்" : "Restlessness, Travel, Eye Care"}
                       </div>
                       <div className="p-1.5 rounded bg-white/70 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700">
-                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">4. பிரகாஷனம்:</span> புகழ், கீர்த்தி, அதிகாரம்
+                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">{isTamil ? "4. பிரகாஷனம்:" : "4. Prakashana:"}</span> {isTamil ? "புகழ், கீர்த்தி, அதிகாரம்" : "Fame, Glory, High Executive Power"}
                       </div>
                       <div className="p-1.5 rounded bg-white/70 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700">
-                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">5. கமனம்:</span> தூரப் பயணம், மாற்றம்
+                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">{isTamil ? "5. கமனம்:" : "5. Gamana:"}</span> {isTamil ? "தூரப் பயணம், மாற்றம்" : "Travel, Overseas Move, Shift"}
                       </div>
                       <div className="p-1.5 rounded bg-white/70 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700">
-                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">6. ஆகமனம்:</span> இல்லம் திரும்புதல், சுபம்
+                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">{isTamil ? "6. ஆகமனம்:" : "6. Aagamana:"}</span> {isTamil ? "இல்லம் திரும்புதல், சுபம்" : "Homecoming, Auspicious Events"}
                       </div>
                       <div className="p-1.5 rounded bg-white/70 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700">
-                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">7. சபாவாசம்:</span> சபையில் மதிப்பு, தலைமை
+                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">{isTamil ? "7. சபாவாசம்:" : "7. Sabhavasatha:"}</span> {isTamil ? "சபையில் மதிப்பு, தலைமை" : "Social Honors, Assemblies, Command"}
                       </div>
                       <div className="p-1.5 rounded bg-white/70 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700">
-                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">8. ஆகமம்:</span> தன லாபம், சாஸ்திர ஞானம்
+                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">{isTamil ? "8. ஆகமம்:" : "8. Aagama:"}</span> {isTamil ? "தன லாபம், சாஸ்திர ஞானம்" : "Wealth Growth, Shastric Erudition"}
                       </div>
                       <div className="p-1.5 rounded bg-white/70 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700">
-                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">9. போஜனம்:</span> அறுசுவை உணவு, தான்யம்
+                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">{isTamil ? "9. போஜனம்:" : "9. Bhojana:"}</span> {isTamil ? "அறுசுவை உணவு, தான்யம்" : "Sumptuous Feasts, Nourishment"}
                       </div>
                       <div className="p-1.5 rounded bg-white/70 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700">
-                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">10. நிருத்யலிப்சா:</span> கலை ஆர்வம், உற்சாகம்
+                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">{isTamil ? "10. நிருத்யலிப்சா:" : "10. Nrityalipsa:"}</span> {isTamil ? "கலை ஆர்வம், உற்சாகம்" : "Artistic Passion, Vitality"}
                       </div>
                       <div className="p-1.5 rounded bg-white/70 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700">
-                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">11. கௌதுகம்:</span> குதூகலம், வெற்றி
+                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">{isTamil ? "11. கௌதுகம்:" : "11. Kautuka:"}</span> {isTamil ? "குதூகலம், வெற்றி" : "Joy, Celebration, Victory"}
                       </div>
                       <div className="p-1.5 rounded bg-white/70 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700">
-                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">12. நித்ரா:</span> மந்த நிலை, தாமதம்
+                        <span className="font-bold text-[#7A1A22] dark:text-amber-400">{isTamil ? "12. நித்ரா:" : "12. Nidra:"}</span> {isTamil ? "மந்த நிலை, தாமதம்" : "Slumber, Lethargy, Delays"}
                       </div>
                     </div>
                   </div>
@@ -4667,27 +4671,27 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                   {/* Parashara Aspect Rules Key Bar */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                     <div className="p-2 rounded-xl bg-amber-50/70 dark:bg-stone-800/40 border border-amber-900/10 dark:border-amber-500/15">
-                      <div className="font-bold text-[#7A1A22] dark:text-amber-300 text-[11px]">7-ம் பார்வை (180°):</div>
+                      <div className="font-bold text-[#7A1A22] dark:text-amber-300 text-[11px]">{isTamil ? "7-ம் பார்வை (180°):" : "7th Aspect (180°):"}</div>
                       <div className="text-[10px] text-stone-600 dark:text-stone-400 mt-0.5">
-                        அனைத்து கிரகங்களுக்கும் 7-ம் பார்வை முழு பார்வை (100% / 60)
+                        {isTamil ? "அனைத்து கிரகங்களுக்கும் 7-ம் பார்வை முழு பார்வை (100% / 60)" : "Full Aspect (100% / 60 Virupas) for all planets on 7th sign."}
                       </div>
                     </div>
                     <div className="p-2 rounded-xl bg-amber-50/70 dark:bg-stone-800/40 border border-amber-900/10 dark:border-amber-500/15">
-                      <div className="font-bold text-[#7A1A22] dark:text-amber-300 text-[11px]">செவ்வாய் (Mars):</div>
+                      <div className="font-bold text-[#7A1A22] dark:text-amber-300 text-[11px]">{isTamil ? "செவ்வாய் (Mars):" : "Mars Special Aspect:"}</div>
                       <div className="text-[10px] text-stone-600 dark:text-stone-400 mt-0.5">
-                        4-ம் பார்வை (90°) & 8-ம் பார்வை (210°) முழு பார்வை (100% / 60)
+                        {isTamil ? "4-ம் பார்வை (90°) & 8-ம் பார்வை (210°) முழு பார்வை (100% / 60)" : "Full special aspect on 4th (90°) & 8th (210°) signs."}
                       </div>
                     </div>
                     <div className="p-2 rounded-xl bg-amber-50/70 dark:bg-stone-800/40 border border-amber-900/10 dark:border-amber-500/15">
-                      <div className="font-bold text-[#7A1A22] dark:text-amber-300 text-[11px]">குரு & ராகு/கேது:</div>
+                      <div className="font-bold text-[#7A1A22] dark:text-amber-300 text-[11px]">{isTamil ? "குரு & ராகு/கேது:" : "Jupiter, Rahu, Ketu:"}</div>
                       <div className="text-[10px] text-stone-600 dark:text-stone-400 mt-0.5">
-                        5-ம் பார்வை (120°) & 9-ம் பார்வை (240°) முழு பார்வை (100% / 60)
+                        {isTamil ? "5-ம் பார்வை (120°) & 9-ம் பார்வை (240°) முழு பார்வை (100% / 60)" : "Full special trinal aspect on 5th (120°) & 9th (240°) signs."}
                       </div>
                     </div>
                     <div className="p-2 rounded-xl bg-amber-50/70 dark:bg-stone-800/40 border border-amber-900/10 dark:border-amber-500/15">
-                      <div className="font-bold text-[#7A1A22] dark:text-amber-300 text-[11px]">சனி (Saturn):</div>
+                      <div className="font-bold text-[#7A1A22] dark:text-amber-300 text-[11px]">{isTamil ? "சனி (Saturn):" : "Saturn Special Aspect:"}</div>
                       <div className="text-[10px] text-stone-600 dark:text-stone-400 mt-0.5">
-                        3-ம் பார்வை (60°) & 10-ம் பார்வை (270°) முழு பார்வை (100% / 60)
+                        {isTamil ? "3-ம் பார்வை (60°) & 10-ம் பார்வை (270°) முழு பார்வை (100% / 60)" : "Full special aspect on 3rd (60°) & 10th (270°) signs."}
                       </div>
                     </div>
                   </div>
@@ -4903,7 +4907,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                           ?.map(b => (
                             <div key={b.bhavaNum} className="flex items-center justify-between p-1.5 rounded bg-white/70 dark:bg-stone-800/40 border border-emerald-200 dark:border-emerald-900/40">
                               <span className="font-bold text-emerald-950 dark:text-emerald-200">{b.nameTa}</span>
-                              <span className="text-[10px] text-emerald-800 dark:text-emerald-300 font-mono">சுப பலம்: {b.totalSubhaVirupas}</span>
+                              <span className="text-[10px] text-emerald-800 dark:text-emerald-300 font-mono">{isTamil ? "சுப பலம்:" : "Subha Bala:"} {b.totalSubhaVirupas}</span>
                             </div>
                           ))}
                       </div>
@@ -4921,7 +4925,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                           ?.map(b => (
                             <div key={b.bhavaNum} className="flex items-center justify-between p-1.5 rounded bg-white/70 dark:bg-stone-800/40 border border-rose-200 dark:border-rose-900/40">
                               <span className="font-bold text-rose-950 dark:text-rose-200">{b.nameTa}</span>
-                              <span className="text-[10px] text-rose-800 dark:text-rose-300 font-mono">பாப பலம்: {b.totalAsubhaVirupas}</span>
+                              <span className="text-[10px] text-rose-800 dark:text-rose-300 font-mono">{isTamil ? "பாப பலம்:" : "Asubha Bala:"} {b.totalAsubhaVirupas}</span>
                             </div>
                           ))}
                       </div>
@@ -5199,11 +5203,11 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                       <thead>
                         <tr className="bg-amber-900/10 dark:bg-amber-950/40 text-[#7A1A22] dark:text-amber-300 border-b border-amber-900/15 dark:border-amber-500/20">
                           <th className="p-2 font-bold text-left whitespace-nowrap">{isTamil ? 'கிழமை' : 'Day'}</th>
-                          <th className="p-1 font-bold whitespace-nowrap">ஜாமம் 1<br/><span className="text-[8px] font-normal text-stone-500 font-mono">06:00-08:24</span></th>
-                          <th className="p-1 font-bold whitespace-nowrap">ஜாமம் 2<br/><span className="text-[8px] font-normal text-stone-500 font-mono">08:24-10:48</span></th>
-                          <th className="p-1 font-bold whitespace-nowrap">ஜாமம் 3<br/><span className="text-[8px] font-normal text-stone-500 font-mono">10:48-13:12</span></th>
-                          <th className="p-1 font-bold whitespace-nowrap">ஜாமம் 4<br/><span className="text-[8px] font-normal text-stone-500 font-mono">13:12-15:36</span></th>
-                          <th className="p-1 font-bold whitespace-nowrap">ஜாமம் 5<br/><span className="text-[8px] font-normal text-stone-500 font-mono">15:36-18:00</span></th>
+                          <th className="p-1 font-bold whitespace-nowrap">{isTamil ? "ஜாமம் 1" : "Yamam 1"}<br/><span className="text-[8px] font-normal text-stone-500 font-mono">06:00-08:24</span></th>
+                          <th className="p-1 font-bold whitespace-nowrap">{isTamil ? "ஜாமம் 2" : "Yamam 2"}<br/><span className="text-[8px] font-normal text-stone-500 font-mono">08:24-10:48</span></th>
+                          <th className="p-1 font-bold whitespace-nowrap">{isTamil ? "ஜாமம் 3" : "Yamam 3"}<br/><span className="text-[8px] font-normal text-stone-500 font-mono">10:48-13:12</span></th>
+                          <th className="p-1 font-bold whitespace-nowrap">{isTamil ? "ஜாமம் 4" : "Yamam 4"}<br/><span className="text-[8px] font-normal text-stone-500 font-mono">13:12-15:36</span></th>
+                          <th className="p-1 font-bold whitespace-nowrap">{isTamil ? "ஜாமம் 5" : "Yamam 5"}<br/><span className="text-[8px] font-normal text-stone-500 font-mono">15:36-18:00</span></th>
                           <th className="p-2 font-bold text-left whitespace-nowrap">{isTamil ? 'வெற்றி நேரம் (அரசு / ஊண்)' : 'Golden Hours'}</th>
                           <th className="p-2 font-bold text-left whitespace-nowrap">{isTamil ? 'தவிர்க்க வேண்டிய நேரம் (சாவு)' : 'Inauspicious (Saavu)'}</th>
                         </tr>
@@ -5591,11 +5595,11 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                         <span>{isTamil ? 'சுப காரியங்களுக்கு உகந்த உத்தம தாரைகள் (Auspicious):' : 'Favorable Taras:'}</span>
                       </div>
                       <div className="text-[11px] text-emerald-950 dark:text-emerald-200 font-sans space-y-1">
-                        <div>• <span className="font-bold">சம்பத்து தாரை:</span> தன லாபம், செல்வம், வியாபாரம், ஒப்பந்தங்கள்.</div>
-                        <div>• <span className="font-bold">க்ஷேம தாரை:</span> பாதுகாப்பு, சௌக்கியம், ஆரோக்கியம், சுப தொடக்கங்கள்.</div>
-                        <div>• <span className="font-bold">சாதக தாரை:</span> காரிய சித்தி, வெற்றி, புதிய முயற்சிகள், வேலை வாய்ப்பு.</div>
-                        <div>• <span className="font-bold">மைத்ர தாரை:</span> நட்பு, உதவி, சமாதானம், கூட்டாண்மை.</div>
-                        <div>• <span className="font-bold">பரம மைத்ர தாரை:</span> உன்னத வெற்றி, பேரின்பம், சகல சுப காரியங்கள்.</div>
+                        <div>• <span className="font-bold">{isTamil ? "சம்பத்து தாரை:" : "Sampat Tara:"}</span> {isTamil ? "தன லாபம், செல்வம், வியாபாரம், ஒப்பந்தங்கள்." : "Wealth gain, commerce, prosperity, agreements."}</div>
+                        <div>• <span className="font-bold">{isTamil ? "க்ஷேம தாரை:" : "Kshema Tara:"}</span> {isTamil ? "பாதுகாப்பு, சௌக்கியம், ஆரோக்கியம், சுப தொடக்கங்கள்." : "Well-being, safety, sound health, auspicious beginnings."}</div>
+                        <div>• <span className="font-bold">{isTamil ? "சாதக தாரை:" : "Sadhaka Tara:"}</span> {isTamil ? "காரிய சித்தி, வெற்றி, புதிய முயற்சிகள், வேலை வாய்ப்பு." : "Achievement of goals, victory, ventures, employment."}</div>
+                        <div>• <span className="font-bold">{isTamil ? "மைத்ர தாரை:" : "Mitra Tara:"}</span> {isTamil ? "நட்பு, உதவி, சமாதானம், கூட்டாண்மை." : "Friendship, alliance, cooperation, peace."}</div>
+                        <div>• <span className="font-bold">{isTamil ? "பரம மைத்ர தாரை:" : "Parama Mitra Tara:"}</span> {isTamil ? "உன்னத வெற்றி, பேரின்பம், சகல சுப காரியங்கள்." : "Supreme triumph, supreme happiness, all auspicious milestones."}</div>
                       </div>
                     </div>
 
@@ -5605,10 +5609,10 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                         <span>{isTamil ? 'சுப காரியங்களைத் தவிர்க்க வேண்டிய அதம தாரைகள் (Inauspicious):' : 'Inauspicious Taras:'}</span>
                       </div>
                       <div className="text-[11px] text-rose-950 dark:text-rose-200 font-sans space-y-1">
-                        <div>• <span className="font-bold">ஜன்ம தாரை:</span> உடல் நலம் கவனம், மன உளைச்சல், சுப ஆரம்பங்களைத் தவிர்க்கவும்.</div>
-                        <div>• <span className="font-bold">விபத்து தாரை:</span> நஷ்டம், விரயம், விபத்து, பயணங்களைத் தவிர்க்கவும்.</div>
-                        <div>• <span className="font-bold">பிரத்யக்கு தாரை:</span> எதிர்ப்பு, விரோதம், வழக்கு, வாக்குவாதங்கள்.</div>
-                        <div>• <span className="font-bold">வத தாரை:</span> கடுமையான இழப்பு மற்றும் ஆபத்து (முற்றிலும் தவிர்க்கவும்).</div>
+                        <div>• <span className="font-bold">{isTamil ? "ஜன்ம தாரை:" : "Janma Tara:"}</span> {isTamil ? "உடல் நலம் கவனம், மன உளைச்சல், சுப ஆரம்பங்களைத் தவிர்க்கவும்." : "Physical vitality care, mental calm needed, avoid high-stakes debuts."}</div>
+                        <div>• <span className="font-bold">{isTamil ? "விபத்து தாரை:" : "Vipat Tara:"}</span> {isTamil ? "நஷ்டம், விரயம், விபத்து, பயணங்களைத் தவிர்க்கவும்." : "Obstacles, expenses, risk mitigation, avoid unnecessary travel."}</div>
+                        <div>• <span className="font-bold">{isTamil ? "பிரத்யக்கு தாரை:" : "Pratyak Tara:"}</span> {isTamil ? "எதிர்ப்புகள், விரோதம், வழக்கு, வாக்குவாதங்கள்." : "Opposition, disputes, litigations, avoid arguments."}</div>
+                        <div>• <span className="font-bold">{isTamil ? "வத தாரை:" : "Naidhana / Vadha Tara:"}</span> {isTamil ? "கடுமையான இழப்பு மற்றும் ஆபத்து (முற்றிலும் தவிர்க்கவும்)." : "Critical vulnerability, severe obstruction (strictly avoid major initiatives)."}</div>
                       </div>
                     </div>
                   </div>
@@ -5643,7 +5647,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
             </div>
             <div className="flex items-center gap-2 text-stone-400">
               <span className="text-[10px] hidden sm:inline-block px-2 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-500 font-mono">
-                {openSections[17] ? 'விரிவாக்கப்பட்டது' : 'சுருக்கப்பட்டது'}
+                {openSections[17] ? (isTamil ? 'விரிவாக்கப்பட்டது' : 'Expanded') : (isTamil ? 'சுருக்கப்பட்டது' : 'Collapsed')}
               </span>
               <span className="text-lg">{openSections[17] ? '▲' : '▼'}</span>
             </div>
@@ -5727,7 +5731,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                             <td className="p-2.5 sm:p-3 font-bold text-stone-800 dark:text-stone-200 border-r border-amber-900/10 dark:border-amber-500/10">
                               <span className="inline-flex items-center gap-1.5">
                                 <span className="w-1.5 h-1.5 rounded-full bg-amber-700 dark:bg-amber-400"></span>
-                                <span>{row.label}</span>
+                                <span>{isTamil ? (row.labelTa || row.label) : (row.labelEn || row.label)}</span>
                               </span>
                             </td>
                             <td className="p-2.5 sm:p-3 font-bold text-[#7A1A22] dark:text-amber-300">
@@ -5752,10 +5756,10 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                       <span>{isTamil ? 'கிரக நிலைகளின் பலன் விளக்கம்:' : 'Key Dignity Interpretations:'}</span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-stone-700 dark:text-stone-300 font-sans">
-                      <div>• <span className="font-bold text-emerald-800 dark:text-emerald-400">ஆட்சி / உச்சம்:</span> முழு சுப பலம், தலைமைப் பண்பு மற்றும் நற்பெயர் வழங்கும் நிலைகள்.</div>
-                      <div>• <span className="font-bold text-rose-800 dark:text-rose-400">நீசம் / பகை:</span> முயற்சிகளில் தடை, கடின உழைப்பிற்கு பிறகே வெற்றி கிட்டும் நிலை.</div>
-                      <div>• <span className="font-bold text-indigo-800 dark:text-indigo-400">வர்க்கோத்தமம்:</span> ராசி மற்றும் நவாம்சத்தில் ஒரே ராசியில் அமர்ந்து ஆட்சிக்கு இணையான பலம் தரும் நிலை.</div>
-                      <div>• <span className="font-bold text-amber-800 dark:text-amber-400">பரிவர்த்தனை:</span> இரு கிரகங்கள் தத்தம் வீடுகளைப் பரிமாறிக்கொண்டு யோக பலன் வழங்கும் ராஜயோக அமைப்பு.</div>
+                      <div>• <span className="font-bold text-emerald-800 dark:text-emerald-400">{isTamil ? "ஆட்சி / உச்சம்:" : "Own / Exalted:"}</span> {isTamil ? "முழு சுப பலம், தலைமைப் பண்பு மற்றும் நற்பெயர் வழங்கும் நிலைகள்." : "Full benefic potency, leadership excellence, and high reputation."}</div>
+                      <div>• <span className="font-bold text-rose-800 dark:text-rose-400">{isTamil ? "நீசம் / பகை:" : "Debilitated / Enemy:"}</span> {isTamil ? "முயற்சிகளில் தடை, கடின உழைப்பிற்கு பிறகே வெற்றி கிட்டும் நிலை." : "Hard work and persevering remedy needed before triumph."}</div>
+                      <div>• <span className="font-bold text-indigo-800 dark:text-indigo-400">{isTamil ? "வர்க்கோத்தமம்:" : "Vargottama:"}</span> {isTamil ? "ராசி மற்றும் நவாம்சத்தில் ஒரே ராசியில் அமர்ந்து ஆட்சிக்கு இணையான பலம் தரும் நிலை." : "Planet in same sign in D1 & D9, granting strength equal to own sign."}</div>
+                      <div>• <span className="font-bold text-amber-800 dark:text-amber-400">{isTamil ? "பரிவர்த்தனை:" : "Parivartana:"}</span> {isTamil ? "இரு கிரகங்கள் தத்தம் வீடுகளைப் பரிமாறிக்கொண்டு யோக பலன் வழங்கும் ராஜயோக அமைப்பு." : "Mutual sign exchange between two planets forming powerful yoga."}</div>
                     </div>
                   </div>
                 </div>
@@ -5858,10 +5862,10 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                       <span>{isTamil ? 'பார்வை விதிகள் (Drishti Principles):' : 'Drishti Rules:'}</span>
                     </div>
                     <div className="text-[11px] text-indigo-950 dark:text-indigo-200 font-sans space-y-1">
-                      <div>• <span className="font-bold">அனைத்து கிரகங்களும்:</span> தாங்கள் நின்ற ராசியிலிருந்து 7-வது ராசியை முழு பார்வையாகப் பார்க்கும் ($180^\circ$).</div>
-                      <div>• <span className="font-bold">செவ்வாய்:</span> 4-வது மற்றும் 8-வது ராசிகளை சிறப்புப் பார்வையாகப் பார்க்கும்.</div>
-                      <div>• <span className="font-bold">குரு, ராகு, கேது:</span> 5-வது மற்றும் 9-வது திரிகோண ராசிகளை சிறப்புப் பார்வையாகப் பார்க்கும்.</div>
-                      <div>• <span className="font-bold">சனி:</span> 3-வது மற்றும் 10-வது ராசிகளை சிறப்புப் பார்வையாகப் பார்க்கும்.</div>
+                      <div>• <span className="font-bold">{isTamil ? "அனைத்து கிரகங்களும்:" : "All Planets:"}</span> {isTamil ? "தாங்கள் நின்ற ராசியிலிருந்து 7-வது ராசியை முழு பார்வையாகப் பார்க்கும் ($180^\\circ$)." : "Cast 100% full aspect on the 7th house ($180^\\circ$)."}</div>
+                      <div>• <span className="font-bold">{isTamil ? "செவ்வாய்:" : "Mars:"}</span> {isTamil ? "4-வது மற்றும் 8-வது ராசிகளை சிறப்புப் பார்வையாகப் பார்க்கும்." : "Special full aspect on 4th and 8th signs."}</div>
+                      <div>• <span className="font-bold">{isTamil ? "குரு, ராகு, கேது:" : "Jupiter, Rahu, Ketu:"}</span> {isTamil ? "5-வது மற்றும் 9-வது திரிகோண ராசிகளை சிறப்புப் பார்வையாகப் பார்க்கும்." : "Special full aspect on 5th and 9th trinal signs."}</div>
+                      <div>• <span className="font-bold">{isTamil ? "சனி:" : "Saturn:"}</span> {isTamil ? "3-வது மற்றும் 10-வது ராசிகளை சிறப்புப் பார்வையாகப் பார்க்கும்." : "Special full aspect on 3rd and 10th signs."}</div>
                     </div>
                   </div>
                 </div>
@@ -5900,7 +5904,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
             </div>
             <div className="flex items-center gap-2 text-stone-400">
               <span className="text-[10px] hidden sm:inline-block px-2 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-500 font-mono">
-                {openSections[18] ? 'விரிவாக்கப்பட்டது' : 'சுருக்கப்பட்டது'}
+                {openSections[18] ? (isTamil ? 'விரிவாக்கப்பட்டது' : 'Expanded') : (isTamil ? 'சுருக்கப்பட்டது' : 'Collapsed')}
               </span>
               <span className="text-lg">{openSections[18] ? '▲' : '▼'}</span>
             </div>
@@ -5913,7 +5917,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/30 flex items-center gap-4">
                   <div className="w-14 h-14 rounded-2xl bg-[#7A1A22] text-amber-100 flex flex-col items-center justify-center shrink-0 shadow-md">
-                    <span className="text-[9px] uppercase tracking-wider font-semibold opacity-80">உடல் எண்</span>
+                    <span className="text-[9px] uppercase tracking-wider font-semibold opacity-80">{isTamil ? "உடல் எண்" : "Body No"}</span>
                     <span className="text-2xl font-black font-mono leading-none mt-0.5">
                       {horoscope?.numerologyData?.dateNum || '---'}
                     </span>
@@ -5930,7 +5934,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
 
                 <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-500/10 via-indigo-500/5 to-transparent border border-indigo-500/30 flex items-center gap-4">
                   <div className="w-14 h-14 rounded-2xl bg-indigo-900 text-indigo-100 flex flex-col items-center justify-center shrink-0 shadow-md">
-                    <span className="text-[9px] uppercase tracking-wider font-semibold opacity-80">உயிர் எண்</span>
+                    <span className="text-[9px] uppercase tracking-wider font-semibold opacity-80">{isTamil ? "உயிர் எண்" : "Destiny No"}</span>
                     <span className="text-2xl font-black font-mono leading-none mt-0.5">
                       {horoscope?.numerologyData?.yearNum || '---'}
                     </span>
@@ -6110,7 +6114,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               <div className="pt-2 text-center">
                 <div className="inline-block px-6 py-2 rounded-2xl bg-amber-100/80 dark:bg-stone-800 border border-amber-900/20 dark:border-amber-500/30 shadow-xs">
                   <span className="text-sm font-black tracking-widest text-[#7A1A22] dark:text-amber-300">
-                    {horoscope?.numerologyData?.subham || 'சுபம்.'}
+                    {isTamil ? (horoscope?.numerologyData?.subham || 'சுபம்.') : (horoscope?.numerologyData?.subhamEn || 'Subham (Auspicious).')}
                   </span>
                 </div>
               </div>
