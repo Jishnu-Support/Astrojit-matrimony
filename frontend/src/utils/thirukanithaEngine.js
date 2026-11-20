@@ -4750,15 +4750,15 @@ export function computeChaldeanNumerology(name = '', dob = '2026-11-05') {
   const lifeNum = reduceToSingle(d + m + y);
 
   const planetMap = {
-    1: { ta: 'சூரியன் (Sun)', stone: 'மாணிக்கம் (Ruby)', col: 'சிவப்பு, பொன்', lucky: '1, 10, 19, 28' },
-    2: { ta: 'சந்திரன் (Moon)', stone: 'முத்து (Pearl)', col: 'வெள்ளை, கிரீம்', lucky: '2, 11, 20, 29' },
-    3: { ta: 'குரு (Jupiter)', stone: 'புஷ்பராகம் (Yellow Sapphire)', col: 'மஞ்சள், தங்கம்', lucky: '3, 12, 21, 30' },
-    4: { ta: 'ராகு (Rahu)', stone: 'கோமேதகம் (Hessonite)', col: 'சாம்பல், நீலம்', lucky: '4, 13, 22, 31' },
-    5: { ta: 'புதன் (Mercury)', stone: 'மரகதம் (Emerald)', col: 'பச்சை, வெளிர் நீலம்', lucky: '5, 14, 23' },
-    6: { ta: 'சுக்கிரன் (Venus)', stone: 'வைரம் (Diamond)', col: 'வெள்ளை, வெள்ளி', lucky: '6, 15, 24' },
-    7: { ta: 'கேது (Ketu)', stone: 'வைடூரியம் (Cat\'s Eye)', col: 'பலவண்ணம், பழுப்பு', lucky: '7, 16, 25' },
-    8: { ta: 'சனி (Saturn)', stone: 'நீலக்கல் (Blue Sapphire)', col: 'கருநீலம், கறுப்பு', lucky: '8, 17, 26' },
-    9: { ta: 'செவ்வாய் (Mars)', stone: 'பவளம் (Coral)', col: 'சிவப்பு, ஆரஞ்சு', lucky: '9, 18, 27' }
+    1: { ta: 'சூரியன்', en: 'Sun', stoneTa: 'மாணிக்கம்', stoneEn: 'Ruby', colTa: 'சிவப்பு, பொன்', colEn: 'Red, Gold', lucky: '1, 10, 19, 28' },
+    2: { ta: 'சந்திரன்', en: 'Moon', stoneTa: 'முத்து', stoneEn: 'Pearl', colTa: 'வெள்ளை, கிரீம்', colEn: 'White, Cream', lucky: '2, 11, 20, 29' },
+    3: { ta: 'குரு', en: 'Jupiter', stoneTa: 'புஷ்பராகம்', stoneEn: 'Yellow Sapphire', colTa: 'மஞ்சள், தங்கம்', colEn: 'Yellow, Gold', lucky: '3, 12, 21, 30' },
+    4: { ta: 'ராகு', en: 'Rahu', stoneTa: 'கோமேதகம்', stoneEn: 'Hessonite', colTa: 'சாம்பல், நீலம்', colEn: 'Grey, Blue', lucky: '4, 13, 22, 31' },
+    5: { ta: 'புதன்', en: 'Mercury', stoneTa: 'மரகதம்', stoneEn: 'Emerald', colTa: 'பச்சை, வெளிர் நீலம்', colEn: 'Green, Light Blue', lucky: '5, 14, 23' },
+    6: { ta: 'சுக்கிரன்', en: 'Venus', stoneTa: 'வைரம்', stoneEn: 'Diamond', colTa: 'வெள்ளை, வெள்ளி', colEn: 'White, Silver', lucky: '6, 15, 24' },
+    7: { ta: 'கேது', en: 'Ketu', stoneTa: 'வைடூரியம்', stoneEn: 'Cat\'s Eye', colTa: 'பலவண்ணம், பழுப்பு', colEn: 'Multi-colour, Brown', lucky: '7, 16, 25' },
+    8: { ta: 'சனி', en: 'Saturn', stoneTa: 'நீலக்கல்', stoneEn: 'Blue Sapphire', colTa: 'கருநீலம், கறுப்பு', colEn: 'Dark Blue, Black', lucky: '8, 17, 26' },
+    9: { ta: 'செவ்வாய்', en: 'Mars', stoneTa: 'பவளம்', stoneEn: 'Coral', colTa: 'சிவப்பு, ஆரஞ்சு', colEn: 'Red, Orange', lucky: '9, 18, 27' }
   };
 
   const pData = planetMap[lifeNum] || planetMap[5];
@@ -4769,17 +4769,34 @@ export function computeChaldeanNumerology(name = '', dob = '2026-11-05') {
     return {
       name: name || 'Sample',
       engSum: String(nameSum),
+      engSumTa: String(nameSum),
+      engSumEn: String(nameSum),
       dobEng: `${dob} Friday`,
+      dobTa: `${dob} வெள்ளிக்கிழமை`,
       dateNum: String(dateNum),
+      dateNumTa: String(dateNum),
+      dateNumEn: String(dateNum),
       yearNum: String(lifeNum),
+      yearNumTa: String(lifeNum),
+      yearNumEn: String(lifeNum),
       luckyNums: '3, 5, 9',
       luckyDates: '3, 12, 21, 30, 5, 14, 23, 9, 18, 27',
       luckyColors: 'வெளிர் மஞ்சள், ஆரஞ்சு, கத்தரிப்பூ நிறம்',
+      luckyColorsTa: 'வெளிர் மஞ்சள், ஆரஞ்சு, கத்தரிப்பூ நிறம்',
+      luckyColorsEn: 'Light Yellow, Orange, Violet',
       luckyStones: 'எமிதிஸ்ட், கனக புஷ்பராகம்',
+      luckyStonesTa: 'எமிதிஸ்ட், கனக புஷ்பராகம்',
+      luckyStonesEn: 'Amethyst, Yellow Sapphire',
       deity: 'குரு, தட்சிணாமூர்த்தி',
+      deityTa: 'குரு, தட்சிணாமூர்த்தி',
+      deityEn: 'Lord Dakshinamurthy',
       temples: 'ஆலங்குடி, திருச்செந்தூர்',
+      templesTa: 'ஆலங்குடி, திருச்செந்தூர்',
+      templesEn: 'Alangudi, Tiruchendur',
       letters: alphabetRow,
-      subham: 'சுபம்.'
+      subham: 'சுபம்.',
+      subhamTa: 'சுபம்.',
+      subhamEn: 'Subham (All Auspiciousness).'
     };
   }
 
@@ -4788,34 +4805,71 @@ export function computeChaldeanNumerology(name = '', dob = '2026-11-05') {
     return {
       name: name || 'Mr. M',
       engSum: '10',
+      engSumTa: '10',
+      engSumEn: '10',
       dobEng: `${dob} Monday`,
+      dobTa: `${dob} திங்கட்கிழமை`,
       dateNum: '3',
+      dateNumTa: '3',
+      dateNumEn: '3',
       yearNum: '7',
+      yearNumTa: '7',
+      yearNumEn: '7',
       luckyNums: '3, 2',
       luckyDates: '3, 12, 21, 30, 2, 22, 20, 29, 5, 14, 23',
       luckyColors: 'ஆரஞ்சு, கத்தரிப்பூ நிறம், ரோசு',
+      luckyColorsTa: 'ஆரஞ்சு, கத்தரிப்பூ நிறம், ரோசு',
+      luckyColorsEn: 'Orange, Violet, Rose',
       luckyStones: 'எமிதிஸ்ட், வைடூரியம்',
+      luckyStonesTa: 'எமிதிஸ்ட், வைடூரியம்',
+      luckyStonesEn: 'Amethyst, Cat\'s Eye',
       deity: 'குரு, தட்சிணாமூர்த்தி',
+      deityTa: 'குரு, தட்சிணாமூர்த்தி',
+      deityEn: 'Lord Dakshinamurthy',
       temples: 'ஆலங்குடி, திருச்செந்தூர்',
+      templesTa: 'ஆலங்குடி, திருச்செந்தூர்',
+      templesEn: 'Alangudi, Tiruchendur',
       letters: alphabetRow,
-      subham: 'சுபம்.'
+      subham: 'சுபம்.',
+      subhamTa: 'சுபம்.',
+      subhamEn: 'Subham (All Auspiciousness).'
     };
   }
 
+  const pNameObj = planetMap[nameSingle] || {};
+  const pDateObj = planetMap[dateNum] || {};
+
   return {
     name: name || 'Native',
-    engSum: cleanName ? `${letterBreakdown.slice(0, 8).join('+')}... = ${nameSum} = ${nameSingle} (${planetMap[nameSingle]?.ta || ''})` : '',
+    engSum: cleanName ? `${letterBreakdown.slice(0, 8).join('+')}... = ${nameSum} = ${nameSingle} (${pNameObj.ta || ''})` : '',
+    engSumTa: cleanName ? `${letterBreakdown.slice(0, 8).join('+')}... = ${nameSum} = ${nameSingle} (${pNameObj.ta || ''})` : '',
+    engSumEn: cleanName ? `${letterBreakdown.slice(0, 8).join('+')}... = ${nameSum} = ${nameSingle} (${pNameObj.en || ''})` : '',
     dobEng: dob,
-    dateNum: `${dateNum} (${planetMap[dateNum]?.ta || ''})`,
+    dobTa: dob,
+    dateNum: `${dateNum} (${pDateObj.ta || ''})`,
+    dateNumTa: `${dateNum} (${pDateObj.ta || ''})`,
+    dateNumEn: `${dateNum} (${pDateObj.en || ''})`,
     yearNum: `${lifeNum} (${pData.ta})`,
+    yearNumTa: `${lifeNum} (${pData.ta})`,
+    yearNumEn: `${lifeNum} (${pData.en})`,
     luckyNums: `${dateNum}, ${lifeNum}, ${(dateNum * 2) % 9 || 9}`,
     luckyDates: pData.lucky,
-    luckyColors: pData.col,
-    luckyStones: pData.stone,
+    luckyColors: pData.colTa,
+    luckyColorsTa: pData.colTa,
+    luckyColorsEn: pData.colEn,
+    luckyStones: pData.stoneTa,
+    luckyStonesTa: pData.stoneTa,
+    luckyStonesEn: pData.stoneEn,
     deity: lifeNum === 5 ? 'ஸ்ரீ மகாவிஷ்ணு' : lifeNum === 8 ? 'ஸ்ரீ வெங்கடாசலபதி / சனி பகவான்' : lifeNum === 3 ? 'ஸ்ரீ தட்சிணாமூர்த்தி' : 'ஸ்ரீ விநாயகர்',
+    deityTa: lifeNum === 5 ? 'ஸ்ரீ மகாவிஷ்ணு' : lifeNum === 8 ? 'ஸ்ரீ வெங்கடாசலபதி / சனி பகவான்' : lifeNum === 3 ? 'ஸ்ரீ தட்சிணாமூர்த்தி' : 'ஸ்ரீ விநாயகர்',
+    deityEn: lifeNum === 5 ? 'Lord Maha Vishnu' : lifeNum === 8 ? 'Lord Venkateshwara / Saturn' : lifeNum === 3 ? 'Lord Dakshinamurthy' : 'Lord Ganesha',
     temples: 'திருப்பதி வெங்கடாசலபதி, மதுரை மீனாட்சி சுந்தரேஸ்வரர், திருநள்ளாறு',
+    templesTa: 'திருப்பதி வெங்கடாசலபதி, மதுரை மீனாட்சி சுந்தரேஸ்வரர், திருநள்ளாறு',
+    templesEn: 'Tirupati Venkateshwara, Madurai Meenakshi Sundareswarar, Thirunallar',
     letters: alphabetRow,
-    subham: 'சுபம்.'
+    subham: 'சுபம்.',
+    subhamTa: 'சுபம்.',
+    subhamEn: 'Subham (All Auspiciousness).'
   };
 }
 
@@ -7531,112 +7585,175 @@ export function computePlanetaryRelationshipsAndAvasthas(planetRows, lagnaDeg, b
 
   const NAISARGIKA = {
     sun: {
-      moolatrikona: 'சிம்மம் (0° - 20°)',
-      exaltation: 'மேஷம் (10°)',
-      debilitation: 'துலாம் (10°)',
-      own: 'சிம்மம்',
+      moolatrikonaTa: 'சிம்மம் (0° - 20°)',
+      moolatrikonaEn: 'Leo (0° - 20°)',
+      exaltationTa: 'மேஷம் (10°)',
+      exaltationEn: 'Aries (10°)',
+      debilitationTa: 'துலாம் (10°)',
+      debilitationEn: 'Libra (10°)',
+      ownTa: 'சிம்மம்',
+      ownEn: 'Leo',
       friends: ['moon', 'mars', 'jupiter'],
       neutrals: ['mercury'],
       enemies: ['venus', 'saturn', 'rahu', 'ketu'],
       friendsTa: 'சந்திரன், செவ்வாய், குரு',
+      friendsEn: 'Moon, Mars, Jupiter',
       neutralsTa: 'புதன்',
-      enemiesTa: 'சுக்கிரன், சனி, ராகு, கேது'
+      neutralsEn: 'Mercury',
+      enemiesTa: 'சுக்கிரன், சனி, ராகு, கேது',
+      enemiesEn: 'Venus, Saturn, Rahu, Ketu'
     },
     moon: {
-      moolatrikona: 'ரிஷபம் (4° - 30°)',
-      exaltation: 'ரிஷபம் (3°)',
-      debilitation: 'விருச்சிகம் (3°)',
-      own: 'கடகம்',
+      moolatrikonaTa: 'ரிஷபம் (4° - 30°)',
+      moolatrikonaEn: 'Taurus (4° - 30°)',
+      exaltationTa: 'ரிஷபம் (3°)',
+      exaltationEn: 'Taurus (3°)',
+      debilitationTa: 'விருச்சிகம் (3°)',
+      debilitationEn: 'Scorpio (3°)',
+      ownTa: 'கடகம்',
+      ownEn: 'Cancer',
       friends: ['sun', 'mercury'],
       neutrals: ['mars', 'jupiter', 'venus', 'saturn'],
       enemies: [],
       friendsTa: 'சூரியன், புதன்',
+      friendsEn: 'Sun, Mercury',
       neutralsTa: 'செவ்வாய், குரு, சுக்கிரன், சனி',
-      enemiesTa: 'எதிரிகள் இல்லை (None)'
+      neutralsEn: 'Mars, Jupiter, Venus, Saturn',
+      enemiesTa: 'எதிரிகள் இல்லை (None)',
+      enemiesEn: 'None'
     },
     mars: {
-      moolatrikona: 'மேஷம் (0° - 12°)',
-      exaltation: 'மகரம் (28°)',
-      debilitation: 'கடகம் (28°)',
-      own: 'மேஷம், விருச்சிகம்',
+      moolatrikonaTa: 'மேஷம் (0° - 12°)',
+      moolatrikonaEn: 'Aries (0° - 12°)',
+      exaltationTa: 'மகரம் (28°)',
+      exaltationEn: 'Capricorn (28°)',
+      debilitationTa: 'கடகம் (28°)',
+      debilitationEn: 'Cancer (28°)',
+      ownTa: 'மேஷம், விருச்சிகம்',
+      ownEn: 'Aries, Scorpio',
       friends: ['sun', 'moon', 'jupiter'],
       neutrals: ['venus', 'saturn'],
       enemies: ['mercury', 'rahu'],
       friendsTa: 'சூரியன், சந்திரன், குரு',
+      friendsEn: 'Sun, Moon, Jupiter',
       neutralsTa: 'சுக்கிரன், சனி',
-      enemiesTa: 'புதன், ராகு'
+      neutralsEn: 'Venus, Saturn',
+      enemiesTa: 'புதன், ராகு',
+      enemiesEn: 'Mercury, Rahu'
     },
     mercury: {
-      moolatrikona: 'கன்னி (16° - 20°)',
-      exaltation: 'கன்னி (15°)',
-      debilitation: 'மீனம் (15°)',
-      own: 'மிதுனம், கன்னி',
+      moolatrikonaTa: 'கன்னி (16° - 20°)',
+      moolatrikonaEn: 'Virgo (16° - 20°)',
+      exaltationTa: 'கன்னி (15°)',
+      exaltationEn: 'Virgo (15°)',
+      debilitationTa: 'மீனம் (15°)',
+      debilitationEn: 'Pisces (15°)',
+      ownTa: 'மிதுனம், கன்னி',
+      ownEn: 'Gemini, Virgo',
       friends: ['sun', 'venus'],
       neutrals: ['mars', 'jupiter', 'saturn'],
       enemies: ['moon'],
       friendsTa: 'சூரியன், சுக்கிரன்',
+      friendsEn: 'Sun, Venus',
       neutralsTa: 'செவ்வாய், குரு, சனி',
-      enemiesTa: 'சந்திரன்'
+      neutralsEn: 'Mars, Jupiter, Saturn',
+      enemiesTa: 'சந்திரன்',
+      enemiesEn: 'Moon'
     },
     jupiter: {
-      moolatrikona: 'தனுசு (0° - 13°)',
-      exaltation: 'கடகம் (5°)',
-      debilitation: 'மகரம் (5°)',
-      own: 'தனுசு, மீனம்',
+      moolatrikonaTa: 'தனுசு (0° - 13°)',
+      moolatrikonaEn: 'Sagittarius (0° - 13°)',
+      exaltationTa: 'கடகம் (5°)',
+      exaltationEn: 'Cancer (5°)',
+      debilitationTa: 'மகரம் (5°)',
+      debilitationEn: 'Capricorn (5°)',
+      ownTa: 'தனுசு, மீனம்',
+      ownEn: 'Sagittarius, Pisces',
       friends: ['sun', 'moon', 'mars'],
       neutrals: ['saturn'],
       enemies: ['mercury', 'venus'],
       friendsTa: 'சூரியன், சந்திரன், செவ்வாய்',
+      friendsEn: 'Sun, Moon, Mars',
       neutralsTa: 'சனி',
-      enemiesTa: 'புதன், சுக்கிரன்'
+      neutralsEn: 'Saturn',
+      enemiesTa: 'புதன், சுக்கிரன்',
+      enemiesEn: 'Mercury, Venus'
     },
     venus: {
-      moolatrikona: 'துலாம் (0° - 15°)',
-      exaltation: 'மீனம் (27°)',
-      debilitation: 'கன்னி (27°)',
-      own: 'ரிஷபம், துலாம்',
+      moolatrikonaTa: 'துலாம் (0° - 15°)',
+      moolatrikonaEn: 'Libra (0° - 15°)',
+      exaltationTa: 'மீனம் (27°)',
+      exaltationEn: 'Pisces (27°)',
+      debilitationTa: 'கன்னி (27°)',
+      debilitationEn: 'Virgo (27°)',
+      ownTa: 'ரிஷபம், துலாம்',
+      ownEn: 'Taurus, Libra',
       friends: ['mercury', 'saturn', 'rahu', 'ketu'],
       neutrals: ['mars', 'jupiter'],
       enemies: ['sun', 'moon'],
       friendsTa: 'புதன், சனி, ராகு, கேது',
+      friendsEn: 'Mercury, Saturn, Rahu, Ketu',
       neutralsTa: 'செவ்வாய், குரு',
-      enemiesTa: 'சூரியன், சந்திரன்'
+      neutralsEn: 'Mars, Jupiter',
+      enemiesTa: 'சூரியன், சந்திரன்',
+      enemiesEn: 'Sun, Moon'
     },
     saturn: {
-      moolatrikona: 'கும்பம் (0° - 20°)',
-      exaltation: 'துலாம் (20°)',
-      debilitation: 'மேஷம் (20°)',
-      own: 'மகரம், கும்பம்',
+      moolatrikonaTa: 'கும்பம் (0° - 20°)',
+      moolatrikonaEn: 'Aquarius (0° - 20°)',
+      exaltationTa: 'துலாம் (20°)',
+      exaltationEn: 'Libra (20°)',
+      debilitationTa: 'மேஷம் (20°)',
+      debilitationEn: 'Aries (20°)',
+      ownTa: 'மகரம், கும்பம்',
+      ownEn: 'Capricorn, Aquarius',
       friends: ['mercury', 'venus', 'rahu'],
       neutrals: ['jupiter'],
       enemies: ['sun', 'moon', 'mars'],
       friendsTa: 'புதன், சுக்கிரன், ராகு',
+      friendsEn: 'Mercury, Venus, Rahu',
       neutralsTa: 'குரு',
-      enemiesTa: 'சூரியன், சந்திரன், செவ்வாய்'
+      neutralsEn: 'Jupiter',
+      enemiesTa: 'சூரியன், சந்திரன், செவ்வாய்',
+      enemiesEn: 'Sun, Moon, Mars'
     },
     rahu: {
-      moolatrikona: 'கும்பம் (0° - 30°)',
-      exaltation: 'ரிஷபம் (20°)',
-      debilitation: 'விருச்சிகம் (20°)',
-      own: 'கும்பம்',
+      moolatrikonaTa: 'கும்பம் (0° - 30°)',
+      moolatrikonaEn: 'Aquarius (0° - 30°)',
+      exaltationTa: 'ரிஷபம் (20°)',
+      exaltationEn: 'Taurus (20°)',
+      debilitationTa: 'விருச்சிகம் (20°)',
+      debilitationEn: 'Scorpio (20°)',
+      ownTa: 'கும்பம்',
+      ownEn: 'Aquarius',
       friends: ['venus', 'saturn', 'mercury'],
       neutrals: ['jupiter'],
       enemies: ['sun', 'moon', 'mars'],
       friendsTa: 'சுக்கிரன், சனி, புதன்',
+      friendsEn: 'Venus, Saturn, Mercury',
       neutralsTa: 'குரு',
-      enemiesTa: 'சூரியன், சந்திரன், செவ்வாய்'
+      neutralsEn: 'Jupiter',
+      enemiesTa: 'சூரியன், சந்திரன், செவ்வாய்',
+      enemiesEn: 'Sun, Moon, Mars'
     },
     ketu: {
-      moolatrikona: 'விருச்சிகம் (0° - 30°)',
-      exaltation: 'விருச்சிகம் (20°)',
-      debilitation: 'ரிஷபம் (20°)',
-      own: 'விருச்சிகம்',
+      moolatrikonaTa: 'விருச்சிகம் (0° - 30°)',
+      moolatrikonaEn: 'Scorpio (0° - 30°)',
+      exaltationTa: 'விருச்சிகம் (20°)',
+      exaltationEn: 'Scorpio (20°)',
+      debilitationTa: 'ரிஷபம் (20°)',
+      debilitationEn: 'Taurus (20°)',
+      ownTa: 'விருச்சிகம்',
+      ownEn: 'Scorpio',
       friends: ['mars', 'venus', 'jupiter'],
       neutrals: ['mercury', 'saturn'],
       enemies: ['sun', 'moon'],
       friendsTa: 'செவ்வாய், சுக்கிரன், குரு',
+      friendsEn: 'Mars, Venus, Jupiter',
       neutralsTa: 'புதன், சனி',
-      enemiesTa: 'சூரியன், சந்திரன்'
+      neutralsEn: 'Mercury, Saturn',
+      enemiesTa: 'சூரியன், சந்திரன்',
+      enemiesEn: 'Sun, Moon'
     }
   };
 
@@ -7658,13 +7775,24 @@ export function computePlanetaryRelationshipsAndAvasthas(planetRows, lagnaDeg, b
       id: pId,
       nameTa: PLANET_NAMES[pId].ta,
       nameEn: PLANET_NAMES[pId].en,
-      moolatrikona: info.moolatrikona,
-      exaltation: info.exaltation,
-      debilitation: info.debilitation,
-      own: info.own,
+      moolatrikona: info.moolatrikonaTa,
+      moolatrikonaTa: info.moolatrikonaTa,
+      moolatrikonaEn: info.moolatrikonaEn,
+      exaltation: info.exaltationTa,
+      exaltationTa: info.exaltationTa,
+      exaltationEn: info.exaltationEn,
+      debilitation: info.debilitationTa,
+      debilitationTa: info.debilitationTa,
+      debilitationEn: info.debilitationEn,
+      own: info.ownTa,
+      ownTa: info.ownTa,
+      ownEn: info.ownEn,
       friendsTa: info.friendsTa,
+      friendsEn: info.friendsEn,
       neutralsTa: info.neutralsTa,
-      enemiesTa: info.enemiesTa
+      neutralsEn: info.neutralsEn,
+      enemiesTa: info.enemiesTa,
+      enemiesEn: info.enemiesEn
     };
   });
 
@@ -7672,8 +7800,10 @@ export function computePlanetaryRelationshipsAndAvasthas(planetRows, lagnaDeg, b
   const tatkalikaData = PLANET_ORDER.map(p1Id => {
     const p1 = planetMap[p1Id];
     const r1 = p1 ? p1.rasi : 0;
-    const friends = [];
-    const enemies = [];
+    const friendsTa = [];
+    const friendsEn = [];
+    const enemiesTa = [];
+    const enemiesEn = [];
     const relationships = {};
 
     PLANET_ORDER.forEach(p2Id => {
@@ -7686,9 +7816,11 @@ export function computePlanetaryRelationshipsAndAvasthas(planetRows, lagnaDeg, b
       const houseDist = ((r2 - r1 + 12) % 12) + 1;
       const isFriend = [2, 3, 4, 10, 11, 12].includes(houseDist);
       if (isFriend) {
-        friends.push(PLANET_NAMES[p2Id].ta);
+        friendsTa.push(PLANET_NAMES[p2Id].ta);
+        friendsEn.push(PLANET_NAMES[p2Id].en);
       } else {
-        enemies.push(PLANET_NAMES[p2Id].ta);
+        enemiesTa.push(PLANET_NAMES[p2Id].ta);
+        enemiesEn.push(PLANET_NAMES[p2Id].en);
       }
       relationships[p2Id] = {
         houseDist,
@@ -7704,8 +7836,12 @@ export function computePlanetaryRelationshipsAndAvasthas(planetRows, lagnaDeg, b
       nameTa: PLANET_NAMES[p1Id].ta,
       nameEn: PLANET_NAMES[p1Id].en,
       rasiName: p1 ? RASHI_NAMES[r1].ta : '',
-      friendsTa: friends.join(', ') || 'எவருமில்லை',
-      enemiesTa: enemies.join(', ') || 'எவருமில்லை',
+      rasiNameTa: p1 ? RASHI_NAMES[r1].ta : '',
+      rasiNameEn: p1 ? RASHI_NAMES[r1].en : '',
+      friendsTa: friendsTa.join(', ') || 'எவருமில்லை',
+      friendsEn: friendsEn.join(', ') || 'None',
+      enemiesTa: enemiesTa.join(', ') || 'எவருமில்லை',
+      enemiesEn: enemiesEn.join(', ') || 'None',
       relationships
     };
   });
@@ -7717,10 +7853,15 @@ export function computePlanetaryRelationshipsAndAvasthas(planetRows, lagnaDeg, b
     const nInfo = NAISARGIKA[p1Id];
     const relations = {};
     const adhiMithru = [];
+    const adhiMithruEn = [];
     const mithru = [];
+    const mithruEn = [];
     const sama = [];
+    const samaEn = [];
     const shatru = [];
+    const shatruEn = [];
     const adhiShatru = [];
+    const adhiShatruEn = [];
 
     PLANET_ORDER.forEach(p2Id => {
       if (p1Id === p2Id) {
@@ -7739,34 +7880,39 @@ export function computePlanetaryRelationshipsAndAvasthas(planetRows, lagnaDeg, b
 
       const score = nVal + tVal;
       let textTa = 'சமம்';
-      let textEn = 'Neutral (Sama)';
+      let textEn = 'Neutral';
       let badge = 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300';
 
       if (score === 2) {
         textTa = 'அதி மித்துரு';
-        textEn = 'Great Friend (Adhi Mithru)';
+        textEn = 'Great Friend';
         badge = 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-400 font-bold';
         adhiMithru.push(PLANET_NAMES[p2Id].ta);
+        adhiMithruEn.push(PLANET_NAMES[p2Id].en);
       } else if (score === 1) {
         textTa = 'மித்துரு';
-        textEn = 'Friend (Mithru)';
+        textEn = 'Friend';
         badge = 'bg-green-50 dark:bg-green-950/60 text-green-700 dark:text-green-300 border border-green-300 font-semibold';
         mithru.push(PLANET_NAMES[p2Id].ta);
+        mithruEn.push(PLANET_NAMES[p2Id].en);
       } else if (score === 0) {
         textTa = 'சமம்';
         textEn = 'Neutral (Sama)';
         badge = 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-300';
         sama.push(PLANET_NAMES[p2Id].ta);
+        samaEn.push(PLANET_NAMES[p2Id].en);
       } else if (score === -1) {
         textTa = 'சத்துரு';
-        textEn = 'Enemy (Shatru)';
+        textEn = 'Enemy';
         badge = 'bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-300 font-semibold';
         shatru.push(PLANET_NAMES[p2Id].ta);
+        shatruEn.push(PLANET_NAMES[p2Id].en);
       } else if (score === -2) {
         textTa = 'அதி சத்துரு';
-        textEn = 'Great Enemy (Adhi Shatru)';
+        textEn = 'Great Enemy';
         badge = 'bg-rose-100 dark:bg-rose-900/60 text-rose-900 dark:text-rose-200 border border-rose-500 font-bold';
         adhiShatru.push(PLANET_NAMES[p2Id].ta);
+        adhiShatruEn.push(PLANET_NAMES[p2Id].en);
       }
 
       relations[p2Id] = { score, textTa, textEn, badge };
@@ -7774,23 +7920,35 @@ export function computePlanetaryRelationshipsAndAvasthas(planetRows, lagnaDeg, b
 
     const signLordId = RASHI_LORDS[r1];
     let presentDignityTa = 'சமம்';
+    let presentDignityEn = 'Neutral';
     let presentDignityBadge = 'bg-amber-100 text-amber-900 border border-amber-300';
 
     if (p1) {
-      if (p1Id === 'sun' && r1 === 0) { presentDignityTa = 'உச்சம் (Exalted)'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
-      else if (p1Id === 'moon' && r1 === 1) { presentDignityTa = 'உச்சம் (Exalted)'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
-      else if (p1Id === 'mars' && r1 === 9) { presentDignityTa = 'உச்சம் (Exalted)'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
-      else if (p1Id === 'mercury' && r1 === 5) { presentDignityTa = 'உச்சம் (Exalted)'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
-      else if (p1Id === 'jupiter' && r1 === 3) { presentDignityTa = 'உச்சம் (Exalted)'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
-      else if (p1Id === 'venus' && r1 === 11) { presentDignityTa = 'உச்சம் (Exalted)'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
-      else if (p1Id === 'saturn' && r1 === 6) { presentDignityTa = 'உச்சம் (Exalted)'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
-      else if (p1Id === 'rahu' && (r1 === 1 || r1 === 2)) { presentDignityTa = 'உச்சம் (Exalted)'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
-      else if (p1Id === 'ketu' && (r1 === 7 || r1 === 8)) { presentDignityTa = 'உச்சம் (Exalted)'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
+      if (p1Id === 'sun' && r1 === 0) { presentDignityTa = 'உச்சம்'; presentDignityEn = 'Exalted'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
+      else if (p1Id === 'moon' && r1 === 1) { presentDignityTa = 'உச்சம்'; presentDignityEn = 'Exalted'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
+      else if (p1Id === 'mars' && r1 === 9) { presentDignityTa = 'உச்சம்'; presentDignityEn = 'Exalted'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
+      else if (p1Id === 'mercury' && r1 === 5) { presentDignityTa = 'உச்சம்'; presentDignityEn = 'Exalted'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
+      else if (p1Id === 'jupiter' && r1 === 3) { presentDignityTa = 'உச்சம்'; presentDignityEn = 'Exalted'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
+      else if (p1Id === 'venus' && r1 === 11) { presentDignityTa = 'உச்சம்'; presentDignityEn = 'Exalted'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
+      else if (p1Id === 'saturn' && r1 === 6) { presentDignityTa = 'உச்சம்'; presentDignityEn = 'Exalted'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
+      else if (p1Id === 'rahu' && (r1 === 1 || r1 === 2)) { presentDignityTa = 'உச்சம்'; presentDignityEn = 'Exalted'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
+      else if (p1Id === 'ketu' && (r1 === 7 || r1 === 8)) { presentDignityTa = 'உச்சம்'; presentDignityEn = 'Exalted'; presentDignityBadge = 'bg-amber-400 text-stone-900 font-bold'; }
+      else if (p1Id === 'sun' && r1 === 6) { presentDignityTa = 'நீசம்'; presentDignityEn = 'Debilitated'; presentDignityBadge = 'bg-rose-200 text-rose-950 font-bold'; }
+      else if (p1Id === 'moon' && r1 === 7) { presentDignityTa = 'நீசம்'; presentDignityEn = 'Debilitated'; presentDignityBadge = 'bg-rose-200 text-rose-950 font-bold'; }
+      else if (p1Id === 'mars' && r1 === 3) { presentDignityTa = 'நீசம்'; presentDignityEn = 'Debilitated'; presentDignityBadge = 'bg-rose-200 text-rose-950 font-bold'; }
+      else if (p1Id === 'mercury' && r1 === 11) { presentDignityTa = 'நீசம்'; presentDignityEn = 'Debilitated'; presentDignityBadge = 'bg-rose-200 text-rose-950 font-bold'; }
+      else if (p1Id === 'jupiter' && r1 === 9) { presentDignityTa = 'நீசம்'; presentDignityEn = 'Debilitated'; presentDignityBadge = 'bg-rose-200 text-rose-950 font-bold'; }
+      else if (p1Id === 'venus' && r1 === 5) { presentDignityTa = 'நீசம்'; presentDignityEn = 'Debilitated'; presentDignityBadge = 'bg-rose-200 text-rose-950 font-bold'; }
+      else if (p1Id === 'saturn' && r1 === 0) { presentDignityTa = 'நீசம்'; presentDignityEn = 'Debilitated'; presentDignityBadge = 'bg-rose-200 text-rose-950 font-bold'; }
+      else if (p1Id === 'rahu' && (r1 === 7 || r1 === 8)) { presentDignityTa = 'நீசம்'; presentDignityEn = 'Debilitated'; presentDignityBadge = 'bg-rose-200 text-rose-950 font-bold'; }
+      else if (p1Id === 'ketu' && (r1 === 1 || r1 === 2)) { presentDignityTa = 'நீசம்'; presentDignityEn = 'Debilitated'; presentDignityBadge = 'bg-rose-200 text-rose-950 font-bold'; }
       else if (p1Id === signLordId) {
-        presentDignityTa = 'ஆட்சி (Own)';
+        presentDignityTa = 'ஆட்சி';
+        presentDignityEn = 'Own Sign';
         presentDignityBadge = 'bg-emerald-200 text-emerald-950 font-bold';
       } else if (relations[signLordId]) {
         presentDignityTa = relations[signLordId].textTa;
+        presentDignityEn = relations[signLordId].textEn;
         presentDignityBadge = relations[signLordId].badge;
       }
     }
@@ -7800,31 +7958,39 @@ export function computePlanetaryRelationshipsAndAvasthas(planetRows, lagnaDeg, b
       nameTa: PLANET_NAMES[p1Id].ta,
       nameEn: PLANET_NAMES[p1Id].en,
       rasiName: p1 ? RASHI_NAMES[r1].ta : '',
+      rasiNameTa: p1 ? RASHI_NAMES[r1].ta : '',
+      rasiNameEn: p1 ? RASHI_NAMES[r1].en : '',
       presentDignityTa,
+      presentDignityEn,
       presentDignityBadge,
       adhiMithruTa: adhiMithru.join(', ') || 'இல்லை',
+      adhiMithruEn: adhiMithruEn.join(', ') || 'None',
       mithruTa: mithru.join(', ') || 'இல்லை',
+      mithruEn: mithruEn.join(', ') || 'None',
       samaTa: sama.join(', ') || 'இல்லை',
+      samaEn: samaEn.join(', ') || 'None',
       shatruTa: shatru.join(', ') || 'இல்லை',
+      shatruEn: shatruEn.join(', ') || 'None',
       adhiShatruTa: adhiShatru.join(', ') || 'இல்லை',
+      adhiShatruEn: adhiShatruEn.join(', ') || 'None',
       relations
     };
   });
 
   // 4. Planetary Avasthas, Mandalam & Dasha Samaya States
   const SHAYANADI_AVASTHAS = [
-    { num: 1, ta: 'சயன அவஸ்தை (Shayana)', en: 'Shayana (Resting / In Bed)', effectTa: 'சுகபோகம், அமைதி, யோக பலன்', badge: 'bg-indigo-100 text-indigo-900' },
-    { num: 2, ta: 'உபவேஷன அவஸ்தை (Upaveshana)', en: 'Upaveshana (Deliberating)', effectTa: 'ஆராய்ச்சி, அறிவுத் தெளிவு, கௌரவம்', badge: 'bg-blue-100 text-blue-900' },
-    { num: 3, ta: 'நேத்ரபாணி அவஸ்தை (Netrapani)', en: 'Netrapani (Restless)', effectTa: 'கண் பார்வை கவனம், அலைச்சல்', badge: 'bg-rose-100 text-rose-900' },
-    { num: 4, ta: 'பிரகாஷன அவஸ்தை (Prakasana)', en: 'Prakasana (Radiant / Renown)', effectTa: 'புகழ், கீர்த்தி, அதிகார பலம்', badge: 'bg-amber-200 text-amber-950 font-bold' },
-    { num: 5, ta: 'கமனா அவஸ்தை (Gamana)', en: 'Gamana (Travelling)', effectTa: 'தூர தேசப் பயணம், இடப்பெயர்ச்சி', badge: 'bg-cyan-100 text-cyan-900' },
-    { num: 6, ta: 'ஆகமனா அவஸ்தை (Agamana)', en: 'Agamana (Arrival)', effectTa: 'இல்லம் திரும்புதல், சுபகாரியம்', badge: 'bg-teal-100 text-teal-900' },
-    { num: 7, ta: 'சபா அவஸ்தை (Sabhavastha)', en: 'Sabhavastha (In Council)', effectTa: 'சபையில் மதிப்பு, தலைமை தாங்குதல்', badge: 'bg-emerald-200 text-emerald-950 font-bold' },
-    { num: 8, ta: 'ஆகம அவஸ்தை (Agama)', en: 'Agama (Acquisition)', effectTa: 'தன லாபம், சாஸ்திர ஞானம்', badge: 'bg-emerald-100 text-emerald-900 font-semibold' },
-    { num: 9, ta: 'போஜன அவஸ்தை (Bhojana)', en: 'Bhojana (Feasting)', effectTa: 'அறுசுவை உணவு, தான்ய விருத்தி', badge: 'bg-orange-100 text-orange-900' },
-    { num: 10, ta: 'நிருத்யலிப்சா அவஸ்தை (Nrityalipsa)', en: 'Nrityalipsa (Joy / Arts)', effectTa: 'கலை ஆர்வம், உற்சாகம், மகிழ்ச்சி', badge: 'bg-purple-100 text-purple-900' },
-    { num: 11, ta: 'கௌதுக அவஸ்தை (Kauthuka)', en: 'Kauthuka (Eager / Curious)', effectTa: 'குதூகலம், வெற்றி, நற்செய்தி', badge: 'bg-amber-100 text-amber-900' },
-    { num: 12, ta: 'நித்ரா அவஸ்தை (Nidra)', en: 'Nidra (Sleeping)', effectTa: 'மந்த நிலை, சோம்பல், தாமதம்', badge: 'bg-stone-200 text-stone-700' }
+    { num: 1, ta: 'சயன அவஸ்தை', en: 'Shayana (Resting / In Bed)', effectTa: 'சுகபோகம், அமைதி, யோக பலன்', badge: 'bg-indigo-100 text-indigo-900' },
+    { num: 2, ta: 'உபவேஷன அவஸ்தை', en: 'Upaveshana (Deliberating)', effectTa: 'ஆராய்ச்சி, அறிவுத் தெளிவு, கௌரவம்', badge: 'bg-blue-100 text-blue-900' },
+    { num: 3, ta: 'நேத்ரபாணி அவஸ்தை', en: 'Netrapani (Restless)', effectTa: 'கண் பார்வை கவனம், அலைச்சல்', badge: 'bg-rose-100 text-rose-900' },
+    { num: 4, ta: 'பிரகாஷன அவஸ்தை', en: 'Prakasana (Radiant / Renown)', effectTa: 'புகழ், கீர்த்தி, அதிகார பலம்', badge: 'bg-amber-200 text-amber-950 font-bold' },
+    { num: 5, ta: 'கமனா அவஸ்தை', en: 'Gamana (Travelling)', effectTa: 'தூர தேசப் பயணம், இடப்பெயர்ச்சி', badge: 'bg-cyan-100 text-cyan-900' },
+    { num: 6, ta: 'ஆகமனா அவஸ்தை', en: 'Agamana (Arrival)', effectTa: 'இல்லம் திரும்புதல், சுபகாரியம்', badge: 'bg-teal-100 text-teal-900' },
+    { num: 7, ta: 'சபா அவஸ்தை', en: 'Sabhavastha (In Council)', effectTa: 'சபையில் மதிப்பு, தலைமை தாங்குதல்', badge: 'bg-emerald-200 text-emerald-950 font-bold' },
+    { num: 8, ta: 'ஆகம அவஸ்தை', en: 'Agama (Acquisition)', effectTa: 'தன லாபம், சாஸ்திர ஞானம்', badge: 'bg-emerald-100 text-emerald-900 font-semibold' },
+    { num: 9, ta: 'போஜன அவஸ்தை', en: 'Bhojana (Feasting)', effectTa: 'அறுசுவை உணவு, தான்ய விருத்தி', badge: 'bg-orange-100 text-orange-900' },
+    { num: 10, ta: 'நிருத்யலிப்சா அவஸ்தை', en: 'Nrityalipsa (Joy / Arts)', effectTa: 'கலை ஆர்வம், உற்சாகம், மகிழ்ச்சி', badge: 'bg-purple-100 text-purple-900' },
+    { num: 11, ta: 'கௌதுக அவஸ்தை', en: 'Kauthuka (Eager / Curious)', effectTa: 'குதூகலம், வெற்றி, நற்செய்தி', badge: 'bg-amber-100 text-amber-900' },
+    { num: 12, ta: 'நித்ரா அவஸ்தை', en: 'Nidra (Sleeping)', effectTa: 'மந்த நிலை, சோம்பல், தாமதம்', badge: 'bg-stone-200 text-stone-700' }
   ];
 
   const avasthasData = PLANET_ORDER.map(pId => {
@@ -7835,13 +8001,13 @@ export function computePlanetaryRelationshipsAndAvasthas(planetRows, lagnaDeg, b
     const degInSign = p.longitude % 30;
     const isOdd = rasi % 2 === 0;
 
-    let baladi = { ta: 'யுவ அவஸ்தை (Yuva)', en: 'Yuva (Adult)', potency: '100% (முழு பலம்)', badge: 'bg-emerald-100 text-emerald-900 font-bold' };
+    let baladi = { ta: 'யுவ அவஸ்தை', en: 'Yuva (Adult)', potency: '100%', badge: 'bg-emerald-100 text-emerald-900 font-bold' };
     if (isOdd) {
-      if (degInSign < 6) baladi = { ta: 'பால அவஸ்தை (Bala)', en: 'Bala (Infant)', potency: '25% (கால் பலம்)', badge: 'bg-amber-100 text-amber-900' };
-      else if (degInSign < 12) baladi = { ta: 'குமார அவஸ்தை (Kumara)', en: 'Kumara (Youth)', potency: '50% (அரை பலம்)', badge: 'bg-blue-100 text-blue-900' };
-      else if (degInSign < 18) baladi = { ta: 'யுவ அவஸ்தை (Yuva)', en: 'Yuva (Adult)', potency: '100% (முழு பலம்)', badge: 'bg-emerald-200 text-emerald-950 font-bold' };
-      else if (degInSign < 24) baladi = { ta: 'விருத்த அவஸ்தை (Vriddha)', en: 'Vriddha (Old)', potency: '15% (குறைந்த பலம்)', badge: 'bg-stone-200 text-stone-800' };
-      else baladi = { ta: 'மிருத அவஸ்தை (Mrita)', en: 'Mrita (Dead)', potency: '0% (செயலற்றது)', badge: 'bg-rose-100 text-rose-800' };
+      if (degInSign < 6) baladi = { ta: 'பால அவஸ்தை', en: 'Bala (Infant)', potency: '25%', badge: 'bg-amber-100 text-amber-900' };
+      else if (degInSign < 12) baladi = { ta: 'குமார அவஸ்தை', en: 'Kumara (Youth)', potency: '50%', badge: 'bg-blue-100 text-blue-900' };
+      else if (degInSign < 18) baladi = { ta: 'யுவ அவஸ்தை', en: 'Yuva (Adult)', potency: '100%', badge: 'bg-emerald-200 text-emerald-950 font-bold' };
+      else if (degInSign < 24) baladi = { ta: 'விருத்த அவஸ்தை', en: 'Vriddha (Old)', potency: '15%', badge: 'bg-stone-200 text-stone-800' };
+      else baladi = { ta: 'மிருத அவஸ்தை', en: 'Mrita (Dead)', potency: '0%', badge: 'bg-rose-100 text-rose-800' };
     } else {
       if (degInSign < 6) baladi = { ta: 'மிருத அவஸ்தை (Mrita)', en: 'Mrita (Dead)', potency: '0% (செயலற்றது)', badge: 'bg-rose-100 text-rose-800' };
       else if (degInSign < 12) baladi = { ta: 'விருத்த அவஸ்தை (Vriddha)', en: 'Vriddha (Old)', potency: '15% (குறைந்த பலம்)', badge: 'bg-stone-200 text-stone-800' };
@@ -7851,12 +8017,12 @@ export function computePlanetaryRelationshipsAndAvasthas(planetRows, lagnaDeg, b
     }
 
     const panchaP = panchadhaData.find(x => x.id === pId);
-    let jagradadi = { ta: 'ஸ்வப்ன அவஸ்தை (Swapna)', en: 'Swapna (Dreaming)', potency: '50%', badge: 'bg-amber-100 text-amber-900' };
+    let jagradadi = { ta: 'ஸ்வப்ன அவஸ்தை', en: 'Swapna (Dreaming)', potency: '50%', badge: 'bg-amber-100 text-amber-900' };
     if (panchaP) {
       if (panchaP.presentDignityTa.includes('உச்சம்') || panchaP.presentDignityTa.includes('ஆட்சி')) {
-        jagradadi = { ta: 'ஜாக்ரத் அவஸ்தை (Jagrata)', en: 'Jagrata (Awake)', potency: '100%', badge: 'bg-emerald-200 text-emerald-950 font-bold' };
+        jagradadi = { ta: 'ஜாக்ரத் அவஸ்தை', en: 'Jagrata (Awake)', potency: '100%', badge: 'bg-emerald-200 text-emerald-950 font-bold' };
       } else if (panchaP.presentDignityTa.includes('பகை') || panchaP.presentDignityTa.includes('நீசம்')) {
-        jagradadi = { ta: 'சுஷுப்தி அவஸ்தை (Sushupti)', en: 'Sushupti (Sleeping)', potency: '0%', badge: 'bg-rose-100 text-rose-900' };
+        jagradadi = { ta: 'சுஷுப்தி அவஸ்தை', en: 'Sushupti (Sleeping)', potency: '0%', badge: 'bg-rose-100 text-rose-900' };
       }
     }
 
@@ -7906,7 +8072,7 @@ export function computePlanetaryRelationshipsAndAvasthas(planetRows, lagnaDeg, b
     } else if (nakNum >= 13 && nakNum <= 21) {
       mandalam = { ta: 'வாயு மண்டலம்', en: 'Vayu Mandala (Airy)', badge: 'bg-blue-100 text-blue-900' };
     } else {
-      mandalam = { ta: 'வருண மண்டலம் (ஜலம்)', en: 'Varuna Mandala (Watery)', badge: 'bg-cyan-100 text-cyan-900' };
+      mandalam = { ta: 'வருண மண்டலம்', en: 'Varuna Mandala (Watery)', badge: 'bg-cyan-100 text-cyan-900' };
     }
 
     return {
@@ -7914,6 +8080,8 @@ export function computePlanetaryRelationshipsAndAvasthas(planetRows, lagnaDeg, b
       nameTa: PLANET_NAMES[pId].ta,
       nameEn: PLANET_NAMES[pId].en,
       rasiName: RASHI_NAMES[rasi].ta,
+      rasiNameTa: RASHI_NAMES[rasi].ta,
+      rasiNameEn: RASHI_NAMES[rasi].en,
       degInSignFormatted: p.degInSign || `${Math.floor(degInSign)}°`,
       baladi,
       jagradadi,
@@ -7951,8 +8119,18 @@ export function computeAspectAnglesData(planetRows, sripatiBhavas = [], lagnaDeg
   };
 
   const RASHI_NAMES = [
-    'மேஷம்', 'ரிஷபம்', 'மிதுனம்', 'கடகம்', 'சிம்மம்', 'கன்னி',
-    'துலாம்', 'விருச்சிகம்', 'தனுசு', 'மகரம்', 'கும்பம்', 'மீனம்'
+    { ta: 'மேஷம்', en: 'Aries' },
+    { ta: 'ரிஷபம்', en: 'Taurus' },
+    { ta: 'மிதுனம்', en: 'Gemini' },
+    { ta: 'கடகம்', en: 'Cancer' },
+    { ta: 'சிம்மம்', en: 'Leo' },
+    { ta: 'கன்னி', en: 'Virgo' },
+    { ta: 'துலாம்', en: 'Libra' },
+    { ta: 'விருச்சிகம்', en: 'Scorpio' },
+    { ta: 'தனுசு', en: 'Sagittarius' },
+    { ta: 'மகரம்', en: 'Capricorn' },
+    { ta: 'கும்பம்', en: 'Aquarius' },
+    { ta: 'மீனம்', en: 'Pisces' }
   ];
 
   const BHAVA_NAMES = [
@@ -8041,22 +8219,27 @@ export function computeAspectAnglesData(planetRows, sripatiBhavas = [], lagnaDeg
     const percent = Math.round((virupas / 60) * 100);
 
     let aspectLevelTa = 'பார்வை இல்லை';
+    let aspectLevelEn = 'No Aspect (0%)';
     let badge = 'text-stone-400 dark:text-stone-600';
     if (percent >= 98) {
       aspectLevelTa = 'முழு பார்வை (100%)';
+      aspectLevelEn = 'Full Aspect (100%)';
       badge = 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-300 border border-emerald-400 font-bold';
     } else if (percent >= 70) {
       aspectLevelTa = 'முக்கால் பார்வை (75%)';
+      aspectLevelEn = '3/4 Aspect (75%)';
       badge = 'bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300 border border-teal-300 font-semibold';
     } else if (percent >= 45) {
       aspectLevelTa = 'அரை பார்வை (50%)';
+      aspectLevelEn = '1/2 Aspect (50%)';
       badge = 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-300 font-medium';
     } else if (percent >= 15) {
       aspectLevelTa = 'கால் பார்வை (25%)';
+      aspectLevelEn = '1/4 Aspect (25%)';
       badge = 'bg-stone-50 dark:bg-stone-800/40 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-700';
     }
 
-    return { virupas, percent, aspectLevelTa, badge };
+    return { virupas, percent, aspectLevelTa, aspectLevelEn, badge };
   };
 
   // --------------------------------------------------------------------------
@@ -8074,7 +8257,9 @@ export function computeAspectAnglesData(planetRows, sripatiBhavas = [], lagnaDeg
       natureTa: PLANET_NAMES[pId].natureTa,
       lon,
       lonFormatted: formatAngle(lon),
-      rasiName: RASHI_NAMES[rasi]
+      rasiName: RASHI_NAMES[rasi]?.ta || '',
+      rasiNameTa: RASHI_NAMES[rasi]?.ta || '',
+      rasiNameEn: RASHI_NAMES[rasi]?.en || ''
     };
   });
 
@@ -8084,8 +8269,10 @@ export function computeAspectAnglesData(planetRows, sripatiBhavas = [], lagnaDeg
     const rasi1 = Math.floor(lon1 / 30);
 
     const cells = {};
-    const fullAspectList = [];
-    const partialAspectList = [];
+    const fullAspectListTa = [];
+    const fullAspectListEn = [];
+    const partialAspectListTa = [];
+    const partialAspectListEn = [];
     let totalCastedVirupas = 0;
 
     PLANET_ORDER.forEach(p2Id => {
@@ -8098,6 +8285,7 @@ export function computeAspectAnglesData(planetRows, sripatiBhavas = [], lagnaDeg
           virupas: 0,
           percent: 0,
           aspectLevelTa: 'சுயம்',
+          aspectLevelEn: 'Self',
           badge: 'bg-stone-100 dark:bg-stone-800 text-stone-400 dark:text-stone-500'
         };
         return;
@@ -8111,9 +8299,11 @@ export function computeAspectAnglesData(planetRows, sripatiBhavas = [], lagnaDeg
 
       totalCastedVirupas += drik.virupas;
       if (drik.percent >= 95) {
-        fullAspectList.push(PLANET_NAMES[p2Id].ta);
+        fullAspectListTa.push(PLANET_NAMES[p2Id].ta);
+        fullAspectListEn.push(PLANET_NAMES[p2Id].en);
       } else if (drik.percent >= 30) {
-        partialAspectList.push(`${PLANET_NAMES[p2Id].ta} (${drik.percent}%)`);
+        partialAspectListTa.push(`${PLANET_NAMES[p2Id].ta} (${drik.percent}%)`);
+        partialAspectListEn.push(`${PLANET_NAMES[p2Id].en} (${drik.percent}%)`);
       }
 
       cells[p2Id] = {
@@ -8124,6 +8314,7 @@ export function computeAspectAnglesData(planetRows, sripatiBhavas = [], lagnaDeg
         virupas: drik.virupas,
         percent: drik.percent,
         aspectLevelTa: drik.aspectLevelTa,
+        aspectLevelEn: drik.aspectLevelEn,
         badge: drik.badge
       };
     });
@@ -8132,12 +8323,18 @@ export function computeAspectAnglesData(planetRows, sripatiBhavas = [], lagnaDeg
       id: p1Id,
       nameTa: PLANET_NAMES[p1Id].ta,
       nameEn: PLANET_NAMES[p1Id].en,
-      rasiName: RASHI_NAMES[rasi1],
+      rasiName: RASHI_NAMES[rasi1]?.ta || '',
+      rasiNameTa: RASHI_NAMES[rasi1]?.ta || '',
+      rasiNameEn: RASHI_NAMES[rasi1]?.en || '',
       lonFormatted: formatAngle(lon1),
       nature: PLANET_NAMES[p1Id].nature,
       cells,
-      fullAspectList: fullAspectList.join(', ') || 'எதுவுமில்லை',
-      partialAspectList: partialAspectList.join(', ') || 'எதுவுமில்லை',
+      fullAspectList: fullAspectListTa.join(', ') || 'எதுவுமில்லை',
+      fullAspectListTa: fullAspectListTa.join(', ') || 'எதுவுமில்லை',
+      fullAspectListEn: fullAspectListEn.join(', ') || 'None',
+      partialAspectList: partialAspectListTa.join(', ') || 'எதுவுமில்லை',
+      partialAspectListTa: partialAspectListTa.join(', ') || 'எதுவுமில்லை',
+      partialAspectListEn: partialAspectListEn.join(', ') || 'None',
       totalCastedVirupas: Math.round(totalCastedVirupas * 10) / 10
     };
   });
@@ -8155,8 +8352,10 @@ export function computeAspectAnglesData(planetRows, sripatiBhavas = [], lagnaDeg
     const cells = {};
     let totalSubhaVirupas = 0;
     let totalAsubhaVirupas = 0;
-    const strongBeneficAspects = [];
-    const strongMaleficAspects = [];
+    const strongBeneficAspectsTa = [];
+    const strongBeneficAspectsEn = [];
+    const strongMaleficAspectsTa = [];
+    const strongMaleficAspectsEn = [];
 
     PLANET_ORDER.forEach(pId => {
       const p = planetMap[pId];
@@ -8168,10 +8367,16 @@ export function computeAspectAnglesData(planetRows, sripatiBhavas = [], lagnaDeg
       const isSubha = PLANET_NAMES[pId].nature === 'benefic';
       if (isSubha) {
         totalSubhaVirupas += drik.virupas;
-        if (drik.percent >= 50) strongBeneficAspects.push(`${PLANET_NAMES[pId].ta} (${drik.percent}%)`);
+        if (drik.percent >= 50) {
+          strongBeneficAspectsTa.push(`${PLANET_NAMES[pId].ta} (${drik.percent}%)`);
+          strongBeneficAspectsEn.push(`${PLANET_NAMES[pId].en} (${drik.percent}%)`);
+        }
       } else {
         totalAsubhaVirupas += drik.virupas;
-        if (drik.percent >= 50) strongMaleficAspects.push(`${PLANET_NAMES[pId].ta} (${drik.percent}%)`);
+        if (drik.percent >= 50) {
+          strongMaleficAspectsTa.push(`${PLANET_NAMES[pId].ta} (${drik.percent}%)`);
+          strongMaleficAspectsEn.push(`${PLANET_NAMES[pId].en} (${drik.percent}%)`);
+        }
       }
 
       cells[pId] = {
@@ -8181,6 +8386,7 @@ export function computeAspectAnglesData(planetRows, sripatiBhavas = [], lagnaDeg
         virupas: drik.virupas,
         percent: drik.percent,
         aspectLevelTa: drik.aspectLevelTa,
+        aspectLevelEn: drik.aspectLevelEn,
         badge: drik.badge,
         isSubha
       };
@@ -8191,12 +8397,15 @@ export function computeAspectAnglesData(planetRows, sripatiBhavas = [], lagnaDeg
     const netDifference = Math.round((totalSubhaVirupas - totalAsubhaVirupas) * 10) / 10;
 
     let verdictTa = 'சுப - பாப சமநிலை';
+    let verdictEn = 'Benefic - Malefic Balance';
     let verdictBadge = 'bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-300 border border-amber-300 font-medium';
     if (netDifference > 15) {
       verdictTa = 'சுப பார்வை ஆதிக்கம் (மிக நன்று)';
+      verdictEn = 'Dominant Benefic Protection (Excellent)';
       verdictBadge = 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-300 border border-emerald-400 font-bold';
     } else if (netDifference < -15) {
       verdictTa = 'பாப பார்வை ஆதிக்கம் (கவனம் / பரிகாரம்)';
+      verdictEn = 'Dominant Malefic Aspect (Caution / Remedy)';
       verdictBadge = 'bg-rose-100 dark:bg-rose-900/60 text-rose-950 dark:text-rose-200 border border-rose-400 font-bold';
     }
 
@@ -8206,15 +8415,22 @@ export function computeAspectAnglesData(planetRows, sripatiBhavas = [], lagnaDeg
       nameEn: bInfo.en,
       madhya: bhavaMadhya,
       madhyaFormatted: formatAngle(bhavaMadhya),
-      rasiName: RASHI_NAMES[rasiIdx],
+      rasiName: RASHI_NAMES[rasiIdx]?.ta || '',
+      rasiNameTa: RASHI_NAMES[rasiIdx]?.ta || '',
+      rasiNameEn: RASHI_NAMES[rasiIdx]?.en || '',
       cells,
       totalSubhaVirupas,
       totalAsubhaVirupas,
       netDifference,
       verdictTa,
+      verdictEn,
       verdictBadge,
-      strongBeneficAspects: strongBeneficAspects.join(', ') || 'இல்லை',
-      strongMaleficAspects: strongMaleficAspects.join(', ') || 'இல்லை'
+      strongBeneficAspects: strongBeneficAspectsTa.join(', ') || 'இல்லை',
+      strongBeneficAspectsTa: strongBeneficAspectsTa.join(', ') || 'இல்லை',
+      strongBeneficAspectsEn: strongBeneficAspectsEn.join(', ') || 'None',
+      strongMaleficAspects: strongMaleficAspectsTa.join(', ') || 'இல்லை',
+      strongMaleficAspectsTa: strongMaleficAspectsTa.join(', ') || 'இல்லை',
+      strongMaleficAspectsEn: strongMaleficAspectsEn.join(', ') || 'None'
     };
   });
 
@@ -8236,71 +8452,106 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
       id: 'hawk',
       ta: 'வல்லூறு',
       en: 'Hawk / Vulture',
-      elementTa: 'பூமி (Earth)',
-      colorTa: 'பொன் / மஞ்சள் (Golden Yellow)',
-      directionTa: 'கிழக்கு (East)',
+      elementTa: 'பூமி',
+      elementEn: 'Earth',
+      colorTa: 'பொன் / மஞ்சள்',
+      colorEn: 'Golden Yellow',
+      directionTa: 'கிழக்கு',
+      directionEn: 'East',
       rulingPlanetTa: 'செவ்வாய், சனி',
+      rulingPlanetEn: 'Mars, Saturn',
       friendBirdsTa: 'ஆந்தை, காகம்',
+      friendBirdsEn: 'Owl, Crow',
       enemyBirdsTa: 'கோழி, மயில்',
+      enemyBirdsEn: 'Rooster, Peacock',
       badDaysSuklaTa: 'வியாழன், சனி',
       badDaysKrishnaTa: 'திங்கள், ஞாயிறு',
-      badDaysTa: 'வளர்பிறையில் வியாழன், சனி; தேய்பிறையில் திங்கள், ஞாயிறு'
+      badDaysTa: 'வளர்பிறையில் வியாழன், சனி; தேய்பிறையில் திங்கள், ஞாயிறு',
+      badDaysEn: 'Thursday, Saturday in Waxing Moon; Monday, Sunday in Waning Moon'
     },
     {
       id: 'owl',
       ta: 'ஆந்தை',
       en: 'Owl',
-      elementTa: 'நீர் (Water)',
-      colorTa: 'வெண்மை (White)',
-      directionTa: 'தெற்கு (South)',
+      elementTa: 'நீர்',
+      elementEn: 'Water',
+      colorTa: 'வெண்மை',
+      colorEn: 'White',
+      directionTa: 'தெற்கு',
+      directionEn: 'South',
       rulingPlanetTa: 'சுக்கிரன், சந்திரன்',
+      rulingPlanetEn: 'Venus, Moon',
       friendBirdsTa: 'வல்லூறு, மயில்',
+      friendBirdsEn: 'Hawk, Peacock',
       enemyBirdsTa: 'காகம், கோழி',
+      enemyBirdsEn: 'Crow, Rooster',
       badDaysSuklaTa: 'ஞாயிறு, வெள்ளி',
       badDaysKrishnaTa: 'செவ்வாய், புதன்',
-      badDaysTa: 'வளர்பிறையில் ஞாயிறு, வெள்ளி; தேய்பிறையில் செவ்வாய், புதன்'
+      badDaysTa: 'வளர்பிறையில் ஞாயிறு, வெள்ளி; தேய்பிறையில் செவ்வாய், புதன்',
+      badDaysEn: 'Sunday, Friday in Waxing Moon; Tuesday, Wednesday in Waning Moon'
     },
     {
       id: 'crow',
       ta: 'காகம்',
       en: 'Crow',
-      elementTa: 'நெருப்பு (Fire)',
-      colorTa: 'கருப்பு (Black)',
-      directionTa: 'மேற்கு (West)',
+      elementTa: 'நெருப்பு',
+      elementEn: 'Fire',
+      colorTa: 'கருப்பு',
+      colorEn: 'Black',
+      directionTa: 'மேற்கு',
+      directionEn: 'West',
       rulingPlanetTa: 'சூரியன், செவ்வாய்',
+      rulingPlanetEn: 'Sun, Mars',
       friendBirdsTa: 'கோழி, வல்லூறு',
+      friendBirdsEn: 'Rooster, Hawk',
       enemyBirdsTa: 'ஆந்தை, மயில்',
+      enemyBirdsEn: 'Owl, Peacock',
       badDaysSuklaTa: 'திங்கள், புதன்',
       badDaysKrishnaTa: 'வியாழன், சனி',
-      badDaysTa: 'வளர்பிறையில் திங்கள், புதன்; தேய்பிறையில் வியாழன், சனி'
+      badDaysTa: 'வளர்பிறையில் திங்கள், புதன்; தேய்பிறையில் வியாழன், சனி',
+      badDaysEn: 'Monday, Wednesday in Waxing Moon; Thursday, Saturday in Waning Moon'
     },
     {
       id: 'rooster',
       ta: 'கோழி',
       en: 'Rooster / Cock',
-      elementTa: 'காற்று (Air)',
-      colorTa: 'செம்மை (Red)',
-      directionTa: 'வடக்கு (North)',
+      elementTa: 'காற்று',
+      elementEn: 'Air',
+      colorTa: 'செம்மை',
+      colorEn: 'Red',
+      directionTa: 'வடக்கு',
+      directionEn: 'North',
       rulingPlanetTa: 'புதன்',
+      rulingPlanetEn: 'Mercury',
       friendBirdsTa: 'ஆந்தை, மயில்',
+      friendBirdsEn: 'Owl, Peacock',
       enemyBirdsTa: 'வல்லூறு, காகம்',
+      enemyBirdsEn: 'Hawk, Crow',
       badDaysSuklaTa: 'புதன்',
       badDaysKrishnaTa: 'வெள்ளி, புதன்',
-      badDaysTa: 'வளர்பிறையில் புதன் மற்றும் தேய்பிறையில் வெள்ளி, புதன்'
+      badDaysTa: 'வளர்பிறையில் புதன் மற்றும் தேய்பிறையில் வெள்ளி, புதன்',
+      badDaysEn: 'Wednesday in Waxing Moon; Friday, Wednesday in Waning Moon'
     },
     {
       id: 'peacock',
       ta: 'மயில்',
       en: 'Peacock',
-      elementTa: 'ஆகாயம் (Ether)',
-      colorTa: 'நீலம் / பலவண்ணம் (Blue)',
-      directionTa: 'வடகிழக்கு (North-East)',
+      elementTa: 'ஆகாயம்',
+      elementEn: 'Ether',
+      colorTa: 'நீலம் / பலவண்ணம்',
+      colorEn: 'Blue / Multi-color',
+      directionTa: 'வடகிழக்கு',
+      directionEn: 'North-East',
       rulingPlanetTa: 'குரு',
+      rulingPlanetEn: 'Jupiter',
       friendBirdsTa: 'ஆந்தை, கோழி',
+      friendBirdsEn: 'Owl, Rooster',
       enemyBirdsTa: 'வல்லூறு, காகம்',
+      enemyBirdsEn: 'Hawk, Crow',
       badDaysSuklaTa: 'புதன், வியாழன்',
       badDaysKrishnaTa: 'ஞாயிறு, சனி',
-      badDaysTa: 'வளர்பிறையில் புதன், வியாழன்; தேய்பிறையில் ஞாயிறு, சனி'
+      badDaysTa: 'வளர்பிறையில் புதன், வியாழன்; தேய்பிறையில் ஞாயிறு, சனி',
+      badDaysEn: 'Wednesday, Thursday in Waxing Moon; Sunday, Saturday in Waning Moon'
     }
   ];
 
@@ -8321,6 +8572,7 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
       potencyVal: 100,
       badge: 'bg-amber-300 dark:bg-amber-500/80 text-stone-900 border border-amber-500 font-bold',
       effectTa: 'வெற்றி, புகழ், காரிய சித்தி, சுப ஆரம்பம் (முழு பலம்)',
+      effectEn: 'Success, fame, triumphant execution, auspicious start (Full Potency)',
       isAuspicious: true
     },
     oon: {
@@ -8331,6 +8583,7 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
       potencyVal: 75,
       badge: 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-300 border border-emerald-400 font-semibold',
       effectTa: 'தன லாபம், சுகபோகம், பேச்சுவார்த்தை வெற்றி (சுப பலம்)',
+      effectEn: 'Wealth gain, sensory comfort, fruitful discussions (Auspicious Potency)',
       isAuspicious: true
     },
     nadai: {
@@ -8341,6 +8594,7 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
       potencyVal: 50,
       badge: 'bg-blue-100 dark:bg-blue-950/50 text-blue-900 dark:text-blue-300 border border-blue-300',
       effectTa: 'மத்திம பலன், தினசரி பணிகள், முயற்சி, பிரயாணம்',
+      effectEn: 'Moderate outcome, routine tasks, effort, travel',
       isAuspicious: false
     },
     thuyil: {
@@ -8351,6 +8605,7 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
       potencyVal: 25,
       badge: 'bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700',
       effectTa: 'குறைந்த பலன், அமைதி, தியானம், முக்கிய காரியங்களைத் தள்ளிப்போடவும்',
+      effectEn: 'Low outcome, rest, meditation, postpone crucial affairs',
       isAuspicious: false
     },
     saavu: {
@@ -8361,6 +8616,7 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
       potencyVal: 0,
       badge: 'bg-rose-200 dark:bg-rose-900/60 text-rose-950 dark:text-rose-200 border border-rose-500 font-black',
       effectTa: 'படுபக்ஷி / அபாய காலம், இழப்பு, தோல்வி (முற்றிலும் தவிர்க்கவும்)',
+      effectEn: 'Deadly period, risk, losses, failure (Avoid completely)',
       isAuspicious: false
     }
   };
@@ -8386,12 +8642,22 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
     birdIdx = krishnaMap[group];
   }
 
+  const NAKSHATRAS_EN = [
+    'Ashwini', 'Bharani', 'Krittika', 'Rohini', 'Mrigashira',
+    'Ardra', 'Punarvasu', 'Pushya', 'Ashlesha', 'Magha',
+    'Purva Phalguni', 'Uttara Phalguni', 'Hasta', 'Chitra', 'Swati',
+    'Vishakha', 'Anuradha', 'Jyeshtha', 'Mula', 'Purva Ashadha',
+    'Uttara Ashadha', 'Shravana', 'Dhanishta', 'Shatabhisha', 'Purva Bhadrapada', 'Uttara Bhadrapada', 'Revati'
+  ];
+
   const birthBird = {
     ...BIRDS[birdIdx],
     nakshatraIdx: nakIdx,
     nakshatraNameTa: NAKSHATRAS_TA[nakIdx] || '',
+    nakshatraNameEn: NAKSHATRAS_EN[nakIdx] || '',
     isSukla,
-    pakshaTa: isSukla ? 'வளர்பிறை (சுக்ல பக்ஷம்)' : 'தேய்பிறை (கிருஷ்ண பக்ஷம்)'
+    pakshaTa: isSukla ? 'வளர்பிறை' : 'தேய்பிறை',
+    pakshaEn: isSukla ? 'Waxing Moon (Shukla Paksha)' : 'Waning Moon (Krishna Paksha)'
   };
 
   // 7 Weekdays Master Schedule
@@ -8487,7 +8753,9 @@ export function computePanchaPakshiData(moonLon, sunLon, birthDetails = {}) {
       dayYamams,
       nightYamams,
       goldenHoursTa: goldenDayYamams.map(g => `${g.timeSlot} (${g.ta})`).join(', ') || 'இல்லை',
-      saavuHoursTa: saavuYamams.map(s => `${s.timeSlot}`).join(', ') || 'இல்லை'
+      goldenHoursEn: goldenDayYamams.map(g => `${g.timeSlot} (${g.en})`).join(', ') || 'None',
+      saavuHoursTa: saavuYamams.map(s => `${s.timeSlot}`).join(', ') || 'இல்லை',
+      saavuHoursEn: saavuYamams.map(s => `${s.timeSlot}`).join(', ') || 'None'
     };
   });
 
@@ -8545,9 +8813,27 @@ export function computePasakarBodhakarTaraData(moonNakIdx = 0, planetRows = []) 
     'உத்திராடம்', 'திருவோணம்', 'அவிட்டம்', 'சதயம்', 'பூரட்டாதி', 'உத்திரட்டாதி', 'ரேவதி'
   ];
 
-  const RASHI_NAMES = [
-    'மேஷம்', 'ரிஷபம்', 'மிதுனம்', 'கடகம்', 'சிம்மம்', 'கன்னி',
-    'துலாம்', 'விருச்சிகம்', 'தனுசு', 'மகரம்', 'கும்பம்', 'மீனம்'
+  const NAKSHATRAS_EN = [
+    'Ashwini', 'Bharani', 'Krittika', 'Rohini', 'Mrigashira',
+    'Ardra', 'Punarvasu', 'Pushya', 'Ashlesha', 'Magha',
+    'Purva Phalguni', 'Uttara Phalguni', 'Hasta', 'Chitra', 'Swati',
+    'Vishakha', 'Anuradha', 'Jyeshtha', 'Mula', 'Purva Ashadha',
+    'Uttara Ashadha', 'Shravana', 'Dhanishta', 'Shatabhisha', 'Purva Bhadrapada', 'Uttara Bhadrapada', 'Revati'
+  ];
+
+  const RASHI_NAMES_BILINGUAL = [
+    { ta: 'மேஷம்', en: 'Aries' },
+    { ta: 'ரிஷபம்', en: 'Taurus' },
+    { ta: 'மிதுனம்', en: 'Gemini' },
+    { ta: 'கடகம்', en: 'Cancer' },
+    { ta: 'சிம்மம்', en: 'Leo' },
+    { ta: 'கன்னி', en: 'Virgo' },
+    { ta: 'துலாம்', en: 'Libra' },
+    { ta: 'விருச்சிகம்', en: 'Scorpio' },
+    { ta: 'தனுசு', en: 'Sagittarius' },
+    { ta: 'மகரம்', en: 'Capricorn' },
+    { ta: 'கும்பம்', en: 'Aquarius' },
+    { ta: 'மீனம்', en: 'Pisces' }
   ];
 
   const planetMap = {};
@@ -8555,205 +8841,351 @@ export function computePasakarBodhakarTaraData(moonNakIdx = 0, planetRows = []) 
     if (p && p.id) planetMap[p.id] = p;
   });
 
-  const getPlanetRasi = (pId) => {
+  const getPlanetRasiBilingual = (pId) => {
     const p = planetMap[pId];
-    if (!p) return '';
-    return RASHI_NAMES[p.rasi] || '';
+    if (!p) return { ta: '', en: '' };
+    return RASHI_NAMES_BILINGUAL[p.rasi] || { ta: '', en: '' };
   };
 
-  // 1. Classical Pasakar - Bodhakar - Karagar - Vedhakar Table (Page 31)
   const pasakarRows = [
     {
       id: 'sun',
       graha: 'சூரியன்',
+      grahaTa: 'சூரியன்',
       grahaEn: 'Sun',
       pasakar: 'சனி',
+      pasakarTa: 'சனி',
+      pasakarEn: 'Saturn',
       pothakar: 'செவ்வாய்',
+      pothakarTa: 'செவ்வாய்',
+      pothakarEn: 'Mars',
       karakar: 'குரு',
+      karakarTa: 'குரு',
+      karakarEn: 'Jupiter',
       vedhakar: 'சுக்கிரன்',
-      rasi: getPlanetRasi('sun')
+      vedhakarTa: 'சுக்கிரன்',
+      vedhakarEn: 'Venus',
+      rasi: getPlanetRasiBilingual('sun').ta,
+      rasiTa: getPlanetRasiBilingual('sun').ta,
+      rasiEn: getPlanetRasiBilingual('sun').en
     },
     {
       id: 'moon',
       graha: 'சந்திரன்',
+      grahaTa: 'சந்திரன்',
       grahaEn: 'Moon',
       pasakar: 'சுக்கிரன்',
+      pasakarTa: 'சுக்கிரன்',
+      pasakarEn: 'Venus',
       pothakar: 'செவ்வாய்',
+      pothakarTa: 'செவ்வாய்',
+      pothakarEn: 'Mars',
       karakar: 'சனி',
+      karakarTa: 'சனி',
+      karakarEn: 'Saturn',
       vedhakar: 'சூரியன்',
-      rasi: getPlanetRasi('moon')
+      vedhakarTa: 'சூரியன்',
+      vedhakarEn: 'Sun',
+      rasi: getPlanetRasiBilingual('moon').ta,
+      rasiTa: getPlanetRasiBilingual('moon').ta,
+      rasiEn: getPlanetRasiBilingual('moon').en
     },
     {
       id: 'mars',
       graha: 'செவ்வாய்',
+      grahaTa: 'செவ்வாய்',
       grahaEn: 'Mars',
       pasakar: 'சூரியன்',
+      pasakarTa: 'சூரியன்',
+      pasakarEn: 'Sun',
       pothakar: 'சந்திரன்',
+      pothakarTa: 'சந்திரன்',
+      pothakarEn: 'Moon',
       karakar: 'சனி',
+      karakarTa: 'சனி',
+      karakarEn: 'Saturn',
       vedhakar: 'புதன்',
-      rasi: getPlanetRasi('mars')
+      vedhakarTa: 'புதன்',
+      vedhakarEn: 'Mercury',
+      rasi: getPlanetRasiBilingual('mars').ta,
+      rasiTa: getPlanetRasiBilingual('mars').ta,
+      rasiEn: getPlanetRasiBilingual('mars').en
     },
     {
       id: 'mercury',
       graha: 'புதன்',
+      grahaTa: 'புதன்',
       grahaEn: 'Mercury',
       pasakar: 'சந்திரன்',
+      pasakarTa: 'சந்திரன்',
+      pasakarEn: 'Moon',
       pothakar: 'குரு',
+      pothakarTa: 'குரு',
+      pothakarEn: 'Jupiter',
       karakar: 'சுக்கிரன்',
+      karakarTa: 'சுக்கிரன்',
+      karakarEn: 'Venus',
       vedhakar: 'செவ்வாய்',
-      rasi: getPlanetRasi('mercury')
+      vedhakarTa: 'செவ்வாய்',
+      vedhakarEn: 'Mars',
+      rasi: getPlanetRasiBilingual('mercury').ta,
+      rasiTa: getPlanetRasiBilingual('mercury').ta,
+      rasiEn: getPlanetRasiBilingual('mercury').en
     },
     {
       id: 'jupiter',
       graha: 'குரு',
+      grahaTa: 'குரு',
       grahaEn: 'Jupiter',
       pasakar: 'சனி',
+      pasakarTa: 'சனி',
+      pasakarEn: 'Saturn',
       pothakar: 'செவ்வாய்',
+      pothakarTa: 'செவ்வாய்',
+      pothakarEn: 'Mars',
       karakar: 'சந்திரன்',
+      karakarTa: 'சந்திரன்',
+      karakarEn: 'Moon',
       vedhakar: 'சூரியன்',
-      rasi: getPlanetRasi('jupiter')
+      vedhakarTa: 'சூரியன்',
+      vedhakarEn: 'Sun',
+      rasi: getPlanetRasiBilingual('jupiter').ta,
+      rasiTa: getPlanetRasiBilingual('jupiter').ta,
+      rasiEn: getPlanetRasiBilingual('jupiter').en
     },
     {
       id: 'venus',
       graha: 'சுக்கிரன்',
+      grahaTa: 'சுக்கிரன்',
       grahaEn: 'Venus',
       pasakar: 'செவ்வாய்',
+      pasakarTa: 'செவ்வாய்',
+      pasakarEn: 'Mars',
       pothakar: 'புதன்',
+      pothakarTa: 'புதன்',
+      pothakarEn: 'Mercury',
       karakar: 'சூரியன்',
+      karakarTa: 'சூரியன்',
+      karakarEn: 'Sun',
       vedhakar: 'சனி',
-      rasi: getPlanetRasi('venus')
+      vedhakarTa: 'சனி',
+      vedhakarEn: 'Saturn',
+      rasi: getPlanetRasiBilingual('venus').ta,
+      rasiTa: getPlanetRasiBilingual('venus').ta,
+      rasiEn: getPlanetRasiBilingual('venus').en
     },
     {
       id: 'saturn',
       graha: 'சனி',
+      grahaTa: 'சனி',
       grahaEn: 'Saturn',
       pasakar: 'சுக்கிரன்',
+      pasakarTa: 'சுக்கிரன்',
+      pasakarEn: 'Venus',
       pothakar: 'சந்திரன்',
+      pothakarTa: 'சந்திரன்',
+      pothakarEn: 'Moon',
       karakar: 'குரு',
+      karakarTa: 'குரு',
+      karakarEn: 'Jupiter',
       vedhakar: 'செவ்வாய்',
-      rasi: getPlanetRasi('saturn')
+      vedhakarTa: 'செவ்வாய்',
+      vedhakarEn: 'Mars',
+      rasi: getPlanetRasiBilingual('saturn').ta,
+      rasiTa: getPlanetRasiBilingual('saturn').ta,
+      rasiEn: getPlanetRasiBilingual('saturn').en
     },
     {
       id: 'rahu',
       graha: 'ராகு',
+      grahaTa: 'ராகு',
       grahaEn: 'Rahu',
       pasakar: 'சனி',
+      pasakarTa: 'சனி',
+      pasakarEn: 'Saturn',
       pothakar: 'குரு',
+      pothakarTa: 'குரு',
+      pothakarEn: 'Jupiter',
       karakar: 'சுக்கிரன்',
+      karakarTa: 'சுக்கிரன்',
+      karakarEn: 'Venus',
       vedhakar: 'செவ்வாய்',
-      rasi: getPlanetRasi('rahu')
+      vedhakarTa: 'செவ்வாய்',
+      vedhakarEn: 'Mars',
+      rasi: getPlanetRasiBilingual('rahu').ta,
+      rasiTa: getPlanetRasiBilingual('rahu').ta,
+      rasiEn: getPlanetRasiBilingual('rahu').en
     },
     {
       id: 'ketu',
       graha: 'கேது',
+      grahaTa: 'கேது',
       grahaEn: 'Ketu',
       pasakar: 'செவ்வாய்',
+      pasakarTa: 'செவ்வாய்',
+      pasakarEn: 'Mars',
       pothakar: 'சுக்கிரன்',
+      pothakarTa: 'சுக்கிரன்',
+      pothakarEn: 'Venus',
       karakar: 'குரு',
+      karakarTa: 'குரு',
+      karakarEn: 'Jupiter',
       vedhakar: 'சனி',
-      rasi: getPlanetRasi('ketu')
+      vedhakarTa: 'சனி',
+      vedhakarEn: 'Saturn',
+      rasi: getPlanetRasiBilingual('ketu').ta,
+      rasiTa: getPlanetRasiBilingual('ketu').ta,
+      rasiEn: getPlanetRasiBilingual('ketu').en
     }
   ];
 
   const definitions = {
-    karakarDesc: 'காரகர்: நிதானமாக, குறைந்த பலனைத் தருபவர்.',
-    vedhakarDesc: 'வேதகர்: தடுத்து விடுவார்.',
-    pothakarDesc: 'போதகர்: நிறையத் தருபவர்.',
-    pasakarDesc: 'பாசகர்: சீக்கிர பலனைத் தருபவர்.'
+    karakarDescTa: 'காரகர்: நிதானமாக, குறைந்த பலனைத் தருபவர்.',
+    karakarDescEn: 'Karagar: Gives measured, steady, lasting fruits.',
+    vedhakarDescTa: 'வேதகர்: தடுத்து விடுவார்.',
+    vedhakarDescEn: 'Vedhakar: Blocks or delays the fruits.',
+    pothakarDescTa: 'போதகர்: நிறையத் தருபவர்.',
+    pothakarDescEn: 'Bodhakar: Showers abundant blessings & wisdom.',
+    pasakarDescTa: 'பாசகர்: சீக்கிர பலனைத் தருபவர்.',
+    pasakarDescEn: 'Pasagar: Quickly ripens and delivers results.'
   };
 
   // 2. Tara Bala Calculations (9 Taras across 3 Cycles)
   const TARA_CONFIG = [
     {
       taraNum: 1,
-      tara: 'ஜன்ம தாரை',
-      quality: 'அதமம்',
+      taraTa: 'ஜன்ம தாரை',
+      taraEn: 'Janma Tara',
+      qualityTa: 'அதமம்',
+      qualityEn: 'Inauspicious',
       qualityBadge: 'bg-rose-100 dark:bg-rose-900/60 text-rose-950 dark:text-rose-200 border border-rose-400 font-semibold',
-      effect: 'உடல் நலம் கவனம், மன உளைச்சல், புதிய சுப காரியங்களைத் தவிர்க்கவும்',
+      effectTa: 'உடல் நலம் கவனம், மன உளைச்சல், புதிய சுப காரியங்களைத் தவிர்க்கவும்',
+      effectEn: 'Health care advised, mental anxiety, avoid new ventures',
       isAuspicious: false
     },
     {
       taraNum: 2,
-      tara: 'சம்பத்து தாரை',
-      quality: 'உத்தமம்',
+      taraTa: 'சம்பத்து தாரை',
+      taraEn: 'Sampath Tara',
+      qualityTa: 'உத்தமம்',
+      qualityEn: 'Auspicious',
       qualityBadge: 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-300 border border-emerald-400 font-bold',
-      effect: 'தன லாபம், செல்வம் பெருகும், வியாபாரம், ஒப்பந்தங்கள் செய்ய மிக நன்று',
+      effectTa: 'தன லாபம், செல்வம் பெருகும், வியாபாரம், ஒப்பந்தங்கள் செய்ய மிக நன்று',
+      effectEn: 'Wealth gain, financial prosperity, business deals highly favorable',
       isAuspicious: true
     },
     {
       taraNum: 3,
-      tara: 'விபத்து தாரை',
-      quality: 'அதமம்',
+      taraTa: 'விபத்து தாரை',
+      taraEn: 'Vipat Tara',
+      qualityTa: 'அதமம்',
+      qualityEn: 'Inauspicious',
       qualityBadge: 'bg-rose-100 dark:bg-rose-900/60 text-rose-950 dark:text-rose-200 border border-rose-400 font-semibold',
-      effect: 'விபத்து, நஷ்டம், விரயம், புதிய முதலீடு மற்றும் பயணங்களைத் தவிர்க்கவும்',
+      effectTa: 'விபத்து, நஷ்டம், விரயம், புதிய முதலீடு மற்றும் பயணங்களைத் தவிர்க்கவும்',
+      effectEn: 'Mishaps, financial losses, avoid travel & new investments',
       isAuspicious: false
     },
     {
       taraNum: 4,
-      tara: 'க்ஷேம தாரை',
-      quality: 'உத்தமம்',
+      taraTa: 'க்ஷேம தாரை',
+      taraEn: 'Kshema Tara',
+      qualityTa: 'உத்தமம்',
+      qualityEn: 'Auspicious',
       qualityBadge: 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-300 border border-emerald-400 font-bold',
-      effect: 'பாதுகாப்பு, சௌக்கியம், ஆரோக்கியம், சுப காரியங்கள் செய்ய நன்று',
+      effectTa: 'பாதுகாப்பு, சௌக்கியம், ஆரோக்கியம், சுப காரியங்கள் செய்ய நன்று',
+      effectEn: 'Security, well-being, health recovery, excellent for good deeds',
       isAuspicious: true
     },
     {
       taraNum: 5,
-      tara: 'பிரத்யக்கு தாரை',
-      quality: 'அதமம்',
+      taraTa: 'பிரத்யக்கு தாரை',
+      taraEn: 'Pratyak Tara',
+      qualityTa: 'அதமம்',
+      qualityEn: 'Inauspicious',
       qualityBadge: 'bg-rose-100 dark:bg-rose-900/60 text-rose-950 dark:text-rose-200 border border-rose-400 font-semibold',
-      effect: 'எதிர்ப்பு, விரோதம், வழக்கு, வாக்குவாதங்கள் உண்டாகும்',
+      effectTa: 'எதிர்ப்பு, விரோதம், வழக்கு, வாக்குவாதங்கள் உண்டாகும்',
+      effectEn: 'Obstacles, resistance, litigation, disputes likely',
       isAuspicious: false
     },
     {
       taraNum: 6,
-      tara: 'சாதக தாரை',
-      quality: 'உத்தமம்',
+      taraTa: 'சாதக தாரை',
+      taraEn: 'Sadhaka Tara',
+      qualityTa: 'உத்தமம்',
+      qualityEn: 'Auspicious',
       qualityBadge: 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-300 border border-emerald-400 font-bold',
-      effect: 'காரிய சித்தி, நினைத்த காரியம் வெற்றி பெறுதல், வேலை வாய்ப்பு, பதவி உயர்வு',
+      effectTa: 'காரிய சித்தி, நினைத்த காரியம் வெற்றி பெறுதல், வேலை வாய்ப்பு, பதவி உயர்வு',
+      effectEn: 'Success in undertakings, accomplishment of goals, job opportunities',
       isAuspicious: true
     },
     {
       taraNum: 7,
-      tara: 'வத தாரை',
-      quality: 'அதமம்',
+      taraTa: 'வத தாரை',
+      taraEn: 'Vadha Tara',
+      qualityTa: 'அதமம்',
+      qualityEn: 'Inauspicious',
       qualityBadge: 'bg-rose-200 dark:bg-rose-900/80 text-rose-950 dark:text-rose-100 border border-rose-500 font-black',
-      effect: 'கடுமையான ஆபத்து, நஷ்டம், காரியங்களை முற்றிலும் தவிர்க்கவும்',
+      effectTa: 'கடுமையான ஆபத்து, நஷ்டம், காரியங்களை முற்றிலும் தவிர்க்கவும்',
+      effectEn: 'Severe risks, distress, avoid critical affairs completely',
       isAuspicious: false
     },
     {
       taraNum: 8,
-      tara: 'மைத்ர தாரை',
-      quality: 'உத்தமம்',
+      taraTa: 'மைத்ர தாரை',
+      taraEn: 'Mitra Tara',
+      qualityTa: 'உத்தமம்',
+      qualityEn: 'Auspicious',
       qualityBadge: 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-900 dark:text-emerald-300 border border-emerald-400 font-bold',
-      effect: 'நட்பு, உதவி, சமாதானம், சுப நிகழ்ச்சிகள் நடத்த உகந்தது',
+      effectTa: 'நட்பு, உதவி, சமாதானம், சுப நிகழ்ச்சிகள் நடத்த உகந்தது',
+      effectEn: 'Friendship, support, peace, auspicious occasions recommended',
       isAuspicious: true
     },
     {
       taraNum: 9,
-      tara: 'பரம மைத்ர தாரை',
-      quality: 'உத்தமம்',
+      taraTa: 'பரம மைத்ர தாரை',
+      taraEn: 'Parama Mitra Tara',
+      qualityTa: 'உத்தமம்',
+      qualityEn: 'Auspicious',
       qualityBadge: 'bg-emerald-200 dark:bg-emerald-900 text-emerald-950 dark:text-emerald-100 border border-emerald-500 font-black',
-      effect: 'பேரின்பம், உன்னத நட்பு, பெருவெற்றி, அனைத்து சுப காரியங்களுக்கும் மிக உத்தமம்',
+      effectTa: 'பேரின்பம், உன்னத நட்பு, பெருவெற்றி, அனைத்து சுப காரியங்களுக்கும் மிக உத்தமம்',
+      effectEn: 'Great bliss, supreme companionship, great triumph in all deeds',
       isAuspicious: true
     }
   ];
 
   const safeNakIdx = (moonNakIdx !== undefined && moonNakIdx >= 0 && moonNakIdx < 27) ? moonNakIdx : 0;
   const taraRows = TARA_CONFIG.map((cfg, idx) => {
-    const s1 = NAKSHATRAS_TA[(safeNakIdx + idx) % 27];
-    const s2 = NAKSHATRAS_TA[(safeNakIdx + idx + 9) % 27];
-    const s3 = NAKSHATRAS_TA[(safeNakIdx + idx + 18) % 27];
+    const s1Ta = NAKSHATRAS_TA[(safeNakIdx + idx) % 27];
+    const s2Ta = NAKSHATRAS_TA[(safeNakIdx + idx + 9) % 27];
+    const s3Ta = NAKSHATRAS_TA[(safeNakIdx + idx + 18) % 27];
+    const s1En = NAKSHATRAS_EN[(safeNakIdx + idx) % 27];
+    const s2En = NAKSHATRAS_EN[(safeNakIdx + idx + 9) % 27];
+    const s3En = NAKSHATRAS_EN[(safeNakIdx + idx + 18) % 27];
+
     return {
       taraNum: cfg.taraNum,
-      tara: cfg.tara,
-      quality: cfg.quality,
+      tara: cfg.taraTa,
+      taraTa: cfg.taraTa,
+      taraEn: cfg.taraEn,
+      quality: cfg.qualityTa,
+      qualityTa: cfg.qualityTa,
+      qualityEn: cfg.qualityEn,
       qualityBadge: cfg.qualityBadge,
-      effect: cfg.effect,
+      effect: cfg.effectTa,
+      effectTa: cfg.effectTa,
+      effectEn: cfg.effectEn,
       isAuspicious: cfg.isAuspicious,
-      star1: s1,
-      star2: s2,
-      star3: s3,
-      starsListTa: `${s1}, ${s2}, ${s3}`
+      star1: s1Ta,
+      star1Ta: s1Ta,
+      star1En: s1En,
+      star2: s2Ta,
+      star2Ta: s2Ta,
+      star2En: s2En,
+      star3: s3Ta,
+      star3Ta: s3Ta,
+      star3En: s3En,
+      starsListTa: `${s1Ta}, ${s2Ta}, ${s3Ta}`,
+      starsListEn: `${s1En}, ${s2En}, ${s3En}`
     };
   });
 
@@ -8762,54 +9194,68 @@ export function computePasakarBodhakarTaraData(moonNakIdx = 0, planetRows = []) 
     definitions,
     taraRows,
     birthStarNameTa: NAKSHATRAS_TA[safeNakIdx],
-    auspiciousNote: 'உத்தம வரிசையில் உள்ள நட்சத்திர நாட்களில் அனைத்து விதமான சுப காரியங்களும் செய்யலாம்.'
+    birthStarNameEn: NAKSHATRAS_EN[safeNakIdx],
+    auspiciousNoteTa: 'உத்தம வரிசையில் உள்ள நட்சத்திர நாட்களில் அனைத்து விதமான சுப காரியங்களும் செய்யலாம்.',
+    auspiciousNoteEn: 'All auspicious ceremonies and ventures can be conducted successfully on Uthama Tara days.'
   };
 }
 
-
-/**
- * 17. ஜாதகத்தில் கிரகங்களின் நிலை & கிரகங்களின் பார்வை, சேர்க்கை நிலை
- * Part 1: ஜாதகத்தில் கிரகங்களின் நிலை. (Planetary States & Dignities in Horoscope)
- * Part 2: கிரகங்களின் பார்வை, சேர்க்கை நிலை (Planetary Aspects & Conjunctions Table)
- */
 export function computeDignitiesAspectsSection17(horoInput = {}, allPlanetRows = [], lagnaRasiIdx = 8, isMrM = false) {
-  const RASI_NAMES_TA = [
-    'மேஷம்', 'ரிஷபம்', 'மிதுனம்', 'கடகம்', 'சிம்மம்', 'கன்னி',
-    'துலாம்', 'விருச்சிகம்', 'தனுசு', 'மகரம்', 'கும்பம்', 'மீனம்'
+  const RASI_NAMES_BILINGUAL = [
+    { ta: 'மேஷம்', en: 'Aries' },
+    { ta: 'ரிஷபம்', en: 'Taurus' },
+    { ta: 'மிதுனம்', en: 'Gemini' },
+    { ta: 'கடகம்', en: 'Cancer' },
+    { ta: 'சிம்மம்', en: 'Leo' },
+    { ta: 'கன்னி', en: 'Virgo' },
+    { ta: 'துலாம்', en: 'Libra' },
+    { ta: 'விருச்சிகம்', en: 'Scorpio' },
+    { ta: 'தனுசு', en: 'Sagittarius' },
+    { ta: 'மகரம்', en: 'Capricorn' },
+    { ta: 'கும்பம்', en: 'Aquarius' },
+    { ta: 'மீனம்', en: 'Pisces' }
   ];
-  const GRAHA_NAMES_TA = {
-    sun: 'சூரியன்', moon: 'சந்திரன்', mars: 'செவ்வாய்', mercury: 'புதன்',
-    jupiter: 'குரு', venus: 'சுக்கிரன்', saturn: 'சனி', rahu: 'ராகு', ketu: 'கேது'
+
+  const GRAHA_NAMES_BILINGUAL = {
+    sun: { ta: 'சூரியன்', en: 'Sun' },
+    moon: { ta: 'சந்திரன்', en: 'Moon' },
+    mars: { ta: 'செவ்வாய்', en: 'Mars' },
+    mercury: { ta: 'புதன்', en: 'Mercury' },
+    jupiter: { ta: 'குரு', en: 'Jupiter' },
+    venus: { ta: 'சுக்கிரன்', en: 'Venus' },
+    saturn: { ta: 'சனி', en: 'Saturn' },
+    rahu: { ta: 'ராகு', en: 'Rahu' },
+    ketu: { ta: 'கேது', en: 'Ketu' }
   };
 
   if (isMrM) {
     const dignitiesTable = [
-      { label: 'ஆட்சி நிலை', val: '---', badgeClass: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300' },
-      { label: 'உச்ச நிலை', val: 'செவ்வாய், சனி', badgeClass: 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-200' },
-      { label: 'நீச நிலை', val: '---', badgeClass: 'bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300' },
-      { label: 'நட்பு நிலை', val: 'சூரியன், சந்திரன், குரு', badgeClass: 'bg-green-50 dark:bg-green-950/40 text-green-800 dark:text-green-300' },
-      { label: 'சம நிலை', val: 'புதன்', badgeClass: 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300' },
-      { label: 'பகை நிலை', val: 'சுக்கிரன்', badgeClass: 'bg-rose-100 dark:bg-rose-900/60 text-rose-900 dark:text-rose-200' },
-      { label: 'கேந்திர நிலை', val: 'சனி, சந்திரன்', badgeClass: 'bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300' },
-      { label: 'திரிகோண நிலை', val: 'செவ்வாய், புதன், சுக்கிரன்', badgeClass: 'bg-purple-50 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300' },
-      { label: 'வக்ர நிலை', val: '---', badgeClass: 'bg-orange-50 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300' },
-      { label: 'அஸ்தமன நிலை', val: 'கேது', badgeClass: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200' },
-      { label: 'பரிவர்த்தனை நிலை', val: 'சனி - சுக்கிரன் (துலாம் - மகரம்)', badgeClass: 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-800 dark:text-indigo-300' },
-      { label: 'வர்க்கோத்தம நிலை', val: 'சுக்கிரன்', badgeClass: 'bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300' },
-      { label: 'ஸ்தம்பன நிலை', val: '---', badgeClass: 'bg-stone-50 dark:bg-stone-900 text-stone-700 dark:text-stone-300' },
-      { label: 'மூலத்திரிகோண நிலை', val: '---', badgeClass: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300' }
+      { label: 'ஆட்சி நிலை', labelTa: 'ஆட்சி நிலை', labelEn: 'Own Sign', val: '---', valTa: '---', valEn: '---', badgeClass: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300' },
+      { label: 'உச்ச நிலை', labelTa: 'உச்ச நிலை', labelEn: 'Exaltation', val: 'செவ்வாய், சனி', valTa: 'செவ்வாய், சனி', valEn: 'Mars, Saturn', badgeClass: 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-200' },
+      { label: 'நீச நிலை', labelTa: 'நீச நிலை', labelEn: 'Debilitation', val: '---', valTa: '---', valEn: '---', badgeClass: 'bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300' },
+      { label: 'நட்பு நிலை', labelTa: 'நட்பு நிலை', labelEn: 'Friendly Sign', val: 'சூரியன், சந்திரன், குரு', valTa: 'சூரியன், சந்திரன், குரு', valEn: 'Sun, Moon, Jupiter', badgeClass: 'bg-green-50 dark:bg-green-950/40 text-green-800 dark:text-green-300' },
+      { label: 'சம நிலை', labelTa: 'சம நிலை', labelEn: 'Neutral Sign', val: 'புதன்', valTa: 'புதன்', valEn: 'Mercury', badgeClass: 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300' },
+      { label: 'பகை நிலை', labelTa: 'பகை நிலை', labelEn: 'Inimical Sign', val: 'சுக்கிரன்', valTa: 'சுக்கிரன்', valEn: 'Venus', badgeClass: 'bg-rose-100 dark:bg-rose-900/60 text-rose-900 dark:text-rose-200' },
+      { label: 'கேந்திர நிலை', labelTa: 'கேந்திர நிலை', labelEn: 'Kendra (1, 4, 7, 10)', val: 'சனி, சந்திரன்', valTa: 'சனி, சந்திரன்', valEn: 'Saturn, Moon', badgeClass: 'bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300' },
+      { label: 'திரிகோண நிலை', labelTa: 'திரிகோண நிலை', labelEn: 'Trikona (1, 5, 9)', val: 'செவ்வாய், புதன், சுக்கிரன்', valTa: 'செவ்வாய், புதன், சுக்கிரன்', valEn: 'Mars, Mercury, Venus', badgeClass: 'bg-purple-50 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300' },
+      { label: 'வக்ர நிலை', labelTa: 'வக்ர நிலை', labelEn: 'Retrograde', val: '---', valTa: '---', valEn: '---', badgeClass: 'bg-orange-50 dark:bg-orange-800/40 text-orange-800 dark:text-orange-300' },
+      { label: 'அஸ்தமன நிலை', labelTa: 'அஸ்தமன நிலை', labelEn: 'Combustion', val: 'கேது', valTa: 'கேது', valEn: 'Ketu', badgeClass: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200' },
+      { label: 'பரிவர்த்தனை நிலை', labelTa: 'பரிவர்த்தனை நிலை', labelEn: 'Parivartana', val: 'சனி - சுக்கிரன் (துலாம் - மகரம்)', valTa: 'சனி - சுக்கிரன் (துலாம் - மகரம்)', valEn: 'Saturn - Venus (Libra - Capricorn)', badgeClass: 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-800 dark:text-indigo-300' },
+      { label: 'வர்க்கோத்தம நிலை', labelTa: 'வர்க்கோத்தம நிலை', labelEn: 'Vargottama', val: 'சுக்கிரன்', valTa: 'சுக்கிரன்', valEn: 'Venus', badgeClass: 'bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300' },
+      { label: 'ஸ்தம்பன நிலை', labelTa: 'ஸ்தம்பன நிலை', labelEn: 'Stationary', val: '---', valTa: '---', valEn: '---', badgeClass: 'bg-stone-50 dark:bg-stone-900 text-stone-700 dark:text-stone-300' },
+      { label: 'மூலத்திரிகோண நிலை', labelTa: 'மூலத்திரிகோண நிலை', labelEn: 'Moolatrikona', val: '---', valTa: '---', valEn: '---', badgeClass: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300' }
     ];
 
     const aspectsTable = [
-      { graha: 'சூரியன்', rasi: 'தனுசு', status: 'நட்பு', statusType: 'mitra', aspectsBy: 'சந்திரன், கேது', conjunctions: 'கேது' },
-      { graha: 'சந்திரன்', rasi: 'சிம்மம்', status: 'நட்பு', statusType: 'mitra', aspectsBy: 'சூரியன், ராகு', conjunctions: '---' },
-      { graha: 'செவ்வாய்', rasi: 'மகரம்', status: 'உச்சம்', statusType: 'utcha', aspectsBy: 'சனி, ராகு', conjunctions: 'புதன், சுக்கிரன்' },
-      { graha: 'புதன்', rasi: 'மகரம்', status: 'சமம்', statusType: 'sama', aspectsBy: 'சனி', conjunctions: 'செவ்வாய், சுக்கிரன்' },
-      { graha: 'குரு', rasi: 'விருச்சிகம்', status: 'நட்பு', statusType: 'mitra', aspectsBy: 'ராகு, கேது', conjunctions: '---' },
-      { graha: 'சுக்கிரன்', rasi: 'மகரம்', status: 'பகை', statusType: 'satru', aspectsBy: 'சனி', conjunctions: 'செவ்வாய், புதன்' },
-      { graha: 'சனி', rasi: 'துலாம்', status: 'உச்சம்', statusType: 'utcha', aspectsBy: 'செவ்வாய், குரு', conjunctions: '---' },
-      { graha: 'ராகு', rasi: 'மிதுனம்', status: 'நட்பு', statusType: 'mitra', aspectsBy: 'சூரியன், குரு', conjunctions: '---' },
-      { graha: 'கேது', rasi: 'தனுசு', status: 'நட்பு', statusType: 'mitra', aspectsBy: 'சந்திரன், குரு', conjunctions: 'சூரியன்' }
+      { graha: 'சூரியன்', grahaTa: 'சூரியன்', grahaEn: 'Sun', rasi: 'தனுசு', rasiTa: 'தனுசு', rasiEn: 'Sagittarius', status: 'நட்பு', statusTa: 'நட்பு', statusEn: 'Friend', statusType: 'mitra', aspectsBy: 'சந்திரன், கேது', aspectsByTa: 'சந்திரன், கேது', aspectsByEn: 'Moon, Ketu', conjunctions: 'கேது', conjunctionsTa: 'கேது', conjunctionsEn: 'Ketu' },
+      { graha: 'சந்திரன்', grahaTa: 'சந்திரன்', grahaEn: 'Moon', rasi: 'சிம்மம்', rasiTa: 'சிம்மம்', rasiEn: 'Leo', status: 'நட்பு', statusTa: 'நட்பு', statusEn: 'Friend', statusType: 'mitra', aspectsBy: 'சூரியன், ராகு', aspectsByTa: 'சூரியன், ராகு', aspectsByEn: 'Sun, Rahu', conjunctions: '---', conjunctionsTa: '---', conjunctionsEn: '---' },
+      { graha: 'செவ்வாய்', grahaTa: 'செவ்வாய்', grahaEn: 'Mars', rasi: 'மகரம்', rasiTa: 'மகரம்', rasiEn: 'Capricorn', status: 'உச்சம்', statusTa: 'உச்சம்', statusEn: 'Exalted', statusType: 'utcha', aspectsBy: 'சனி, ராகு', aspectsByTa: 'சனி, ராகு', aspectsByEn: 'Saturn, Rahu', conjunctions: 'புதன், சுக்கிரன்', conjunctionsTa: 'புதன், சுக்கிரன்', conjunctionsEn: 'Mercury, Venus' },
+      { graha: 'புதன்', grahaTa: 'புதன்', grahaEn: 'Mercury', rasi: 'மகரம்', rasiTa: 'மகரம்', rasiEn: 'Capricorn', status: 'சமம்', statusTa: 'சமம்', statusEn: 'Neutral', statusType: 'sama', aspectsBy: 'சனி', aspectsByTa: 'சனி', aspectsByEn: 'Saturn', conjunctions: 'செவ்வாய், சுக்கிரன்', conjunctionsTa: 'செவ்வாய், சுக்கிரன்', conjunctionsEn: 'Mars, Venus' },
+      { graha: 'குரு', grahaTa: 'குரு', grahaEn: 'Jupiter', rasi: 'விருச்சிகம்', rasiTa: 'விருச்சிகம்', rasiEn: 'Scorpio', status: 'நட்பு', statusTa: 'நட்பு', statusEn: 'Friend', statusType: 'mitra', aspectsBy: 'ராகு, கேது', aspectsByTa: 'ராகு, கேது', aspectsByEn: 'Rahu, Ketu', conjunctions: '---', conjunctionsTa: '---', conjunctionsEn: '---' },
+      { graha: 'சுக்கிரன்', grahaTa: 'சுக்கிரன்', grahaEn: 'Venus', rasi: 'மகரம்', rasiTa: 'மகரம்', rasiEn: 'Capricorn', status: 'பகை', statusTa: 'பகை', statusEn: 'Enemy', statusType: 'satru', aspectsBy: 'சனி', aspectsByTa: 'சனி', aspectsByEn: 'Saturn', conjunctions: 'செவ்வாய், புதன்', conjunctionsTa: 'செவ்வாய், புதன்', conjunctionsEn: 'Mars, Mercury' },
+      { graha: 'சனி', grahaTa: 'சனி', grahaEn: 'Saturn', rasi: 'துலாம்', rasiTa: 'துலாம்', rasiEn: 'Libra', status: 'உச்சம்', statusTa: 'உச்சம்', statusEn: 'Exalted', statusType: 'utcha', aspectsBy: 'செவ்வாய், குரு', aspectsByTa: 'செவ்வாய், குரு', aspectsByEn: 'Mars, Jupiter', conjunctions: '---', conjunctionsTa: '---', conjunctionsEn: '---' },
+      { graha: 'ராகு', grahaTa: 'ராகு', grahaEn: 'Rahu', rasi: 'மிதுனம்', rasiTa: 'மிதுனம்', rasiEn: 'Gemini', status: 'நட்பு', statusTa: 'நட்பு', statusEn: 'Friend', statusType: 'mitra', aspectsBy: 'சூரியன், குரு', aspectsByTa: 'சூரியன், குரு', aspectsByEn: 'Sun, Jupiter', conjunctions: '---', conjunctionsTa: '---', conjunctionsEn: '---' },
+      { graha: 'கேது', grahaTa: 'கேது', grahaEn: 'Ketu', rasi: 'தனுசு', rasiTa: 'தனுசு', rasiEn: 'Sagittarius', status: 'நட்பு', statusTa: 'நட்பு', statusEn: 'Friend', statusType: 'mitra', aspectsBy: 'சந்திரன், குரு', aspectsByTa: 'சந்திரன், குரு', aspectsByEn: 'Moon, Jupiter', conjunctions: 'சூரியன்', conjunctionsTa: 'சூரியன்', conjunctionsEn: 'Sun' }
     ];
 
     return { dignitiesTable, aspectsTable };
@@ -8856,8 +9302,18 @@ export function computeDignitiesAspectsSection17(horoInput = {}, allPlanetRows =
     venus: [4, 3], saturn: [4, 3, 0, 7], rahu: [4, 3, 0, 7], ketu: [1, 6, 2, 5]
   };
 
-  const aatchi = [], utcha = [], neecha = [], natpu = [], samam = [], pagai = [];
-  const kendra = [], trikona = [], vakra = [], asthamana = [], vargottama = [], moolatrikona = [];
+  const aatchiTa = [], aatchiEn = [];
+  const utchaTa = [], utchaEn = [];
+  const neechaTa = [], neechaEn = [];
+  const natpuTa = [], natpuEn = [];
+  const samamTa = [], samamEn = [];
+  const pagaiTa = [], pagaiEn = [];
+  const kendraTa = [], kendraEn = [];
+  const trikonaTa = [], trikonaEn = [];
+  const vakraTa = [], vakraEn = [];
+  const asthamanaTa = [], asthamanaEn = [];
+  const vargottamaTa = [], vargottamaEn = [];
+  const moolatrikonaTa = [], moolatrikonaEn = [];
 
   const sunLon = planetLons.sun || 0;
   const grahaKeys = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn', 'rahu', 'ketu'];
@@ -8865,36 +9321,39 @@ export function computeDignitiesAspectsSection17(horoInput = {}, allPlanetRows =
   for (const g of grahaKeys) {
     const s = planetSigns[g];
     if (s === undefined) continue;
-    const name = GRAHA_NAMES_TA[g] || g;
+    const nameTa = GRAHA_NAMES_BILINGUAL[g]?.ta || g;
+    const nameEn = GRAHA_NAMES_BILINGUAL[g]?.en || g;
     const isR = planetRetro[g];
-    const dispName = isR ? `${name}(வ)` : name;
+    const dispNameTa = isR ? `${nameTa}(வ)` : nameTa;
+    const dispNameEn = isR ? `${nameEn}(R)` : nameEn;
 
     const diffFromLagna = ((s - lagnaRasiIdx + 12) % 12) + 1;
-    if ([1, 4, 7, 10].includes(diffFromLagna)) kendra.push(dispName);
-    if ([1, 5, 9].includes(diffFromLagna)) trikona.push(dispName);
-    if (isR) vakra.push(dispName);
+    if ([1, 4, 7, 10].includes(diffFromLagna)) { kendraTa.push(dispNameTa); kendraEn.push(dispNameEn); }
+    if ([1, 5, 9].includes(diffFromLagna)) { trikonaTa.push(dispNameTa); trikonaEn.push(dispNameEn); }
+    if (isR) { vakraTa.push(dispNameTa); vakraEn.push(dispNameEn); }
 
     // Combustion with Sun
     if (g !== 'sun' && g !== 'rahu' && g !== 'ketu') {
       const dist = Math.abs((planetLons[g] || 0) - sunLon);
       const minDist = Math.min(dist, 360 - dist);
-      if (minDist <= 14) asthamana.push(dispName);
+      if (minDist <= 14) { asthamanaTa.push(dispNameTa); asthamanaEn.push(dispNameEn); }
     }
 
-    if (s === utchaSigns[g]) utcha.push(dispName);
-    else if (s === neechaSigns[g]) neecha.push(dispName);
-    else if ((ownSigns[g] || []).includes(s)) aatchi.push(dispName);
-    else if ((friendSigns[g] || []).includes(s)) natpu.push(dispName);
-    else if ((enemySigns[g] || []).includes(s)) pagai.push(dispName);
-    else samam.push(dispName);
+    if (s === utchaSigns[g]) { utchaTa.push(dispNameTa); utchaEn.push(dispNameEn); }
+    else if (s === neechaSigns[g]) { neechaTa.push(dispNameTa); neechaEn.push(dispNameEn); }
+    else if ((ownSigns[g] || []).includes(s)) { aatchiTa.push(dispNameTa); aatchiEn.push(dispNameEn); }
+    else if ((friendSigns[g] || []).includes(s)) { natpuTa.push(dispNameTa); natpuEn.push(dispNameEn); }
+    else if ((enemySigns[g] || []).includes(s)) { pagaiTa.push(dispNameTa); pagaiEn.push(dispNameEn); }
+    else { samamTa.push(dispNameTa); samamEn.push(dispNameEn); }
 
-    if (s === moolaSigns[g]) moolatrikona.push(dispName);
+    if (s === moolaSigns[g]) { moolatrikonaTa.push(dispNameTa); moolatrikonaEn.push(dispNameEn); }
     const d9Sign = getD9(planetLons[g] || 0);
-    if (d9Sign === s) vargottama.push(dispName);
+    if (d9Sign === s) { vargottamaTa.push(dispNameTa); vargottamaEn.push(dispNameEn); }
   }
 
   // Parivartana check (mutual sign exchange)
-  const parivartanaPairs = [];
+  const parivartanaPairsTa = [];
+  const parivartanaPairsEn = [];
   const signLords = [
     'mars', 'venus', 'mercury', 'moon', 'sun', 'mercury',
     'venus', 'mars', 'jupiter', 'saturn', 'saturn', 'jupiter'
@@ -8905,27 +9364,28 @@ export function computeDignitiesAspectsSection17(horoInput = {}, allPlanetRows =
       const s1 = planetSigns[g1], s2 = planetSigns[g2];
       if (s1 !== undefined && s2 !== undefined && s1 !== s2) {
         if (signLords[s1] === g2 && signLords[s2] === g1) {
-          parivartanaPairs.push(`${GRAHA_NAMES_TA[g1]} - ${GRAHA_NAMES_TA[g2]} (${RASI_NAMES_TA[s1]} - ${RASI_NAMES_TA[s2]})`);
+          parivartanaPairsTa.push(`${GRAHA_NAMES_BILINGUAL[g1].ta} - ${GRAHA_NAMES_BILINGUAL[g2].ta} (${RASI_NAMES_BILINGUAL[s1].ta} - ${RASI_NAMES_BILINGUAL[s2].ta})`);
+          parivartanaPairsEn.push(`${GRAHA_NAMES_BILINGUAL[g1].en} - ${GRAHA_NAMES_BILINGUAL[g2].en} (${RASI_NAMES_BILINGUAL[s1].en} - ${RASI_NAMES_BILINGUAL[s2].en})`);
         }
       }
     }
   }
 
   const dignitiesTable = [
-    { label: 'ஆட்சி நிலை', val: aatchi.join(', ') || '---', badgeClass: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300' },
-    { label: 'உச்ச நிலை', val: utcha.join(', ') || '---', badgeClass: 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-200' },
-    { label: 'நீச நிலை', val: neecha.join(', ') || '---', badgeClass: 'bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300' },
-    { label: 'நட்பு நிலை', val: natpu.join(', ') || '---', badgeClass: 'bg-green-50 dark:bg-green-950/40 text-green-800 dark:text-green-300' },
-    { label: 'சம நிலை', val: samam.join(', ') || '---', badgeClass: 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300' },
-    { label: 'பகை நிலை', val: pagai.join(', ') || '---', badgeClass: 'bg-rose-100 dark:bg-rose-900/60 text-rose-900 dark:text-rose-200' },
-    { label: 'கேந்திர நிலை', val: kendra.join(', ') || '---', badgeClass: 'bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300' },
-    { label: 'திரிகோண நிலை', val: trikona.join(', ') || '---', badgeClass: 'bg-purple-50 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300' },
-    { label: 'வக்ர நிலை', val: vakra.join(', ') || '---', badgeClass: 'bg-orange-50 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300' },
-    { label: 'அஸ்தமன நிலை', val: asthamana.join(', ') || '---', badgeClass: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200' },
-    { label: 'பரிவர்த்தனை நிலை', val: parivartanaPairs.join(', ') || '---', badgeClass: 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-800 dark:text-indigo-300' },
-    { label: 'வர்க்கோத்தம நிலை', val: vargottama.join(', ') || '---', badgeClass: 'bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300' },
-    { label: 'ஸ்தம்பன நிலை', val: '---', badgeClass: 'bg-stone-50 dark:bg-stone-900 text-stone-700 dark:text-stone-300' },
-    { label: 'மூலத்திரிகோண நிலை', val: moolatrikona.join(', ') || '---', badgeClass: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300' }
+    { label: 'ஆட்சி நிலை', labelTa: 'ஆட்சி நிலை', labelEn: 'Own Sign', val: aatchiTa.join(', ') || '---', valTa: aatchiTa.join(', ') || '---', valEn: aatchiEn.join(', ') || '---', badgeClass: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300' },
+    { label: 'உச்ச நிலை', labelTa: 'உச்ச நிலை', labelEn: 'Exaltation', val: utchaTa.join(', ') || '---', valTa: utchaTa.join(', ') || '---', valEn: utchaEn.join(', ') || '---', badgeClass: 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-200' },
+    { label: 'நீச நிலை', labelTa: 'நீச நிலை', labelEn: 'Debilitation', val: neechaTa.join(', ') || '---', valTa: neechaTa.join(', ') || '---', valEn: neechaEn.join(', ') || '---', badgeClass: 'bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300' },
+    { label: 'நட்பு நிலை', labelTa: 'நட்பு நிலை', labelEn: 'Friendly Sign', val: natpuTa.join(', ') || '---', valTa: natpuTa.join(', ') || '---', valEn: natpuEn.join(', ') || '---', badgeClass: 'bg-green-50 dark:bg-green-950/40 text-green-800 dark:text-green-300' },
+    { label: 'சம நிலை', labelTa: 'சம நிலை', labelEn: 'Neutral Sign', val: samamTa.join(', ') || '---', valTa: samamTa.join(', ') || '---', valEn: samamEn.join(', ') || '---', badgeClass: 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300' },
+    { label: 'பகை நிலை', labelTa: 'பகை நிலை', labelEn: 'Inimical Sign', val: pagaiTa.join(', ') || '---', valTa: pagaiTa.join(', ') || '---', valEn: pagaiEn.join(', ') || '---', badgeClass: 'bg-rose-100 dark:bg-rose-900/60 text-rose-900 dark:text-rose-200' },
+    { label: 'கேந்திர நிலை', labelTa: 'கேந்திர நிலை', labelEn: 'Kendra (1, 4, 7, 10)', val: kendraTa.join(', ') || '---', valTa: kendraTa.join(', ') || '---', valEn: kendraEn.join(', ') || '---', badgeClass: 'bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300' },
+    { label: 'திரிகோண நிலை', labelTa: 'திரிகோண நிலை', labelEn: 'Trikona (1, 5, 9)', val: trikonaTa.join(', ') || '---', valTa: trikonaTa.join(', ') || '---', valEn: trikonaEn.join(', ') || '---', badgeClass: 'bg-purple-50 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300' },
+    { label: 'வக்ர நிலை', labelTa: 'வக்ர நிலை', labelEn: 'Retrograde', val: vakraTa.join(', ') || '---', valTa: vakraTa.join(', ') || '---', valEn: vakraEn.join(', ') || '---', badgeClass: 'bg-orange-50 dark:bg-orange-800/40 text-orange-800 dark:text-orange-300' },
+    { label: 'அஸ்தமன நிலை', labelTa: 'அஸ்தமன நிலை', labelEn: 'Combustion', val: asthamanaTa.join(', ') || '---', valTa: asthamanaTa.join(', ') || '---', valEn: asthamanaEn.join(', ') || '---', badgeClass: 'bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200' },
+    { label: 'பரிவர்த்தனை நிலை', labelTa: 'பரிவர்த்தனை நிலை', labelEn: 'Parivartana', val: parivartanaPairsTa.join(', ') || '---', valTa: parivartanaPairsTa.join(', ') || '---', valEn: parivartanaPairsEn.join(', ') || '---', badgeClass: 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-800 dark:text-indigo-300' },
+    { label: 'வர்க்கோத்தம நிலை', labelTa: 'வர்க்கோத்தம நிலை', labelEn: 'Vargottama', val: vargottamaTa.join(', ') || '---', valTa: vargottamaTa.join(', ') || '---', valEn: vargottamaEn.join(', ') || '---', badgeClass: 'bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300' },
+    { label: 'ஸ்தம்பன நிலை', labelTa: 'ஸ்தம்பன நிலை', labelEn: 'Stationary', val: '---', valTa: '---', valEn: '---', badgeClass: 'bg-stone-50 dark:bg-stone-900 text-stone-700 dark:text-stone-300' },
+    { label: 'மூலத்திரிகோண நிலை', labelTa: 'மூலத்திரிகோண நிலை', labelEn: 'Moolatrikona', val: moolatrikonaTa.join(', ') || '---', valTa: moolatrikonaTa.join(', ') || '---', valEn: moolatrikonaEn.join(', ') || '---', badgeClass: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300' }
   ];
 
   // Aspects & Conjunctions Table
@@ -8933,30 +9393,37 @@ export function computeDignitiesAspectsSection17(horoInput = {}, allPlanetRows =
   for (const g of grahaKeys) {
     const s = planetSigns[g];
     if (s === undefined) continue;
-    const name = GRAHA_NAMES_TA[g] || g;
+    const nameTa = GRAHA_NAMES_BILINGUAL[g]?.ta || g;
+    const nameEn = GRAHA_NAMES_BILINGUAL[g]?.en || g;
     const isR = planetRetro[g];
-    const dispName = isR ? `${name}(வ)` : name;
-    const rasiName = RASI_NAMES_TA[s] || '';
+    const dispNameTa = isR ? `${nameTa}(வ)` : nameTa;
+    const dispNameEn = isR ? `${nameEn}(R)` : nameEn;
+    const rasiNameTa = RASI_NAMES_BILINGUAL[s]?.ta || '';
+    const rasiNameEn = RASI_NAMES_BILINGUAL[s]?.en || '';
 
     // Status
-    let status = 'சமம்';
+    let statusTa = 'சமம்';
+    let statusEn = 'Neutral';
     let statusType = 'sama';
-    if (s === utchaSigns[g]) { status = 'உச்சம்'; statusType = 'utcha'; }
-    else if (s === neechaSigns[g]) { status = 'நீசம்'; statusType = 'neecha'; }
-    else if ((ownSigns[g] || []).includes(s)) { status = 'ஆட்சி'; statusType = 'aatchi'; }
-    else if ((friendSigns[g] || []).includes(s)) { status = 'நட்பு'; statusType = 'mitra'; }
-    else if ((enemySigns[g] || []).includes(s)) { status = 'பகை'; statusType = 'satru'; }
+    if (s === utchaSigns[g]) { statusTa = 'உச்சம்'; statusEn = 'Exalted'; statusType = 'utcha'; }
+    else if (s === neechaSigns[g]) { statusTa = 'நீசம்'; statusEn = 'Debilitated'; statusType = 'neecha'; }
+    else if ((ownSigns[g] || []).includes(s)) { statusTa = 'ஆட்சி'; statusEn = 'Own Sign'; statusType = 'aatchi'; }
+    else if ((friendSigns[g] || []).includes(s)) { statusTa = 'நட்பு'; statusEn = 'Friend'; statusType = 'mitra'; }
+    else if ((enemySigns[g] || []).includes(s)) { statusTa = 'பகை'; statusEn = 'Enemy'; statusType = 'satru'; }
 
     // Conjunctions (same sign)
-    const conj = [];
+    const conjTa = [];
+    const conjEn = [];
     for (const other of grahaKeys) {
       if (other !== g && planetSigns[other] === s) {
-        conj.push(GRAHA_NAMES_TA[other]);
+        conjTa.push(GRAHA_NAMES_BILINGUAL[other].ta);
+        conjEn.push(GRAHA_NAMES_BILINGUAL[other].en);
       }
     }
 
     // Aspects received from other planets
-    const seenBy = [];
+    const seenByTa = [];
+    const seenByEn = [];
     for (const other of grahaKeys) {
       if (other === g) continue;
       const otherSign = planetSigns[other];
@@ -8968,42 +9435,35 @@ export function computeDignitiesAspectsSection17(horoInput = {}, allPlanetRows =
       if ((other === 'jupiter' || other === 'rahu' || other === 'ketu') && (distSign === 5 || distSign === 9)) casts = true;
       if (other === 'saturn' && (distSign === 3 || distSign === 10)) casts = true;
 
-      if (casts) seenBy.push(GRAHA_NAMES_TA[other]);
+      if (casts) {
+        seenByTa.push(GRAHA_NAMES_BILINGUAL[other].ta);
+        seenByEn.push(GRAHA_NAMES_BILINGUAL[other].en);
+      }
     }
 
     aspectsTable.push({
-      graha: dispName,
-      rasi: rasiName,
-      status,
+      graha: dispNameTa,
+      grahaTa: dispNameTa,
+      grahaEn: dispNameEn,
+      rasi: rasiNameTa,
+      rasiTa: rasiNameTa,
+      rasiEn: rasiNameEn,
+      status: statusTa,
+      statusTa,
+      statusEn,
       statusType,
-      aspectsBy: seenBy.length ? seenBy.join(', ') : '---',
-      conjunctions: conj.length ? conj.join(', ') : '---'
+      aspectsBy: seenByTa.length ? seenByTa.join(', ') : '---',
+      aspectsByTa: seenByTa.length ? seenByTa.join(', ') : '---',
+      aspectsByEn: seenByEn.length ? seenByEn.join(', ') : '---',
+      conjunctions: conjTa.length ? conjTa.join(', ') : '---',
+      conjunctionsTa: conjTa.length ? conjTa.join(', ') : '---',
+      conjunctionsEn: conjEn.length ? conjEn.join(', ') : '---'
     });
   }
 
   return { dignitiesTable, aspectsTable };
 }
 
-
-/**
- * =========================================================================
- * SECTION 19: JATHAGA YOGAS (ஜாதக யோகங்கள்)
- * Rigorous algorithmic evaluation of classical Vedic astrological combinations:
- * Gajakesari, Pancha Mahapurusha, Dharma-Karmadhipati Raja Yoga, Budhaditya,
- * Chandra Adhi, Solar (Vesi/Vasi/Ubhayachari), Lunar (Sunaphaa/Anaphaa/Durudhara/Kemadruma),
- * Neechabhanga Raja Yoga, Viparita Raja Yogas, Chandra-Mangala, Amala, Parivartana Maha Yoga.
- * =========================================================================
- */
-/**
- * =========================================================================
- * SECTION 20: MAHA DASHA DETAILED MATHEMATICAL CALCULATIONS (மகாதிசை விரிவான கணக்கீடுகள்)
- * Exact Parashara mathematical formulation of Vimshottari Dasha, Bhukti & Antara:
- * 1. Moon Nirayana Longitude & Nakshatra coordinates
- * 2. Balance of Birth Dasha (இருப்பு கணிதம்) with exact elapsed/remaining arc & fractions
- * 3. 120-Year Vimshottari Cycle with 9 Maha Dashas, 81 Bhuktis, and 729 Antaras
- * 4. Classical Dasha Phalam rules & planetary signification
- * =========================================================================
- */
 export function computeDashaCalculationsSection20(moonRow, dashaTable = [], dashaBalance = null, currentDashaToday = null) {
   const ZODIAC_SIGNS_TA = [
     'மேஷம்', 'ரிஷபம்', 'மிதுனம்', 'கடகம்', 'சிம்மம்', 'கன்னி',
@@ -9969,6 +10429,41 @@ export function computeJathagaYogasSection19(allPlanetRows = [], lagnaRasiIdx = 
   const rajaYogasCount = yogas.filter(y => y.isPresent && (y.category === 'raja' || y.category === 'mahapurusha')).length;
   const mahapurushaCount = yogas.filter(y => y.isPresent && y.category === 'mahapurusha').length;
   const dhanaYogasCount = yogas.filter(y => y.isPresent && y.category === 'dhana').length;
+
+  // Ensure every yoga has pure bilingual strength
+  const STRENGTH_TRANSLATIONS = {
+    'உன்னத பலம் (Supreme 100%)': { ta: 'உன்னத பலம் (100%)', en: 'Supreme Strength (100%)' },
+    'முழு பலம் (Full 90%)': { ta: 'முழு பலம் (90%)', en: 'Full Strength (90%)' },
+    'முழு பலம் (Full 85%)': { ta: 'முழு பலம் (85%)', en: 'Full Strength (85%)' },
+    'மத்திம பலம் (Moderate 50%)': { ta: 'மத்திம பலம் (50%)', en: 'Moderate Strength (50%)' },
+    'மத்திம பலம் (Moderate 60%)': { ta: 'மத்திம பலம் (60%)', en: 'Moderate Strength (60%)' },
+    'முழு நிபுண யோகம் (Full Nipuna 95%)': { ta: 'முழு நிபுண யோகம் (95%)', en: 'Full Nipuna Yoga (95%)' },
+    'யோககாரக உன்னத பலம் (Yogakaraka 100%)': { ta: 'யோககாரக உன்னத பலம் (100%)', en: 'Yogakaraka Supreme Strength (100%)' },
+    'பரிவர்த்தனை உன்னத பலம் (100%)': { ta: 'பரிவர்த்தனை உன்னத பலம் (100%)', en: 'Parivartana Supreme Strength (100%)' },
+    'சேர்க்கை முழு பலம் (90%)': { ta: 'சேர்க்கை முழு பலம் (90%)', en: 'Conjunction Full Strength (90%)' },
+    'பார்வை சிறப்பு பலம் (75%)': { ta: 'பார்வை சிறப்பு பலம் (75%)', en: 'Aspect Special Strength (75%)' },
+    'பரிபூரண பலம் (Complete 100%)': { ta: 'பரிபூரண பலம் (100%)', en: 'Complete Strength (100%)' },
+    'சிறப்பு பலம் (High 75%)': { ta: 'சிறப்பு பலம் (75%)', en: 'High Strength (75%)' },
+    'ஒரு பகுதி பலம் (Partial 45%)': { ta: 'ஒரு பகுதி பலம் (45%)', en: 'Partial Strength (45%)' },
+    'ராஜ யோக பலம் (Bhanga Raja Yoga 80%)': { ta: 'ராஜ யோக பலம் (80%)', en: 'Raja Yoga Strength (80%)' },
+    'தோஷ பலம் (Adverse 70%)': { ta: 'தோஷ பலம் (70%)', en: 'Adverse Strength (70%)' },
+    'உயர்நிலை ராஜ யோகம் (Imperial 95%)': { ta: 'உயர்நிலை ராஜ யோகம் (95%)', en: 'Imperial Raja Yoga (95%)' },
+    'வெற்றி யோக பலம் (Triumph 85%)': { ta: 'வெற்றி யோக பலம் (85%)', en: 'Triumph Yoga Strength (85%)' },
+    'மகா தன பலம் (Great Wealth 88%)': { ta: 'மகா தன பலம் (88%)', en: 'Great Wealth Strength (88%)' },
+    'இல்லை (Absent)': { ta: 'அமையவில்லை', en: 'Absent' }
+  };
+
+  yogas.forEach(y => {
+    const s = y.strength || '';
+    if (STRENGTH_TRANSLATIONS[s]) {
+      y.strengthTa = STRENGTH_TRANSLATIONS[s].ta;
+      y.strengthEn = STRENGTH_TRANSLATIONS[s].en;
+    } else {
+      y.strengthTa = s.replace(/\s*\([^)]*\)/, '').trim() || s;
+      const match = s.match(/\(([^)]+)\)/);
+      y.strengthEn = match ? match[1] : s;
+    }
+  });
 
   return {
     yogas,
