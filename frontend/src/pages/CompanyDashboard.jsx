@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { API } from '../api';
 import { useLang } from '../i18n';
+import HoroscopeHub from '../components/HoroscopeHub';
 import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
 import HoroscopePagerView from '../components/HoroscopePagerView';
 
@@ -198,14 +199,14 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
             {t('tabAstrologers')} ({astrologers.length})
           </button>
           <button
-            onClick={() => { setActiveTab('thirukanitha'); setSelectedClientMobile(null); }}
+            onClick={() => { setActiveTab('horoscope'); setSelectedClientMobile(null); }}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-              activeTab === 'thirukanitha'
+              activeTab === 'horoscope' || activeTab === 'thirukanitha' || activeTab === 'horoscope_pagers'
                 ? 'bg-rose-600 text-white shadow-xs'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
             }`}
           >
-            {tr('Thirukanitha Horoscope', 'திருக்கணித ஜாதகம்')}
+            {tr('Horoscope', 'ஜாதகம்')}
           </button>
           <button
             onClick={() => { setActiveTab('vendors'); setSelectedClientMobile(null); }}
@@ -346,14 +347,11 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
             </div>
           )}
 
-          {/* TAB: THIRUKANITHA HOROSCOPE */}
-          {activeTab === 'thirukanitha' && (
-            <ThirukanithaHoroscopeView />
-          )}
-
-          {/* TAB: HOROSCOPE PAGERS (1-PAGE A4) */}
-          {(activeTab === 'horoscope_pagers' || activeTab === 'pager') && (
-            <HoroscopePagerView />
+          {/* TAB: HOROSCOPE HUB */}
+          {(activeTab === 'horoscope' || activeTab === 'thirukanitha' || activeTab === 'horoscope_pagers' || activeTab === 'pager') && (
+            <HoroscopeHub
+              initialSubView={activeTab === 'horoscope_pagers' || activeTab === 'pager' ? 'print' : 'screen'}
+            />
           )}
 
           {/* TAB 2: CLIENTS */}

@@ -1151,21 +1151,42 @@ app.post('/api/matchmaking/submit-review', authenticate, (req, res) => {
 
 app.get('/api/astrologer/search-client', authenticate, (req, res) => {
   try {
-    const query = (req.query.mobile || '').trim();
-    if (!query) {
-      return res.status(400).json({ error: 'Please enter a mobile number to search.' });
+    const rawQuery = (req.query.q || req.query.query || req.query.mobile || '').trim();
+    if (!rawQuery) {
+      return res.status(400).json({ error: 'Please enter a mobile number or search terms.' });
     }
 
+    const query = rawQuery.toLowerCase();
+    const queryParts = query.split(/[\s,+/]+/).filter(Boolean);
+
     const db = readDb();
-    const matchedClients = db.clients
-      .filter((c) => c.mobile.includes(query))
+    const matchedClients = (db.clients || [])
+      .filter((c) => {
+        const m = (c.mobile || '').toLowerCase();
+        const n = (c.name || '').toLowerCase();
+        const dob = (c.dob || '').toLowerCase();
+        const pob = (c.dobPlace || c.pob || c.birthPlace || c.place || c.city || c.nativePlace || '').toLowerCase();
+        const combined = `${n} ${dob} ${pob} ${m}`;
+
+        // Match if query is contained directly in mobile, name, dob, or place
+        if (m.includes(query) || n.includes(query) || dob.includes(query) || pob.includes(query) || combined.includes(query)) {
+          return true;
+        }
+
+        // Or if all space-separated tokens match (e.g. "Aarav Salem" or "Aarav 05-11-2026")
+        if (queryParts.length > 1) {
+          return queryParts.every((part) => combined.includes(part));
+        }
+
+        return false;
+      })
       .map((c) => {
         const { passwordHash, ...safeData } = c;
         return safeData;
       });
 
     return res.json({
-      query,
+      query: rawQuery,
       count: matchedClients.length,
       clients: matchedClients,
     });
@@ -2536,7 +2557,7 @@ app.get('/api/health', (req, res) => {
 const frontendDist = path.join(__dirname, '../frontend/dist');
 if (fs.existsSync(frontendDist)) {
   app.use(express.static(frontendDist));
-  app.get('*', (req, res, next) => {
+  app.use((req, res, next) => {
     if (req.path.startsWith('/api')) return next();
     res.sendFile(path.join(frontendDist, 'index.html'));
   });

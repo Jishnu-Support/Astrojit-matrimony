@@ -36,6 +36,7 @@ import { API } from '../api';
 import ClientRegistrationReceiptModal from '../components/ClientRegistrationReceiptModal';
 import KundliMatchmaking from '../components/KundliMatchmaking';
 import TamilPoruthamCard from '../components/TamilPoruthamCard';
+import HoroscopeHub from '../components/HoroscopeHub';
 import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
 import HoroscopePagerView from '../components/HoroscopePagerView';
 import { MATCH_I18N } from '../matchmakingI18n';
@@ -395,26 +396,15 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
             )}
           </button>
           <button
-            onClick={() => setActiveTab('thirukanitha')}
+            onClick={() => setActiveTab('horoscope')}
             className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-              activeTab === 'thirukanitha' || activeTab === 'horoscope'
+              activeTab === 'horoscope' || activeTab === 'thirukanitha' || activeTab === 'horoscope_pagers' || activeTab === 'pager'
                 ? 'bg-indigo-600 text-white shadow-xs'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>{lang === 'ta' ? 'திருக்கணித ஜாதகம்' : 'Thirukanitha Horoscope'}</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('horoscope_pagers')}
-            className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-              activeTab === 'horoscope_pagers' || activeTab === 'pager'
-                ? 'bg-indigo-600 text-white shadow-xs'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            <FileText className="w-3.5 h-3.5 text-amber-300" />
-            <span>{lang === 'ta' ? 'ஜாதக ஏடு (A4)' : 'Horoscope Pagers'}</span>
+            <span>{lang === 'ta' ? 'ஜாதகம்' : 'Horoscope'}</span>
           </button>
           <button
             onClick={() => setActiveTab('search')}
@@ -770,41 +760,10 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
         </div>
       )}
 
-      {/* TAB: Thirukanitha Vedic Horoscope Generator */}
-      {(activeTab === 'thirukanitha' || activeTab === 'horoscope') && (
-        <ThirukanithaHoroscopeView
-          initialData={{
-            name: 'Sample',
-            dob: '2026-11-05',
-            dobTime: '21:04',
-            dobTime12: '09:04:00 PM',
-            country: 'India',
-            state: 'Tamil Nadu',
-            placeName: 'Salem',
-            city: 'Salem',
-            lat: 11.65,
-            lon: 78.20,
-            utcOffset: '05:30 UTC'
-          }}
-        />
-      )}
-
-      {/* TAB: Horoscope Pagers (1-Page A4 Sheet) */}
-      {(activeTab === 'horoscope_pagers' || activeTab === 'pager') && (
-        <HoroscopePagerView
-          initialBirthData={{
-            name: 'Sample',
-            dob: '2026-11-05',
-            dobTime: '21:04:00',
-            dobTime12: '09:04:00 PM',
-            country: 'India',
-            state: 'Tamil Nadu',
-            placeName: 'Salem',
-            city: 'Salem',
-            lat: 11.65,
-            lon: 78.20,
-            utcOffset: '05:30 UTC'
-          }}
+      {/* TAB: Unified Horoscope Hub (Intake + Previous Clients Search + Screen View + Print Page) */}
+      {(activeTab === 'horoscope' || activeTab === 'thirukanitha' || activeTab === 'horoscope_pagers' || activeTab === 'pager') && (
+        <HoroscopeHub
+          initialSubView={activeTab === 'horoscope_pagers' || activeTab === 'pager' ? 'print' : 'screen'}
         />
       )}
 

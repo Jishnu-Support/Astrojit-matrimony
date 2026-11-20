@@ -83,7 +83,7 @@ export const API = {
   getMyAppointments: () => apiRequest('/appointments/my', 'GET'),
 
   // Astrologer
-  searchClients: (mobile) => apiRequest(`/astrologer/search-client?mobile=${encodeURIComponent(mobile)}`, 'GET'),
+  searchClients: (q) => apiRequest(`/astrologer/search-client?q=${encodeURIComponent(q)}`, 'GET'),
   saveConsultationNote: (data) => apiRequest('/astrologer/consultation-note', 'POST', data),
   getReferredClients: () => apiRequest('/astrologer/referred-clients', 'GET'),
 

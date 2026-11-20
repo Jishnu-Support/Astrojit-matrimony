@@ -39,7 +39,7 @@ export default function Sidebar({
           { id: 'overview', label: tr('System Overview', 'கணினி கண்ணோட்டம்'), icon: Shield, badge: 'HQ' },
           { id: 'clients', label: tr('All Clients', 'வாடிக்கையாளர்கள்'), icon: Users },
           { id: 'astrologers', label: tr('Astrologer Network', 'ஜோதிடர்கள்'), icon: Compass },
-          { id: 'thirukanitha', label: tr('Thirukanitha Horoscope', 'திருக்கணித ஜாதகம்'), icon: Compass, badge: 'Drik' },
+          { id: 'horoscope', label: tr('Horoscope', 'ஜாதகம்'), icon: Compass, badge: 'Drik' },
           { id: 'vendors', label: tr('Certified Vendors', 'வணிகர்கள்'), icon: Store },
           { id: 'products', label: tr('Marketplace Inventory', 'சந்தை இருப்பு'), icon: ShoppingBag },
           { id: 'matrimony', label: tr('Matrimony Hub', 'திருமண மையம்'), icon: HeartHandshake, badge: 'Gov', isMatrimonyTab: true },
@@ -47,8 +47,7 @@ export default function Sidebar({
       case 'astrologer':
         return [
           { id: 'appointments', label: tr('Consultations & Slots', 'ஆலோசனை முன்பதிவுகள்'), icon: Clock },
-          { id: 'thirukanitha', label: tr('Thirukanitha Horoscope', 'திருக்கணித ஜாதகம்'), icon: Compass, badge: 'Drik' },
-          { id: 'horoscope_pagers', label: tr('Horoscope Pagers', 'ஜாதக ஏடு (A4)'), icon: FileText, badge: 'A4' },
+          { id: 'horoscope', label: tr('Horoscope', 'ஜாதகம்'), icon: Compass, badge: 'Drik' },
           { id: 'search', label: tr('Client Search', 'வாடிக்கையாளர் தேடல்'), icon: Search },
           { id: 'matchmaking', label: tr('Matchmaking Requests', 'பொருத்த ஆய்வுக் கோரிக்கைகள்'), icon: HeartHandshake, badge: 'Active' },
           { id: 'referred', label: tr('Referred Clients', 'பரிந்துரைக்கப்பட்டோர்'), icon: Users },
@@ -62,8 +61,7 @@ export default function Sidebar({
       default:
         return [
           { id: 'panchangam', label: tr('Daily Panchangam', 'தினசரி பஞ்சாங்கம்'), icon: Calendar, badge: 'Live' },
-          { id: 'thirukanitha', label: tr('Thirukanitha Horoscope', 'திருக்கணித ஜாதகம்'), icon: Compass, badge: 'Drik' },
-          { id: 'horoscope_pagers', label: tr('Horoscope Pagers', 'ஜாதக ஏடு (A4)'), icon: FileText, badge: 'A4' },
+          { id: 'horoscope', label: tr('Horoscope', 'ஜாதகம்'), icon: Compass, badge: 'Drik' },
           { id: 'matchmaking', label: tr('Marriage Compatibility', 'திருமணப் பொருத்தம்'), icon: HeartHandshake },
           { id: 'matrimony', label: tr('Vedic Matrimony Portal', 'வைதீக மேட்ரிமோனி'), icon: Heart, badge: 'NEW', isMatrimonyPage: true },
           { id: 'shop', label: tr('Puja & Spiritual Shop', 'பூஜைப் பொருட்கள் அங்காடி'), icon: ShoppingBag },

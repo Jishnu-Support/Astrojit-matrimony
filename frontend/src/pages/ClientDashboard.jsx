@@ -6,6 +6,7 @@ import { API } from '../api';
 import DailyPanchangam from '../components/DailyPanchangam';
 import KundliMatchmaking from '../components/KundliMatchmaking';
 import SlotBookingModal from '../components/SlotBookingModal';
+import HoroscopeHub from '../components/HoroscopeHub';
 import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
 import HoroscopePagerView from '../components/HoroscopePagerView';
 
@@ -340,26 +341,15 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
             <span>{t('dailyPanchangam')}</span>
           </button>
           <button
-            onClick={() => setActiveTab('thirukanitha')}
+            onClick={() => setActiveTab('horoscope')}
             className={`shrink-0 px-3 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-              activeTab === 'thirukanitha' || activeTab === 'horoscope'
+              activeTab === 'horoscope' || activeTab === 'thirukanitha' || activeTab === 'horoscope_pagers' || activeTab === 'pager'
                 ? 'bg-slate-950 text-white shadow-xs'
                 : 'bg-white/40 text-slate-900 hover:bg-white/60'
             }`}
           >
             <span>🪐</span>
-            <span>{lang === 'ta' ? 'திருக்கணித ஜாதகம்' : 'Thirukanitha Horoscope'}</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('horoscope_pagers')}
-            className={`shrink-0 px-3 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-              activeTab === 'horoscope_pagers' || activeTab === 'pager'
-                ? 'bg-slate-950 text-white shadow-xs'
-                : 'bg-white/40 text-slate-900 hover:bg-white/60'
-            }`}
-          >
-            <span>📄</span>
-            <span>{lang === 'ta' ? 'ஜாதக ஏடு (1-பக்கம்)' : 'Horoscope Pager (1-Page)'}</span>
+            <span>{lang === 'ta' ? 'ஜாதகம்' : 'Horoscope'}</span>
           </button>
           <button
             onClick={() => setActiveTab('matchmaking')}
@@ -400,41 +390,11 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
       {/* Tab 1: Daily Panchangam */}
       {activeTab === 'panchangam' && <DailyPanchangam />}
 
-      {/* Tab 2: Thirukanitha Horoscope */}
-      {(activeTab === 'thirukanitha' || activeTab === 'horoscope') && (
-        <ThirukanithaHoroscopeView
-          initialData={{
-            name: user?.name || 'Aarav Kumar',
-            dob: user?.dob || '2026-11-05',
-            dobTime: user?.dobTime || '21:04',
-            dobTime12: '09:04:00 PM',
-            country: 'India',
-            state: 'Tamil Nadu',
-            placeName: user?.dobPlace || 'Salem',
-            city: user?.dobPlace || 'Salem',
-            lat: 11.65,
-            lon: 78.20,
-            utcOffset: '05:30 UTC'
-          }}
-        />
-      )}
-
-      {/* Tab 2B: Horoscope Pagers (1-Page A4 Sheet) */}
-      {(activeTab === 'horoscope_pagers' || activeTab === 'pager') && (
-        <HoroscopePagerView
-          initialBirthData={{
-            name: user?.name || 'Aarav Kumar',
-            dob: user?.dob || '2026-11-05',
-            dobTime: user?.dobTime || '21:04:00',
-            dobTime12: '09:04:00 PM',
-            country: 'India',
-            state: 'Tamil Nadu',
-            placeName: user?.dobPlace || 'Salem',
-            city: user?.dobPlace || 'Salem',
-            lat: 11.65,
-            lon: 78.20,
-            utcOffset: '05:30 UTC'
-          }}
+      {/* Tab 2: Unified Horoscope Hub (Screen View + Print Pager) */}
+      {(activeTab === 'horoscope' || activeTab === 'thirukanitha' || activeTab === 'horoscope_pagers' || activeTab === 'pager') && (
+        <HoroscopeHub
+          initialSubView={activeTab === 'horoscope_pagers' || activeTab === 'pager' ? 'print' : 'screen'}
+          initialClient={user}
         />
       )}
 
