@@ -204,7 +204,6 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                   type="date"
                   name="dob"
                   required
-                  defaultValue="1998-05-15"
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500"
                 />
               </div>
@@ -215,7 +214,6 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                   type="time"
                   name="dobTime"
                   required
-                  defaultValue="07:30"
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500"
                 />
               </div>

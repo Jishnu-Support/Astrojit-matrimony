@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sparkles, Compass, Send, CheckCircle2, X, AlertCircle, Calendar, User, Heart } from 'lucide-react';
 import { useLang } from '../i18n';
 import { API } from '../api';
@@ -13,7 +13,7 @@ export default function AstrologerConsultationModal({
   onSuccess
 }) {
   const { lang, t } = useLang();
-  const [selectedAstrologer, setSelectedAstrologer] = useState('astro-1');
+  const [selectedAstrologer, setSelectedAstrologer] = useState('');
   const [query, setQuery] = useState(
     'Kindly examine the 10 Poruthams, Dasa Sandhi alignment, Chevvai Dosha cancellation, and recommend auspicious Vivaha Muhurtham dates for 2026/2027.'
   );
@@ -30,24 +30,20 @@ export default function AstrologerConsultationModal({
     return en;
   };
 
-  const astrologers = [
-    {
-      id: 'astro-1',
-      name: 'Pandit Rajesh Sharma',
-      title: tr('Senior Vedic Astrologer & Vivaha Specialist', 'மூத்த வேத ஜோதிடர் & திருமணப் பொருத்த நிபுணர்'),
-      experience: tr('28+ Years Experience • Kashi Jyotish Visharad', '28+ ஆண்டுகள் அனுபவம் • காசி ஜோதிட விஸாரத்'),
-      fee: 'Included in Vedic Plan',
-      rating: '4.9 ★ (1,840+ Consultations)',
-    },
-    {
-      id: 'astro-2',
-      name: 'AstroVeda Consultancy LLP',
-      title: tr('Comprehensive Jathagam & Dosha Pariharam Firm', 'முழுமையான ஜாதகப் பொருத்தம் மற்றும் பரிகார ஆலோசனை நிறுவனம்'),
-      experience: tr('15+ Years Experience • Institutional Panel', '15+ ஆண்டுகள் அனுபவம் • நிறுவனக் குழு'),
-      fee: 'Included in Vedic Plan',
-      rating: '4.8 ★ (920+ Consultations)',
-    },
-  ];
+  const [astrologers, setAstrologers] = useState([]);
+
+  useEffect(() => {
+    API.getAstrologers()
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setAstrologers(data);
+          if (data.length > 0 && !selectedAstrologer) {
+            setSelectedAstrologer(data[0].id);
+          }
+        }
+      })
+      .catch(() => setAstrologers([]));
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -214,7 +210,11 @@ export default function AstrologerConsultationModal({
                 {tr('Select Certified Vedic Astrologer *', 'சான்றளிக்கப்பட்ட வேத ஜோதிடரைத் தேர்ந்தெடுக்கவும் *')}
               </label>
               <div className="space-y-2">
-                {astrologers.map((a) => (
+                {astrologers.length === 0 ? (
+                  <div className="p-4 rounded-xl border border-dashed border-slate-300 text-center text-slate-500 text-xs">
+                    {tr('No verified astrologers registered yet.', 'சான்றளிக்கப்பட்ட ஜோதிடர்கள் தற்போது பதிவு செய்யப்படவில்லை.')}
+                  </div>
+                ) : astrologers.map((a) => (
                   <label
                     key={a.id}
                     onClick={() => setSelectedAstrologer(a.id)}

@@ -88,7 +88,7 @@ export default function Login({ onSwitchToRegister }) {
 
       setVerifiedUserInfo(res);
       setForgotStep(2);
-      setForgotOtp('7788'); // Pre-fill with demo OTP for instant ease
+      setForgotOtp('');
       setForgotSuccess(res.message || tr('Account verified. Please enter the verification OTP.', 'கணக்கு சரிபார்க்கப்பட்டது. ஓடிபி குறியீட்டை உள்ளிடவும்.'));
     } catch (err) {
       setForgotError(err.message || tr('Account verification failed.', 'கணக்கு சரிபார்ப்பு தோல்வியடைந்தது.'));
@@ -225,7 +225,7 @@ export default function Login({ onSwitchToRegister }) {
               <div>
                 <label className="text-slate-700 font-bold block mb-1">
                   {selectedRole === 'company'
-                    ? tr('Mobile or Admin ID', 'மொபைல் எண் அல்லது நிர்வாகி ஐடி')
+                    ? tr('Username (jit_admin) *', 'பயனர்பெயர் (jit_admin) *')
                     : tr('Mobile Number (Username) *', 'மொபைல் எண் (பயனர்பெயர்) *')}
                 </label>
                 <div className="relative">
@@ -235,7 +235,7 @@ export default function Login({ onSwitchToRegister }) {
                     required
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
-                    placeholder={selectedRole === 'company' ? '9999999999 or admin' : 'Enter 10-digit mobile number'}
+                    placeholder={selectedRole === 'company' ? 'jit_admin' : 'Enter 10-digit mobile number'}
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
                   />
                 </div>
@@ -427,26 +427,17 @@ export default function Login({ onSwitchToRegister }) {
                 </div>
               )}
 
-              {/* OTP Field with Demo Auto-fill Helper */}
+              {/* OTP Field */}
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-slate-700 font-bold">
-                    {tr('Verification Code (OTP) *', 'சரிபார்ப்புக் குறியீடு (OTP) *')}
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setForgotOtp('7788')}
-                    className="text-[10px] font-bold bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded-md border border-emerald-300 cursor-pointer transition-all"
-                  >
-                    {tr('Auto-Fill Demo Code (7788)', 'டெமோ குறியீடு (7788)')}
-                  </button>
-                </div>
+                <label className="text-slate-700 font-bold block mb-1">
+                  {tr('Verification Code (OTP) *', 'சரிபார்ப்புக் குறியீடு (OTP) *')}
+                </label>
                 <input
                   type="text"
                   required
                   value={forgotOtp}
                   onChange={(e) => setForgotOtp(e.target.value)}
-                  placeholder="Enter 4-digit code (e.g. 7788)"
+                  placeholder="Enter 4-digit verification code"
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-mono font-bold tracking-widest text-center text-sm"
                 />
               </div>

@@ -271,7 +271,13 @@ app.post('/api/auth/login', (req, res) => {
 
     if (role === 'company') {
       const company = db.company;
-      if (cleanMobile === company.mobile || cleanMobile === 'admin' || cleanMobile === company.email) {
+      if (
+        cleanMobile === company.username ||
+        cleanMobile === company.mobile ||
+        cleanMobile === company.email ||
+        cleanMobile === 'jit_admin' ||
+        cleanMobile === 'admin'
+      ) {
         const isMatch = bcrypt.compareSync(password, company.passwordHash);
         if (!isMatch) {
           return res.status(401).json({ error: 'Invalid Company password.' });
@@ -284,7 +290,8 @@ app.post('/api/auth/login', (req, res) => {
           user: {
             id: 'company-jit',
             name: company.name,
-            mobile: company.mobile,
+            username: company.username || 'jit_admin',
+            mobile: company.mobile || 'jit_admin',
             email: company.email,
             role: 'company',
           },
@@ -1915,9 +1922,6 @@ app.get('/api/matrimony/autofill-sources', (req, res) => {
     if (!client && req.query.mobile) {
       client = db.clients.find(c => c.mobile === req.query.mobile.trim());
     }
-    if (!client && db.clients.length > 0) {
-      client = db.clients[0];
-    }
 
     let clientData = null;
     if (client) {
@@ -1992,7 +1996,7 @@ app.post('/api/matrimony/family-members', (req, res) => {
 
     const newFm = {
       id: 'fm-' + uuidv4().substring(0, 8),
-      clientId: req.body.clientId || (db.clients[0] ? db.clients[0].id : 'client-1'),
+      clientId: req.body.clientId || (db.clients[0] ? db.clients[0].id : ''),
       relation,
       name,
       gender: gender || (relation === 'Sister' || relation === 'Daughter' || relation === 'Mother' ? 'Bride' : 'Groom'),

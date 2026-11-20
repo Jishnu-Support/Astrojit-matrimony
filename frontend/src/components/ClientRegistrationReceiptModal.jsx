@@ -173,13 +173,13 @@ Client Code: ${clientCode}`;
               <div className="text-left sm:text-right border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200 print:border-none print:pt-0">
                 <div className="flex items-center sm:justify-end gap-1.5 text-amber-800 text-xs font-bold">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>{astrologer.association || 'Vedic Astrology & Research Centre'}</span>
+                  <span>{astrologer.association || ''}</span>
                 </div>
                 <p className="text-xs font-black text-slate-950">
-                  {astrologer.name || 'Pandit Rajesh Sharma'}
+                  {astrologer.name || ''}
                 </p>
                 <p className="text-[11px] text-slate-600 print:text-[10px]">
-                  Ref Code: <strong className="font-mono text-indigo-700 font-bold">{astrologer.referralCode || 'PANDIT101'}</strong> • Ph: {astrologer.mobile || '9876543210'}
+                  Ref Code: <strong className="font-mono text-indigo-700 font-bold">{astrologer.referralCode || ''}</strong> {astrologer.mobile ? `• Ph: ${astrologer.mobile}` : ''}
                 </p>
                 {astrologer.officeAddress && (
                   <p className="text-[10px] text-slate-500 max-w-xs sm:ml-auto print:hidden">
@@ -405,7 +405,7 @@ Client Code: ${clientCode}`;
 
               <div className="text-right">
                 <div className="w-40 border-b border-slate-400 pb-1 mb-1 text-center font-serif text-slate-800 font-bold italic text-xs">
-                  {astrologer.name || 'Pandit Rajesh Sharma'}
+                  {astrologer.name || ''}
                 </div>
                 <span className="text-[10px] text-slate-500 block">Authorized Astrologer Seal & Signature</span>
               </div>
