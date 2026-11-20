@@ -24,28 +24,10 @@ import {
 import {
   createEmptyHoroscopePagerData,
   computeHoroscopePagerData,
-  createEmpty7PageBookletData,
-  compute7PageBookletData,
-  createEmpty18PageBookletData,
-  compute18PageBookletData,
-  createEmpty21PageBookletData,
-  compute21PageBookletData,
-  createEmpty25PageBookletData,
-  compute25PageBookletData,
-  createEmpty33PageBookletData,
-  compute33PageBookletData,
-  createEmpty51PageBookletData,
-  compute51PageBookletData,
   PLANET_ROW_KEYS,
   RASHIS
 } from '../utils/thirukanithaEngine';
 import { COUNTRIES, GEO_DATA, lookupCoordinates } from '../data/geoCoordinates';
-import HoroscopeBooklet7PageView from './HoroscopeBooklet7PageView';
-import HoroscopeBooklet18PageView from './HoroscopeBooklet18PageView';
-import HoroscopeBooklet21PageView from './HoroscopeBooklet21PageView';
-import HoroscopeBooklet25PageView from './HoroscopeBooklet25PageView';
-import HoroscopeBooklet33PageView from './HoroscopeBooklet33PageView';
-import HoroscopeBooklet51PageView from './HoroscopeBooklet51PageView';
 
 function parseInitialTime(timeStr) {
   let raw = timeStr || '21:04:00';
@@ -163,17 +145,8 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
     nativePlace: initialBirthData?.nativePlace || 'நாமக்கல்'
   }));
 
-  // Pager Format Mode: '18page' (18-Page Booklet default), '51page', '33page', '25page', '21page', '7page' or '1page'
-  const [pagerType, setPagerType] = useState('18page');
-
-  // Initial computed data so 1-page, 7-page, 18-page, 21-page, 25-page, 33-page, and 51-page are pre-populated with authentic calculations
+  // Initial computed data for authentic 1-page Janana Jathagam A4 sheet
   const [data, setData] = useState(() => computeHoroscopePagerData(calcInputs));
-  const [bookletData, setBookletData] = useState(() => compute7PageBookletData(calcInputs));
-  const [booklet18Data, setBooklet18Data] = useState(() => compute18PageBookletData(calcInputs));
-  const [booklet21Data, setBooklet21Data] = useState(() => compute21PageBookletData(calcInputs));
-  const [booklet25Data, setBooklet25Data] = useState(() => compute25PageBookletData(calcInputs));
-  const [booklet33Data, setBooklet33Data] = useState(() => compute33PageBookletData(calcInputs));
-  const [booklet51Data, setBooklet51Data] = useState(() => compute51PageBookletData(calcInputs));
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [activeEditorTab, setActiveEditorTab] = useState('person');
   const [calcSuccessMsg, setCalcSuccessMsg] = useState('');
@@ -274,38 +247,20 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
     }));
   };
 
-  // Trigger calculation and populate both 1-page sheet and 7-page booklet
+  // Trigger calculation and populate 1-page Janana Jathagam sheet
   const handleCalculatePager = (e) => {
     if (e && e.preventDefault) e.preventDefault();
-    const computed1 = computeHoroscopePagerData(calcInputs);
-    const computed7 = compute7PageBookletData(calcInputs);
-    const computed18 = compute18PageBookletData(calcInputs);
-    const computed21 = compute21PageBookletData(calcInputs);
-    const computed25 = compute25PageBookletData(calcInputs);
-    const computed33 = compute33PageBookletData(calcInputs);
-    const computed51 = compute51PageBookletData(calcInputs);
-    setData(computed1);
-    setBookletData(computed7);
-    setBooklet18Data(computed18);
-    setBooklet21Data(computed21);
-    setBooklet25Data(computed25);
-    setBooklet33Data(computed33);
-    setBooklet51Data(computed51);
+    const computed = computeHoroscopePagerData(calcInputs);
+    setData(computed);
     setCalcSuccessMsg(isTa ? 'ஜாதகக் கணிப்பு வெற்றிகரமாக கணிக்கப்பெற்று தயார்!' : 'Horoscope generated successfully!');
     setTimeout(() => setCalcSuccessMsg(''), 4000);
   };
 
-  // Auto-calculate on input changes so booklet is always reactive and up to date
+  // Auto-calculate on input changes so Janana Jathagam sheet is always reactive and up to date
   useEffect(() => {
     const timer = setTimeout(() => {
       try {
         setData(computeHoroscopePagerData(calcInputs));
-        setBookletData(compute7PageBookletData(calcInputs));
-        setBooklet18Data(compute18PageBookletData(calcInputs));
-        setBooklet21Data(compute21PageBookletData(calcInputs));
-        setBooklet25Data(compute25PageBookletData(calcInputs));
-        setBooklet33Data(compute33PageBookletData(calcInputs));
-        setBooklet51Data(compute51PageBookletData(calcInputs));
       } catch (err) {
         console.error('Auto-calculation error:', err);
       }
@@ -349,23 +304,11 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
   const handleClearAll = () => {
     if (window.confirm(isTa ? 'அனைத்து விவரங்களையும் அழிக்கவா?' : 'Clear all fields to blank?')) {
       setData(createEmptyHoroscopePagerData());
-      setBookletData(createEmpty7PageBookletData());
-      setBooklet18Data(createEmpty18PageBookletData());
-      setBooklet21Data(createEmpty21PageBookletData());
-      setBooklet25Data(createEmpty25PageBookletData());
-      setBooklet33Data(createEmpty33PageBookletData());
-      setBooklet51Data(createEmpty51PageBookletData());
     }
   };
 
   const handleAutoFillFromThirukanitha = () => {
     setData(computeHoroscopePagerData(calcInputs));
-    setBookletData(compute7PageBookletData(calcInputs));
-    setBooklet18Data(compute18PageBookletData(calcInputs));
-    setBooklet21Data(compute21PageBookletData(calcInputs));
-    setBooklet25Data(compute25PageBookletData(calcInputs));
-    setBooklet33Data(compute33PageBookletData(calcInputs));
-    setBooklet51Data(compute51PageBookletData(calcInputs));
   };
 
   const handlePrint = () => {
@@ -549,127 +492,17 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
             <span className="text-xl">📄</span>
             <div>
               <h1 className="text-base sm:text-lg font-bold text-[#7A1A22] dark:text-[#E8838B]">
-                {pagerType === '51page'
-                  ? (isTa ? 'ஜாதக ஏடு (A4 - 51 பக்க மகா புத்தகம்)' : 'Horoscope Booklet (51-Page Master Edition)')
-                  : pagerType === '33page'
-                  ? (isTa ? 'ஜாதக ஏடு (A4 - 33 பக்க புத்தகம்)' : 'Horoscope Booklet (33-Page Booklet)')
-                  : pagerType === '25page'
-                  ? (isTa ? 'ஜாதக ஏடு (A4 - 25 பக்க புத்தகம்)' : 'Horoscope Booklet (25-Page Booklet)')
-                  : pagerType === '21page'
-                  ? (isTa ? 'ஜாதக ஏடு (A4 - 21 பக்க புத்தகம்)' : 'Horoscope Booklet (21-Page Booklet)')
-                  : pagerType === '18page'
-                  ? (isTa ? 'ஜாதக ஏடு (A4 - 18 பக்க புத்தகம்)' : 'Horoscope Booklet (18-Page Booklet)')
-                  : pagerType === '7page'
-                  ? (isTa ? 'ஜாதக ஏடு (A4 - 7 பக்க புத்தகம்)' : 'Horoscope Booklet (7-Page Booklet)')
-                  : L.title}
+                {L.title}
               </h1>
               <p className="text-[11px] text-stone-500">
-                {pagerType === '51page'
-                  ? (isTa ? 'A4 பக்கத்தில் அச்சிடக்கூடிய 51-பக்க பரிபூரண மகா வேத ஜோதிட ஜாதக புத்தகம் (அனைத்து வர்க்கங்கள், தசா அந்தரங்கள், அஷ்டகவர்க்கம் & எண் கணிதம்)' : 'Complete 51-page A4 master edition Vedic horoscope booklet with all Divisional Charts, Antaras, Ashtakavarga & Numerology')
-                  : pagerType === '33page'
-                  ? (isTa ? 'A4 பக்கத்தில் அச்சிடக்கூடிய 33-பக்க மகா வேத ஜோதிட ஜாதக புத்தகம் (வர்க்கங்கள், அந்தரங்கள் & அஷ்டகவர்க்கம்)' : 'Comprehensive 33-page A4 portrait printable Vedic horoscope booklet with Divisional Charts, Full Antaras & Ashtakavarga')
-                  : pagerType === '25page'
-                  ? (isTa ? 'A4 பக்கத்தில் அச்சிடக்கூடிய 25-பக்க பூரண வேத ஜோதிட ஜாதக புத்தகம் (பஞ்ச பட்சி, அந்தர தேதிகள் & அஷ்டகவர்க்கம்)' : 'Comprehensive 25-page A4 portrait printable Vedic horoscope booklet with Pancha Pakshi, Antara Dates & Ashtakavarga')
-                  : pagerType === '21page'
-                  ? (isTa ? 'A4 பக்கத்தில் அச்சிடக்கூடிய 21-பக்க வேத ஜோதிட ஸ்துதி & ஷட்பல ஜாதக புத்தகம்' : 'Comprehensive 21-page A4 portrait printable Vedic horoscope booklet with Stotras & Shadbala')
-                  : pagerType === '18page'
-                  ? (isTa ? 'A4 பக்கத்தில் அச்சிடக்கூடிய 18-பக்க விரிவான வேத ஜோதிட ஜாதக புத்தகம்' : 'Comprehensive 18-page A4 portrait printable Vedic horoscope booklet')
-                  : pagerType === '7page'
-                  ? (isTa ? 'A4 பக்கத்தில் அச்சிடக்கூடிய 7-பக்க வேத ஜோதிட ஜாதக புத்தகம்' : 'Standard 7-page A4 portrait printable Vedic horoscope booklet')
-                  : (isTa ? 'A4 பக்கத்தில் அச்சிடக்கூடிய மாதிரி ஜாதக ஏடு (Janana Jathagam Printable Sheet)' : 'Single-page A4 portrait printable Janana Jathagam template')}
+                {isTa
+                  ? 'A4 பக்கத்தில் அச்சிடக்கூடிய மாதிரி ஜாதக ஏடு (Janana Jathagam Printable Sheet)'
+                  : 'Single-page A4 portrait printable Janana Jathagam template'}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            {/* Format Switcher: 51-Page vs 33-Page vs 25-Page vs 21-Page vs 18-Page vs 7-Page vs 1-Page Sheet */}
-            <div className="flex bg-stone-100 dark:bg-stone-800 p-0.5 rounded-lg border border-stone-300 dark:border-stone-700 overflow-x-auto touch-pan-x scrollbar-thin max-w-full">
-              <button
-                type="button"
-                onClick={() => setPagerType('51page')}
-                className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  pagerType === '51page'
-                    ? 'bg-[#7A1A22] text-white shadow-xs'
-                    : 'text-stone-600 dark:text-stone-300 hover:text-stone-900'
-                }`}
-              >
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>{isTa ? '51-பக்கம்' : '51-Page'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPagerType('33page')}
-                className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  pagerType === '33page'
-                    ? 'bg-[#7A1A22] text-white shadow-xs'
-                    : 'text-stone-600 dark:text-stone-300 hover:text-stone-900'
-                }`}
-              >
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>{isTa ? '33-பக்கம்' : '33-Page'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPagerType('25page')}
-                className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  pagerType === '25page'
-                    ? 'bg-[#7A1A22] text-white shadow-xs'
-                    : 'text-stone-600 dark:text-stone-300 hover:text-stone-900'
-                }`}
-              >
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>{isTa ? '25-பக்கம்' : '25-Page'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPagerType('21page')}
-                className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  pagerType === '21page'
-                    ? 'bg-[#7A1A22] text-white shadow-xs'
-                    : 'text-stone-600 dark:text-stone-300 hover:text-stone-900'
-                }`}
-              >
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>{isTa ? '21-பக்கம்' : '21-Page'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPagerType('18page')}
-                className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  pagerType === '18page'
-                    ? 'bg-[#7A1A22] text-white shadow-xs'
-                    : 'text-stone-600 dark:text-stone-300 hover:text-stone-900'
-                }`}
-              >
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>{isTa ? '18-பக்கம்' : '18-Page'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPagerType('7page')}
-                className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  pagerType === '7page'
-                    ? 'bg-[#7A1A22] text-white shadow-xs'
-                    : 'text-stone-600 dark:text-stone-300 hover:text-stone-900'
-                }`}
-              >
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>{isTa ? '7-பக்கம்' : '7-Page'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPagerType('1page')}
-                className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  pagerType === '1page'
-                    ? 'bg-[#7A1A22] text-white shadow-xs'
-                    : 'text-stone-600 dark:text-stone-300 hover:text-stone-900'
-                }`}
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>{isTa ? '1-பக்கம்' : '1-Page'}</span>
-              </button>
-            </div>
-
             {/* Language Toggle */}
             <div className="flex items-center bg-stone-100 dark:bg-stone-800 p-0.5 rounded-lg border border-stone-300 dark:border-stone-700">
               <button
@@ -703,17 +536,15 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
               <span>{isTa ? 'வெற்று ஏடு (Clear)' : 'Blank Sheet'}</span>
             </button>
 
-            {/* Toggle Manual Edit Panel (only in 1-page mode) */}
-            {pagerType === '1page' && (
-              <button
-                type="button"
-                onClick={() => setIsEditorOpen(!isEditorOpen)}
-                className="px-3 py-1.5 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700 text-xs font-bold hover:bg-stone-200 transition-colors cursor-pointer flex items-center gap-1.5"
-              >
-                {isEditorOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                <span>{isEditorOpen ? (isTa ? 'திருத்தத்தை மறைக்க' : 'Hide Editor') : (isTa ? 'தனிப்பட்ட திருத்தங்கள்' : 'Manual Overrides')}</span>
-              </button>
-            )}
+            {/* Toggle Manual Edit Panel */}
+            <button
+              type="button"
+              onClick={() => setIsEditorOpen(!isEditorOpen)}
+              className="px-3 py-1.5 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700 text-xs font-bold hover:bg-stone-200 transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              {isEditorOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+              <span>{isEditorOpen ? (isTa ? 'திருத்தத்தை மறைக்க' : 'Hide Editor') : (isTa ? 'தனிப்பட்ட திருத்தங்கள்' : 'Manual Overrides')}</span>
+            </button>
 
             {/* Dark / Light Toggle */}
             <button
@@ -731,7 +562,7 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
               className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-white text-xs font-bold hover:from-[#5C1017] hover:to-[#7A1A22] shadow-md shadow-red-950/20 transition-all cursor-pointer flex items-center gap-1.5"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>{pagerType === '51page' ? (isTa ? 'அச்சு / PDF (51-பக்கம்)' : 'Save as PDF / Print (51 Pages)') : pagerType === '33page' ? (isTa ? 'அச்சு / PDF (33-பக்கம்)' : 'Save as PDF / Print (33 Pages)') : pagerType === '25page' ? (isTa ? 'அச்சு / PDF (25-பக்கம்)' : 'Save as PDF / Print (25 Pages)') : pagerType === '21page' ? (isTa ? 'அச்சு / PDF (21-பக்கம்)' : 'Save as PDF / Print (21 Pages)') : pagerType === '18page' ? (isTa ? 'அச்சு / PDF (18-பக்கம்)' : 'Save as PDF / Print (18 Pages)') : pagerType === '7page' ? (isTa ? 'அச்சு / PDF (7-பக்கம்)' : 'Save as PDF / Print (7 Pages)') : (isTa ? 'அச்சு / PDF (1-A4)' : 'Save as PDF / Print (1-A4)')}</span>
+              <span>{isTa ? 'அச்சு / PDF (1-A4)' : 'Save as PDF / Print (1-A4)'}</span>
             </button>
 
             {onClose && (
@@ -1691,67 +1522,10 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
         )}
 
         {/* ========================================================================= */}
-        {/* CONDITIONAL RENDER: 51-PAGE vs 33-PAGE vs 25-PAGE vs 21-PAGE vs 18-PAGE vs 7-PAGE vs 1-PAGE SHEET */}
-        <div className="block sm:hidden text-center text-[10px] text-stone-500 dark:text-stone-400 py-1 italic font-sans no-print">
-          📱 {isTa ? 'அச்சிடும் பக்கத்தை முழுமையாகக் காண கிடைமட்டமாக உருட்டவும்' : 'Swipe horizontally to view full A4 booklet sheet'}
-        </div>
-        <div className="w-full overflow-x-auto touch-pan-x pb-4">
         {/* ========================================================================= */}
-        {pagerType === '51page' ? (
-          <HoroscopeBooklet51PageView
-            data={booklet51Data}
-            setData={setBooklet51Data}
-            isTa={isTa}
-            onAutoFill={() => setBooklet51Data(compute51PageBookletData(calcInputs))}
-            onClearAll={() => setBooklet51Data(createEmpty51PageBookletData())}
-            onPrint={handlePrint}
-          />
-        ) : pagerType === '33page' ? (
-          <HoroscopeBooklet33PageView
-            data={booklet33Data}
-            setData={setBooklet33Data}
-            isTa={isTa}
-            onAutoFill={() => setBooklet33Data(compute33PageBookletData(calcInputs))}
-            onClearAll={() => setBooklet33Data(createEmpty33PageBookletData())}
-            onPrint={handlePrint}
-          />
-        ) : pagerType === '25page' ? (
-          <HoroscopeBooklet25PageView
-            data={booklet25Data}
-            setData={setBooklet25Data}
-            isTa={isTa}
-            onAutoFill={() => setBooklet25Data(compute25PageBookletData(calcInputs))}
-            onClearAll={() => setBooklet25Data(createEmpty25PageBookletData())}
-            onPrint={handlePrint}
-          />
-        ) : pagerType === '21page' ? (
-          <HoroscopeBooklet21PageView
-            data={booklet21Data}
-            setData={setBooklet21Data}
-            isTa={isTa}
-            onAutoFill={() => setBooklet21Data(compute21PageBookletData(calcInputs))}
-            onClearAll={() => setBooklet21Data(createEmpty21PageBookletData())}
-            onPrint={handlePrint}
-          />
-        ) : pagerType === '18page' ? (
-          <HoroscopeBooklet18PageView
-            data={booklet18Data}
-            setData={setBooklet18Data}
-            isTa={isTa}
-            onAutoFill={() => setBooklet18Data(compute18PageBookletData(calcInputs))}
-            onClearAll={() => setBooklet18Data(createEmpty18PageBookletData())}
-            onPrint={handlePrint}
-          />
-        ) : pagerType === '7page' ? (
-          <HoroscopeBooklet7PageView
-            data={bookletData}
-            setData={setBookletData}
-            isTa={isTa}
-            onAutoFill={handleAutoFillFromThirukanitha}
-            onClearAll={handleClearAll}
-            onPrint={handlePrint}
-          />
-        ) : (
+        {/* PRINTABLE 1-PAGE A4 JANANA JATHAGAM SHEET */}
+        {/* ========================================================================= */}
+        <div className="w-full overflow-x-auto touch-pan-x pb-4">
           <div
             id="janana-jathagam-sheet"
           className="bg-white text-black mx-auto shadow-2xl p-4 sm:p-6 print:p-0 print:shadow-none transition-all"
@@ -1947,8 +1721,7 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
             </div>
           </div>
         </div>
-        )}
-        </div>
+      </div>
       </div>
 
       {/* Print Stylesheet for 1-Page A4 Sheet */}
