@@ -109,9 +109,13 @@ export default function OtpMobileInput({
           <label className="text-slate-700 font-bold flex items-center gap-1">
             <Phone className={`w-3.5 h-3.5 ${accentColorClass}`} /> Mobile Number (Username) *
           </label>
-          {isVerified && (
+          {isVerified ? (
             <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Verified
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Verified Username
+            </span>
+          ) : (
+            <span className="text-[10px] text-slate-400 font-medium">
+              OTP Verified Username
             </span>
           )}
         </div>

@@ -37,6 +37,16 @@ export function AuthProvider({ children }) {
     return res.user;
   };
 
+  const loginWithOtp = async (loginRole, mobile, otp) => {
+    const res = await API.loginWithOtp({ role: loginRole, mobile, otp });
+    localStorage.setItem('astrojit_token', res.token);
+    localStorage.setItem('astrojit_role', res.user.role);
+    setToken(res.token);
+    setRole(res.user.role);
+    setUser(res.user);
+    return res.user;
+  };
+
   const registerClient = async (formData) => {
     const res = await API.registerClient(formData);
     localStorage.setItem('astrojit_token', res.token);
@@ -83,6 +93,7 @@ export function AuthProvider({ children }) {
         token,
         loading,
         login,
+        loginWithOtp,
         registerClient,
         registerAstrologer,
         registerVendor,

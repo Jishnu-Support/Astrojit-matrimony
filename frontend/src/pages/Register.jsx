@@ -86,6 +86,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
       lat: coords?.lat,
       lon: coords?.lon,
       mobile: mobile.trim(),
+      username: mobile.trim(),
       password,
       confirmPassword,
       astrologerReferralCode: formData.get('astrologerReferralCode'),
@@ -126,6 +127,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
       name: formData.get('name'),
       contactPerson: astroType === 'company' ? formData.get('contactPerson') : undefined,
       mobile: mobile.trim(),
+      username: mobile.trim(),
       password,
       confirmPassword,
       country,
@@ -173,6 +175,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
       shopName: formData.get('shopName'),
       contactPerson: formData.get('contactPerson'),
       mobile: mobile.trim(),
+      username: mobile.trim(),
       password,
       confirmPassword,
       country,
@@ -203,7 +206,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
           Create Your <span className="text-amber-600">Astrojit</span> Account
         </h2>
         <p className="text-xs text-slate-500">
-          Mobile Number is verified via OTP and used as your username
+          Mobile Number verified via OTP is considered your Username for login
         </p>
       </div>
 
