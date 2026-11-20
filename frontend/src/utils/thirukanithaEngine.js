@@ -2995,7 +2995,8 @@ export function calculateThirukanithaHoroscope({
       lagnaRasi,
       isMrM
     ),
-    numerologyData: computeChaldeanNumerology(name, dob)
+    numerologyData: computeChaldeanNumerology(name, dob),
+    jathagaYogasSection19Data: computeJathagaYogasSection19(allPlanetRows, lagnaRasi)
   };
 }
 
@@ -8968,4 +8969,777 @@ export function computeDignitiesAspectsSection17(horoInput = {}, allPlanetRows =
   }
 
   return { dignitiesTable, aspectsTable };
+}
+
+
+/**
+ * =========================================================================
+ * SECTION 19: JATHAGA YOGAS (ஜாதக யோகங்கள்)
+ * Rigorous algorithmic evaluation of classical Vedic astrological combinations:
+ * Gajakesari, Pancha Mahapurusha, Dharma-Karmadhipati Raja Yoga, Budhaditya,
+ * Chandra Adhi, Solar (Vesi/Vasi/Ubhayachari), Lunar (Sunaphaa/Anaphaa/Durudhara/Kemadruma),
+ * Neechabhanga Raja Yoga, Viparita Raja Yogas, Chandra-Mangala, Amala, Parivartana Maha Yoga.
+ * =========================================================================
+ */
+export function computeJathagaYogasSection19(allPlanetRows = [], lagnaRasiIdx = 8) {
+  const SIGN_LORDS = ['mars', 'venus', 'mercury', 'moon', 'sun', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'saturn', 'jupiter'];
+  const RASHIS_TA = ['மேஷம்', 'ரிஷபம்', 'மிதுனம்', 'கடகம்', 'சிம்மம்', 'கன்னி', 'துலாம்', 'விருச்சிகம்', 'தனுசு', 'மகரம்', 'கும்பம்', 'மீனம்'];
+  const RASHIS_EN = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
+  const GRAHA_NAMES_TA = {
+    sun: 'சூரியன்', moon: 'சந்திரன்', mars: 'செவ்வாய்', mercury: 'புதன்',
+    jupiter: 'குரு', venus: 'சுக்கிரன்', saturn: 'சனி', rahu: 'ராகு', ketu: 'கேது', lagna: 'லக்னம்'
+  };
+  const GRAHA_NAMES_EN = {
+    sun: 'Sun', moon: 'Moon', mars: 'Mars', mercury: 'Mercury',
+    jupiter: 'Jupiter', venus: 'Venus', saturn: 'Saturn', rahu: 'Rahu', ketu: 'Ketu', lagna: 'Lagna'
+  };
+
+  const UTCHA_SIGNS = { sun: 0, moon: 1, mars: 9, mercury: 5, jupiter: 3, venus: 11, saturn: 6 };
+  const NEECHA_SIGNS = { sun: 6, moon: 7, mars: 3, mercury: 11, jupiter: 9, venus: 5, saturn: 0 };
+  const OWN_SIGNS = {
+    sun: [4], moon: [3], mars: [0, 7], mercury: [2, 5],
+    jupiter: [8, 11], venus: [1, 6], saturn: [9, 10]
+  };
+
+  const pSigns = {};
+  const pLongs = {};
+  for (const r of allPlanetRows) {
+    if (r && r.id) {
+      pSigns[r.id] = r.rasi !== undefined ? r.rasi : Math.floor((r.longitude || 0) / 30);
+      pLongs[r.id] = r.longitude || 0;
+    }
+  }
+
+  const lagnaRasi = lagnaRasiIdx !== undefined ? lagnaRasiIdx : (pSigns.lagna || 0);
+  const moonRasi = pSigns.moon !== undefined ? pSigns.moon : 0;
+  const sunRasi = pSigns.sun !== undefined ? pSigns.sun : 0;
+
+  const getHouseFrom = (targetSign, refSign) => ((targetSign - refSign + 12) % 12) + 1;
+
+  const houseLords = {};
+  const houseSigns = {};
+  for (let h = 1; h <= 12; h++) {
+    const s = (lagnaRasi + h - 1) % 12;
+    houseSigns[h] = s;
+    houseLords[h] = SIGN_LORDS[s];
+  }
+
+  const hasMutualAspect = (g1, g2) => {
+    const s1 = pSigns[g1];
+    const s2 = pSigns[g2];
+    if (s1 === undefined || s2 === undefined) return false;
+    const d1to2 = getHouseFrom(s2, s1);
+    const d2to1 = getHouseFrom(s1, s2);
+    let g1SeesG2 = (d1to2 === 7);
+    if (g1 === 'mars' && (d1to2 === 4 || d1to2 === 8)) g1SeesG2 = true;
+    if (g1 === 'jupiter' && (d1to2 === 5 || d1to2 === 9)) g1SeesG2 = true;
+    if (g1 === 'saturn' && (d1to2 === 3 || d1to2 === 10)) g1SeesG2 = true;
+
+    let g2SeesG1 = (d2to1 === 7);
+    if (g2 === 'mars' && (d2to1 === 4 || d2to1 === 8)) g2SeesG1 = true;
+    if (g2 === 'jupiter' && (d2to1 === 5 || d2to1 === 9)) g2SeesG1 = true;
+    if (g2 === 'saturn' && (d2to1 === 3 || d2to1 === 10)) g2SeesG1 = true;
+
+    return g1SeesG2 || g2SeesG1;
+  };
+
+  const isConjoined = (g1, g2) => pSigns[g1] !== undefined && pSigns[g1] === pSigns[g2];
+
+  const hasParivartana = (g1, g2) => {
+    if (g1 === g2) return false;
+    const s1 = pSigns[g1];
+    const s2 = pSigns[g2];
+    if (s1 === undefined || s2 === undefined) return false;
+    const g1Owns = OWN_SIGNS[g1] || [];
+    const g2Owns = OWN_SIGNS[g2] || [];
+    return g2Owns.includes(s1) && g1Owns.includes(s2);
+  };
+
+  const yogas = [];
+
+  // 1. GAJAKESARI YOGA
+  {
+    const jupFromMoon = getHouseFrom(pSigns.jupiter, moonRasi);
+    const isKendra = [1, 4, 7, 10].includes(jupFromMoon);
+    const isJupCombust = Math.abs((pLongs.jupiter || 0) - (pLongs.sun || 0)) <= 11;
+    const isJupNeecha = pSigns.jupiter === NEECHA_SIGNS.jupiter;
+    const isJupUtcha = pSigns.jupiter === UTCHA_SIGNS.jupiter;
+
+    let strength = 'இல்லை (Absent)';
+    let isPresent = false;
+    let obsTa = `சந்திரனிலிருந்து குரு ${jupFromMoon}-ம் இடத்தில் உள்ளார் (${RASHIS_TA[pSigns.jupiter]}).`;
+    let obsEn = `Jupiter is in house ${jupFromMoon} from Moon in ${RASHIS_EN[pSigns.jupiter]}.`;
+
+    if (isKendra) {
+      isPresent = true;
+      if (isJupUtcha) {
+        strength = 'உன்னத பலம் (Supreme 100%)';
+        obsTa += ' குரு உச்சம் பெற்றுள்ளார்.';
+        obsEn += ' Jupiter is exalted.';
+      } else if (!isJupCombust && !isJupNeecha) {
+        strength = 'முழு பலம் (Full 90%)';
+        obsTa += ' குரு அஸ்தமனம் அல்லது நீசமின்றி சுபமாக உள்ளார்.';
+        obsEn += ' Jupiter is uncombust and free from debilitation.';
+      } else {
+        strength = 'மத்திம பலம் (Moderate 50%)';
+        obsTa += isJupCombust ? ' குரு சூரியனுடன் அஸ்தமனம் பெற்றுள்ளார்.' : ' குரு நீசமடைந்துள்ளார்.';
+        obsEn += isJupCombust ? ' Jupiter is combust with Sun.' : ' Jupiter is debilitated.';
+      }
+    }
+
+    yogas.push({
+      id: 'gajakesari',
+      nameTa: 'கஜகேசரி யோகம்',
+      nameEn: 'Gajakesari Yoga',
+      category: 'raja',
+      categoryTa: 'சுப ராஜ யோகம்',
+      categoryEn: 'Auspicious Raja Yoga',
+      isPresent,
+      strength,
+      planets: ['moon', 'jupiter'],
+      ruleTa: 'சந்திரனுக்கு கேந்திரத்தில் (1, 4, 7, 10) குரு அமர வேண்டும்.',
+      ruleEn: 'Jupiter must occupy a Kendra (1st, 4th, 7th, or 10th) from the Moon.',
+      observationTa: obsTa,
+      observationEn: obsEn,
+      phalanTa: 'அளவற்ற புகழ், உயர் கல்வி, யானை போன்ற கம்பீரம், சமுதாயத்தில் செல்வாக்கு, பகைவர்களை வெல்லும் பேராற்றல்.',
+      phalanEn: 'Immense reputation, high intelligence, leadership authority, overcoming adversaries, and lasting prosperity.'
+    });
+  }
+
+  // 2. PANCHA MAHAPURUSHA YOGAS (5)
+  const mahapurushaList = [
+    {
+      id: 'ruchaka',
+      planet: 'mars',
+      nameTa: 'ருசக யோகம் (மகாபுருஷ யோகம்)',
+      nameEn: 'Ruchaka Yoga (Pancha Mahapurusha)',
+      ruleTa: 'செவ்வாய் லக்ன கேந்திரத்தில் (1, 4, 7, 10) ஆட்சி (மேஷம், விருச்சிகம்) அல்லது உச்சம் (மகரம்) பெற வேண்டும்.',
+      ruleEn: 'Mars must be in a Kendra from Lagna in its own sign (Aries, Scorpio) or exalted sign (Capricorn).',
+      phalanTa: 'தைரியம், நிலபுலன்கள், அதிகாரம், நிர்வாக ஆற்றல், காவல்/இராணுவத் தலைமை, சகோதர பலம்.',
+      phalanEn: 'Courage, real estate wealth, administrative command, military/police valor, and triumphant success.'
+    },
+    {
+      id: 'bhadra',
+      planet: 'mercury',
+      nameTa: 'பத்ர யோகம் (மகாபுருஷ யோகம்)',
+      nameEn: 'Bhadra Yoga (Pancha Mahapurusha)',
+      ruleTa: 'புதன் லக்ன கேந்திரத்தில் (1, 4, 7, 10) ஆட்சி/உச்சம் (மிதுனம், கன்னி) பெற வேண்டும்.',
+      ruleEn: 'Mercury must be in a Kendra from Lagna in its own or exalted sign (Gemini, Virgo).',
+      phalanTa: 'கூர்மையான புத்தி கூர்மை, வாக்கு சாதுரியம், வணிக வெற்றி, கணிதம் மற்றும் எழுத்தாற்றல்.',
+      phalanEn: 'Intellectual brilliance, eloquence, mercantile success, mathematical skill, and longevity.'
+    },
+    {
+      id: 'hamsa',
+      planet: 'jupiter',
+      nameTa: 'ஹம்ச யோகம் (மகாபுருஷ யோகம்)',
+      nameEn: 'Hamsa Yoga (Pancha Mahapurusha)',
+      ruleTa: 'குரு லக்ன கேந்திரத்தில் (1, 4, 7, 10) ஆட்சி (தனுசு, மீனம்) அல்லது உச்சம் (கடகம்) பெற வேண்டும்.',
+      ruleEn: 'Jupiter must be in a Kendra from Lagna in its own sign (Sagittarius, Pisces) or exalted sign (Cancer).',
+      phalanTa: 'ஆன்மீக ஞானம், நீதிநெறி வழுவாமை, அரசாங்க மரியாதை, அறப்பணிகள், உன்னத ஒழுக்கம்.',
+      phalanEn: 'Spiritual wisdom, virtuous character, governmental respect, righteous deeds, and scholarly renown.'
+    },
+    {
+      id: 'malavya',
+      planet: 'venus',
+      nameTa: 'மாளவ்ய யோகம் (மகாபுருஷ யோகம்)',
+      nameEn: 'Malavya Yoga (Pancha Mahapurusha)',
+      ruleTa: 'சுக்கிரன் லக்ன கேந்திரத்தில் (1, 4, 7, 10) ஆட்சி (ரிஷபம், துலாம்) அல்லது உச்சம் (மீனம்) பெற வேண்டும்.',
+      ruleEn: 'Venus must be in a Kendra from Lagna in its own sign (Taurus, Libra) or exalted sign (Pisces).',
+      phalanTa: 'கலைத் திறன், வாகனம், அழகு, இல்லற சுகம், ஆபரணச் சேர்க்கை, கவர்ச்சிகரமான ஆளுமை.',
+      phalanEn: 'Artistic talent, luxury vehicles, beauty, marital happiness, prosperous lifestyle, and charismatic aura.'
+    },
+    {
+      id: 'sasa',
+      planet: 'saturn',
+      nameTa: 'சச யோகம் (மகாபுருஷ யோகம்)',
+      nameEn: 'Sasa Yoga (Pancha Mahapurusha)',
+      ruleTa: 'சனி லக்ன கேந்திரத்தில் (1, 4, 7, 10) ஆட்சி (மகரம், கும்பம்) அல்லது உச்சம் (துலாம்) பெற வேண்டும்.',
+      ruleEn: 'Saturn must be in a Kendra from Lagna in its own sign (Capricorn, Aquarius) or exalted sign (Libra).',
+      phalanTa: 'மக்கள் ஆதரவு, தலைமைப் பதவி, ஆழ்ந்த உழைப்பு, நீதி பரிபாலனம், நெடுங்கால ஆட்சி.',
+      phalanEn: 'Mass support, durable leadership, relentless industriousness, judicial mastery, and command over land.'
+    }
+  ];
+
+  for (const mDef of mahapurushaList) {
+    const pKey = mDef.planet;
+    const hL = getHouseFrom(pSigns[pKey], lagnaRasi);
+    const isKendra = [1, 4, 7, 10].includes(hL);
+    const pSign = pSigns[pKey];
+    const isOwn = (OWN_SIGNS[pKey] || []).includes(pSign);
+    const isUtcha = pSign === UTCHA_SIGNS[pKey];
+    const isPresent = isKendra && (isOwn || isUtcha);
+
+    let strength = 'இல்லை (Absent)';
+    let obsTa = `${GRAHA_NAMES_TA[pKey]} லக்னத்திலிருந்து ${hL}-ம் வீட்டில் (${RASHIS_TA[pSign]}) உள்ளார்.`;
+    let obsEn = `${GRAHA_NAMES_EN[pKey]} is in house ${hL} from Lagna in ${RASHIS_EN[pSign]}.`;
+
+    if (isPresent) {
+      strength = isUtcha ? 'உன்னத பலம் (Supreme 100%)' : 'முழு பலம் (Full 85%)';
+      obsTa += isUtcha ? ' உச்ச கேந்திர பலம்.' : ' ஆட்சிக் கேந்திர பலம்.';
+      obsEn += isUtcha ? ' Exalted in Kendra.' : ' Own sign in Kendra.';
+    }
+
+    yogas.push({
+      id: mDef.id,
+      nameTa: mDef.nameTa,
+      nameEn: mDef.nameEn,
+      category: 'mahapurusha',
+      categoryTa: 'மகாபுருஷ யோகம்',
+      categoryEn: 'Pancha Mahapurusha Yoga',
+      isPresent,
+      strength,
+      planets: [pKey],
+      ruleTa: mDef.ruleTa,
+      ruleEn: mDef.ruleEn,
+      observationTa: obsTa,
+      observationEn: obsEn,
+      phalanTa: mDef.phalanTa,
+      phalanEn: mDef.phalanEn
+    });
+  }
+
+  // 3. BUDHADITYA YOGA
+  {
+    const sameSign = pSigns.sun === pSigns.mercury;
+    const sepDeg = Math.abs((pLongs.sun || 0) - (pLongs.mercury || 0));
+    const isPresent = sameSign;
+    let strength = 'இல்லை (Absent)';
+    let obsTa = `சூரியன் (${RASHIS_TA[pSigns.sun]}) மற்றும் புதன் (${RASHIS_TA[pSigns.mercury]}). இடைவெளி: ${sepDeg.toFixed(2)}°.`;
+    let obsEn = `Sun in ${RASHIS_EN[pSigns.sun]} and Mercury in ${RASHIS_EN[pSigns.mercury]}. Separation: ${sepDeg.toFixed(2)}°.`;
+
+    if (isPresent) {
+      if (sepDeg >= 3.0 && sepDeg <= 14.0) {
+        strength = 'முழு நிபுண யோகம் (Full Nipuna 95%)';
+        obsTa += ' சுத்த அஸ்தமனமின்றி நிபுணத்துவத்துடன் இணைந்துள்ளனர்.';
+        obsEn += ' Healthy separation avoiding deep combustion.';
+      } else {
+        strength = 'மத்திம பலம் (Moderate 60%)';
+        obsTa += ' மிக நெருங்கிய சேர்க்கை (அஸ்தமன வீச்சு).';
+        obsEn += ' Close conjunction under combustion rays.';
+      }
+    }
+
+    yogas.push({
+      id: 'budhaditya',
+      nameTa: 'புதாதித்ய யோகம் (நிபுண யோகம்)',
+      nameEn: 'Budhaditya Yoga (Nipuna Yoga)',
+      category: 'raja',
+      categoryTa: 'புத்தி & வித்யா யோகம்',
+      categoryEn: 'Intellect & Wisdom Yoga',
+      isPresent,
+      strength,
+      planets: ['sun', 'mercury'],
+      ruleTa: 'சூரியனும் புதனும் ஒரே ராசியில் இணைய வேண்டும்.',
+      ruleEn: 'Sun and Mercury must be conjoined in the same sign.',
+      observationTa: obsTa,
+      observationEn: obsEn,
+      phalanTa: 'கூர்மையான அறிவு, கணிதம், தர்க்கம், நிர்வாகத் திறன், அரசு அனுகூலம், வாக்குவன்மை.',
+      phalanEn: 'Razor-sharp intellect, mathematical brilliance, administrative acumen, governmental favors, and communicative charisma.'
+    });
+  }
+
+  // 4. DHARMA-KARMADHIPATI RAJA YOGA
+  {
+    const l9 = houseLords[9];
+    const l10 = houseLords[10];
+    const isSamePlanet = l9 === l10;
+
+    let isPresent = false;
+    let strength = 'இல்லை (Absent)';
+    let obsTa = `9-ம் அதிபதி (${GRAHA_NAMES_TA[l9]}) மற்றும் 10-ம் அதிபதி (${GRAHA_NAMES_TA[l10]}).`;
+    let obsEn = `9th Lord (${GRAHA_NAMES_EN[l9]}) and 10th Lord (${GRAHA_NAMES_EN[l10]}).`;
+
+    if (isSamePlanet) {
+      const hLord = getHouseFrom(pSigns[l9], lagnaRasi);
+      const isAuspicious = [1, 2, 4, 5, 7, 9, 10, 11].includes(hLord);
+      if (isAuspicious) {
+        isPresent = true;
+        strength = 'யோககாரக உன்னத பலம் (Yogakaraka 100%)';
+        obsTa += ` ஒரே கிரகம் 9, 10 அதிபதியாகி சுப வீட்டில் (${hLord}-ம் பாவம்) அமர்ந்துள்ளார்.`;
+        obsEn += ` Single planet owns both 9th and 10th as natural Yogakaraka in house ${hLord}.`;
+      }
+    } else {
+      const conj = isConjoined(l9, l10);
+      const aspect = hasMutualAspect(l9, l10);
+      const pariv = hasParivartana(l9, l10);
+
+      if (conj || aspect || pariv) {
+        isPresent = true;
+        strength = pariv ? 'பரிவர்த்தனை உன்னத பலம் (100%)' : conj ? 'சேர்க்கை முழு பலம் (90%)' : 'பார்வை சிறப்பு பலம் (75%)';
+        const typeTa = pariv ? 'பரிவர்த்தனை' : conj ? 'சேர்க்கை' : 'சமசப்தம பார்வை';
+        const typeEn = pariv ? 'Mutual Exchange (Parivartana)' : conj ? 'Conjunction' : 'Mutual Aspect';
+        obsTa += ` இரு கிரகங்களும் ${typeTa} உறவில் உள்ளனர்.`;
+        obsEn += ` Both lords are linked via ${typeEn}.`;
+      }
+    }
+
+    yogas.push({
+      id: 'dharma_karmadhipati',
+      nameTa: 'தர்ம-கர்மாதிபதி ராஜ யோகம்',
+      nameEn: 'Dharma-Karmadhipati Raja Yoga',
+      category: 'raja',
+      categoryTa: 'உயர்நிலை ராஜ யோகம்',
+      categoryEn: 'Supreme Raja Yoga',
+      isPresent,
+      strength,
+      planets: isSamePlanet ? [l9] : [l9, l10],
+      ruleTa: 'பாக்கியாதிபதி (9-ம் அதிபதி) மற்றும் கர்மாதிபதி (10-ம் அதிபதி) சேர்க்கை, பார்வை அல்லது பரிவர்த்தனை பெற வேண்டும்.',
+      ruleEn: 'The 9th Lord (Dharma) and 10th Lord (Karma) must form a conjunction, mutual aspect, or sign exchange.',
+      observationTa: obsTa,
+      observationEn: obsEn,
+      phalanTa: 'சமூகத்தில் உச்ச பதவி, அரசு செல்வாக்கு, அறநெறி வழுவாத வாழ்க்கை, அழியாத புகழ், சகல செல்வங்கள்.',
+      phalanEn: 'Pinnacle of career success, executive power, righteous governance, wealth, and immortal fame.'
+    });
+  }
+
+  // 5. CHANDRA ADHI YOGA
+  {
+    const benefics = ['mercury', 'jupiter', 'venus'];
+    const foundBenefics = [];
+    for (const b of benefics) {
+      const hM = getHouseFrom(pSigns[b], moonRasi);
+      if ([6, 7, 8].includes(hM)) {
+        foundBenefics.push({ planet: b, house: hM });
+      }
+    }
+
+    const isPresent = foundBenefics.length > 0;
+    let strength = 'இல்லை (Absent)';
+    if (foundBenefics.length === 3) strength = 'பரிபூரண பலம் (Complete 100%)';
+    else if (foundBenefics.length === 2) strength = 'சிறப்பு பலம் (High 75%)';
+    else if (foundBenefics.length === 1) strength = 'ஒரு பகுதி பலம் (Partial 45%)';
+
+    const obsTa = foundBenefics.length
+      ? `சந்திரனிலிருந்து 6, 7, 8-ல் உள்ள சுபர்கள்: ${foundBenefics.map(f => `${GRAHA_NAMES_TA[f.planet]} (${f.house}-ம் வீடு)`).join(', ')}.`
+      : 'சந்திரனிலிருந்து 6, 7, 8-ல் சுப கிரகங்கள் அமையவில்லை.';
+    const obsEn = foundBenefics.length
+      ? `Benefics in 6, 7, 8 from Moon: ${foundBenefics.map(f => `${GRAHA_NAMES_EN[f.planet]} (H${f.house})`).join(', ')}.`
+      : 'No natural benefics found in houses 6, 7, 8 from Moon.';
+
+    yogas.push({
+      id: 'chandra_adhi',
+      nameTa: 'சந்திராதி யோகம் (அதி யோகம்)',
+      nameEn: 'Chandra Adhi Yoga',
+      category: 'raja',
+      categoryTa: 'சுப ராஜ யோகம்',
+      categoryEn: 'Auspicious Raja Yoga',
+      isPresent,
+      strength,
+      planets: foundBenefics.map(f => f.planet),
+      ruleTa: 'சந்திரனுக்கு 6, 7, 8 ஆகிய இடங்களில் சுப கிரகங்கள் (புதன், குரு, சுக்கிரன்) அமைய வேண்டும்.',
+      ruleEn: 'Natural benefics (Mercury, Jupiter, Venus) must occupy the 6th, 7th, or 8th house from the Moon.',
+      observationTa: obsTa,
+      observationEn: obsEn,
+      phalanTa: 'பகைவர்களை வெல்லும் வீரம், நீண்ட ஆயுள், அரச மரியாதை, நோய்நொடியற்ற சுகவாழ்வு, அமைதியான மனம்.',
+      phalanEn: 'Dominance over rivals, longevity, princely comforts, robust health, and untroubled peace of mind.'
+    });
+  }
+
+  // 6. SOLAR YOGAS
+  {
+    const qualifyingPlanets = ['mars', 'mercury', 'jupiter', 'venus', 'saturn'];
+    const h2Planets = [];
+    const h12Planets = [];
+    for (const p of qualifyingPlanets) {
+      const hSun = getHouseFrom(pSigns[p], sunRasi);
+      if (hSun === 2) h2Planets.push(p);
+      if (hSun === 12) h12Planets.push(p);
+    }
+
+    const hasVesi = h2Planets.length > 0;
+    const hasVasi = h12Planets.length > 0;
+    const hasUbhayachari = hasVesi && hasVasi;
+
+    let yogaNameTa = 'சூரிய யோகங்கள் இல்லை';
+    let yogaNameEn = 'No Solar Yoga';
+    let isPresent = false;
+    let strength = 'இல்லை (Absent)';
+    let obsTa = '';
+    let obsEn = '';
+    let phalanTa = '';
+    let phalanEn = '';
+
+    if (hasUbhayachari) {
+      yogaNameTa = 'உபயசாரி யோகம் (சூரிய யோகம்)';
+      yogaNameEn = 'Ubhayachari Yoga (Solar Yoga)';
+      isPresent = true;
+      strength = 'முழு பலம் (Full 90%)';
+      obsTa = `சூரியனுக்கு 2-ல் (${h2Planets.map(p => GRAHA_NAMES_TA[p]).join(', ')}) மற்றும் 12-ல் (${h12Planets.map(p => GRAHA_NAMES_TA[p]).join(', ')}).`;
+      obsEn = `Planets in 2nd (${h2Planets.map(p => GRAHA_NAMES_EN[p]).join(', ')}) and 12th (${h12Planets.map(p => GRAHA_NAMES_EN[p]).join(', ')}) from Sun.`;
+      phalanTa = 'மன்னருக்கு ஒப்பான வாழ்க்கை, நற்குணங்கள், சமச்சீரான ஆளுமை, சமூகத்தில் பெரும் நற்பெயர்.';
+      phalanEn = 'King-like dignified stature, eloquent speech, poised personality, and enduring social fortune.';
+    } else if (hasVesi) {
+      yogaNameTa = 'வேசி யோகம் (சூரிய யோகம்)';
+      yogaNameEn = 'Vesi Yoga (Solar Yoga)';
+      isPresent = true;
+      strength = 'சிறப்பு பலம் (High 75%)';
+      obsTa = `சூரியனுக்கு 2-ம் வீட்டில் உள்ள கிரகங்கள்: ${h2Planets.map(p => GRAHA_NAMES_TA[p]).join(', ')}.`;
+      obsEn = `Planets in 2nd from Sun: ${h2Planets.map(p => GRAHA_NAMES_EN[p]).join(', ')}.`;
+      phalanTa = 'மகிழ்ச்சியான பேச்சு, செல்வம், தர்ம சிந்தனை, அழகிய தோற்றம், வசதியான வாழ்க்கை.';
+      phalanEn = 'Pleasant speech, accumulated wealth, charitable mindset, handsome presence, and comfortable life.';
+    } else if (hasVasi) {
+      yogaNameTa = 'வாசி யோகம் (சூரிய யோகம்)';
+      yogaNameEn = 'Vasi Yoga (Solar Yoga)';
+      isPresent = true;
+      strength = 'சிறப்பு பலம் (High 75%)';
+      obsTa = `சூரியனுக்கு 12-ம் வீட்டில் உள்ள கிரகங்கள்: ${h12Planets.map(p => GRAHA_NAMES_TA[p]).join(', ')}.`;
+      obsEn = `Planets in 12th from Sun: ${h12Planets.map(p => GRAHA_NAMES_EN[p]).join(', ')}.`;
+      phalanTa = 'புத்தி கூர்மை, ஞாபக சக்தி, வெளிநாட்டுப் பயணங்கள், தாராள குணம், உலகப் புகழ்.';
+      phalanEn = 'Sharp intelligence, stellar memory, overseas travels, charitable magnanimity, and wide renown.';
+    } else {
+      obsTa = 'சூரியனுக்கு 2 அல்லது 12-ல் கிரகங்கள் அமையவில்லை.';
+      obsEn = 'No planetary occupants in 2nd or 12th from Sun.';
+    }
+
+    yogas.push({
+      id: 'solar_yogas',
+      nameTa: yogaNameTa,
+      nameEn: yogaNameEn,
+      category: 'lunar_solar',
+      categoryTa: 'சூரிய யோகம்',
+      categoryEn: 'Solar Yoga',
+      isPresent,
+      strength,
+      planets: [...h2Planets, ...h12Planets],
+      ruleTa: 'சூரியனுக்கு 2-ல் கிரகம் அமைந்தால் வேசி யோகம்; 12-ல் அமைந்தால் வாசி யோகம்; இரண்டிலும் அமைந்தால் உபயசாரி யோகம்.',
+      ruleEn: 'Planets in 2nd from Sun form Vesi; in 12th form Vasi; in both form Ubhayachari Yoga.',
+      observationTa: obsTa,
+      observationEn: obsEn,
+      phalanTa: phalanTa || 'சூரியனின் இருபுறமும் சுப கிரகங்கள் அமைந்தால் அரச வாழ்க்கை மற்றும் உயர்ந்த கௌரவம் கிட்டும்.',
+      phalanEn: phalanEn || 'Planets flanking the Sun grant royal standing, good health, and elevated honors.'
+    });
+  }
+
+  // 7. LUNAR YOGAS
+  {
+    const qualifyingPlanets = ['mars', 'mercury', 'jupiter', 'venus', 'saturn'];
+    const h2Planets = [];
+    const h12Planets = [];
+    for (const p of qualifyingPlanets) {
+      const hM = getHouseFrom(pSigns[p], moonRasi);
+      if (hM === 2) h2Planets.push(p);
+      if (hM === 12) h12Planets.push(p);
+    }
+
+    const hasSunaphaa = h2Planets.length > 0;
+    const hasAnaphaa = h12Planets.length > 0;
+    const hasDurudhara = hasSunaphaa && hasAnaphaa;
+
+    const isKemadruma = !hasSunaphaa && !hasAnaphaa;
+    const hasKendraPlanet = qualifyingPlanets.some(p => {
+      const hL = getHouseFrom(pSigns[p], lagnaRasi);
+      const hM = getHouseFrom(pSigns[p], moonRasi);
+      return [1, 4, 7, 10].includes(hL) || [1, 4, 7, 10].includes(hM);
+    });
+
+    let yogaNameTa = '';
+    let yogaNameEn = '';
+    let isPresent = true;
+    let strength = 'முழு பலம் (Full 85%)';
+    let obsTa = '';
+    let obsEn = '';
+    let phalanTa = '';
+    let phalanEn = '';
+
+    if (hasDurudhara) {
+      yogaNameTa = 'துரதுரா யோகம் (சந்திர யோகம்)';
+      yogaNameEn = 'Durudhara Yoga (Lunar Yoga)';
+      obsTa = `சந்திரனுக்கு 2-ல் (${h2Planets.map(p => GRAHA_NAMES_TA[p]).join(', ')}) மற்றும் 12-ல் (${h12Planets.map(p => GRAHA_NAMES_TA[p]).join(', ')}).`;
+      obsEn = `Planets in 2nd (${h2Planets.map(p => GRAHA_NAMES_EN[p]).join(', ')}) and 12th (${h12Planets.map(p => GRAHA_NAMES_EN[p]).join(', ')}) from Moon.`;
+      phalanTa = 'அளவற்ற செல்வம், தாராள குணம், வாகன சுகம், புகழ், இன்பமான வாழ்க்கை.';
+      phalanEn = 'Bountiful wealth, generosity, vehicle comforts, fame, and luxurious contentment.';
+    } else if (hasSunaphaa) {
+      yogaNameTa = 'சுனபா யோகம் (சந்திர யோகம்)';
+      yogaNameEn = 'Sunaphaa Yoga (Lunar Yoga)';
+      obsTa = `சந்திரனுக்கு 2-ம் வீட்டில் உள்ள கிரகங்கள்: ${h2Planets.map(p => GRAHA_NAMES_TA[p]).join(', ')}.`;
+      obsEn = `Planets in 2nd from Moon: ${h2Planets.map(p => GRAHA_NAMES_EN[p]).join(', ')}.`;
+      phalanTa = 'சுய முயற்சியால் திரட்டிய செல்வம், அறிவாற்றல், நற்புகழ், மன அமைதி.';
+      phalanEn = 'Self-earned riches, intellectual sharpness, good reputation, and peace of mind.';
+    } else if (hasAnaphaa) {
+      yogaNameTa = 'அனபா யோகம் (சந்திர யோகம்)';
+      yogaNameEn = 'Anaphaa Yoga (Lunar Yoga)';
+      obsTa = `சந்திரனுக்கு 12-ம் வீட்டில் உள்ள கிரகங்கள்: ${h12Planets.map(p => GRAHA_NAMES_TA[p]).join(', ')}.`;
+      obsEn = `Planets in 12th from Moon: ${h12Planets.map(p => GRAHA_NAMES_EN[p]).join(', ')}.`;
+      phalanTa = 'ஆரோக்கியமான உடல், கவர்ச்சிகரமான தோற்றம், நன்னடத்தை, சுகபோகம்.';
+      phalanEn = 'Sound health, magnetic physical appeal, noble character, and pleasurable life.';
+    } else if (isKemadruma) {
+      if (hasKendraPlanet) {
+        yogaNameTa = 'கேமத்ரும பங்க யோகம் (ரத்து பெற்று ராஜ யோகம்)';
+        yogaNameEn = 'Kemadruma Bhanga Yoga (Cancelled Kemadruma)';
+        strength = 'ராஜ யோக பலம் (Bhanga Raja Yoga 80%)';
+        obsTa = 'சந்திரனுக்கு இருபுறமும் கிரகமில்லை; ஆனால் கேந்திரத்தில் கிரகங்கள் உள்ளதால் கேமத்ருமம் ரத்தாகி ராஜயோகமானது.';
+        obsEn = 'No planets in 2/12 from Moon, but cancelled by planets in Kendras transforming into Raja Yoga.';
+        phalanTa = 'தொடக்க கால சிரமங்களுக்குப் பின் பெருத்த செல்வம், புகழ், தன்னம்பிக்கை மற்றும் தலைமைத் திறன்.';
+        phalanEn = 'After initial struggles, grand rise to wealth, self-reliance, leadership, and public acclaim.';
+      } else {
+        yogaNameTa = 'கேமத்ரும யோகம் (சந்திர தனிமை நிலை)';
+        yogaNameEn = 'Kemadruma Yoga (Isolated Moon)';
+        strength = 'தோஷ பலம் (Adverse 70%)';
+        obsTa = 'சந்திரனுக்கு 2 மற்றும் 12-ம் வீடுகளில் கிரகங்கள் இன்றி சந்திரன் தனித்துள்ளது.';
+        obsEn = 'Moon is isolated without planets in 2nd or 12th houses.';
+        phalanTa = 'மனக் குழப்பம், தனிமை உணர்வு, ஏற்ற இறக்கமான நிதி நிலை (பரிகாரத்தால் சுபமடையும்).';
+        phalanEn = 'Restless thoughts, loneliness, fluctuating fortunes (mitigated by worship and remedies).';
+      }
+    }
+
+    yogas.push({
+      id: 'lunar_yogas',
+      nameTa: yogaNameTa,
+      nameEn: yogaNameEn,
+      category: 'lunar_solar',
+      categoryTa: 'சந்திர யோகம்',
+      categoryEn: 'Lunar Yoga',
+      isPresent,
+      strength,
+      planets: [...h2Planets, ...h12Planets],
+      ruleTa: 'சந்திரனுக்கு 2-ல் அமைந்தால் சுனபா; 12-ல் அமைந்தால் அனபா; இரண்டிலும் அமைந்தால் துரதுரா யோகம்.',
+      ruleEn: 'Planets in 2nd from Moon form Sunaphaa; in 12th form Anaphaa; in both form Durudhara Yoga.',
+      observationTa: obsTa,
+      observationEn: obsEn,
+      phalanTa: phalanTa,
+      phalanEn: phalanEn
+    });
+  }
+
+  // 8. NEECHABHANGA RAJA YOGA
+  {
+    const grahaOrder = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn'];
+    const neechaPlanets = [];
+    for (const g of grahaOrder) {
+      if (pSigns[g] === NEECHA_SIGNS[g]) {
+        neechaPlanets.push(g);
+      }
+    }
+
+    const cancelledPlanets = [];
+    for (const np of neechaPlanets) {
+      const nSign = NEECHA_SIGNS[np];
+      const dispositor = SIGN_LORDS[nSign];
+      const uchaSign = UTCHA_SIGNS[np];
+      const uchaLord = SIGN_LORDS[uchaSign];
+
+      const hDisFromL = getHouseFrom(pSigns[dispositor], lagnaRasi);
+      const hDisFromM = getHouseFrom(pSigns[dispositor], moonRasi);
+      const r1 = [1, 4, 7, 10].includes(hDisFromL) || [1, 4, 7, 10].includes(hDisFromM);
+
+      const hUchaFromL = getHouseFrom(pSigns[uchaLord], lagnaRasi);
+      const hUchaFromM = getHouseFrom(pSigns[uchaLord], moonRasi);
+      const r2 = [1, 4, 7, 10].includes(hUchaFromL) || [1, 4, 7, 10].includes(hUchaFromM);
+
+      const r3 = hasMutualAspect(np, dispositor);
+      const r4 = grahaOrder.some(other => other !== np && pSigns[other] === nSign && pSigns[other] === UTCHA_SIGNS[other]);
+
+      if (r1 || r2 || r3 || r4) {
+        cancelledPlanets.push({
+          planet: np,
+          dispositor,
+          uchaLord,
+          rulesMatched: [r1 ? 'விதி 1 (நீசாதிபதி கேந்திரம்)' : '', r2 ? 'விதி 2 (உச்ச நாதன் கேந்திரம்)' : '', r3 ? 'விதி 3 (நீசனுக்கு அதிபதி பார்வை)' : '', r4 ? 'விதி 4 (உச்ச கிரக சேர்க்கை)' : ''].filter(Boolean)
+        });
+      }
+    }
+
+    const isPresent = cancelledPlanets.length > 0;
+    const obsTa = isPresent
+      ? `நீசபங்கமான கிரகங்கள்: ${cancelledPlanets.map(cp => `${GRAHA_NAMES_TA[cp.planet]} (${cp.rulesMatched.join(', ')})`).join('; ')}.`
+      : (neechaPlanets.length ? `${neechaPlanets.map(p => GRAHA_NAMES_TA[p]).join(', ')} நீசம் பெற்றுள்ளது (முழு நீசபங்கம் பூர்த்தியாகவில்லை).` : 'ஜாதகத்தில் நீச கிரகங்கள் எதுவுமில்லை (கிரகங்கள் சுப பலத்துடன் உள்ளன).');
+    const obsEn = isPresent
+      ? `Debilitation cancelled for: ${cancelledPlanets.map(cp => `${GRAHA_NAMES_EN[cp.planet]} via ${cp.rulesMatched.join(', ')}`).join('; ')}.`
+      : (neechaPlanets.length ? `${neechaPlanets.map(p => GRAHA_NAMES_EN[p]).join(', ')} in debilitation without full cancellation.` : 'No debilitated planets found in the horoscope.');
+
+    yogas.push({
+      id: 'neechabhanga_raja',
+      nameTa: 'நீசபங்க ராஜ யோகம்',
+      nameEn: 'Neechabhanga Raja Yoga',
+      category: 'viparita',
+      categoryTa: 'விசேஷ ராஜ யோகம்',
+      categoryEn: 'Special Elevation Raja Yoga',
+      isPresent,
+      strength: isPresent ? 'உயர்நிலை ராஜ யோகம் (Imperial 95%)' : 'இல்லை (Absent)',
+      planets: cancelledPlanets.map(cp => cp.planet),
+      ruleTa: 'நீச கிரகத்தின் வீட்டு அதிபதியோ அல்லது அக்கிரகம் உச்சம் பெரும் வீட்டு அதிபதியோ லக்ன/சந்திர கேந்திரத்தில் அமைய வேண்டும்.',
+      ruleEn: 'The dispositor of the debilitated planet or its exaltation lord must occupy a Kendra from Lagna or Moon.',
+      observationTa: obsTa,
+      observationEn: obsEn,
+      phalanTa: 'எளிய சூழலில் பிறப்பினும் அரசனாக உயரும் பெரும் பாக்கியம், சவால்களை முறியடித்து சரித்திரம் படைக்கும் ஆற்றல்.',
+      phalanEn: 'Rising from humble beginnings to supreme authority, overcoming colossal challenges, and commanding profound prestige.'
+    });
+  }
+
+  // 9. VIPARITA RAJA YOGAS
+  {
+    const l6 = houseLords[6];
+    const l8 = houseLords[8];
+    const l12 = houseLords[12];
+
+    const h6Pos = getHouseFrom(pSigns[l6], lagnaRasi);
+    const h8Pos = getHouseFrom(pSigns[l8], lagnaRasi);
+    const h12Pos = getHouseFrom(pSigns[l12], lagnaRasi);
+
+    const isHarsha = [6, 8, 12].includes(h6Pos);
+    const isSarala = [6, 8, 12].includes(h8Pos);
+    const isVimala = [6, 8, 12].includes(h12Pos);
+
+    const viparitasFound = [];
+    if (isHarsha) viparitasFound.push(`ஹர்ஷ யோகம் (6-க்குடைய ${GRAHA_NAMES_TA[l6]} ${h6Pos}-ல்)`);
+    if (isSarala) viparitasFound.push(`சரள யோகம் (8-க்குடைய ${GRAHA_NAMES_TA[l8]} ${h8Pos}-ல்)`);
+    if (isVimala) viparitasFound.push(`விமல யோகம் (12-க்குடைய ${GRAHA_NAMES_TA[l12]} ${h12Pos}-ல்)`);
+
+    const isPresent = viparitasFound.length > 0;
+    const obsTa = isPresent
+      ? `அமைந்துள்ள விபரீத யோகங்கள்: ${viparitasFound.join(', ')}.`
+      : `மறைவு ஸ்தானாதிபதிகள் மறைவு வீடுகளில் அமையவில்லை (6-அதிபதி: ${h6Pos}, 8-அதிபதி: ${h8Pos}, 12-அதிபதி: ${h12Pos}).`;
+    const obsEn = isPresent
+      ? `Formed Viparita Yogas: ${viparitasFound.join(', ')}.`
+      : `Dusthana lords are not situated in Dusthanas (6th Lord in H${h6Pos}, 8th Lord in H${h8Pos}, 12th Lord in H${h12Pos}).`;
+
+    yogas.push({
+      id: 'viparita_raja',
+      nameTa: 'விபரீத ராஜ யோகம் (ஹர்ஷ / சரள / விமல யோகம்)',
+      nameEn: 'Viparita Raja Yoga (Harsha / Sarala / Vimala)',
+      category: 'viparita',
+      categoryTa: 'விபரீத ராஜ யோகம்',
+      categoryEn: 'Inverted Victory Raja Yoga',
+      isPresent,
+      strength: isPresent ? 'வெற்றி யோக பலம் (Triumph 85%)' : 'இல்லை (Absent)',
+      planets: [l6, l8, l12],
+      ruleTa: '6, 8, 12-ம் அதிபதிகள் தங்களுக்குள் 6, 8, 12-ம் மறைவு வீடுகளில் அமர வேண்டும்.',
+      ruleEn: 'Lords of the 6th, 8th, or 12th houses must occupy the 6th, 8th, or 12th houses.',
+      observationTa: obsTa,
+      observationEn: obsEn,
+      phalanTa: 'எதிர்பாராத அதிர்ஷ்டம், எதிரிகள் தானாக வீழ்தல், திடீர் தனலாபம், நெருக்கடிகளை வெற்றியாக மாற்றும் ஆற்றல்.',
+      phalanEn: 'Unexpected windfalls, effortless vanquishing of adversaries, miraculous recovery from crises, and sudden high ascent.'
+    });
+  }
+
+  // 10. CHANDRA-MANGALA YOGA
+  {
+    const conj = isConjoined('moon', 'mars');
+    const aspect = hasMutualAspect('moon', 'mars');
+    const isPresent = conj || aspect;
+
+    const obsTa = isPresent
+      ? `சந்திரனும் செவ்வாயும் ${conj ? 'ஒரே ராசியில் இணைந்துள்ளனர்' : 'பரஸ்பர பார்வை பெற்றுள்ளனர்'} (${RASHIS_TA[pSigns.moon]} & ${RASHIS_TA[pSigns.mars]}).`
+      : `சந்திரனும் செவ்வாயும் இணையவில்லை (சந்திரன்: ${RASHIS_TA[pSigns.moon]}, செவ்வாய்: ${RASHIS_TA[pSigns.mars]}).`;
+    const obsEn = isPresent
+      ? `Moon and Mars are ${conj ? 'conjoined in the same sign' : 'mutually aspecting each other'} (${RASHIS_EN[pSigns.moon]} & ${RASHIS_EN[pSigns.mars]}).`
+      : 'Moon and Mars are not in conjunction or aspect.';
+
+    yogas.push({
+      id: 'chandra_mangala',
+      nameTa: 'சந்திர-மங்கள யோகம் (மகா தன யோகம்)',
+      nameEn: 'Chandra-Mangala Yoga (Wealth Yoga)',
+      category: 'dhana',
+      categoryTa: 'தன யோகம்',
+      categoryEn: 'Wealth & Prosperity Yoga',
+      isPresent,
+      strength: isPresent ? 'மகா தன பலம் (Great Wealth 88%)' : 'இல்லை (Absent)',
+      planets: ['moon', 'mars'],
+      ruleTa: 'சந்திரனும் செவ்வாயும் சேர்க்கை அல்லது சமசப்தம பார்வை பெற வேண்டும்.',
+      ruleEn: 'Moon and Mars must be conjoined or in mutual aspect.',
+      observationTa: obsTa,
+      observationEn: obsEn,
+      phalanTa: 'அசையா சொத்துக்கள், நிலம், ரியல் எஸ்டேட் யோகம், கைநிறைய வருமானம், தாயின் ஆசி, வணிக லாபம்.',
+      phalanEn: 'Immovable properties, agricultural/real-estate fortune, robust commercial income, and material wealth.'
+    });
+  }
+
+  // 11. AMALA YOGA
+  {
+    const h10Lagna = houseSigns[10];
+    const h10Moon = (moonRasi + 9) % 12;
+
+    const benefics = ['jupiter', 'venus', 'mercury'];
+    const bIn10L = benefics.filter(b => pSigns[b] === h10Lagna);
+    const bIn10M = benefics.filter(b => pSigns[b] === h10Moon);
+
+    const isPresent = bIn10L.length > 0 || bIn10M.length > 0;
+    const all10B = Array.from(new Set([...bIn10L, ...bIn10M]));
+
+    const obsTa = isPresent
+      ? `10-ம் பாவத்தில் உள்ள சுப கிரகங்கள்: ${all10B.map(b => GRAHA_NAMES_TA[b]).join(', ')} (லக்ன/சந்திர பத்தாம் இடம்).`
+      : 'லக்னம் அல்லது சந்திரனுக்கு 10-ம் இடத்தில் தனித்த சுப கிரகங்கள் அமையவில்லை.';
+    const obsEn = isPresent
+      ? `Natural benefics in 10th house: ${all10B.map(b => GRAHA_NAMES_EN[b]).join(', ')}.`
+      : 'No natural benefics found in the 10th house from Lagna or Moon.';
+
+    yogas.push({
+      id: 'amala_yoga',
+      nameTa: 'அமல யோகம் (களங்கமற்ற கீர்த்தி யோகம்)',
+      nameEn: 'Amala Yoga (Spotless Fame Yoga)',
+      category: 'raja',
+      categoryTa: 'கீர்த்தி & தொழில் யோகம்',
+      categoryEn: 'Fame & Career Yoga',
+      isPresent,
+      strength: isPresent ? 'கீர்த்தி பலம் (High Honor 85%)' : 'இல்லை (Absent)',
+      planets: all10B,
+      ruleTa: 'லக்னம் அல்லது சந்திரனுக்கு 10-ம் வீட்டில் சுப கிரகங்கள் (குரு, சுக்கிரன், புதன்) அமைய வேண்டும்.',
+      ruleEn: 'A natural benefic (Jupiter, Venus, or Mercury) must reside in the 10th house from Lagna or Moon.',
+      observationTa: obsTa,
+      observationEn: obsEn,
+      phalanTa: 'களங்கமற்ற நற்பெயர், உயர்ந்த தொழில் கௌரவம், அறப்பணிகள், சமூகத்தில் நீடித்த மரியாதை.',
+      phalanEn: 'Unblemished reputation, stellar career honor, virtuous deeds, and enduring social reverence.'
+    });
+  }
+
+  // 12. PARIVARTANA MAHA YOGA
+  {
+    const auspiciousHouses = [1, 2, 4, 5, 7, 9, 10, 11];
+    const parivartanas = [];
+    for (let i = 0; i < auspiciousHouses.length; i++) {
+      for (let j = i + 1; j < auspiciousHouses.length; j++) {
+        const hA = auspiciousHouses[i];
+        const hB = auspiciousHouses[j];
+        const lordA = houseLords[hA];
+        const lordB = houseLords[hB];
+        if (lordA && lordB && lordA !== lordB) {
+          if (hasParivartana(lordA, lordB)) {
+            parivartanas.push({ hA, hB, lordA, lordB });
+          }
+        }
+      }
+    }
+
+    const isPresent = parivartanas.length > 0;
+    const obsTa = isPresent
+      ? `பரிவர்த்தனை பெற்ற பாவகங்கள்: ${parivartanas.map(p => `${p.hA} & ${p.hB} பாவாதிபதிகள் (${GRAHA_NAMES_TA[p.lordA]} ⇄ ${GRAHA_NAMES_TA[p.lordB]})`).join('; ')}.`
+      : 'சுப பாவாதிபதிகளிடையே பரிவர்த்தனை இல்லை.';
+    const obsEn = isPresent
+      ? `Exchanged house lords: ${parivartanas.map(p => `Houses ${p.hA} & ${p.hB} (${GRAHA_NAMES_EN[p.lordA]} ⇄ ${GRAHA_NAMES_EN[p.lordB]})`).join('; ')}.`
+      : 'No auspicious mutual house exchanges detected.';
+
+    yogas.push({
+      id: 'parivartana_maha',
+      nameTa: 'பரிவர்த்தனை மகா யோகம்',
+      nameEn: 'Parivartana Maha Yoga',
+      category: 'raja',
+      categoryTa: 'மகா பாவக யோகம்',
+      categoryEn: 'Great Exchange Yoga',
+      isPresent,
+      strength: isPresent ? 'உன்னத பரிவர்த்தனை பலம் (Supreme 95%)' : 'இல்லை (Absent)',
+      planets: parivartanas.flatMap(p => [p.lordA, p.lordB]),
+      ruleTa: 'சுப பாவகங்களான 1, 2, 4, 5, 7, 9, 10, 11-ம் அதிபதிகள் தங்களுக்குள் வீடுகளைப் பரிமாறிக் கொள்ள வேண்டும்.',
+      ruleEn: 'Mutual sign exchange between lords of auspicious houses (1, 2, 4, 5, 7, 9, 10, 11).',
+      observationTa: obsTa,
+      observationEn: obsEn,
+      phalanTa: 'இரு பாவகங்களும் உச்ச பலம் அடைந்து, ஜாதகருக்கு வாழ்க்கையில் தடைகளற்ற தொடர் வளர்ச்சி மற்றும் செல்வம் தரும்.',
+      phalanEn: 'Both houses gain immense elevation, unlocking effortless progress, prestige, and financial triumph.'
+    });
+  }
+
+  // Summary counts
+  const totalYogas = yogas.length;
+  const presentCount = yogas.filter(y => y.isPresent).length;
+  const rajaYogasCount = yogas.filter(y => y.isPresent && (y.category === 'raja' || y.category === 'mahapurusha')).length;
+  const mahapurushaCount = yogas.filter(y => y.isPresent && y.category === 'mahapurusha').length;
+  const dhanaYogasCount = yogas.filter(y => y.isPresent && y.category === 'dhana').length;
+
+  return {
+    yogas,
+    totalYogas,
+    presentCount,
+    rajaYogasCount,
+    mahapurushaCount,
+    dhanaYogasCount
+  };
 }

@@ -141,7 +141,8 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
     15: true,
     16: true,
     17: true,
-    18: true
+    18: true,
+    19: true
   });
 
   const toggleSection = (secNum) => {
@@ -149,11 +150,11 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
   };
 
   const expandAllSections = () => {
-    setOpenSections({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true, 11: true, 12: true, 13: true, 14: true, 15: true, 16: true, 17: true, 18: true });
+    setOpenSections({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true, 11: true, 12: true, 13: true, 14: true, 15: true, 16: true, 17: true, 18: true, 19: true });
   };
 
   const collapseAllSections = () => {
-    setOpenSections({ 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false, 10: false, 11: false, 12: false, 13: false, 14: false, 15: false, 16: false, 17: false, 18: false });
+    setOpenSections({ 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false, 10: false, 11: false, 12: false, 13: false, 14: false, 15: false, 16: false, 17: false, 18: false, 19: false });
   };
 
   const jumpToSection = (secNum) => {
@@ -173,6 +174,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
   const [section15Tab, setSection15Tab] = useState('all'); // 'all' | 'profile' | 'schedule' | 'live'
   const [section16Tab, setSection16Tab] = useState('all'); // 'all' | 'pasakar' | 'tara'
   const [section17Tab, setSection17Tab] = useState('all'); // 'all' | 'dignities' | 'aspects'
+  const [section19Tab, setSection19Tab] = useState('present'); // 'present' | 'all' | 'raja' | 'mahapurusha' | 'dhana' | 'lunar_solar' | 'viparita'
   const [gocharaDate, setGocharaDate] = useState(() => new Date().toISOString().split('T')[0]);
 
   // Compute Horoscope (All client-side)
@@ -731,7 +733,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               }}
               className="bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-1.5 text-xs font-bold text-stone-800 dark:text-stone-200 focus:outline-none focus:border-[#7A1A22] cursor-pointer w-full max-w-sm shadow-2xs"
             >
-              <option value="">{isTamil ? '-- 18 பிரிவுகள் பட்டியல் (தேர்வு செய்க) --' : '-- Select Section to Jump (1 to 18) --'}</option>
+              <option value="">{isTamil ? '-- 19 பிரிவுகள் பட்டியல் (தேர்வு செய்க) --' : '-- Select Section to Jump (1 to 19) --'}</option>
               <option value="1">1. ஜனன விவரக் குறிப்பு</option>
               <option value="2">2. வர்க்கச் சக்கரங்கள் (16 Shodashavarga Charts)</option>
               <option value="3">3. கிரக நிலைகள் அட்டவணை (நிராயண)</option>
@@ -750,6 +752,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               <option value="16">16. கிரகங்களின் பாசகர்- போதகர்- காரகர்- வேதகர் & தாரா பலமுள்ள நட்சத்திரங்கள்.</option>
               <option value="17">17. ஜாதகத்தில் கிரகங்களின் நிலை & கிரகங்களின் பார்வை, சேர்க்கை நிலை.</option>
               <option value="18">18. எண் கணிதம் (நியூமராலஜி - சாலடியன் முறை).</option>
+              <option value="19">19. ஜாதக யோகங்கள் (Jathaga Yogas - 16 Classical Combinations).</option>
             </select>
           </div>
 
@@ -6108,6 +6111,212 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     {horoscope?.numerologyData?.subham || 'சுபம்.'}
                   </span>
                 </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ======================================================== */}
+        {/* SECTION 19: ஜாதக யோகங்கள் (JATHAGA YOGAS) */}
+        {/* ======================================================== */}
+        <div id="horoscope-section-19" className="bg-white/95 dark:bg-[#251E1A] p-4 sm:p-6 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
+          <div className="flex items-center justify-between border-b border-amber-900/15 dark:border-amber-500/20 pb-3">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">🌟</span>
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-[#7A1A22] dark:text-amber-300">
+                  {isTamil ? '19. ஜாதக யோகங்கள் (Jathaga Yogas - 16 Classical Combinations)' : '19. Jathaga Yogas (Natal Planetary Combinations)'}
+                </h2>
+                <p className="text-[11px] text-stone-500 dark:text-stone-400">
+                  {isTamil
+                    ? 'கஜகேசரி, பஞ்ச மகாபுருஷ, தர்ம-கர்மாதிபதி, புதாதித்ய, சந்திராதி, சூரிய-சந்திர மற்றும் விபரீத ராஜ யோகங்களின் துல்லிய ஆய்வு'
+                    : 'Algorithmic evaluation of Gajakesari, Pancha Mahapurusha, Dharma-Karmadhipati, Budhaditya, Adhi, Solar/Lunar & Viparita Raja Yogas'}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => toggleSection(19)}
+              className="p-1 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500 transition-colors"
+            >
+              {openSections[19] ? '▲' : '▼'}
+            </button>
+          </div>
+
+          {openSections[19] && (
+            <div className="space-y-4">
+              {/* Summary KPI Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
+                <div className="p-3 rounded-xl bg-amber-50/80 dark:bg-stone-800/60 border border-amber-900/10 dark:border-amber-500/20 shadow-2xs">
+                  <span className="text-[10px] text-stone-500 dark:text-stone-400 block font-bold">
+                    {isTamil ? 'அமைந்துள்ள யோகங்கள்' : 'Active Yogas in Chart'}
+                  </span>
+                  <div className="flex items-baseline gap-1 mt-0.5">
+                    <span className="text-xl sm:text-2xl font-black text-[#7A1A22] dark:text-amber-300 font-mono">
+                      {horoscope?.jathagaYogasSection19Data?.presentCount || 0}
+                    </span>
+                    <span className="text-[10px] text-stone-500">
+                      / {horoscope?.jathagaYogasSection19Data?.totalYogas || 16}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-purple-50/80 dark:bg-stone-800/60 border border-purple-900/10 dark:border-purple-500/20 shadow-2xs">
+                  <span className="text-[10px] text-stone-500 dark:text-stone-400 block font-bold">
+                    {isTamil ? 'ராஜ யோகங்கள்' : 'Raja Yogas'}
+                  </span>
+                  <div className="flex items-baseline gap-1 mt-0.5">
+                    <span className="text-xl sm:text-2xl font-black text-purple-900 dark:text-purple-300 font-mono">
+                      {horoscope?.jathagaYogasSection19Data?.rajaYogasCount || 0}
+                    </span>
+                    <span className="text-[10px] text-stone-500">{isTamil ? 'அமைந்துள்ளது' : 'Formed'}</span>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-blue-50/80 dark:bg-stone-800/60 border border-blue-900/10 dark:border-blue-500/20 shadow-2xs">
+                  <span className="text-[10px] text-stone-500 dark:text-stone-400 block font-bold">
+                    {isTamil ? 'மகாபுருஷ யோகங்கள்' : 'Mahapurusha Yogas'}
+                  </span>
+                  <div className="flex items-baseline gap-1 mt-0.5">
+                    <span className="text-xl sm:text-2xl font-black text-blue-900 dark:text-blue-300 font-mono">
+                      {horoscope?.jathagaYogasSection19Data?.mahapurushaCount || 0}
+                    </span>
+                    <span className="text-[10px] text-stone-500">/ 5 {isTamil ? 'சாத்தியங்கள்' : 'Types'}</span>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-emerald-50/80 dark:bg-stone-800/60 border border-emerald-900/10 dark:border-emerald-500/20 shadow-2xs">
+                  <span className="text-[10px] text-stone-500 dark:text-stone-400 block font-bold">
+                    {isTamil ? 'தன & சுப யோகங்கள்' : 'Wealth & Prosperity'}
+                  </span>
+                  <div className="flex items-baseline gap-1 mt-0.5">
+                    <span className="text-xl sm:text-2xl font-black text-emerald-800 dark:text-emerald-300 font-mono">
+                      {horoscope?.jathagaYogasSection19Data?.dhanaYogasCount || 0}
+                    </span>
+                    <span className="text-[10px] text-stone-500">{isTamil ? 'பலம்' : 'Active'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Category Filter Pills */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full print:hidden scrollbar-thin touch-pan-x">
+                {[
+                  { id: 'present', labelTa: `🌟 ஜாதகத்தில் உள்ளவை (${horoscope?.jathagaYogasSection19Data?.presentCount || 0})`, labelEn: `Active in Chart (${horoscope?.jathagaYogasSection19Data?.presentCount || 0})` },
+                  { id: 'all', labelTa: `📑 அனைத்து 16 யோகங்கள் (${horoscope?.jathagaYogasSection19Data?.totalYogas || 16})`, labelEn: `All 16 Yogas (${horoscope?.jathagaYogasSection19Data?.totalYogas || 16})` },
+                  { id: 'raja', labelTa: '👑 ராஜ யோகங்கள்', labelEn: 'Raja Yogas' },
+                  { id: 'mahapurusha', labelTa: '💎 மகாபுருஷ யோகங்கள்', labelEn: 'Mahapurusha' },
+                  { id: 'dhana', labelTa: '💰 தன யோகங்கள்', labelEn: 'Wealth Yogas' },
+                  { id: 'lunar_solar', labelTa: '🌙 சந்திர & சூரிய யோகங்கள்', labelEn: 'Lunar & Solar' },
+                  { id: 'viparita', labelTa: '⚡ விபரீத & நீசபங்க யோகங்கள்', labelEn: 'Viparita & Neechabhanga' }
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setSection19Tab(tab.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 shrink-0 ${
+                      section19Tab === tab.id
+                        ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
+                        : 'bg-amber-900/10 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-amber-900/20'
+                    }`}
+                  >
+                    <span>{isTamil ? tab.labelTa : tab.labelEn}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Yoga Cards List */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {(horoscope?.jathagaYogasSection19Data?.yogas || [])
+                  .filter(y => {
+                    if (section19Tab === 'present') return y.isPresent;
+                    if (section19Tab === 'raja') return y.category === 'raja';
+                    if (section19Tab === 'mahapurusha') return y.category === 'mahapurusha';
+                    if (section19Tab === 'dhana') return y.category === 'dhana';
+                    if (section19Tab === 'lunar_solar') return y.category === 'lunar_solar';
+                    if (section19Tab === 'viparita') return y.category === 'viparita';
+                    return true;
+                  })
+                  .map(yoga => {
+                    const isActive = yoga.isPresent;
+                    return (
+                      <div
+                        key={yoga.id}
+                        className={`rounded-2xl border p-3.5 sm:p-4 space-y-2.5 transition-all shadow-2xs ${
+                          isActive
+                            ? 'bg-gradient-to-br from-[#FFFDF9] via-amber-50/40 to-emerald-50/20 dark:from-[#1E1815] dark:via-stone-900 dark:to-stone-900/80 border-amber-900/20 dark:border-amber-500/30'
+                            : 'bg-stone-50/70 dark:bg-stone-900/40 border-stone-200 dark:border-stone-800 opacity-75'
+                        }`}
+                      >
+                        {/* Header: Title + Category + Status */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-900/10 dark:border-stone-800 pb-2">
+                          <div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <h3 className="font-bold text-sm sm:text-base text-[#7A1A22] dark:text-amber-300">
+                                {isTamil ? yoga.nameTa : yoga.nameEn}
+                              </h3>
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 border border-amber-900/15">
+                                {isTamil ? yoga.categoryTa : yoga.categoryEn}
+                              </span>
+                            </div>
+                            <span className="text-[11px] font-medium text-stone-500 dark:text-stone-400 block mt-0.5">
+                              {isTamil ? yoga.nameEn : yoga.nameTa}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <span
+                              className={`text-[10px] sm:text-xs font-black px-2.5 py-0.5 rounded-full border shadow-2xs flex items-center gap-1 ${
+                                isActive
+                                  ? 'bg-emerald-100 text-emerald-950 dark:bg-emerald-950/80 dark:text-emerald-300 border-emerald-400'
+                                  : 'bg-stone-200 text-stone-700 dark:bg-stone-800 dark:text-stone-400 border-stone-300 dark:border-stone-700'
+                              }`}
+                            >
+                              <span>{isActive ? '✓' : '✕'}</span>
+                              <span>{isActive ? (isTamil ? 'யோகம் அமைந்துள்ளது' : 'Formed') : (isTamil ? 'அமையவில்லை' : 'Not Formed')}</span>
+                            </span>
+                            {isActive && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200/80 dark:bg-amber-900/60 text-amber-950 dark:text-amber-200 border border-amber-400/50">
+                                {yoga.strength}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Rule Formula Box */}
+                        <div className="p-2 rounded-xl bg-amber-50/70 dark:bg-stone-800/40 border border-amber-900/10 text-[11px] space-y-0.5">
+                          <span className="text-[10px] font-bold text-amber-900 dark:text-amber-300 uppercase tracking-wider block">
+                            📐 {isTamil ? 'ஜோதிட விதி & கணித சூத்திரம் (Rule Criteria):' : 'Astrological Rule Criteria:'}
+                          </span>
+                          <p className="text-stone-700 dark:text-stone-300 leading-relaxed font-medium">
+                            {isTamil ? yoga.ruleTa : yoga.ruleEn}
+                          </p>
+                        </div>
+
+                        {/* Observation Box */}
+                        <div className="p-2 rounded-xl bg-white dark:bg-stone-900/60 border border-amber-900/10 text-[11px] space-y-0.5">
+                          <span className="text-[10px] font-bold text-indigo-900 dark:text-indigo-300 uppercase tracking-wider block">
+                            🔍 {isTamil ? 'ஜாதகத்தில் அமைந்த விபரம் (Chart Finding):' : 'Chart Finding:'}
+                          </span>
+                          <p className="text-stone-800 dark:text-stone-200 leading-relaxed font-semibold">
+                            {isTamil ? yoga.observationTa : yoga.observationEn}
+                          </p>
+                        </div>
+
+                        {/* Phalan / Result Box */}
+                        {isActive && (
+                          <div className="p-2.5 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-900/15 text-[11px] space-y-0.5">
+                            <span className="text-[10px] font-bold text-emerald-900 dark:text-emerald-300 uppercase tracking-wider block">
+                              🎁 {isTamil ? 'யோக பலன்கள் (Manifestation & Astrological Result):' : 'Astrological Results:'}
+                            </span>
+                            <p className="text-emerald-950 dark:text-emerald-200 leading-relaxed font-medium">
+                              {isTamil ? yoga.phalanTa : yoga.phalanEn}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
               </div>
             </div>
           )}
