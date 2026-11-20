@@ -1419,19 +1419,6 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               {/* SECTION 5B: Shadbala & Bhava Bala Analysis (ஜாதகத்தில் ஷட்பலம் & பாவக பலம் ஆய்வு) */}
         {horoscope.shadbala && (
           <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
-            <div className="border-b border-amber-900/10 dark:border-amber-500/15 pb-2 flex justify-end items-center">
-              <a
-                href="/Shadbala_Calculation_Formulas_Tamil_English.pdf"
-                target="_blank"
-                rel="noreferrer"
-                download="Shadbala_Calculation_Formulas_Tamil_English.pdf"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#7A1A22] hover:bg-[#93232C] text-white shadow-2xs transition-colors shrink-0 print:hidden"
-              >
-                <span>📄</span>
-                <span>{isTamil ? 'சூத்திரங்கள் PDF தரவிறக்கம்' : 'Download Formulas PDF'}</span>
-              </a>
-            </div>
-
             {/* Table 1: Graha Shadbala */}
             <div className="space-y-1.5">
               <h3 className="text-xs font-bold text-[#7A1A22] dark:text-amber-300">
