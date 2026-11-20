@@ -64,6 +64,9 @@ export const API = {
   // Daily Panchangam
   getPanchangam: (date) => apiRequest(date ? `/panchangam?date=${date}` : '/panchangam', 'GET'),
   getClientProfileByMobile: (mobile) => apiRequest(`/client/profile-by-mobile/${mobile}`, 'GET'),
+  getClientProfiles: () => apiRequest('/client/profiles', 'GET'),
+  saveClientProfile: (data) => apiRequest('/client/profiles', 'POST', data),
+  deleteClientProfile: (id) => apiRequest(`/client/profiles/${id}`, 'DELETE'),
   registerClientByAstrologer: (data) => apiRequest('/astrologer/register-client', 'POST', data),
   getClientReceipt: (clientId) => apiRequest(`/astrologer/client-receipt/${clientId}`, 'GET'),
 

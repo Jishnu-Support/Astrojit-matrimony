@@ -18,7 +18,8 @@ import {
   Users,
   Compass,
   FileText,
-  RotateCcw
+  RotateCcw,
+  UserPlus
 } from 'lucide-react';
 import { useLang } from '../i18n';
 import { useAuth } from '../context/AuthContext';
@@ -184,6 +185,219 @@ export default function HoroscopeHub({
   const [receiptModalData, setReceiptModalData] = useState(null);
   const [isRegistering, setIsRegistering] = useState(false);
   const [actionFeedback, setActionFeedback] = useState(null);
+
+  // Client multi-profile state
+  const [clientProfiles, setClientProfiles] = useState([]);
+  const [activeProfileId, setActiveProfileId] = useState('primary');
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+
+  // Fetch client profiles when in client portal view
+  useEffect(() => {
+    if (shouldHideLookup) {
+      async function loadProfiles() {
+        try {
+          const res = await API.getClientProfiles();
+          if (res && res.profiles) {
+            setClientProfiles(res.profiles);
+          }
+        } catch (err) {
+          // Client profiles optional fetch notice
+        }
+      }
+      loadProfiles();
+    }
+  }, [shouldHideLookup]);
+
+  // Option for Client: Clear all data in table to enter a new profile
+  const handleClearForNewProfile = () => {
+    setName('');
+    setDob('');
+    setTimeState({ hour: '12', minute: '00', second: '00', period: 'AM' });
+    setCountry('India');
+    setState('Tamil Nadu');
+    setCity('');
+    setLat(null);
+    setLon(null);
+    setUtcOffset('05:30 UTC');
+    setFather('');
+    setMother('');
+    setNativePlace('');
+    setGender('male');
+    setActiveProfileId('new');
+    setActionFeedback({
+      type: 'info',
+      message: isTa
+        ? 'படிவம் அழிக்கப்பட்டது! புதிய விவரங்களை உள்ளிட்டு "மற்றொரு சுயவிவரமாக சேமி" என்பதைக் கிளிக் செய்யவும்.'
+        : 'Form cleared! Enter the details and click "Save Another Profile".'
+    });
+    setTimeout(() => setActionFeedback(null), 5000);
+  };
+
+  // Option for Client: Switch between Primary profile and Saved profiles
+  const handleSelectProfile = (prof) => {
+    if (prof.id === 'primary') {
+      setActiveProfileId('primary');
+      setName(user?.name || initialClient?.name || '');
+      setDob(user?.dob || initialClient?.dob || '');
+      const tStr = user?.dobTime12 || user?.dobTime || initialClient?.dobTime12 || initialClient?.dobTime;
+      if (tStr) setTimeState(parse12HourTime(tStr));
+      setCountry(user?.country || initialClient?.country || 'India');
+      setState(user?.state || initialClient?.state || 'Tamil Nadu');
+      const p = user?.dobPlace || user?.place || user?.city || initialClient?.dobPlace || initialClient?.place || 'Salem';
+      setCity(p);
+      setLat(user?.lat || initialClient?.lat || 11.6643);
+      setLon(user?.lon || initialClient?.lon || 78.1460);
+      setUtcOffset(user?.utcOffset || initialClient?.utcOffset || '05:30 UTC');
+      setFather(user?.fatherName || user?.father || initialClient?.fatherName || '');
+      setMother(user?.motherName || user?.mother || initialClient?.motherName || '');
+      setNativePlace(user?.nativePlace || initialClient?.nativePlace || '');
+      setGender(user?.gender || initialClient?.gender || 'male');
+
+      setActiveBirthData({
+        name: user?.name || initialClient?.name || '',
+        dob: user?.dob || initialClient?.dob || '',
+        dobTime: user?.dobTime || '',
+        dobTime12: tStr,
+        country: user?.country || initialClient?.country || 'India',
+        state: user?.state || initialClient?.state || 'Tamil Nadu',
+        placeName: p,
+        city: p,
+        lat: user?.lat || initialClient?.lat || 11.6643,
+        lon: user?.lon || initialClient?.lon || 78.1460,
+        utcOffset: user?.utcOffset || initialClient?.utcOffset || '05:30 UTC',
+        father: user?.fatherName || user?.father || initialClient?.fatherName || '',
+        mother: user?.motherName || user?.mother || initialClient?.motherName || '',
+        nativePlace: user?.nativePlace || initialClient?.nativePlace || '',
+        mobile: user?.mobile || initialClient?.mobile || '',
+        gender: user?.gender || initialClient?.gender || 'male'
+      });
+      setCalcKey(k => k + 1);
+      return;
+    }
+
+    setActiveProfileId(prof.id);
+    setName(prof.name || '');
+    setDob(prof.dob || '');
+    if (prof.dobTime12 || prof.dobTime) {
+      setTimeState(parse12HourTime(prof.dobTime12 || prof.dobTime));
+    }
+    setCountry(prof.country || 'India');
+    setState(prof.state || 'Tamil Nadu');
+    const place = prof.dobPlace || prof.city || prof.place || 'Salem';
+    setCity(place);
+    setLat(prof.lat || 11.6643);
+    setLon(prof.lon || 78.1460);
+    setUtcOffset(prof.utcOffset || '05:30 UTC');
+    setFather(prof.fatherName || '');
+    setMother(prof.motherName || '');
+    setNativePlace(prof.nativePlace || '');
+    setGender(prof.gender || 'male');
+
+    setActiveBirthData({
+      name: prof.name || '',
+      dob: prof.dob || '',
+      dobTime: prof.dobTime || '',
+      dobTime12: prof.dobTime12 || '',
+      country: prof.country || 'India',
+      state: prof.state || 'Tamil Nadu',
+      placeName: place,
+      city: place,
+      lat: prof.lat || 11.6643,
+      lon: prof.lon || 78.1460,
+      utcOffset: prof.utcOffset || '05:30 UTC',
+      father: prof.fatherName || '',
+      mother: prof.motherName || '',
+      nativePlace: prof.nativePlace || '',
+      mobile: prof.mobile || user?.mobile || '',
+      gender: prof.gender || 'male'
+    });
+    setCalcKey(k => k + 1);
+  };
+
+  // Option for Client: Save Another Profile in same client account
+  const handleSaveAnotherProfile = async () => {
+    if (!name.trim()) {
+      alert(isTa ? 'தயவுசெய்து முழு பெயரை உள்ளிடவும்.' : 'Please enter Full Name.');
+      return;
+    }
+    if (!dob) {
+      alert(isTa ? 'தயவுசெய்து பிறந்த தேதியை உள்ளிடவும்.' : 'Please enter Date of Birth.');
+      return;
+    }
+
+    setIsSavingProfile(true);
+    setActionFeedback(null);
+    try {
+      const time12Str = `${timeState.hour}:${timeState.minute}:${timeState.second} ${timeState.period}`;
+      const time24Str = to24HourTime(timeState.hour, timeState.minute, timeState.second, timeState.period);
+
+      const payload = {
+        name: name.trim(),
+        dob,
+        dobTime: time24Str,
+        dobTime12: time12Str,
+        country,
+        state,
+        city,
+        lat: lat ? Number(lat) : null,
+        lon: lon ? Number(lon) : null,
+        utcOffset,
+        fatherName: father.trim(),
+        motherName: mother.trim(),
+        nativePlace: nativePlace.trim(),
+        gender
+      };
+
+      const res = await API.saveClientProfile(payload);
+      if (res && res.profile) {
+        setClientProfiles(res.profiles || [...clientProfiles, res.profile]);
+        setActiveProfileId(res.profile.id);
+
+        const birth = {
+          ...payload,
+          placeName: city,
+          mobile: user?.mobile || ''
+        };
+        setActiveBirthData(birth);
+        setCalcKey(k => k + 1);
+
+        setActionFeedback({
+          type: 'success',
+          message: isTa
+            ? `"${res.profile.name}" சுயவிவரம் உங்கள் கணக்கில் வெற்றிகரமாக சேமிக்கப்பட்டது!`
+            : `Profile "${res.profile.name}" saved successfully to your client account!`
+        });
+        setTimeout(() => setActionFeedback(null), 5000);
+      }
+    } catch (err) {
+      console.error('Save another profile error:', err);
+      setActionFeedback({
+        type: 'error',
+        message: err.message || 'Failed to save profile'
+      });
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
+
+  // Option for Client: Delete saved secondary profile
+  const handleDeleteProfile = async (e, profId) => {
+    e.stopPropagation();
+    if (!window.confirm(isTa ? 'இந்த சுயவிவரத்தை நீக்க வேண்டுமா?' : 'Are you sure you want to delete this profile?')) {
+      return;
+    }
+    try {
+      const res = await API.deleteClientProfile(profId);
+      if (res && res.profiles) {
+        setClientProfiles(res.profiles);
+        if (activeProfileId === profId) {
+          handleSelectProfile({ id: 'primary' });
+        }
+      }
+    } catch (err) {
+      console.error('Delete profile error:', err);
+    }
+  };
 
   // Close search dropdown on click outside
   useEffect(() => {
@@ -594,15 +808,30 @@ export default function HoroscopeHub({
       <div id="birth-intake-card" className="bg-white/95 dark:bg-[#251E1A] p-4 sm:p-6 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4 no-print text-xs">
         {/* Header & Client Lookup Strip */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-amber-900/10 dark:border-amber-500/15 pb-3">
-          <div className="flex items-center gap-2">
-            <span className="text-lg">📝</span>
+          <div className="flex items-center gap-2.5">
+            <span className="text-xl">📝</span>
             <div>
-              <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B]">
-                {isTa ? 'பிறப்பு விவரப் படிவம் (Birth Details Intake)' : 'Birth Details Intake (Compute & Generate Pager)'}
-              </h2>
-              <p className="text-[11px] text-stone-500">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B]">
+                  {isTa ? 'பிறப்பு விவரப் படிவம் (Birth Details Intake)' : 'Birth Details Intake (Compute & Generate Pager)'}
+                </h2>
+
+                {/* NEW BUTTON AT LEFT TOP FOR CLIENT TO CLEAR TABLE/FORM */}
+                {shouldHideLookup && (
+                  <button
+                    type="button"
+                    onClick={handleClearForNewProfile}
+                    className="px-3 py-1 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white text-xs font-black shadow-xs hover:shadow-md transition-all cursor-pointer flex items-center gap-1.5"
+                    title={isTa ? 'அனைத்து விவரங்களையும் அழித்து புதிய சுயவிவரம் உள்ளிடவும்' : 'Clear all data in table to enter a new profile'}
+                  >
+                    <PlusCircle className="w-3.5 h-3.5" />
+                    <span>{isTa ? '+ புதிய சுயவிவரம் (New Profile)' : '+ New Profile'}</span>
+                  </button>
+                )}
+              </div>
+              <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
                 {shouldHideLookup
-                  ? (isTa ? 'பிறப்பு விவரங்களை சரிபார்த்து திருக்கணித ஜாதகத்தை பார்க்கவும்' : 'Review birth details and calculate Thirukanitha horoscope')
+                  ? (isTa ? 'பிறப்பு விவரங்களை சரிபார்த்து திருக்கணித ஜாதகத்தை பார்க்கவும் அல்லது "+ புதிய சுயவிவரம்" அழுத்தி மற்றொரு சுயவிவரமாக சேமிக்கவும்' : 'Review your birth details, or click "+ New Profile" to clear the form and save another profile')
                   : (isTa
                       ? 'முந்தைய வாடிக்கையாளர் விவரங்களை தேடவும் அல்லது புதிய விவரங்களை உள்ளிடவும்'
                       : 'Search existing clients by mobile/name/dob/place, or enter new client birth data')}
@@ -620,6 +849,68 @@ export default function HoroscopeHub({
             </span>
           </div>
         </div>
+
+        {/* FOR CLIENT: Saved Profiles Pill Bar (Self + Other saved family profiles) */}
+        {shouldHideLookup && (
+          <div className="p-2.5 rounded-xl bg-amber-50/70 dark:bg-stone-800/60 border border-amber-900/15 dark:border-amber-500/20 flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-bold text-stone-700 dark:text-stone-300 mr-1 flex items-center gap-1">
+              <Users className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
+              <span>{isTa ? 'உங்கள் சுயவிவரங்கள்:' : 'Your Profiles:'}</span>
+            </span>
+
+            {/* Primary Profile Pill */}
+            <button
+              type="button"
+              onClick={() => handleSelectProfile({ id: 'primary' })}
+              className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs ${
+                activeProfileId === 'primary'
+                  ? 'bg-[#7A1A22] text-amber-100 shadow-xs ring-2 ring-[#7A1A22]/20'
+                  : 'bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 border border-stone-200 dark:border-stone-700'
+              }`}
+            >
+              <User className="w-3 h-3" />
+              <span>{user?.name || initialClient?.name || 'Self'} ({isTa ? 'முதன்மை' : 'Primary'})</span>
+            </button>
+
+            {/* Other Saved Profiles Pills */}
+            {clientProfiles.map(p => (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => handleSelectProfile(p)}
+                className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs ${
+                  activeProfileId === p.id
+                    ? 'bg-[#7A1A22] text-amber-100 shadow-xs ring-2 ring-[#7A1A22]/20'
+                    : 'bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 border border-stone-200 dark:border-stone-700'
+                }`}
+              >
+                <User className="w-3 h-3 text-amber-600" />
+                <span>{p.name}</span>
+                <span
+                  onClick={(e) => handleDeleteProfile(e, p.id)}
+                  className="hover:text-red-500 ml-1 p-0.5 rounded-full transition-colors cursor-pointer"
+                  title={isTa ? 'சுயவிவரத்தை நீக்க' : 'Delete profile'}
+                >
+                  <X className="w-3 h-3" />
+                </span>
+              </button>
+            ))}
+
+            {/* Quick + Add Profile Pill */}
+            <button
+              type="button"
+              onClick={handleClearForNewProfile}
+              className={`px-3 py-1 rounded-full text-xs font-bold transition-all flex items-center gap-1 cursor-pointer border border-dashed border-amber-600/70 dark:border-amber-400/70 ${
+                activeProfileId === 'new'
+                  ? 'bg-amber-600 text-white font-black shadow-xs'
+                  : 'text-amber-800 dark:text-amber-300 hover:bg-amber-100/60 dark:hover:bg-amber-950/40 bg-white/50 dark:bg-stone-900/50'
+              }`}
+            >
+              <PlusCircle className="w-3 h-3" />
+              <span>{isTa ? '+ மற்றொரு சுயவிவரம்' : '+ Add Another Profile'}</span>
+            </button>
+          </div>
+        )}
 
         {/* OPTION FOR PREVIOUS CLIENTS (Search by Mobile OR Name + D.O.B + Place) - ONLY SHOWN IN ASTROLOGER/COMPANY PORTALS */}
         {!shouldHideLookup && (
@@ -983,7 +1274,25 @@ export default function HoroscopeHub({
                 <span>{isTa ? 'ஜாதகம் கணிக்க & காட்சிப்படுத்து' : 'Calculate & View Horoscope'}</span>
               </button>
 
-              {/* Button 2: If Astrologer/Company, Create Client Account & Share */}
+              {/* Button 2 FOR CLIENT: Save Another Profile in same client account */}
+              {shouldHideLookup && (
+                <button
+                  type="button"
+                  onClick={handleSaveAnotherProfile}
+                  disabled={isSavingProfile}
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white text-xs font-bold shadow-md shadow-emerald-950/20 transition-all cursor-pointer flex items-center gap-1.5"
+                  title="Save this person's birth details as another profile in your client account"
+                >
+                  <UserPlus className="w-3.5 h-3.5" />
+                  <span>
+                    {isSavingProfile
+                      ? (isTa ? 'சேமிக்கப்படுகிறது...' : 'Saving Profile...')
+                      : (isTa ? 'மற்றொரு சுயவிவரமாக சேமி' : 'Save Another Profile')}
+                  </span>
+                </button>
+              )}
+
+              {/* Button 2 FOR ASTROLOGER/COMPANY: Create Client Account & Share */}
               {!shouldHideLookup && (
                 <button
                   type="button"

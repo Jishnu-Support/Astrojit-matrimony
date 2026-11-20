@@ -1018,6 +1018,156 @@ app.get('/api/client/profile-by-mobile/:mobile', authenticate, (req, res) => {
   }
 });
 
+// Fetch all saved profiles for the logged-in client account
+app.get('/api/client/profiles', authenticate, (req, res) => {
+  try {
+    const db = readDb();
+    const cleanMobile = (req.user.mobile || '').replace(/\D/g, '').slice(-10);
+    const client = db.clients.find(c => {
+      const cMob = (c.mobile || '').replace(/\D/g, '').slice(-10);
+      return (cMob && cMob === cleanMobile) || c.id === req.user.id || c.username === req.user.mobile;
+    });
+
+    if (!client) {
+      return res.status(404).json({ error: 'Client account not found.' });
+    }
+
+    return res.json({
+      primaryProfile: {
+        id: 'primary',
+        name: client.name || 'Self',
+        isPrimary: true,
+        dob: client.dob,
+        dobTime: client.dobTime,
+        dobTime12: client.dobTime12,
+        dobPlace: client.dobPlace || client.place || client.city,
+        city: client.dobPlace || client.place || client.city,
+        country: client.country || 'India',
+        state: client.state || 'Tamil Nadu',
+        lat: client.lat,
+        lon: client.lon,
+        utcOffset: client.utcOffset || '05:30 UTC',
+        fatherName: client.fatherName || client.father || '',
+        motherName: client.motherName || client.mother || '',
+        nativePlace: client.nativePlace || '',
+        gender: client.gender || 'male',
+        mobile: client.mobile,
+      },
+      profiles: client.profiles || []
+    });
+  } catch (error) {
+    console.error('Fetch client profiles error:', error);
+    return res.status(500).json({ error: 'Failed to fetch client profiles' });
+  }
+});
+
+// Save another profile under the same client account
+app.post('/api/client/profiles', authenticate, (req, res) => {
+  try {
+    const db = readDb();
+    const cleanMobile = (req.user.mobile || '').replace(/\D/g, '').slice(-10);
+    const clientIndex = db.clients.findIndex(c => {
+      const cMob = (c.mobile || '').replace(/\D/g, '').slice(-10);
+      return (cMob && cMob === cleanMobile) || c.id === req.user.id || c.username === req.user.mobile;
+    });
+
+    if (clientIndex === -1) {
+      return res.status(404).json({ error: 'Client account not found.' });
+    }
+
+    const {
+      name,
+      dob,
+      dobTime,
+      dobTime12,
+      country = 'India',
+      state = 'Tamil Nadu',
+      city = '',
+      lat,
+      lon,
+      utcOffset = '05:30 UTC',
+      fatherName = '',
+      motherName = '',
+      nativePlace = '',
+      gender = 'male',
+      relationship = 'Family Member'
+    } = req.body;
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: 'Full Name is required.' });
+    }
+    if (!dob) {
+      return res.status(400).json({ error: 'Date of Birth is required.' });
+    }
+
+    if (!db.clients[clientIndex].profiles) {
+      db.clients[clientIndex].profiles = [];
+    }
+
+    const newProfile = {
+      id: 'prof_' + Date.now(),
+      name: name.trim(),
+      relationship,
+      dob,
+      dobTime: dobTime || '',
+      dobTime12: dobTime12 || '',
+      country,
+      state,
+      city: city || '',
+      dobPlace: city || '',
+      lat: lat ? Number(lat) : null,
+      lon: lon ? Number(lon) : null,
+      utcOffset,
+      fatherName,
+      motherName,
+      nativePlace,
+      gender,
+      createdAt: new Date().toISOString()
+    };
+
+    db.clients[clientIndex].profiles.push(newProfile);
+    writeDb(db);
+
+    return res.status(201).json({
+      message: 'Profile saved successfully to your account',
+      profile: newProfile,
+      profiles: db.clients[clientIndex].profiles
+    });
+  } catch (error) {
+    console.error('Save client profile error:', error);
+    return res.status(500).json({ error: 'Failed to save profile' });
+  }
+});
+
+// Delete a saved profile from client account
+app.delete('/api/client/profiles/:id', authenticate, (req, res) => {
+  try {
+    const db = readDb();
+    const cleanMobile = (req.user.mobile || '').replace(/\D/g, '').slice(-10);
+    const clientIndex = db.clients.findIndex(c => {
+      const cMob = (c.mobile || '').replace(/\D/g, '').slice(-10);
+      return (cMob && cMob === cleanMobile) || c.id === req.user.id || c.username === req.user.mobile;
+    });
+
+    if (clientIndex === -1) {
+      return res.status(404).json({ error: 'Client account not found.' });
+    }
+
+    if (db.clients[clientIndex].profiles) {
+      db.clients[clientIndex].profiles = db.clients[clientIndex].profiles.filter(p => p.id !== req.params.id);
+      writeDb(db);
+    }
+
+    return res.json({
+      message: 'Profile deleted successfully',
+      profiles: db.clients[clientIndex].profiles || []
+    });
+  } catch (error) {
+    console.error('Delete client profile error:', error);
+    return res.status(500).json({ error: 'Failed to delete profile' });
+  }
+});
+
 // Register a new client account directly by astrologer + generate credentials + receipt
 app.post('/api/astrologer/register-client', authenticate, (req, res) => {
   try {
