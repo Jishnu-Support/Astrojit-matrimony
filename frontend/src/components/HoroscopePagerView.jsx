@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Printer,
   Eraser,
@@ -28,12 +28,24 @@ import {
   compute7PageBookletData,
   createEmpty18PageBookletData,
   compute18PageBookletData,
+  createEmpty21PageBookletData,
+  compute21PageBookletData,
+  createEmpty25PageBookletData,
+  compute25PageBookletData,
+  createEmpty33PageBookletData,
+  compute33PageBookletData,
+  createEmpty51PageBookletData,
+  compute51PageBookletData,
   PLANET_ROW_KEYS,
   RASHIS
 } from '../utils/thirukanithaEngine';
 import { COUNTRIES, GEO_DATA, lookupCoordinates } from '../data/geoCoordinates';
 import HoroscopeBooklet7PageView from './HoroscopeBooklet7PageView';
 import HoroscopeBooklet18PageView from './HoroscopeBooklet18PageView';
+import HoroscopeBooklet21PageView from './HoroscopeBooklet21PageView';
+import HoroscopeBooklet25PageView from './HoroscopeBooklet25PageView';
+import HoroscopeBooklet33PageView from './HoroscopeBooklet33PageView';
+import HoroscopeBooklet51PageView from './HoroscopeBooklet51PageView';
 
 function parseInitialTime(timeStr) {
   let raw = timeStr || '21:04:00';
@@ -124,39 +136,44 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
   // Selected Country / State / City state for hierarchical picker
   const [selectedCountry, setSelectedCountry] = useState(initialBirthData?.country || 'India');
   const [selectedState, setSelectedState] = useState(initialBirthData?.state || 'Tamil Nadu');
-  const [selectedCity, setSelectedCity] = useState(initialBirthData?.city || initialBirthData?.placeName || 'Salem');
+  const [selectedCity, setSelectedCity] = useState(initialBirthData?.city || initialBirthData?.placeName || 'Namakkal');
   const [citySearch, setCitySearch] = useState('');
 
   // 12-hour AM/PM time state
   const [timeState, setTimeState] = useState(() =>
-    parseInitialTime(initialBirthData?.dobTime12 || initialBirthData?.dobTime || '21:04:00')
+    parseInitialTime(initialBirthData?.dobTime12 || initialBirthData?.dobTime || '04:50:00')
   );
 
   // Input form state for Thirukanitha calculation
   const [calcInputs, setCalcInputs] = useState(() => ({
-    name: initialBirthData?.name || 'Aarav Kumar',
-    dob: initialBirthData?.dob || '2026-11-05',
-    dobTime: initialBirthData?.dobTime || '21:04:00',
-    dobTime12: initialBirthData?.dobTime12 || '09:04:00 PM',
+    name: initialBirthData?.name || 'Mr. M',
+    gender: initialBirthData?.gender || 'male',
+    dob: initialBirthData?.dob || '1983-01-03',
+    dobTime: initialBirthData?.dobTime || '04:50:00',
+    dobTime12: initialBirthData?.dobTime12 || '04:50:00 AM',
     country: initialBirthData?.country || 'India',
     state: initialBirthData?.state || 'Tamil Nadu',
-    placeName: initialBirthData?.city || initialBirthData?.placeName || 'Salem',
-    city: initialBirthData?.city || 'Salem',
-    lat: initialBirthData?.lat !== undefined ? initialBirthData.lat : 11.65,
-    lon: initialBirthData?.lon !== undefined ? initialBirthData.lon : 78.20,
-    utcOffset: initialBirthData?.utcOffset !== undefined ? initialBirthData.utcOffset : '05:30 UTC',
+    placeName: initialBirthData?.city || initialBirthData?.placeName || 'Namakkal',
+    city: initialBirthData?.city || 'Namakkal',
+    lat: initialBirthData?.lat !== undefined ? initialBirthData.lat : 11.22,
+    lon: initialBirthData?.lon !== undefined ? initialBirthData.lon : 78.17,
+    utcOffset: initialBirthData?.utcOffset !== undefined ? initialBirthData.utcOffset : '+05:30 UTC',
     father: initialBirthData?.father || 'ரமேஷ் குமார்',
     mother: initialBirthData?.mother || 'பிரியா',
-    nativePlace: initialBirthData?.nativePlace || 'சேலம்'
+    nativePlace: initialBirthData?.nativePlace || 'நாமக்கல்'
   }));
 
-  // Pager Format Mode: '18page' (18-Page Booklet), '7page' (7-Page Booklet) or '1page' (Single sheet)
+  // Pager Format Mode: '18page' (18-Page Booklet default), '51page', '33page', '25page', '21page', '7page' or '1page'
   const [pagerType, setPagerType] = useState('18page');
 
-  // Initial computed data so 1-page, 7-page, and 18-page are pre-populated with authentic calculations
+  // Initial computed data so 1-page, 7-page, 18-page, 21-page, 25-page, 33-page, and 51-page are pre-populated with authentic calculations
   const [data, setData] = useState(() => computeHoroscopePagerData(calcInputs));
   const [bookletData, setBookletData] = useState(() => compute7PageBookletData(calcInputs));
   const [booklet18Data, setBooklet18Data] = useState(() => compute18PageBookletData(calcInputs));
+  const [booklet21Data, setBooklet21Data] = useState(() => compute21PageBookletData(calcInputs));
+  const [booklet25Data, setBooklet25Data] = useState(() => compute25PageBookletData(calcInputs));
+  const [booklet33Data, setBooklet33Data] = useState(() => compute33PageBookletData(calcInputs));
+  const [booklet51Data, setBooklet51Data] = useState(() => compute51PageBookletData(calcInputs));
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [activeEditorTab, setActiveEditorTab] = useState('person');
   const [calcSuccessMsg, setCalcSuccessMsg] = useState('');
@@ -263,12 +280,38 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
     const computed1 = computeHoroscopePagerData(calcInputs);
     const computed7 = compute7PageBookletData(calcInputs);
     const computed18 = compute18PageBookletData(calcInputs);
+    const computed21 = compute21PageBookletData(calcInputs);
+    const computed25 = compute25PageBookletData(calcInputs);
+    const computed33 = compute33PageBookletData(calcInputs);
+    const computed51 = compute51PageBookletData(calcInputs);
     setData(computed1);
     setBookletData(computed7);
     setBooklet18Data(computed18);
+    setBooklet21Data(computed21);
+    setBooklet25Data(computed25);
+    setBooklet33Data(computed33);
+    setBooklet51Data(computed51);
     setCalcSuccessMsg(isTa ? 'ஜாதகக் கணிப்பு வெற்றிகரமாக கணிக்கப்பெற்று தயார்!' : 'Horoscope generated successfully!');
     setTimeout(() => setCalcSuccessMsg(''), 4000);
   };
+
+  // Auto-calculate on input changes so booklet is always reactive and up to date
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      try {
+        setData(computeHoroscopePagerData(calcInputs));
+        setBookletData(compute7PageBookletData(calcInputs));
+        setBooklet18Data(compute18PageBookletData(calcInputs));
+        setBooklet21Data(compute21PageBookletData(calcInputs));
+        setBooklet25Data(compute25PageBookletData(calcInputs));
+        setBooklet33Data(compute33PageBookletData(calcInputs));
+        setBooklet51Data(compute51PageBookletData(calcInputs));
+      } catch (err) {
+        console.error('Auto-calculation error:', err);
+      }
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [calcInputs]);
 
   // Handle nested updates for 1-page sheet
   const updateField = (section, key, val) => {
@@ -307,12 +350,22 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
     if (window.confirm(isTa ? 'அனைத்து விவரங்களையும் அழிக்கவா?' : 'Clear all fields to blank?')) {
       setData(createEmptyHoroscopePagerData());
       setBookletData(createEmpty7PageBookletData());
+      setBooklet18Data(createEmpty18PageBookletData());
+      setBooklet21Data(createEmpty21PageBookletData());
+      setBooklet25Data(createEmpty25PageBookletData());
+      setBooklet33Data(createEmpty33PageBookletData());
+      setBooklet51Data(createEmpty51PageBookletData());
     }
   };
 
   const handleAutoFillFromThirukanitha = () => {
     setData(computeHoroscopePagerData(calcInputs));
     setBookletData(compute7PageBookletData(calcInputs));
+    setBooklet18Data(compute18PageBookletData(calcInputs));
+    setBooklet21Data(compute21PageBookletData(calcInputs));
+    setBooklet25Data(compute25PageBookletData(calcInputs));
+    setBooklet33Data(compute33PageBookletData(calcInputs));
+    setBooklet51Data(compute51PageBookletData(calcInputs));
   };
 
   const handlePrint = () => {
@@ -347,7 +400,7 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
     lmtCorr: isTa ? 'சுதேச நேரத்திருத்தம்' : 'Local Mean Time Corr',
 
     // Right Column Labels
-    dateWeekday: isTa ? 'தேதி' : 'Date & Weekday',
+    dateWeekday: isTa ? 'பிறந்த தேதி (D.O.B)' : 'Date of Birth (D.O.B)',
     time: isTa ? 'நேரம்' : 'Birth Time',
     tamilDate: isTa ? 'தமிழ் தேதி' : 'Tamil Date',
     udayadiNazhigai: isTa ? 'உதயாதி நாழிகை' : 'Udayadi Nazhigai',
@@ -358,6 +411,12 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
     sunriseSunset: isTa ? 'சூரிய (பிம்ப மத்தி) sunrise/sunset' : 'Sunrise / Sunset (Center)',
     yogiAvayogi: isTa ? 'யோகி-அவயோகி' : 'Yogi - Avayogi',
     nakshatraSyllables: isTa ? 'நக்ஷத்திர எழுத்துக்கள்' : 'Nakshatra Letters',
+    age: isTa ? 'வயது (Age)' : 'Age',
+    subhar: isTa ? 'சுபர்கள்' : 'Benefics (Subhar)',
+    asubhar: isTa ? 'அசுபர்கள்' : 'Malefics (Asubhar)',
+    lagnagathipathi: isTa ? 'லக்னாதிபதி' : 'Lagna Lord',
+    bhagayathipathi: isTa ? 'பாக்யாதிபதி' : 'Bhagya Lord (9th)',
+    bhathagathipathi: isTa ? 'பாதகாதிபதி' : 'Badhaka Lord',
 
     // Table Headers
     thPlanet: isTa ? 'கிரகம்' : 'Planet',
@@ -373,6 +432,10 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
     dashaBalance: isTa ? 'திசை இருப்பு:' : 'Dasha Balance at Birth:',
     currentDasha: isTa ? 'நடப்பு திசை / புக்தி:' : 'Current Dasha / Bhukti:',
     bhavaTransitions: isTa ? 'பாவக மாறுதல்:' : 'Bhava Transitions:',
+    bhodhagar: isTa ? 'போதகர்:' : 'Bhodhagar:',
+    vedhagar: isTa ? 'வேதகர்:' : 'Vedhagar:',
+    pasagar: isTa ? 'பாசகர்:' : 'Pasagar:',
+    karagar: isTa ? 'காரகர்:' : 'Karagar:',
     luckyNumbers: isTa ? 'அதிர்ஷ்ட எண்கள்:' : 'Lucky Numbers:'
   };
 
@@ -486,14 +549,30 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
             <span className="text-xl">📄</span>
             <div>
               <h1 className="text-base sm:text-lg font-bold text-[#7A1A22] dark:text-[#E8838B]">
-                {pagerType === '18page'
+                {pagerType === '51page'
+                  ? (isTa ? 'ஜாதக ஏடு (A4 - 51 பக்க மகா புத்தகம்)' : 'Horoscope Booklet (51-Page Master Edition)')
+                  : pagerType === '33page'
+                  ? (isTa ? 'ஜாதக ஏடு (A4 - 33 பக்க புத்தகம்)' : 'Horoscope Booklet (33-Page Booklet)')
+                  : pagerType === '25page'
+                  ? (isTa ? 'ஜாதக ஏடு (A4 - 25 பக்க புத்தகம்)' : 'Horoscope Booklet (25-Page Booklet)')
+                  : pagerType === '21page'
+                  ? (isTa ? 'ஜாதக ஏடு (A4 - 21 பக்க புத்தகம்)' : 'Horoscope Booklet (21-Page Booklet)')
+                  : pagerType === '18page'
                   ? (isTa ? 'ஜாதக ஏடு (A4 - 18 பக்க புத்தகம்)' : 'Horoscope Booklet (18-Page Booklet)')
                   : pagerType === '7page'
                   ? (isTa ? 'ஜாதக ஏடு (A4 - 7 பக்க புத்தகம்)' : 'Horoscope Booklet (7-Page Booklet)')
                   : L.title}
               </h1>
               <p className="text-[11px] text-stone-500">
-                {pagerType === '18page'
+                {pagerType === '51page'
+                  ? (isTa ? 'A4 பக்கத்தில் அச்சிடக்கூடிய 51-பக்க பரிபூரண மகா வேத ஜோதிட ஜாதக புத்தகம் (அனைத்து வர்க்கங்கள், தசா அந்தரங்கள், அஷ்டகவர்க்கம் & எண் கணிதம்)' : 'Complete 51-page A4 master edition Vedic horoscope booklet with all Divisional Charts, Antaras, Ashtakavarga & Numerology')
+                  : pagerType === '33page'
+                  ? (isTa ? 'A4 பக்கத்தில் அச்சிடக்கூடிய 33-பக்க மகா வேத ஜோதிட ஜாதக புத்தகம் (வர்க்கங்கள், அந்தரங்கள் & அஷ்டகவர்க்கம்)' : 'Comprehensive 33-page A4 portrait printable Vedic horoscope booklet with Divisional Charts, Full Antaras & Ashtakavarga')
+                  : pagerType === '25page'
+                  ? (isTa ? 'A4 பக்கத்தில் அச்சிடக்கூடிய 25-பக்க பூரண வேத ஜோதிட ஜாதக புத்தகம் (பஞ்ச பட்சி, அந்தர தேதிகள் & அஷ்டகவர்க்கம்)' : 'Comprehensive 25-page A4 portrait printable Vedic horoscope booklet with Pancha Pakshi, Antara Dates & Ashtakavarga')
+                  : pagerType === '21page'
+                  ? (isTa ? 'A4 பக்கத்தில் அச்சிடக்கூடிய 21-பக்க வேத ஜோதிட ஸ்துதி & ஷட்பல ஜாதக புத்தகம்' : 'Comprehensive 21-page A4 portrait printable Vedic horoscope booklet with Stotras & Shadbala')
+                  : pagerType === '18page'
                   ? (isTa ? 'A4 பக்கத்தில் அச்சிடக்கூடிய 18-பக்க விரிவான வேத ஜோதிட ஜாதக புத்தகம்' : 'Comprehensive 18-page A4 portrait printable Vedic horoscope booklet')
                   : pagerType === '7page'
                   ? (isTa ? 'A4 பக்கத்தில் அச்சிடக்கூடிய 7-பக்க வேத ஜோதிட ஜாதக புத்தகம்' : 'Standard 7-page A4 portrait printable Vedic horoscope booklet')
@@ -503,8 +582,56 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            {/* Format Switcher: 18-Page Booklet vs 7-Page Booklet vs 1-Page Sheet */}
+            {/* Format Switcher: 51-Page vs 33-Page vs 25-Page vs 21-Page vs 18-Page vs 7-Page vs 1-Page Sheet */}
             <div className="flex bg-stone-100 dark:bg-stone-800 p-0.5 rounded-lg border border-stone-300 dark:border-stone-700">
+              <button
+                type="button"
+                onClick={() => setPagerType('51page')}
+                className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  pagerType === '51page'
+                    ? 'bg-[#7A1A22] text-white shadow-xs'
+                    : 'text-stone-600 dark:text-stone-300 hover:text-stone-900'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>{isTa ? '51-பக்கம்' : '51-Page'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPagerType('33page')}
+                className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  pagerType === '33page'
+                    ? 'bg-[#7A1A22] text-white shadow-xs'
+                    : 'text-stone-600 dark:text-stone-300 hover:text-stone-900'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>{isTa ? '33-பக்கம்' : '33-Page'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPagerType('25page')}
+                className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  pagerType === '25page'
+                    ? 'bg-[#7A1A22] text-white shadow-xs'
+                    : 'text-stone-600 dark:text-stone-300 hover:text-stone-900'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>{isTa ? '25-பக்கம்' : '25-Page'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPagerType('21page')}
+                className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  pagerType === '21page'
+                    ? 'bg-[#7A1A22] text-white shadow-xs'
+                    : 'text-stone-600 dark:text-stone-300 hover:text-stone-900'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>{isTa ? '21-பக்கம்' : '21-Page'}</span>
+              </button>
               <button
                 type="button"
                 onClick={() => setPagerType('18page')}
@@ -604,7 +731,7 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
               className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-white text-xs font-bold hover:from-[#5C1017] hover:to-[#7A1A22] shadow-md shadow-red-950/20 transition-all cursor-pointer flex items-center gap-1.5"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>{pagerType === '18page' ? (isTa ? 'அச்சு / PDF (18-பக்கம்)' : 'Save as PDF / Print (18 Pages)') : pagerType === '7page' ? (isTa ? 'அச்சு / PDF (7-பக்கம்)' : 'Save as PDF / Print (7 Pages)') : (isTa ? 'அச்சு / PDF (1-A4)' : 'Save as PDF / Print (1-A4)')}</span>
+              <span>{pagerType === '51page' ? (isTa ? 'அச்சு / PDF (51-பக்கம்)' : 'Save as PDF / Print (51 Pages)') : pagerType === '33page' ? (isTa ? 'அச்சு / PDF (33-பக்கம்)' : 'Save as PDF / Print (33 Pages)') : pagerType === '25page' ? (isTa ? 'அச்சு / PDF (25-பக்கம்)' : 'Save as PDF / Print (25 Pages)') : pagerType === '21page' ? (isTa ? 'அச்சு / PDF (21-பக்கம்)' : 'Save as PDF / Print (21 Pages)') : pagerType === '18page' ? (isTa ? 'அச்சு / PDF (18-பக்கம்)' : 'Save as PDF / Print (18 Pages)') : pagerType === '7page' ? (isTa ? 'அச்சு / PDF (7-பக்கம்)' : 'Save as PDF / Print (7 Pages)') : (isTa ? 'அச்சு / PDF (1-A4)' : 'Save as PDF / Print (1-A4)')}</span>
             </button>
 
             {onClose && (
@@ -795,7 +922,7 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
                 >
                   {filteredCities.map(c => (
                     <option key={c.name} value={c.name}>
-                      {c.name} ({c.latDec?.toFixed(2)}°N, {c.lonDec?.toFixed(2)}°E)
+                      {c.name} ({c.latDec}°N, {c.lonDec}°E)
                     </option>
                   ))}
                 </select>
@@ -1104,7 +1231,16 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
                       type="text"
                       value={data.person.dateWeekday}
                       onChange={e => updateField('person', 'dateWeekday', e.target.value)}
-                      className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs"
+                      className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs font-bold text-[#7A1A22]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold mb-1 opacity-80">{L.age}</label>
+                    <input
+                      type="text"
+                      value={data.person.age || ''}
+                      onChange={e => updateField('person', 'age', e.target.value)}
+                      className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs font-semibold"
                     />
                   </div>
                   <div>
@@ -1203,8 +1339,54 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
                     <label className="block font-bold mb-1 opacity-80">{L.nakshatraSyllables}</label>
                     <input
                       type="text"
-                      value={data.person.nakshatraSyllables}
+                      value={data.person.nakshatraSyllables || ''}
                       onChange={e => updateField('person', 'nakshatraSyllables', e.target.value)}
+                      className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-bold mb-1 opacity-80">{L.subhar}</label>
+                    <input
+                      type="text"
+                      value={data.person.subhar || ''}
+                      onChange={e => updateField('person', 'subhar', e.target.value)}
+                      className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold mb-1 opacity-80">{L.asubhar}</label>
+                    <input
+                      type="text"
+                      value={data.person.asubhar || ''}
+                      onChange={e => updateField('person', 'asubhar', e.target.value)}
+                      className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold mb-1 opacity-80">{L.lagnagathipathi}</label>
+                    <input
+                      type="text"
+                      value={data.person.lagnagathipathi || ''}
+                      onChange={e => updateField('person', 'lagnagathipathi', e.target.value)}
+                      className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold mb-1 opacity-80">{L.bhagayathipathi}</label>
+                    <input
+                      type="text"
+                      value={data.person.bhagayathipathi || ''}
+                      onChange={e => updateField('person', 'bhagayathipathi', e.target.value)}
+                      className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold mb-1 opacity-80">{L.bhathagathipathi}</label>
+                    <input
+                      type="text"
+                      value={data.person.bhathagathipathi || ''}
+                      onChange={e => updateField('person', 'bhathagathipathi', e.target.value)}
                       className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs"
                     />
                   </div>
@@ -1449,11 +1631,49 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
                   <label className="block font-bold mb-1 opacity-80">{L.bhavaTransitions}</label>
                   <input
                     type="text"
-                    value={data.footer.bhavaTransitions}
+                    value={data.footer.bhavaTransitions || ''}
                     onChange={e => updateField('footer', 'bhavaTransitions', e.target.value)}
                     placeholder="e.g. லக்ன பாவக ஆரம்பம்: ரிஷபம் 22° 15′ | முடிவு: மிதுனம் 22° 15′"
                     className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs"
                   />
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div>
+                    <label className="block font-bold mb-1 opacity-80">{L.bhodhagar}</label>
+                    <input
+                      type="text"
+                      value={data.footer.bhodhagar || ''}
+                      onChange={e => updateField('footer', 'bhodhagar', e.target.value)}
+                      className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold mb-1 opacity-80">{L.vedhagar}</label>
+                    <input
+                      type="text"
+                      value={data.footer.vedhagar || ''}
+                      onChange={e => updateField('footer', 'vedhagar', e.target.value)}
+                      className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold mb-1 opacity-80">{L.pasagar}</label>
+                    <input
+                      type="text"
+                      value={data.footer.pasagar || ''}
+                      onChange={e => updateField('footer', 'pasagar', e.target.value)}
+                      className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold mb-1 opacity-80">{L.karagar}</label>
+                    <input
+                      type="text"
+                      value={data.footer.karagar || ''}
+                      onChange={e => updateField('footer', 'karagar', e.target.value)}
+                      className="w-full bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg p-2 text-xs"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="block font-bold mb-1 opacity-80">{L.luckyNumbers}</label>
@@ -1471,9 +1691,45 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
         )}
 
         {/* ========================================================================= */}
-        {/* CONDITIONAL RENDER: 18-PAGE BOOKLET vs 7-PAGE BOOKLET vs 1-PAGE SHEET     */}
+        {/* CONDITIONAL RENDER: 51-PAGE vs 33-PAGE vs 25-PAGE vs 21-PAGE vs 18-PAGE vs 7-PAGE vs 1-PAGE SHEET */}
         {/* ========================================================================= */}
-        {pagerType === '18page' ? (
+        {pagerType === '51page' ? (
+          <HoroscopeBooklet51PageView
+            data={booklet51Data}
+            setData={setBooklet51Data}
+            isTa={isTa}
+            onAutoFill={() => setBooklet51Data(compute51PageBookletData(calcInputs))}
+            onClearAll={() => setBooklet51Data(createEmpty51PageBookletData())}
+            onPrint={handlePrint}
+          />
+        ) : pagerType === '33page' ? (
+          <HoroscopeBooklet33PageView
+            data={booklet33Data}
+            setData={setBooklet33Data}
+            isTa={isTa}
+            onAutoFill={() => setBooklet33Data(compute33PageBookletData(calcInputs))}
+            onClearAll={() => setBooklet33Data(createEmpty33PageBookletData())}
+            onPrint={handlePrint}
+          />
+        ) : pagerType === '25page' ? (
+          <HoroscopeBooklet25PageView
+            data={booklet25Data}
+            setData={setBooklet25Data}
+            isTa={isTa}
+            onAutoFill={() => setBooklet25Data(compute25PageBookletData(calcInputs))}
+            onClearAll={() => setBooklet25Data(createEmpty25PageBookletData())}
+            onPrint={handlePrint}
+          />
+        ) : pagerType === '21page' ? (
+          <HoroscopeBooklet21PageView
+            data={booklet21Data}
+            setData={setBooklet21Data}
+            isTa={isTa}
+            onAutoFill={() => setBooklet21Data(compute21PageBookletData(calcInputs))}
+            onClearAll={() => setBooklet21Data(createEmpty21PageBookletData())}
+            onPrint={handlePrint}
+          />
+        ) : pagerType === '18page' ? (
           <HoroscopeBooklet18PageView
             data={booklet18Data}
             setData={setBooklet18Data}
@@ -1564,37 +1820,43 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
                 </div>
               </div>
 
-              {/* 4. Two-column details block (label, colon, value) */}
-              <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[9px] sm:text-[10px] px-1 border-t border-stone-300 pt-1 leading-normal">
-                {/* Left Column (12 lines) */}
+              {/* 4. Professional Two-Column Details Block (Astrological Systems on Left, Birth & Personal Details on Right) */}
+              <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[9px] sm:text-[9.5px] px-1 border-t border-stone-300 pt-1 leading-normal">
+                {/* Left Column: Astrological & Panchangam System (15 lines) */}
                 <div className="space-y-0.5">
-                  <div className="flex"><span className="w-32 font-bold shrink-0">{L.father}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.father || <span className="opacity-0">&nbsp;</span>}</span></div>
-                  <div className="flex"><span className="w-32 font-bold shrink-0">{L.mother}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.mother || <span className="opacity-0">&nbsp;</span>}</span></div>
-                  <div className="flex"><span className="w-32 font-bold shrink-0">{L.nativePlace}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.nativePlace || <span className="opacity-0">&nbsp;</span>}</span></div>
-                  <div className="flex"><span className="w-32 font-bold shrink-0">{L.lagna}</span><span className="mr-1">:</span><span className="font-bold text-[#7A1A22] truncate">{data.person.lagna || <span className="opacity-0">&nbsp;</span>}</span></div>
-                  <div className="flex items-center"><span className="w-32 font-bold shrink-0">{L.rasi}</span><span className="mr-1">:</span><span className="font-bold truncate flex items-center gap-1">{data.person.rasi || <span className="opacity-0">&nbsp;</span>} <span className="text-xs">{data.person.rasiGlyph}</span></span></div>
-                  <div className="flex"><span className="w-32 font-bold shrink-0">{L.nakshatra}</span><span className="mr-1">:</span><span className="font-bold truncate">{data.person.nakshatra ? `${data.person.nakshatra} பாதம் ${data.person.pada || ''}` : <span className="opacity-0">&nbsp;</span>}</span></div>
-                  <div className="flex"><span className="w-32 font-bold shrink-0">{L.pakshaTithi}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.pakshaTithi || <span className="opacity-0">&nbsp;</span>}</span></div>
-                  <div className="flex"><span className="w-32 font-bold shrink-0">{L.yogaKarana}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.yogaKarana || <span className="opacity-0">&nbsp;</span>}</span></div>
-                  <div className="flex"><span className="w-32 font-bold shrink-0">{L.ayanam}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.ayanam || <span className="opacity-0">&nbsp;</span>}</span></div>
-                  <div className="flex"><span className="w-32 font-bold shrink-0">{L.hora}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.hora || <span className="opacity-0">&nbsp;</span>}</span></div>
-                  <div className="flex"><span className="w-32 font-bold shrink-0">{L.ayanamsha}</span><span className="mr-1">:</span><span className="font-mono font-bold truncate">{data.person.ayanamsha || <span className="opacity-0">&nbsp;</span>}</span></div>
-                  <div className="flex"><span className="w-32 font-bold shrink-0">{L.lmtCorr}</span><span className="mr-1">:</span><span className="font-mono truncate">{data.person.lmtCorr || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-34 font-bold shrink-0">{L.lagna}</span><span className="mr-1">:</span><span className="font-bold text-[#7A1A22] truncate">{data.person.lagna || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-34 font-bold shrink-0">{L.lagnagathipathi}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.lagnagathipathi || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex items-center"><span className="w-34 font-bold shrink-0">{L.rasi}</span><span className="mr-1">:</span><span className="font-bold truncate flex items-center gap-1">{data.person.rasi || <span className="opacity-0">&nbsp;</span>} <span className="text-xs">{data.person.rasiGlyph}</span></span></div>
+                  <div className="flex"><span className="w-34 font-bold shrink-0">{L.nakshatra}</span><span className="mr-1">:</span><span className="font-bold truncate">{data.person.nakshatra ? `${data.person.nakshatra} பாதம் ${data.person.pada || ''}` : <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-34 font-bold shrink-0">{L.nakshatraSyllables}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.nakshatraSyllables || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-34 font-bold shrink-0">{L.bhagayathipathi}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.bhagayathipathi || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-34 font-bold shrink-0">{L.bhathagathipathi}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.bhathagathipathi || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-34 font-bold shrink-0">{L.subhar}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.subhar || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-34 font-bold shrink-0">{L.asubhar}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.asubhar || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-34 font-bold shrink-0">{L.pakshaTithi}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.pakshaTithi || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-34 font-bold shrink-0">{L.yogaKarana}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.yogaKarana || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-34 font-bold shrink-0">{L.ayanam}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.ayanam || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-34 font-bold shrink-0">{L.hora}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.hora || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-34 font-bold shrink-0">{L.ayanamsha}</span><span className="mr-1">:</span><span className="font-mono font-bold truncate">{data.person.ayanamsha || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-34 font-bold shrink-0">{L.lmtCorr}</span><span className="mr-1">:</span><span className="font-mono truncate">{data.person.lmtCorr || <span className="opacity-0">&nbsp;</span>}</span></div>
                 </div>
 
-                {/* Right Column (11 lines) */}
+                {/* Right Column: Birth, Timing & Family Details (14 lines, D.O.B on top and Age right below) */}
                 <div className="space-y-0.5">
-                  <div className="flex"><span className="w-36 font-bold shrink-0">{L.dateWeekday}</span><span className="mr-1">:</span><span className="font-bold truncate">{data.person.dateWeekday || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-36 font-bold shrink-0">{L.dateWeekday}</span><span className="mr-1">:</span><span className="font-bold truncate text-[#7A1A22]">{data.person.dateWeekday || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-36 font-bold shrink-0">{L.age}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.age || <span className="opacity-0">&nbsp;</span>}</span></div>
                   <div className="flex"><span className="w-36 font-bold shrink-0">{L.time}</span><span className="mr-1">:</span><span className="font-mono font-bold truncate">{data.person.time || <span className="opacity-0">&nbsp;</span>}</span></div>
                   <div className="flex"><span className="w-36 font-bold shrink-0">{L.tamilDate}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.tamilDate || <span className="opacity-0">&nbsp;</span>}</span></div>
                   <div className="flex"><span className="w-36 font-bold shrink-0">{L.udayadiNazhigai}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.udayadiNazhigai || <span className="opacity-0">&nbsp;</span>}</span></div>
-                  <div className="flex"><span className="w-36 font-bold shrink-0">{L.country}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.country || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-36 font-bold shrink-0">{L.sunriseSunset}</span><span className="mr-1">:</span><span className="font-mono text-[9px] truncate">{data.person.sunriseSunset || <span className="opacity-0">&nbsp;</span>}</span></div>
                   <div className="flex flex-col"><div className="flex"><span className="w-36 font-bold shrink-0">{L.place}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.placeLine1 || <span className="opacity-0">&nbsp;</span>}</span></div>{data.person.placeLine2 && <div className="pl-38 text-xs font-black tracking-tight">{data.person.placeLine2}</div>}</div>
+                  <div className="flex"><span className="w-36 font-bold shrink-0">{L.country}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.country || <span className="opacity-0">&nbsp;</span>}</span></div>
                   <div className="flex"><span className="w-36 font-bold shrink-0">{L.latLon}</span><span className="mr-1">:</span><span className="font-mono truncate">{data.person.latLon || <span className="opacity-0">&nbsp;</span>}</span></div>
                   <div className="flex"><span className="w-36 font-bold shrink-0">{L.stdTimeCorr}</span><span className="mr-1">:</span><span className="font-mono truncate">{data.person.stdTimeCorr || <span className="opacity-0">&nbsp;</span>}</span></div>
-                  <div className="flex"><span className="w-36 font-bold shrink-0">{L.sunriseSunset}</span><span className="mr-1">:</span><span className="font-mono text-[9px] truncate">{data.person.sunriseSunset || <span className="opacity-0">&nbsp;</span>}</span></div>
                   <div className="flex"><span className="w-36 font-bold shrink-0">{L.yogiAvayogi}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.yogiAvayogi || <span className="opacity-0">&nbsp;</span>}</span></div>
-                  <div className="flex"><span className="w-36 font-bold shrink-0">{L.nakshatraSyllables}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.nakshatraSyllables || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-36 font-bold shrink-0">{L.father}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.father || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-36 font-bold shrink-0">{L.mother}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.mother || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex"><span className="w-36 font-bold shrink-0">{L.nativePlace}</span><span className="mr-1">:</span><span className="font-semibold truncate">{data.person.nativePlace || <span className="opacity-0">&nbsp;</span>}</span></div>
                 </div>
               </div>
 
@@ -1659,6 +1921,12 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
                 <div className="flex">
                   <span className="font-bold shrink-0 mr-1.5">{L.bhavaTransitions}</span>
                   <span className="font-semibold truncate">{data.footer.bhavaTransitions || <span className="opacity-0">&nbsp;</span>}</span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-2 text-[8.5px] sm:text-[9px]">
+                  <div className="flex truncate"><span className="font-bold mr-1 shrink-0">{L.bhodhagar}</span><span className="font-semibold truncate">{data.footer.bhodhagar || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex truncate"><span className="font-bold mr-1 shrink-0">{L.vedhagar}</span><span className="font-semibold truncate">{data.footer.vedhagar || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex truncate"><span className="font-bold mr-1 shrink-0">{L.pasagar}</span><span className="font-semibold truncate">{data.footer.pasagar || <span className="opacity-0">&nbsp;</span>}</span></div>
+                  <div className="flex truncate"><span className="font-bold mr-1 shrink-0">{L.karagar}</span><span className="font-semibold truncate">{data.footer.karagar || <span className="opacity-0">&nbsp;</span>}</span></div>
                 </div>
                 <div className="flex">
                   <span className="font-bold shrink-0 mr-1.5">{L.luckyNumbers}</span>

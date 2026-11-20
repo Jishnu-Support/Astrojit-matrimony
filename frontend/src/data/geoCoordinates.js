@@ -162,10 +162,10 @@ export const GEO_DATA = {
       },
       {
         "name": "Hosur",
-        "lat": "12° 44' N",
-        "lon": "77° 49' E",
-        "latDec": 12.7409,
-        "lonDec": 77.8253,
+        "lat": "12° 43' 30\" N",
+        "lon": "77° 49' 30\" E",
+        "latDec": 12.725,
+        "lonDec": 77.825,
         "tz": "+05:30"
       },
       {
@@ -6080,13 +6080,13 @@ export function lookupCoordinates(country = 'India', state = 'Tamil Nadu', city 
     }
   }
 
-  // Default Hosur coordinates
+  // Default Hosur coordinates (Traditional temple benchmark)
   return {
     name: city || 'Hosur',
-    lat: "12° 44' N",
-    lon: "77° 49' E",
-    latDec: 12.7409,
-    lonDec: 77.8253,
+    lat: "12° 43' 30\" N",
+    lon: "77° 49' 30\" E",
+    latDec: 12.725,
+    lonDec: 77.825,
     tz: '+05:30',
   };
 }

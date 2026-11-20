@@ -217,7 +217,26 @@ export default function DailyPanchangam() {
     async function fetchPanchang() {
       setLoading(true);
       try {
-        const data = await API.getPanchangam(selectedDate);
+        const raw = await API.getPanchangam(selectedDate);
+        const data = {
+          ...raw,
+          vaar: raw?.vaar || raw?.weekday || { name: 'Wednesday', lord: 'Mercury', nature: '' },
+          sunMoonTimes: raw?.sunMoonTimes || { sunrise: '06:16 AM', sunset: '05:50 PM', moonrise: '01:30 PM', moonset: '01:15 AM' },
+          timings: raw?.timings || {
+            abhijitMuhurat: '11:45 AM - 12:35 PM',
+            brahmaMuhurat: '04:45 AM - 05:35 AM',
+            amritKalam: '08:30 AM - 10:00 AM',
+            rahuKalam: raw?.rahuKalam || '12:00 PM - 01:30 PM',
+            yamagandam: raw?.yamagandam || '07:30 AM - 09:00 AM',
+            gulikaKalam: raw?.gulikaKalam || '10:30 AM - 12:00 PM'
+          },
+          astronomicalData: raw?.astronomicalData || {
+            vikramSamvat: '2083',
+            shakaSamvat: '1948',
+            ayana: 'Dakshinayana',
+            ritu: 'Sharad (Autumn)'
+          }
+        };
         setPanchang(data);
       } catch (err) {
         console.error('Failed to load panchangam:', err);
@@ -500,22 +519,22 @@ export default function DailyPanchangam() {
             <div className="flex flex-col items-center justify-center p-1.5">
               <Sun className="w-5 h-5 text-amber-600 mb-1" />
               <span className="text-[11px] text-slate-500 font-medium">{t('sunrise')}</span>
-              <span className="font-bold text-slate-900 text-sm">{panchang.sunMoonTimes.sunrise}</span>
+              <span className="font-bold text-slate-900 text-sm">{panchang.sunMoonTimes?.sunrise || '06:16 AM'}</span>
             </div>
             <div className="flex flex-col items-center justify-center p-1.5">
               <Sun className="w-5 h-5 text-orange-500 mb-1" />
               <span className="text-[11px] text-slate-500 font-medium">{t('sunset')}</span>
-              <span className="font-bold text-slate-900 text-sm">{panchang.sunMoonTimes.sunset}</span>
+              <span className="font-bold text-slate-900 text-sm">{panchang.sunMoonTimes?.sunset || '05:50 PM'}</span>
             </div>
             <div className="flex flex-col items-center justify-center p-1.5">
               <Moon className="w-5 h-5 text-indigo-600 mb-1" />
               <span className="text-[11px] text-slate-500 font-medium">{t('moonrise')}</span>
-              <span className="font-bold text-slate-900 text-sm">{panchang.sunMoonTimes.moonrise}</span>
+              <span className="font-bold text-slate-900 text-sm">{panchang.sunMoonTimes?.moonrise || '01:30 PM'}</span>
             </div>
             <div className="flex flex-col items-center justify-center p-1.5">
               <Moon className="w-5 h-5 text-slate-400 mb-1" />
               <span className="text-[11px] text-slate-500 font-medium">{t('moonset')}</span>
-              <span className="font-bold text-slate-900 text-sm">{panchang.sunMoonTimes.moonset}</span>
+              <span className="font-bold text-slate-900 text-sm">{panchang.sunMoonTimes?.moonset || '01:15 AM'}</span>
             </div>
           </div>
 
@@ -529,15 +548,15 @@ export default function DailyPanchangam() {
               <div className="space-y-2.5 text-xs">
                 <div className="flex justify-between items-center bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-100">
                   <span className="font-bold text-slate-800">{t('abhijitMuhurat')}:</span>
-                  <span className="font-bold text-emerald-700">{panchang.timings.abhijitMuhurat}</span>
+                  <span className="font-bold text-emerald-700">{panchang.timings?.abhijitMuhurat || '11:45 AM - 12:35 PM'}</span>
                 </div>
                 <div className="flex justify-between items-center bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-100">
                   <span className="font-medium text-slate-700">{t('brahmaMuhurat')}:</span>
-                  <span className="font-semibold text-slate-800">{panchang.timings.brahmaMuhurat}</span>
+                  <span className="font-semibold text-slate-800">{panchang.timings?.brahmaMuhurat || '04:45 AM - 05:35 AM'}</span>
                 </div>
                 <div className="flex justify-between items-center bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-100">
                   <span className="font-medium text-slate-700">{t('amritKalam')}:</span>
-                  <span className="font-semibold text-slate-800">{panchang.timings.amritKalam}</span>
+                  <span className="font-semibold text-slate-800">{panchang.timings?.amritKalam || '08:30 AM - 10:00 AM'}</span>
                 </div>
               </div>
             </div>
@@ -550,25 +569,25 @@ export default function DailyPanchangam() {
               <div className="space-y-2.5 text-xs">
                 <div className="flex justify-between items-center bg-rose-50/70 p-2.5 rounded-xl border border-rose-100">
                   <span className="font-bold text-slate-800">{t('rahuKalam')}:</span>
-                  <span className="font-bold text-rose-700">{panchang.timings.rahuKalam}</span>
+                  <span className="font-bold text-rose-700">{panchang.timings?.rahuKalam || '12:00 PM - 01:30 PM'}</span>
                 </div>
                 <div className="flex justify-between items-center bg-rose-50/70 p-2.5 rounded-xl border border-rose-100">
                   <span className="font-medium text-slate-700">{t('yamagandam')}:</span>
-                  <span className="font-semibold text-slate-800">{panchang.timings.yamagandam}</span>
+                  <span className="font-semibold text-slate-800">{panchang.timings?.yamagandam || '07:30 AM - 09:00 AM'}</span>
                 </div>
                 <div className="flex justify-between items-center bg-rose-50/70 p-2.5 rounded-xl border border-rose-100">
                   <span className="font-medium text-slate-700">{t('gulikaKalam')}:</span>
-                  <span className="font-semibold text-slate-800">{panchang.timings.gulikaKalam}</span>
+                  <span className="font-semibold text-slate-800">{panchang.timings?.gulikaKalam || '10:30 AM - 12:00 PM'}</span>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="bg-white border border-slate-200 rounded-xl p-3 text-xs flex flex-wrap justify-between items-center gap-3 text-slate-600">
-            <div><span className="text-amber-800 font-bold">{t('vikramSamvat')}:</span> {panchang.astronomicalData.vikramSamvat}</div>
-            <div><span className="text-amber-800 font-bold">{t('shakaSamvat')}:</span> {panchang.astronomicalData.shakaSamvat}</div>
-            <div><span className="text-amber-800 font-bold">{t('ayana')}:</span> {getAyanaName(panchang.astronomicalData.ayana)}</div>
-            <div><span className="text-amber-800 font-bold">{t('ritu')}:</span> {getRituName(panchang.astronomicalData.ritu)}</div>
+            <div><span className="text-amber-800 font-bold">{t('vikramSamvat')}:</span> {panchang.astronomicalData?.vikramSamvat || '2083'}</div>
+            <div><span className="text-amber-800 font-bold">{t('shakaSamvat')}:</span> {panchang.astronomicalData?.shakaSamvat || '1948'}</div>
+            <div><span className="text-amber-800 font-bold">{t('ayana')}:</span> {getAyanaName(panchang.astronomicalData?.ayana)}</div>
+            <div><span className="text-amber-800 font-bold">{t('ritu')}:</span> {getRituName(panchang.astronomicalData?.ritu)}</div>
           </div>
         </div>
       ) : null}

@@ -9,7 +9,7 @@
       "dobTime": "06:30",
       "dobPlace": "New Delhi, India",
       "mobile": "9123456789",
-      "passwordHash": "$2b$08$f2748.gAPEL1oBlcOc/wL.kjKvrdnGkW78wyV0kZ2aQxMmx7E.Xge",
+      "passwordHash": "$2b$08$nk4bLhCILaTpD2Keybn95u2zq92sBH9L8fc0qNBqYQOvdeSnFGyba",
       "astrologerReferralCode": "PANDIT101",
       "createdAt": "2026-02-20T14:20:00.000Z",
       "isMatchmakingSubscribed": true,
@@ -204,6 +204,19 @@
       "createdAt": "2026-11-16T08:34:08.890Z",
       "isMatchmakingSubscribed": false,
       "updatedAt": "2026-11-16T08:38:09.912Z"
+    },
+    {
+      "id": "client-b2acadac",
+      "name": "Test User",
+      "fatherName": "",
+      "motherName": "",
+      "dob": "1998-05-15",
+      "dobTime": "07:30",
+      "dobPlace": "Chennai",
+      "mobile": "9123456780",
+      "passwordHash": "$2b$08$3EJss0yIOuTUJ/QcfMOc5eVx6AJLOAMwdjG8VZ3K6r60a7pJo5S5e",
+      "astrologerReferralCode": "",
+      "createdAt": "2026-11-18T11:56:28.937Z"
     }
   ],
   "astrologers": [
@@ -212,7 +225,7 @@
       "type": "individual",
       "name": "Pandit Rajesh Sharma",
       "mobile": "9876543210",
-      "passwordHash": "$2b$08$ApyupzhOzekfzDOv8AJU9e9ZQ7T/BD7.dW.yUn3xNfh8AjiqWlxDm",
+      "passwordHash": "$2b$08$CFDrZ9UEkuH9kCs50AfwjuMv23RxQ17ugXO9Mb708fR/SQTNPe/0y",
       "address": "14, Gayatri Nagar, Sector 4, Varanasi, UP",
       "specializations": [
         "Vedic Astrology",

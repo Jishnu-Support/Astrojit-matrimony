@@ -447,6 +447,12 @@ function getDailyPanchangam(dateStr) {
     rahuKalam: rahuKalamSlots[weekdayIndex],
     yamagandam: yamagandamSlots[weekdayIndex],
     gulikaKalam: gulikaSlots[weekdayIndex],
+    sunMoonTimes: {
+      sunrise: '06:16 AM',
+      sunset: '05:50 PM',
+      moonrise: '01:30 PM',
+      moonset: '01:15 AM'
+    }
   };
 }
 

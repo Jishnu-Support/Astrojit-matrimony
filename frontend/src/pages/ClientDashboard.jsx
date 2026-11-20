@@ -351,6 +351,17 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
             <span>{lang === 'ta' ? 'திருக்கணித ஜாதகம்' : 'Thirukanitha Horoscope'}</span>
           </button>
           <button
+            onClick={() => setActiveTab('horoscope_pagers')}
+            className={`shrink-0 px-3 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'horoscope_pagers' || activeTab === 'pager'
+                ? 'bg-slate-950 text-white shadow-xs'
+                : 'bg-white/40 text-slate-900 hover:bg-white/60'
+            }`}
+          >
+            <span>📄</span>
+            <span>{lang === 'ta' ? 'ஜாதக ஏடு (1-பக்கம்)' : 'Horoscope Pager (1-Page)'}</span>
+          </button>
+          <button
             onClick={() => setActiveTab('matchmaking')}
             className={`shrink-0 px-3 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'matchmaking'

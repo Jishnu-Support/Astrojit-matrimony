@@ -12,8 +12,8 @@ export default function BirthCoordinatesPicker({
   country = 'India',
   state = 'Tamil Nadu',
   city = 'Hosur',
-  latitude = "12° 44' N",
-  longitude = "77° 49' E",
+  latitude = "12° 43' 30\" N",
+  longitude = "77° 49' 30\" E",
   dobTime = '10:55:00',
   dobTime12 = '10:55:00 AM',
   onChange,
@@ -64,8 +64,8 @@ export default function BirthCoordinatesPicker({
   const [citySearch, setCitySearch] = useState('');
   const [isCustomCity, setIsCustomCity] = useState(false);
   const [customCityName, setCustomCityName] = useState('');
-  const [customLat, setCustomLat] = useState(latitude || "12° 44' N");
-  const [customLon, setCustomLon] = useState(longitude || "77° 49' E");
+  const [customLat, setCustomLat] = useState(latitude || "12° 43' 30\" N");
+  const [customLon, setCustomLon] = useState(longitude || "77° 49' 30\" E");
 
   // Sync props from parent if updated from outside (e.g. presets, customer profile)
   useEffect(() => {

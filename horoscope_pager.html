@@ -653,15 +653,18 @@
 
         <!-- 4. Two-Column Details Block -->
         <div class="details-grid">
-          <!-- Left Column -->
+          <!-- Left Column: Astrological & Panchangam System (15 lines) -->
           <div>
-            <div class="detail-row"><span class="detail-label" id="lbl-father">தந்தை</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-father"></span></div>
-            <div class="detail-row"><span class="detail-label" id="lbl-mother">தாய்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-mother"></span></div>
-            <div class="detail-row"><span class="detail-label" id="lbl-nativePlace">சொந்த ஊர்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-nativePlace"></span></div>
             <div class="detail-row"><span class="detail-label" id="lbl-lagna">லக்னம்</span><span class="detail-colon">:</span><span class="detail-value val-highlight" id="ui-p-lagna"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-lagnagathipathi">லக்னாதிபதி</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-lagnagathipathi"></span></div>
             <div class="detail-row"><span class="detail-label" id="lbl-rasi">ராசி</span><span class="detail-colon">:</span><span class="detail-value val-highlight" id="ui-p-rasi"></span></div>
             <div class="detail-row"><span class="detail-label" id="lbl-nakshatra">நட்சத்திரம்</span><span class="detail-colon">:</span><span class="detail-value val-highlight" id="ui-p-nakshatra"></span></div>
-            <div class="detail-row"><span class="detail-label" id="lbl-pakshaTithi">பக்ஷம் & திதி</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-pakshaTithi"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-nakshatraSyllables">நக்ஷத்திர எழுத்துக்கள்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-nakshatraSyllables"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-bhagayathipathi">பாக்யாதிபதி</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-bhagayathipathi"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-bhathagathipathi">பாதகாதிபதி</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-bhathagathipathi"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-subhar">சுபர்கள்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-subhar"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-asubhar">அசுபர்கள்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-asubhar"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-pakshaTithi">பட்சம் & திதி</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-pakshaTithi"></span></div>
             <div class="detail-row"><span class="detail-label" id="lbl-yogaKarana">யோகம்-கரணம்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-yogaKarana"></span></div>
             <div class="detail-row"><span class="detail-label" id="lbl-ayanam">அயனம்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-ayanam"></span></div>
             <div class="detail-row"><span class="detail-label" id="lbl-hora">நட்சத்திர ஹோரை</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-hora"></span></div>
@@ -669,20 +672,23 @@
             <div class="detail-row"><span class="detail-label" id="lbl-lmtCorr">சுதேச நேரத்திருத்தம்</span><span class="detail-colon">:</span><span class="detail-value val-mono" id="ui-p-lmtCorr"></span></div>
           </div>
 
-          <!-- Right Column -->
+          <!-- Right Column: Birth, Timing & Family Details (14 lines, D.O.B and Age below) -->
           <div>
-            <div class="detail-row"><span class="detail-label" id="lbl-dateWeekday">தேதி</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-dateWeekday"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-dateWeekday">பிறந்த தேதி (D.O.B)</span><span class="detail-colon">:</span><span class="detail-value val-highlight" id="ui-p-dateWeekday"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-age">வயது (Age)</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-age"></span></div>
             <div class="detail-row"><span class="detail-label" id="lbl-time">நேரம்</span><span class="detail-colon">:</span><span class="detail-value val-mono" id="ui-p-time"></span></div>
             <div class="detail-row"><span class="detail-label" id="lbl-tamilDate">தமிழ் தேதி</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-tamilDate"></span></div>
             <div class="detail-row"><span class="detail-label" id="lbl-udayadiNazhigai">உதயாதி நாழிகை</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-udayadiNazhigai"></span></div>
-            <div class="detail-row"><span class="detail-label" id="lbl-country">நாடு</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-country"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-sunriseSunset">சூரிய (பிம்ப மத்தி) sunrise/sunset</span><span class="detail-colon">:</span><span class="detail-value val-mono" style="font-size: 7.2pt;" id="ui-p-sunriseSunset"></span></div>
             <div class="detail-row"><span class="detail-label" id="lbl-place">இடம்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-placeLine1"></span></div>
             <div class="place-line-2" id="ui-p-placeLine2"></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-country">நாடு</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-country"></span></div>
             <div class="detail-row"><span class="detail-label" id="lbl-latLon">அட்ச தீர்க்க ரேகை</span><span class="detail-colon">:</span><span class="detail-value val-mono" id="ui-p-latLon"></span></div>
             <div class="detail-row"><span class="detail-label" id="lbl-stdTimeCorr">பொது நேரம் திருத்தம்</span><span class="detail-colon">:</span><span class="detail-value val-mono" id="ui-p-stdTimeCorr"></span></div>
-            <div class="detail-row"><span class="detail-label" id="lbl-sunriseSunset">சூரிய (பிம்ப மத்தி) sunrise/sunset</span><span class="detail-colon">:</span><span class="detail-value val-mono" style="font-size: 7.2pt;" id="ui-p-sunriseSunset"></span></div>
             <div class="detail-row"><span class="detail-label" id="lbl-yogiAvayogi">யோகி-அவயோகி</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-yogiAvayogi"></span></div>
-            <div class="detail-row"><span class="detail-label" id="lbl-nakshatraSyllables">நக்ஷத்திர எழுத்துக்கள்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-nakshatraSyllables"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-father">தந்தை</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-father"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-mother">தாய்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-mother"></span></div>
+            <div class="detail-row"><span class="detail-label" id="lbl-nativePlace">பூர்வீகம்</span><span class="detail-colon">:</span><span class="detail-value" id="ui-p-nativePlace"></span></div>
           </div>
         </div>
 
@@ -722,6 +728,12 @@
           <div class="footer-row"><span class="footer-lbl" id="lbl-dashaBalance">திசை இருப்பு:</span><span class="footer-val" id="ui-f-dashaBalance"></span></div>
           <div class="footer-row"><span class="footer-lbl" id="lbl-currentDasha">நடப்பு திசை / புக்தி:</span><span class="footer-val" id="ui-f-currentDasha"></span></div>
           <div class="footer-row"><span class="footer-lbl" id="lbl-bhavaTransitions">பாவக மாறுதல்:</span><span class="footer-val" id="ui-f-bhavaTransitions"></span></div>
+          <div class="footer-row" style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <span><span class="footer-lbl" id="lbl-bhodhagar">போதகர்:</span> <span class="footer-val" id="ui-f-bhodhagar"></span></span>
+            <span><span class="footer-lbl" id="lbl-vedhagar">வேதகர்:</span> <span class="footer-val" id="ui-f-vedhagar"></span></span>
+            <span><span class="footer-lbl" id="lbl-pasagar">பாசகர்:</span> <span class="footer-val" id="ui-f-pasagar"></span></span>
+            <span><span class="footer-lbl" id="lbl-karagar">காரகர்:</span> <span class="footer-val" id="ui-f-karagar"></span></span>
+          </div>
           <div class="footer-row"><span class="footer-lbl" id="lbl-luckyNumbers">அதிர்ஷ்ட எண்கள்:</span><span class="footer-val" id="ui-f-luckyNumbers"></span></div>
         </div>
 
@@ -781,7 +793,7 @@
         stdTimeCorr: '',
         sunriseSunset: '',
         yogiAvayogi: '',
-        nakshatraSyllables: ''
+        nakshatraSyllables: '', age: '', subhar: '', asubhar: '', lagnagathipathi: '', bhagayathipathi: '', bhathagathipathi: ''
       },
       planetRows: [
         { planet: '1-லக்னம்', degMin: '', nakshatra: '', pada: '', lord: '', rasi: '', degInSign: '', state: '' },
@@ -803,7 +815,7 @@
       footer: {
         dashaBalance: '',
         currentDasha: '',
-        bhavaTransitions: '',
+        bhavaTransitions: '', bhodhagar: '', vedhagar: '', pasagar: '', karagar: '',
         luckyNumbers: ''
       }
     };
@@ -836,14 +848,14 @@
         father: 'தந்தை', mother: 'தாய்', nativePlace: 'சொந்த ஊர்', lagna: 'லக்னம்', rasi: 'ராசி',
         nakshatra: 'நட்சத்திரம்', pakshaTithi: 'பக்ஷம் & திதி', yogaKarana: 'யோகம்-கரணம்', ayanam: 'அயனம்',
         hora: 'நட்சத்திர ஹோரை', ayanamsha: 'அயனாம்சம்', lmtCorr: 'சுதேச நேரத்திருத்தம்',
-        dateWeekday: 'தேதி', time: 'நேரம்', tamilDate: 'தமிழ் தேதி', udayadiNazhigai: 'உதயாதி நாழிகை',
+        dateWeekday: 'பிறந்த தேதி (D.O.B)', time: 'நேரம்', tamilDate: 'தமிழ் தேதி', udayadiNazhigai: 'உதயாதி நாழிகை',
         country: 'நாடு', place: 'இடம்', latLon: 'அட்ச தீர்க்க ரேகை', stdTimeCorr: 'பொது நேரம் திருத்தம்',
-        sunriseSunset: 'சூரிய (பிம்ப மத்தி) sunrise/sunset', yogiAvayogi: 'யோகி-அவயோகி', nakshatraSyllables: 'நக்ஷத்திர எழுத்துக்கள்',
+        sunriseSunset: 'சூரிய (பிம்ப மத்தி) sunrise/sunset', yogiAvayogi: 'யோகி-அவயோகி', nakshatraSyllables: 'நக்ஷத்திர எழுத்துக்கள்', age: 'வயது (Age)', subhar: 'சுபர்கள்', asubhar: 'அசுபர்கள்', lagnagathipathi: 'லக்னாதிபதி', bhagayathipathi: 'பாக்யாதிபதி', bhathagathipathi: 'பாதகாதிபதி',
         thPlanet: 'கிரகம்', thDegMin: 'பாகை-கலை', thStar: 'நட்சத்திரம்', thPada: 'பாதம்',
         thLord: 'நட்-அதிபதி', thRasi: 'ராசி', thDegIn: 'பாகை-கலை', thState: 'நிலை',
         chartRasi: 'ராசி', chartNavamsa: 'நவாம்சம்',
         dashaBalance: 'திசை இருப்பு:', currentDasha: 'நடப்பு திசை / புக்தி:',
-        bhavaTransitions: 'பாவக மாறுதல்:', luckyNumbers: 'அதிர்ஷ்ட எண்கள்:',
+        bhavaTransitions: 'பாவக மாறுதல்:', bhodhagar: 'போதகர்:', vedhagar: 'வேதகர்:', pasagar: 'பாசகர்:', karagar: 'காரகர்:', luckyNumbers: 'அதிர்ஷ்ட எண்கள்:',
         footerNotice: 'இது சுத்த திருக்கணித பஞ்சாங்கத்தின்படி மிகத்துல்லியமாக கணிக்கப்பெற்றது..'
       },
       en: {
@@ -856,12 +868,12 @@
         hora: 'Nakshatra Hora', ayanamsha: 'Ayanamsha (Lahiri)', lmtCorr: 'LMT Correction',
         dateWeekday: 'Date & Weekday', time: 'Birth Time', tamilDate: 'Tamil Date', udayadiNazhigai: 'Udayadi Nazhigai',
         country: 'Country', place: 'Place of Birth', latLon: 'Lat & Long', stdTimeCorr: 'Timezone (UTC)',
-        sunriseSunset: 'Sunrise / Sunset (Center)', yogiAvayogi: 'Yogi - Avayogi', nakshatraSyllables: 'Nakshatra Letters',
+        sunriseSunset: 'Sunrise / Sunset (Center)', yogiAvayogi: 'Yogi - Avayogi', nakshatraSyllables: 'Nakshatra Letters', age: 'Age', subhar: 'Benefics (Subhar)', asubhar: 'Malefics (Asubhar)', lagnagathipathi: 'Lagna Lord', bhagayathipathi: 'Bhagya Lord (9th)', bhathagathipathi: 'Badhaka Lord',
         thPlanet: 'Planet', thDegMin: 'Deg-Min', thStar: 'Star', thPada: 'Pada',
         thLord: 'Star Lord', thRasi: 'Sign', thDegIn: 'Deg-Min', thState: 'State',
         chartRasi: 'RASI', chartNavamsa: 'NAVAMSA',
         dashaBalance: 'Dasha Balance at Birth:', currentDasha: 'Current Dasha / Bhukti:',
-        bhavaTransitions: 'Bhava Transitions:', luckyNumbers: 'Lucky Numbers:',
+        bhavaTransitions: 'Bhava Transitions:', bhodhagar: 'Bhodhagar:', vedhagar: 'Vedhagar:', pasagar: 'Pasagar:', karagar: 'Karagar:', luckyNumbers: 'Lucky Numbers:',
         footerNotice: 'Accurately computed according to authentic Shuddha Thirukanitha Drik Ganitha Panchangam..'
       }
     };
@@ -883,9 +895,9 @@
         'father', 'mother', 'nativePlace', 'lagna', 'rasi', 'nakshatra',
         'pakshaTithi', 'yogaKarana', 'ayanam', 'hora', 'ayanamsha', 'lmtCorr',
         'dateWeekday', 'time', 'tamilDate', 'udayadiNazhigai', 'country', 'place',
-        'latLon', 'stdTimeCorr', 'sunriseSunset', 'yogiAvayogi', 'nakshatraSyllables',
+        'latLon', 'stdTimeCorr', 'sunriseSunset', 'yogiAvayogi', 'nakshatraSyllables', 'age', 'subhar', 'asubhar', 'lagnagathipathi', 'bhagayathipathi', 'bhathagathipathi',
         'thPlanet', 'thDegMin', 'thStar', 'thPada', 'thLord', 'thRasi', 'thDegIn', 'thState',
-        'dashaBalance', 'currentDasha', 'bhavaTransitions', 'luckyNumbers'
+        'dashaBalance', 'currentDasha', 'bhavaTransitions', 'bhodhagar', 'vedhagar', 'pasagar', 'karagar', 'luckyNumbers'
       ];
       labelIds.forEach(id => {
         const el = document.getElementById('lbl-' + id) || document.getElementById('th-p-' + id.toLowerCase().replace('th', ''));
@@ -934,7 +946,13 @@
       document.getElementById('ui-p-stdTimeCorr').textContent = p.stdTimeCorr;
       document.getElementById('ui-p-sunriseSunset').textContent = p.sunriseSunset;
       document.getElementById('ui-p-yogiAvayogi').textContent = p.yogiAvayogi;
-      document.getElementById('ui-p-nakshatraSyllables').textContent = p.nakshatraSyllables;
+      document.getElementById('ui-p-nakshatraSyllables').textContent = p.nakshatraSyllables || '';
+      if (document.getElementById('ui-p-age')) document.getElementById('ui-p-age').textContent = p.age || '';
+      if (document.getElementById('ui-p-subhar')) document.getElementById('ui-p-subhar').textContent = p.subhar || '';
+      if (document.getElementById('ui-p-asubhar')) document.getElementById('ui-p-asubhar').textContent = p.asubhar || '';
+      if (document.getElementById('ui-p-lagnagathipathi')) document.getElementById('ui-p-lagnagathipathi').textContent = p.lagnagathipathi || '';
+      if (document.getElementById('ui-p-bhagayathipathi')) document.getElementById('ui-p-bhagayathipathi').textContent = p.bhagayathipathi || '';
+      if (document.getElementById('ui-p-bhathagathipathi')) document.getElementById('ui-p-bhathagathipathi').textContent = p.bhathagathipathi || '';
 
       // Update Planet Table Rows
       const tbody = document.getElementById('planet-tbody');
@@ -962,7 +980,11 @@
       const f = PAGER_DATA.footer;
       document.getElementById('ui-f-dashaBalance').textContent = f.dashaBalance;
       document.getElementById('ui-f-currentDasha').textContent = f.currentDasha;
-      document.getElementById('ui-f-bhavaTransitions').textContent = f.bhavaTransitions;
+      document.getElementById('ui-f-bhavaTransitions').textContent = f.bhavaTransitions || '';
+      if (document.getElementById('ui-f-bhodhagar')) document.getElementById('ui-f-bhodhagar').textContent = f.bhodhagar || '';
+      if (document.getElementById('ui-f-vedhagar')) document.getElementById('ui-f-vedhagar').textContent = f.vedhagar || '';
+      if (document.getElementById('ui-f-pasagar')) document.getElementById('ui-f-pasagar').textContent = f.pasagar || '';
+      if (document.getElementById('ui-f-karagar')) document.getElementById('ui-f-karagar').textContent = f.karagar || '';
       document.getElementById('ui-f-luckyNumbers').textContent = f.luckyNumbers;
     }
 
