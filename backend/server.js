@@ -260,14 +260,18 @@ app.post('/api/auth/register/vendor', (req, res) => {
 
 app.post('/api/auth/login', (req, res) => {
   try {
-    const { role, mobile, password } = req.body;
+    let { role, mobile, username, password } = req.body;
+    const cleanMobile = (mobile || username || '').trim();
 
-    if (!role || !mobile || !password) {
-      return res.status(400).json({ error: 'Role, Mobile Number, and Password are required.' });
+    if (!role && (cleanMobile === 'jit_admin' || cleanMobile === 'admin')) {
+      role = 'company';
+    }
+
+    if (!role || !cleanMobile || !password) {
+      return res.status(400).json({ error: 'Role, Mobile Number/Username, and Password are required.' });
     }
 
     const db = readDb();
-    const cleanMobile = mobile.trim();
 
     if (role === 'company') {
       const company = db.company;
@@ -778,7 +782,7 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
       client.coordinates = coordinates || (latitude && longitude ? `${latitude} , ${longitude}` : '');
       client.dobTime12 = dobTime12;
       client.starBasis = starBasis;
-      client.astrologerReferralCode = astro.referralCode || req.user.referralCode || 'PANDIT101';
+      client.astrologerReferralCode = astro.referralCode || req.user.referralCode || '';
       client.clientCode = clientCode;
       client.plainInitialPassword = cleanPassword;
       client.passwordHash = passwordHash;
@@ -809,7 +813,7 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
         gotra: gotra.trim(),
         passwordHash,
         plainInitialPassword: cleanPassword,
-        astrologerReferralCode: astro.referralCode || req.user.referralCode || 'PANDIT101',
+        astrologerReferralCode: astro.referralCode || req.user.referralCode || '',
         registeredByAstrologerId: astro.id,
         createdAt: new Date().toISOString(),
         isMatchmakingSubscribed: false,
@@ -822,16 +826,16 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
     const astrologicalSnapshot = {
       starBasis: snap.starBasis || client.starBasis || 'moon',
       starBasisLabel: snap.starBasisLabel || (client.starBasis === 'sun' ? 'Sun Star (Surya Nakshatra)' : 'Moon Star (Chandra Nakshatra)'),
-      nakshatra: snap.nakshatra || client.nakshatra || 'Magha',
-      pada: snap.pada || client.pada || 1,
-      moonSign: snap.moonSign || client.rasi || 'Simham (Leo)',
-      lagna: snap.lagna || client.lagna || 'Vrischigam (Scorpio)',
-      lagnaSubhas: snap.lagnaSubhas || client.lagnaSubhas || 'Sun, Jupiter',
-      lagnaPapas: snap.lagnaPapas || client.lagnaPapas || 'Venus, Saturn',
-      lagnaSubhaPavar: snap.lagnaSubhaPavar || client.lagnaSubhaPavar || 'Jupiter, Sun',
-      dashaBalance: snap.dashaBalance || client.dashaBalance || 'Ketu Balance 3y 4m 12d',
-      gana: snap.gana || client.gana || 'Rakshasa',
-      yoni: snap.yoni || client.yoni || 'Male Rat (Aankh-Yoni)',
+      nakshatra: snap.nakshatra || client.nakshatra || '',
+      pada: snap.pada || client.pada || '',
+      moonSign: snap.moonSign || client.rasi || '',
+      lagna: snap.lagna || client.lagna || '',
+      lagnaSubhas: snap.lagnaSubhas || client.lagnaSubhas || '',
+      lagnaPapas: snap.lagnaPapas || client.lagnaPapas || '',
+      lagnaSubhaPavar: snap.lagnaSubhaPavar || client.lagnaSubhaPavar || '',
+      dashaBalance: snap.dashaBalance || client.dashaBalance || '',
+      gana: snap.gana || client.gana || '',
+      yoni: snap.yoni || client.yoni || '',
     };
     client.astrologicalSnapshot = astrologicalSnapshot;
     client.nakshatra = astrologicalSnapshot.nakshatra;
@@ -849,15 +853,15 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
       registrationDate: client.createdAt || new Date().toISOString(),
       astrologer: {
         id: astro.id,
-        name: astro.name || 'Pandit Rajesh Sharma',
-        mobile: astro.mobile || '9876543210',
-        email: astro.email || 'pandit.rajesh@astrojit.org',
-        referralCode: astro.referralCode || 'PANDIT101',
-        experience: astro.experience || '22 Years',
-        officeAddress: astro.officeAddress || astro.address || 'Vedic Jyotish Peetham, Gayatri Nagar, Varanasi',
-        association: astro.association || 'Jishnu Astro & Vasthu Research Centre / Vedic Jyotish Peetham',
+        name: astro.name || '',
+        mobile: astro.mobile || '',
+        email: astro.email || '',
+        referralCode: astro.referralCode || '',
+        experience: astro.experience || '',
+        officeAddress: astro.officeAddress || astro.address || '',
+        association: astro.association || '',
         associationLogo: astro.associationLogo || null,
-        languages: astro.languages || 'Hindi, Sanskrit, English',
+        languages: astro.languages || '',
       },
       client: {
         id: client.id,
@@ -920,15 +924,15 @@ app.get('/api/astrologer/client-receipt/:clientId', authenticate, (req, res) => 
       registrationDate: client.createdAt || new Date().toISOString(),
       astrologer: {
         id: astro.id,
-        name: astro.name || 'Pandit Rajesh Sharma',
-        mobile: astro.mobile || '9876543210',
-        email: astro.email || 'pandit.rajesh@astrojit.org',
-        referralCode: astro.referralCode || 'PANDIT101',
-        experience: astro.experience || '22 Years',
-        officeAddress: astro.officeAddress || astro.address || 'Vedic Jyotish Peetham, Gayatri Nagar, Varanasi',
-        association: astro.association || 'Jishnu Astro & Vasthu Research Centre / Vedic Jyotish Peetham',
+        name: astro.name || '',
+        mobile: astro.mobile || '',
+        email: astro.email || '',
+        referralCode: astro.referralCode || '',
+        experience: astro.experience || '',
+        officeAddress: astro.officeAddress || astro.address || '',
+        association: astro.association || '',
         associationLogo: astro.associationLogo || null,
-        languages: astro.languages || 'Hindi, Sanskrit, English',
+        languages: astro.languages || '',
       },
       client: {
         id: client.id,
@@ -956,16 +960,16 @@ app.get('/api/astrologer/client-receipt/:clientId', authenticate, (req, res) => 
       astrologicalSnapshot: client.astrologicalSnapshot || {
         starBasis: client.starBasis || 'moon',
         starBasisLabel: client.starBasis === 'sun' ? 'Sun Star (Surya Nakshatra)' : 'Moon Star (Chandra Nakshatra)',
-        nakshatra: client.nakshatra || 'Magha',
-        pada: client.pada || 1,
-        moonSign: client.rasi || 'Simham',
-        lagna: client.lagna || 'Vrischigam',
-        lagnaSubhas: client.lagnaSubhas || 'Sun, Jupiter',
-        lagnaPapas: client.lagnaPapas || 'Venus, Saturn',
-        lagnaSubhaPavar: client.lagnaSubhaPavar || 'Jupiter, Sun',
-        dashaBalance: client.dashaBalance || '3y 4m 12d',
-        gana: client.gana || 'Rakshasa',
-        yoni: client.yoni || 'Rat',
+        nakshatra: client.nakshatra || '',
+        pada: client.pada || '',
+        moonSign: client.rasi || '',
+        lagna: client.lagna || '',
+        lagnaSubhas: client.lagnaSubhas || '',
+        lagnaPapas: client.lagnaPapas || '',
+        lagnaSubhaPavar: client.lagnaSubhaPavar || '',
+        dashaBalance: client.dashaBalance || '',
+        gana: client.gana || '',
+        yoni: client.yoni || '',
       },
       credentials: {
         portalUrl: 'http://localhost:3000/#/client-login',

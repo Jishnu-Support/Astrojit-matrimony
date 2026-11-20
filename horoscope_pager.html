@@ -535,15 +535,15 @@
     <div class="editor-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
       <div class="form-group">
         <label>பெயர் (Full Name)</label>
-        <input type="text" class="form-control" id="inp-name" value="ஆரவ் குமார் (Aarav Kumar)">
+        <input type="text" class="form-control" id="inp-name" value="" placeholder="பெயர் உள்ளிடவும்">
       </div>
       <div class="form-group">
         <label>பிறந்த தேதி (Date of Birth)</label>
-        <input type="date" class="form-control" id="inp-dob" value="2026-11-05">
+        <input type="date" class="form-control" id="inp-dob" value="">
       </div>
       <div class="form-group">
         <label>பிறந்த நேரம் (12-Hour AM/PM)</label>
-        <input type="text" class="form-control" id="inp-time12" value="09:04:00 PM" style="font-weight: bold; font-family: monospace;">
+        <input type="text" class="form-control" id="inp-time12" value="" placeholder="12:00:00 AM" style="font-weight: bold; font-family: monospace;">
       </div>
       <div class="form-group">
         <label>இடம் (Place Preset)</label>
@@ -566,15 +566,15 @@
       </div>
       <div class="form-group">
         <label>தந்தை பெயர் (Father)</label>
-        <input type="text" class="form-control" id="inp-father" value="ரமேஷ் குமார்">
+        <input type="text" class="form-control" id="inp-father" value="" placeholder="தந்தை பெயர்">
       </div>
       <div class="form-group">
         <label>தாய் பெயர் (Mother)</label>
-        <input type="text" class="form-control" id="inp-mother" value="பிரியா">
+        <input type="text" class="form-control" id="inp-mother" value="" placeholder="தாய் பெயர்">
       </div>
       <div class="form-group">
         <label>சொந்த ஊர் (Native Place)</label>
-        <input type="text" class="form-control" id="inp-nativePlace" value="சேலம் (Salem)">
+        <input type="text" class="form-control" id="inp-nativePlace" value="" placeholder="சொந்த ஊர்">
       </div>
     </div>
 
@@ -1118,14 +1118,14 @@
     }
 
     function calculateAndPopulatePager() {
-      const name = document.getElementById('inp-name').value || 'ஆரவ் குமார்';
-      const dob = document.getElementById('inp-dob').value || '2026-11-05';
-      const time12 = document.getElementById('inp-time12').value || '09:04:00 PM';
+      const name = document.getElementById('inp-name').value || '';
+      const dob = document.getElementById('inp-dob').value || '';
+      const time12 = document.getElementById('inp-time12').value || '';
       const place = document.getElementById('inp-place-preset').value || 'Salem';
       const lat = parseFloat(document.getElementById('inp-lat').value) || 11.65;
       const lon = parseFloat(document.getElementById('inp-lon').value) || 78.20;
-      const father = document.getElementById('inp-father').value || 'ரமேஷ் குமார்';
-      const mother = document.getElementById('inp-mother').value || 'பிரியா';
+      const father = document.getElementById('inp-father').value || '';
+      const mother = document.getElementById('inp-mother').value || '';
       const nativePlace = document.getElementById('inp-nativePlace').value || place;
 
       autoFillThirukanitha();
@@ -1159,9 +1159,9 @@
         },
         person: {
           title: 'ஜனன ஜாதகம்',
-          name: 'ஆரவ் குமார் (Aarav Kumar)',
-          father: 'ரமேஷ் குமார்',
-          mother: 'பிரியா',
+          name: '',
+          father: '',
+          mother: '',
           nativePlace: 'சேலம் (Salem)',
           lagna: 'மிதுனம் (Gemini)',
           rasi: 'கன்னி',

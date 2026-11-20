@@ -55,10 +55,10 @@ export default function ClientRegistrationReceiptModal({
 *Client Registration Code:* ${clientCode}
 *Date:* ${formattedDate}
 
-*Astrologer:* ${astrologer.name || 'Vedic Astrologer'}
-*Astrologer Referral Code:* ${astrologer.referralCode || 'ASTRO101'}
-*Association:* ${astrologer.association || 'Vedic Astrology & Research Centre'}
-*Astrologer Contact:* ${astrologer.mobile || '9876543210'}
+*Astrologer:* ${astrologer.name || ''}
+*Astrologer Referral Code:* ${astrologer.referralCode || ''}
+*Association:* ${astrologer.association || ''}
+*Astrologer Contact:* ${astrologer.mobile || ''}
 
 ----------------------------------------
 👤 *CLIENT DETAILS*
@@ -69,7 +69,7 @@ export default function ClientRegistrationReceiptModal({
 *Star (Nakshatra):* ${astrologicalSnapshot.nakshatra || 'N/A'} (Pada ${astrologicalSnapshot.pada || 1})
 *Rashi (${client.starBasis === 'sun' || astrologicalSnapshot.starBasis === 'sun' ? 'Surya Rashi' : 'Chandra Rashi'}):* ${astrologicalSnapshot.moonSign || 'N/A'}
 *Lagna:* ${astrologicalSnapshot.lagna || 'N/A'}
-*Lagna Subha / Pavar:* ${astrologicalSnapshot.lagnaSubhas || 'Sun, Mars'} / ${astrologicalSnapshot.lagnaPapas || 'Venus, Saturn'}
+*Lagna Subha / Pavar:* ${astrologicalSnapshot.lagnaSubhas || ''}${astrologicalSnapshot.lagnaPapas ? ' / ' + astrologicalSnapshot.lagnaPapas : ''}
 
 ----------------------------------------
 🔐 *YOUR ASTROJIT LOGIN CREDENTIALS*
