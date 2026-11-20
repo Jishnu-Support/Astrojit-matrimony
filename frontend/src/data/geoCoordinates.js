@@ -6064,19 +6064,79 @@ export const GEO_DATA = {
   }
 };
 
-export function lookupCoordinates(country = 'India', state = 'Tamil Nadu', city = 'Hosur') {
+export function parseCoordinateToDec(val, fallback = 0) {
+  if (typeof val === 'number') return isNaN(val) ? fallback : val;
+  if (!val) return fallback;
+  const str = String(val).trim();
+  // Check DMS pattern: e.g. 12° 43' 30" N or 77° 49' 30" E
+  const dms = str.match(/([0-9.]+)\s*[°ddeg\s]+\s*([0-9.]+)?\s*['mmin\s]*\s*([0-9.]+)?\s*["ssec\s]*\s*([NSEW])?/i);
+  if (dms) {
+    const d = parseFloat(dms[1] || '0');
+    const m = parseFloat(dms[2] || '0');
+    const s = parseFloat(dms[3] || '0');
+    const dir = (dms[4] || '').toUpperCase();
+    let dec = d + m / 60 + s / 3600;
+    if (dir === 'S' || dir === 'W') dec = -dec;
+    return isNaN(dec) ? fallback : dec;
+  }
+  const num = parseFloat(str);
+  return isNaN(num) ? fallback : num;
+}
+
+export function lookupCoordinates(arg1 = 'India', arg2 = 'Tamil Nadu', arg3 = 'Hosur') {
+  // Support both (country, state, city) and (city, state, country)
+  let country = 'India';
+  let state = 'Tamil Nadu';
+  let city = 'Hosur';
+
+  if (GEO_DATA[arg1]) {
+    country = arg1;
+    state = arg2 || 'Tamil Nadu';
+    city = arg3 || 'Hosur';
+  } else if (GEO_DATA[arg3]) {
+    country = arg3;
+    state = arg2 || 'Tamil Nadu';
+    city = arg1 || 'Hosur';
+  } else {
+    city = arg1 || 'Hosur';
+    state = arg2 || 'Tamil Nadu';
+    country = arg3 || 'India';
+  }
+
+  // Clean city name (e.g. "Krishnagiri (Tamil Nadu, India)" -> "Krishnagiri")
+  const cleanCity = String(city).replace(/\(.*\)/g, '').split(/[,/-]/)[0].trim().toLowerCase();
+
   const stateData = GEO_DATA[country]?.[state];
   if (stateData) {
-    const cityObj = stateData.find(c => c.name.toLowerCase() === city.toLowerCase() || city.toLowerCase().includes(c.name.toLowerCase()) || c.name.toLowerCase().includes(city.toLowerCase()));
-    if (cityObj) return cityObj;
+    const cityObj = stateData.find(c => {
+      const cLow = c.name.toLowerCase();
+      return cLow === cleanCity || cleanCity.includes(cLow) || cLow.includes(cleanCity);
+    });
+    if (cityObj) {
+      return {
+        ...cityObj,
+        latDec: parseCoordinateToDec(cityObj.latDec !== undefined ? cityObj.latDec : cityObj.lat, 12.725),
+        lonDec: parseCoordinateToDec(cityObj.lonDec !== undefined ? cityObj.lonDec : cityObj.lon, 77.825)
+      };
+    }
   }
 
   // Fallback scan across all states in country
   const allStates = GEO_DATA[country];
   if (allStates) {
     for (const [stName, cities] of Object.entries(allStates)) {
-      const cityObj = cities.find(c => c.name.toLowerCase() === city.toLowerCase() || city.toLowerCase().includes(c.name.toLowerCase()) || c.name.toLowerCase().includes(city.toLowerCase()));
-      if (cityObj) return { ...cityObj, state: stName };
+      const cityObj = cities.find(c => {
+        const cLow = c.name.toLowerCase();
+        return cLow === cleanCity || cleanCity.includes(cLow) || cLow.includes(cleanCity);
+      });
+      if (cityObj) {
+        return {
+          ...cityObj,
+          state: stName,
+          latDec: parseCoordinateToDec(cityObj.latDec !== undefined ? cityObj.latDec : cityObj.lat, 12.725),
+          lonDec: parseCoordinateToDec(cityObj.lonDec !== undefined ? cityObj.lonDec : cityObj.lon, 77.825)
+        };
+      }
     }
   }
 

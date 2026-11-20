@@ -25,7 +25,7 @@ import { API } from '../api';
 import ClientRegistrationReceiptModal from './ClientRegistrationReceiptModal';
 import ThirukanithaHoroscopeView from './ThirukanithaHoroscopeView';
 import HoroscopePagerView from './HoroscopePagerView';
-import { COUNTRIES, GEO_DATA, lookupCoordinates } from '../data/geoCoordinates';
+import { COUNTRIES, GEO_DATA, lookupCoordinates, parseCoordinateToDec } from '../data/geoCoordinates';
 
 const HOURS_12 = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
 const MINUTES_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
@@ -159,8 +159,8 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
     const firstCity = cities[0]?.name || '';
     setCity(firstCity);
     if (cities[0]) {
-      setLat(cities[0].lat);
-      setLon(cities[0].lon);
+      setLat(cities[0].latDec !== undefined ? cities[0].latDec : parseCoordinateToDec(cities[0].lat, 11.6643));
+      setLon(cities[0].lonDec !== undefined ? cities[0].lonDec : parseCoordinateToDec(cities[0].lon, 78.1460));
       setUtcOffset(cities[0].utcOffset || '05:30 UTC');
     }
   };
@@ -173,8 +173,8 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
     const firstCity = cities[0]?.name || '';
     setCity(firstCity);
     if (cities[0]) {
-      setLat(cities[0].lat);
-      setLon(cities[0].lon);
+      setLat(cities[0].latDec !== undefined ? cities[0].latDec : parseCoordinateToDec(cities[0].lat, 11.6643));
+      setLon(cities[0].lonDec !== undefined ? cities[0].lonDec : parseCoordinateToDec(cities[0].lon, 78.1460));
       setUtcOffset(cities[0].utcOffset || '05:30 UTC');
     }
   };
@@ -183,11 +183,11 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
   const handleCityChange = (e) => {
     const newCityName = e.target.value;
     setCity(newCityName);
-    const geo = lookupCoordinates(newCityName, state, country);
+    const geo = lookupCoordinates(country, state, newCityName);
     if (geo) {
-      setLat(geo.lat);
-      setLon(geo.lon);
-      if (geo.utcOffset) setUtcOffset(geo.utcOffset);
+      setLat(geo.latDec !== undefined ? geo.latDec : parseCoordinateToDec(geo.lat, 11.6643));
+      setLon(geo.lonDec !== undefined ? geo.lonDec : parseCoordinateToDec(geo.lon, 78.1460));
+      if (geo.utcOffset || geo.tz) setUtcOffset(geo.utcOffset || `${geo.tz} UTC`);
     }
   };
 
@@ -232,10 +232,14 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
     setState(cState);
     setCity(cCity);
 
-    const geo = lookupCoordinates(cCity, cState, cCountry);
-    const cLat = c.lat !== undefined ? c.lat : (geo?.lat || 11.6643);
-    const cLon = c.lon !== undefined ? c.lon : (geo?.lon || 78.1460);
-    const cUtc = c.utcOffset || geo?.utcOffset || '05:30 UTC';
+    const geo = lookupCoordinates(cCountry, cState, cCity);
+    const cLat = typeof c.lat === 'number' && !isNaN(c.lat)
+      ? c.lat
+      : (geo?.latDec !== undefined ? geo.latDec : parseCoordinateToDec(geo?.lat, 11.6643));
+    const cLon = typeof c.lon === 'number' && !isNaN(c.lon)
+      ? c.lon
+      : (geo?.lonDec !== undefined ? geo.lonDec : parseCoordinateToDec(geo?.lon, 78.1460));
+    const cUtc = c.utcOffset || geo?.utcOffset || (geo?.tz ? `${geo.tz} UTC` : '05:30 UTC');
 
     setLat(cLat);
     setLon(cLon);
@@ -310,8 +314,8 @@ export default function HoroscopeHub({ initialSubView = 'screen', initialClient 
       state,
       placeName: city,
       city,
-      lat: parseFloat(lat) || 11.6643,
-      lon: parseFloat(lon) || 78.1460,
+      lat: parseCoordinateToDec(lat, 11.6643),
+      lon: parseCoordinateToDec(lon, 78.1460),
       utcOffset,
       father,
       mother,

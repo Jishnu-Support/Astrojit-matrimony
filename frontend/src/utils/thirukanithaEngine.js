@@ -76,6 +76,24 @@ export function parseLocalHour(timeVal) {
   return h + m / 60 + s / 3600;
 }
 
+export function parseCoordinate(val, fallback = 0) {
+  if (typeof val === 'number') return isNaN(val) ? fallback : val;
+  if (!val) return fallback;
+  const str = String(val).trim();
+  const dms = str.match(/([0-9.]+)\s*[°ddeg\s]+\s*([0-9.]+)?\s*['mmin\s]*\s*([0-9.]+)?\s*["ssec\s]*\s*([NSEW])?/i);
+  if (dms) {
+    const d = parseFloat(dms[1] || '0');
+    const m = parseFloat(dms[2] || '0');
+    const s = parseFloat(dms[3] || '0');
+    const dir = (dms[4] || '').toUpperCase();
+    let dec = d + m / 60 + s / 3600;
+    if (dir === 'S' || dir === 'W') dec = -dec;
+    return isNaN(dec) ? fallback : dec;
+  }
+  const num = parseFloat(str);
+  return isNaN(num) ? fallback : num;
+}
+
 export const PRESETS = [
   { name: 'Salem', lat: 11.6643, lon: 78.1460, labelTa: 'சேலம்' },
   { name: 'Chennai', lat: 13.0827, lon: 80.2707, labelTa: 'சென்னை' },
@@ -2103,6 +2121,11 @@ export function calculateThirukanithaHoroscope({
     Y = dateParts[2];
   }
 
+  const numLat = parseCoordinate(lat, 11.65);
+  const numLon = parseCoordinate(lon, 78.20);
+  lat = numLat;
+  lon = numLon;
+
   const localHour = parseLocalHour(dobTime12 || dobTime);
   const numUtcOffset = parseUtcOffset(utcOffset);
 
@@ -2629,36 +2652,42 @@ export function calculateThirukanithaHoroscope({
     }));
 
     // Add Lagna
-    const lagnaSign = lagnaDivisions[chartKey];
-    signs[lagnaSign].occupants.push({
-      id: 'lagna',
-      isLagna: true,
-      isMandi: false,
-      labelEn: 'Asc',
-      labelTa: 'ல'
-    });
-
-    // Add Planets
-    for (const pr of planetRows) {
-      const signIdx = pr.div[chartKey];
-      signs[signIdx].occupants.push({
-        id: pr.id,
-        isLagna: false,
+    const lagnaSign = lagnaDivisions?.[chartKey];
+    if (signs[lagnaSign]) {
+      signs[lagnaSign].occupants.push({
+        id: 'lagna',
+        isLagna: true,
         isMandi: false,
-        labelEn: pr.info.shortEn,
-        labelTa: pr.info.shortTa
+        labelEn: 'Asc',
+        labelTa: 'ல'
       });
     }
 
+    // Add Planets
+    for (const pr of planetRows) {
+      const signIdx = pr.div?.[chartKey];
+      if (signs[signIdx]) {
+        signs[signIdx].occupants.push({
+          id: pr.id,
+          isLagna: false,
+          isMandi: false,
+          labelEn: pr.info?.shortEn || pr.id,
+          labelTa: pr.info?.shortTa || pr.id
+        });
+      }
+    }
+
     // Add Mandi
-    const mandiSign = mandiDivisions[chartKey];
-    signs[mandiSign].occupants.push({
-      id: 'mandi',
-      isLagna: false,
-      isMandi: true,
-      labelEn: 'Man',
-      labelTa: 'மாந்'
-    });
+    const mandiSign = mandiDivisions?.[chartKey];
+    if (signs[mandiSign]) {
+      signs[mandiSign].occupants.push({
+        id: 'mandi',
+        isLagna: false,
+        isMandi: true,
+        labelEn: 'Man',
+        labelTa: 'மாந்'
+      });
+    }
 
     return signs;
   }
@@ -3485,19 +3514,23 @@ export function computeHoroscopePagerData(horoInput) {
   };
 
   // Populate Rasi Chart
-  horo.charts.D1.forEach(signData => {
+  horo.charts?.D1?.forEach(signData => {
+    if (!signData) return;
     const cellIdx = SIGN_ORDER.indexOf(signData.rasi);
     if (cellIdx !== -1) {
-      const labels = signData.occupants.map(o => PLANET_SHORT_CODES[o.id] || o.id);
+      const occupants = Array.isArray(signData.occupants) ? signData.occupants : [];
+      const labels = occupants.map(o => PLANET_SHORT_CODES[o.id] || o.id);
       rasiCells[cellIdx] = labels.join(', ');
     }
   });
 
   // Populate Navamsa Chart
-  horo.charts.D9.forEach(signData => {
+  horo.charts?.D9?.forEach(signData => {
+    if (!signData) return;
     const cellIdx = SIGN_ORDER.indexOf(signData.rasi);
     if (cellIdx !== -1) {
-      const labels = signData.occupants.map(o => PLANET_SHORT_CODES[o.id] || o.id);
+      const occupants = Array.isArray(signData.occupants) ? signData.occupants : [];
+      const labels = occupants.map(o => PLANET_SHORT_CODES[o.id] || o.id);
       navamsaCells[cellIdx] = labels.join(', ');
     }
   });

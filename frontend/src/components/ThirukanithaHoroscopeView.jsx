@@ -6760,8 +6760,12 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
 function SouthIndianChartGrid({ chartData, isTamil, centerTitle, centerSub }) {
   // Map signs by sign index 0..11
   const signsMap = {};
-  for (const s of chartData) {
-    signsMap[s.rasi] = s;
+  if (Array.isArray(chartData)) {
+    for (const s of chartData) {
+      if (s && typeof s.rasi === 'number') {
+        signsMap[s.rasi] = s;
+      }
+    }
   }
 
   // Generate 4x4 cells
@@ -6802,6 +6806,7 @@ function SouthIndianChartGrid({ chartData, isTamil, centerTitle, centerSub }) {
 
           const signInfo = RASHIS[cellDef.rasi];
           const signData = signsMap[cellDef.rasi] || { occupants: [] };
+          const occupants = Array.isArray(signData?.occupants) ? signData.occupants : [];
 
           return (
             <div
@@ -6816,7 +6821,7 @@ function SouthIndianChartGrid({ chartData, isTamil, centerTitle, centerSub }) {
 
               {/* Occupants: Planets, Lagna, and Mandi */}
               <div className="flex flex-wrap gap-1 items-center justify-center my-auto">
-                {signData.occupants.map((occ, oIdx) => (
+                {occupants.map((occ, oIdx) => (
                   <span
                     key={oIdx}
                     className={`text-[8.5px] sm:text-[9.5px] md:text-[10px] font-black px-0.5 sm:px-1 py-0 sm:py-0.2 rounded leading-tight ${
