@@ -9,6 +9,7 @@ import { useLang } from '../i18n';
 import { useAuth } from '../context/AuthContext';
 import { API } from '../api';
 import { formatNakshatra, formatRasi, formatDosha, formatMaritalStatus } from '../matrimonyLocalization';
+import { calculateThirukanithaHoroscope, NAKSHATRAS, RASHIS } from '../utils/thirukanithaEngine';
 import MarriageBiodataModal from './MarriageBiodataModal';
 import AstrologerConsultationModal from './AstrologerConsultationModal';
 
@@ -33,6 +34,68 @@ const HEIGHT_OPTIONS = [
   "5'10\" (178 cm)", "5'11\" (180 cm)", "6'0\" (183 cm)", "6'1\" (185 cm)",
   "6'2\" (188 cm)", "6'3\" (190 cm)", "6'4\" (193 cm)"
 ];
+
+/**
+ * Accurately calculate Vedic Thirukanitha Ephemeris details from Astrojit profile
+ * Returns empty values if profile has no DOB/Birth Time (strictly NO demo data)
+ */
+export function getHoroscopeDetailsFromProfile(p) {
+  if (!p || !p.dob || !p.dobTime) {
+    return {
+      starNakshatra: '',
+      rasiMoonSign: '',
+      lagnamAscendant: '',
+      padam: '',
+      manglikDosha: 'No Chevvai Dosha',
+    };
+  }
+
+  try {
+    const horo = calculateThirukanithaHoroscope({
+      name: p.name || 'Native',
+      dob: p.dob,
+      dobTime: p.dobTime,
+      placeName: p.dobPlace || p.city || 'Salem',
+      city: p.city || p.dobPlace || 'Salem',
+      lat: p.lat || 11.6643,
+      lon: p.lon || 78.1460,
+    });
+
+    if (horo && horo.summary) {
+      const nakObj = NAKSHATRAS[horo.summary.moonNak];
+      const matchedRasi = RASI_OPTIONS[horo.summary.moonRasi] || '';
+      const matchedLagna = RASI_OPTIONS[horo.summary.lagnaRasi] || '';
+
+      const mars = (horo.planets || []).find(pl => pl.id === 'mars');
+      let manglikDosha = 'No Chevvai Dosha';
+      if (mars && horo.summary.lagnaRasi !== undefined) {
+        const houseFromLagna = ((mars.rasi - horo.summary.lagnaRasi + 12) % 12) + 1;
+        const houseFromMoon = ((mars.rasi - horo.summary.moonRasi + 12) % 12) + 1;
+        if ([2, 4, 7, 8, 12].includes(houseFromLagna) || [2, 4, 7, 8, 12].includes(houseFromMoon)) {
+          manglikDosha = 'Chevvai Dosham Present';
+        }
+      }
+
+      return {
+        starNakshatra: nakObj?.en || '',
+        rasiMoonSign: matchedRasi,
+        lagnamAscendant: matchedLagna,
+        padam: horo.summary.moonPada || 1,
+        manglikDosha,
+      };
+    }
+  } catch (err) {
+    console.error('Error computing Thirukanitha horoscope for matrimony profile:', err);
+  }
+
+  return {
+    starNakshatra: '',
+    rasiMoonSign: '',
+    lagnamAscendant: '',
+    padam: '',
+    manglikDosha: 'No Chevvai Dosha',
+  };
+}
 
 export default function MatrimonyPortal({ isModal = false, onClose, defaultTab = 'browse', hideHeroBanner = false }) {
   const { lang, t } = useLang();
@@ -102,9 +165,9 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
     name: '',
     relation: 'Sister',
     gender: 'Bride',
-    dob: '1998-05-15',
-    dobTime: '08:30',
-    dobPlace: 'Chennai, India',
+    dob: '',
+    dobTime: '',
+    dobPlace: '',
     fatherName: user?.fatherName || '',
     motherName: user?.motherName || '',
     mobile: '',
@@ -269,6 +332,70 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
     }
   }, [formData.dob]);
 
+  // Auto-calculate Thirukanitha horoscope from provided birth details
+  const handleAutoComputeHoroscope = (birthDate, birthTime, birthPlace) => {
+    const d = birthDate || formData.dob;
+    const t = birthTime || formData.birthTime;
+    const p = birthPlace || formData.birthPlace || formData.city;
+    if (!d || !t) return;
+    const computed = getHoroscopeDetailsFromProfile({
+      dob: d,
+      dobTime: t,
+      dobPlace: p,
+      city: p,
+      lat: user?.lat,
+      lon: user?.lon
+    });
+    if (computed.starNakshatra) {
+      setFormData(prev => ({
+        ...prev,
+        starNakshatra: computed.starNakshatra,
+        rasiMoonSign: computed.rasiMoonSign,
+        lagnamAscendant: computed.lagnamAscendant,
+        padam: computed.padam,
+        manglikDosha: computed.manglikDosha
+      }));
+    }
+  };
+
+  // Synchronize profile details strictly from Astrojit profile whenever user changes
+  useEffect(() => {
+    if (!user) return;
+
+    let computedHoro = { starNakshatra: '', rasiMoonSign: '', lagnamAscendant: '', padam: '', manglikDosha: 'No Chevvai Dosha' };
+    if (user.dob && user.dobTime) {
+      computedHoro = getHoroscopeDetailsFromProfile(user);
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      name: user.name || prev.name || '',
+      gender: user.gender === 'female' ? 'Female' : (user.gender === 'male' ? 'Male' : prev.gender),
+      profileType: (user.gender === 'female' || user.profileType === 'Bride') ? 'Bride' : (user.gender === 'male' || user.profileType === 'Groom' ? 'Groom' : prev.profileType),
+      dob: user.dob || prev.dob || '',
+      birthTime: user.dobTime || prev.birthTime || '',
+      birthPlace: user.dobPlace || user.city || prev.birthPlace || '',
+      country: user.country || prev.country || 'India',
+      state: user.state || prev.state || '',
+      city: user.city || user.dobPlace || prev.city || '',
+      fatherName: user.fatherName || prev.fatherName || '',
+      motherName: user.motherName || prev.motherName || '',
+      mobile: user.mobile || prev.mobile || '',
+      whatsappNumber: user.mobile || prev.whatsappNumber || '',
+      loginMobile: user.mobile || prev.loginMobile || '',
+      email: user.email || prev.email || '',
+      caste: user.caste || prev.caste || '',
+      gotra: user.gotra || prev.gotra || '',
+      religion: user.religion || prev.religion || 'Hindu',
+      contactPerson: user.name || prev.contactPerson || '',
+      starNakshatra: computedHoro.starNakshatra || prev.starNakshatra || '',
+      rasiMoonSign: computedHoro.rasiMoonSign || prev.rasiMoonSign || '',
+      lagnamAscendant: computedHoro.lagnamAscendant || prev.lagnamAscendant || '',
+      padam: computedHoro.padam || prev.padam || '',
+      manglikDosha: computedHoro.manglikDosha || prev.manglikDosha || 'No Chevvai Dosha',
+    }));
+  }, [user]);
+
   // Load Initial Data (Profiles, Autofill Sources, Shortlists, Interests)
   const loadInitialData = async () => {
     try {
@@ -295,91 +422,103 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
     loadInitialData();
   }, []);
 
-  // Handle Person Selection & 1-Click Autofill
+  // Handle Person Selection & 1-Click Autofill from Astrojit profile
   const handleAutofillPerson = (personId) => {
     setSelectedPersonId(personId);
     setActiveTab('register');
-    if (!autofillSources) return;
 
     if (personId === 'client-self') {
-      const c = autofillSources.client;
+      const c = autofillSources?.client || user;
       if (!c) return;
+
+      const horoDetails = getHoroscopeDetailsFromProfile(c);
 
       setFormData(prev => ({
         ...prev,
         profileCreatedBy: 'Self',
-        profileType: 'Groom',
-        name: c.name || prev.name,
-        gender: 'Male',
-        dob: c.dob || prev.dob,
-        age: c.age || prev.age,
-        birthTime: c.dobTime || prev.birthTime,
-        birthPlace: c.dobPlace || prev.birthPlace,
-        fatherName: c.fatherName || prev.fatherName,
-        motherName: c.motherName || prev.motherName,
-        mobile: c.mobile || prev.mobile,
-        whatsappNumber: c.mobile || prev.whatsappNumber,
-        email: c.email || prev.email,
-        contactPerson: `${c.name}`,
+        profileType: (c.gender === 'female' || c.profileType === 'Bride') ? 'Bride' : 'Groom',
+        name: c.name || '',
+        gender: (c.gender === 'female' || c.profileType === 'Bride') ? 'Female' : 'Male',
+        dob: c.dob || '',
+        age: c.age || '',
+        birthTime: c.dobTime || '',
+        birthPlace: c.dobPlace || c.city || '',
+        country: c.country || 'India',
+        state: c.state || '',
+        city: c.city || c.dobPlace || '',
+        fatherName: c.fatherName || '',
+        motherName: c.motherName || '',
+        mobile: c.mobile || '',
+        whatsappNumber: c.mobile || '',
+        loginMobile: c.mobile || '',
+        email: c.email || '',
+        contactPerson: `${c.name || ''}`,
         contactPersonRelation: 'Self',
-        starNakshatra: c.horoscope?.nakshatra || prev.starNakshatra,
-        rasiMoonSign: c.horoscope?.rasi || prev.rasiMoonSign,
-        lagnamAscendant: c.horoscope?.lagna || prev.lagnamAscendant,
-        padam: c.horoscope?.pada || prev.padam,
-        manglikDosha: c.horoscope?.chevvaiDosha || prev.manglikDosha,
+        caste: c.caste || '',
+        gotra: c.gotra || '',
+        religion: c.religion || 'Hindu',
+        starNakshatra: horoDetails.starNakshatra || c.horoscope?.nakshatra || '',
+        rasiMoonSign: horoDetails.rasiMoonSign || c.horoscope?.rasi || '',
+        lagnamAscendant: horoDetails.lagnamAscendant || c.horoscope?.lagna || '',
+        padam: horoDetails.padam || c.horoscope?.pada || '',
+        manglikDosha: horoDetails.manglikDosha || c.horoscope?.chevvaiDosha || 'No Chevvai Dosha',
       }));
 
+      const starLabel = horoDetails.starNakshatra || c.horoscope?.nakshatra;
+      const rasiLabel = horoDetails.rasiMoonSign || c.horoscope?.rasi;
       setAutofillSuccessMsg(
         tr(
-          `Successfully autofilled ${c.name}'s details! Star: ${c.horoscope?.nakshatra || 'Magha'}, Rasi: ${c.horoscope?.rasi || 'Simha'}.`,
-          `${c.name} அவர்களின் விவரங்கள் தானியங்கு முறையில் நிரப்பப்பட்டன! நட்சத்திரம்: ${c.horoscope?.nakshatra || 'மகம்'}, ராசி: ${c.horoscope?.rasi || 'சிம்மம்'}.`,
-          `${c.name} ಅವರ ವಿವರಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಭರ್ತಿ ಮಾಡಲಾಗಿದೆ!`,
-          `${c.name} के विवरण सफलतापूर्वक स्वतः भर दिए गए हैं!`
+          `Successfully gathered details from Astrojit profile for ${c.name}!${starLabel ? ` Star: ${starLabel}, Rasi: ${rasiLabel}.` : ''}`,
+          `Astrojit சுயவிவரத்திலிருந்து ${c.name} அவர்களின் விவரங்கள் பெறப்பட்டன!${starLabel ? ` நட்சத்திரம்: ${starLabel}, ராசி: ${rasiLabel}.` : ''}`,
+          `Astrojit ಪ್ರೊಫೈಲ್‌ನಿಂದ ${c.name} ವಿವರಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಪಡೆಯಲಾಗಿದೆ!`,
+          `Astrojit प्रोफाइल से ${c.name} के विवरण सफलतापूर्वक प्राप्त किए गए!`
         )
       );
       setTimeout(() => setAutofillSuccessMsg(''), 6000);
     } else {
-      const fm = (autofillSources.familyMembers || []).find(m => m.id === personId);
+      const fm = (autofillSources?.familyMembers || []).find(m => m.id === personId);
       if (!fm) return;
 
       const isBride = (fm.gender || '').toLowerCase().includes('bride') || (fm.relation || '').toLowerCase().includes('sister') || (fm.relation || '').toLowerCase().includes('daughter');
+      const horoDetails = getHoroscopeDetailsFromProfile(fm);
 
       setFormData(prev => ({
         ...prev,
-        profileCreatedBy: fm.relation === 'Sister' ? 'Brother' : fm.relation === 'Brother' ? 'Brother' : 'Relative',
+        profileCreatedBy: fm.relation === 'Sister' ? 'Brother' : fm.relation === 'Brother' ? 'Brother' : (fm.relation || 'Relative'),
         profileType: isBride ? 'Bride' : 'Groom',
-        name: fm.name,
+        name: fm.name || '',
         gender: isBride ? 'Female' : 'Male',
-        dob: fm.dob,
-        age: fm.age || 26,
-        birthTime: fm.dobTime || '09:15',
-        birthPlace: fm.dobPlace || 'Chennai, India',
-        fatherName: fm.fatherName || user?.fatherName || prev.fatherName,
-        motherName: fm.motherName || user?.motherName || prev.motherName,
-        mobile: fm.mobile || prev.mobile,
-        whatsappNumber: fm.mobile || prev.whatsappNumber,
-        email: fm.email || `${fm.name.toLowerCase().replace(/\s+/g, '')}@example.com`,
-        occupation: fm.occupation || prev.occupation,
+        dob: fm.dob || '',
+        age: fm.age || '',
+        birthTime: fm.dobTime || '',
+        birthPlace: fm.dobPlace || '',
+        country: fm.country || 'India',
+        state: fm.state || '',
+        city: fm.city || fm.dobPlace || '',
+        fatherName: fm.fatherName || user?.fatherName || '',
+        motherName: fm.motherName || user?.motherName || '',
+        mobile: fm.mobile || user?.mobile || '',
+        whatsappNumber: fm.mobile || user?.mobile || '',
+        email: fm.email || '',
+        occupation: fm.occupation || '',
         maritalStatus: fm.maritalStatus || 'Never Married',
-        highestEducation: fm.highestEducation || prev.highestEducation,
-        contactPerson: `${user?.name || 'Aarav Sharma'}`,
-        contactPersonRelation: 'Brother',
-        starNakshatra: fm.horoscope?.nakshatra || 'Anuradha',
-        rasiMoonSign: fm.horoscope?.rasi || 'Vrishchika (Scorpio)',
-        lagnamAscendant: fm.horoscope?.lagna || 'Tula (Libra)',
-        padam: fm.horoscope?.pada || 2,
-        manglikDosha: fm.horoscope?.chevvaiDosha || 'No Chevvai Dosha',
-        primaryPhotoUrl: isBride
-          ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&fit=crop'
-          : 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&fit=crop',
+        highestEducation: fm.highestEducation || '',
+        contactPerson: `${user?.name || ''}`,
+        contactPersonRelation: fm.relation || 'Relative',
+        starNakshatra: horoDetails.starNakshatra || fm.horoscope?.nakshatra || '',
+        rasiMoonSign: horoDetails.rasiMoonSign || fm.horoscope?.rasi || '',
+        lagnamAscendant: horoDetails.lagnamAscendant || fm.horoscope?.lagna || '',
+        padam: horoDetails.padam || fm.horoscope?.pada || '',
+        manglikDosha: horoDetails.manglikDosha || fm.horoscope?.chevvaiDosha || 'No Chevvai Dosha',
+        primaryPhotoUrl: fm.photoUrl || '',
       }));
 
       setAutofillSuccessMsg(
         tr(
-          `Successfully autofilled family member ${fm.name} (${fm.relation}) with calculated Thirukanitha attributes!`,
-          `குடும்ப உறுப்பினர் ${fm.name} (${fm.relation}) அவர்களின் விவரங்கள் திருக்கணிதக் கணிப்புகளுடன் தானியங்கு முறையில் நிரப்பப்பட்டன!`,
-          `ಕುಟುಂಬ ಸದಸ್ಯ ${fm.name} ಅವರ ವಿವರಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಭರ್ತಿ ಮಾಡಲಾಗಿದೆ!`,
-          `पारिवारिक सदस्य ${fm.name} के विवरण थिरुकणिता गणना सहित स्वतः भरे गए!`
+          `Successfully gathered details for ${fm.name} (${fm.relation}) from Astrojit family profile!`,
+          `Astrojit குடும்ப சுயவிவரத்திலிருந்து ${fm.name} (${fm.relation}) விவரங்கள் பெறப்பட்டன!`,
+          `Astrojit ಕುಟುಂಬ ಪ್ರೊಫೈಲ್‌ನಿಂದ ${fm.name} ವಿವರಗಳನ್ನು ಪಡೆಯಲಾಗಿದೆ!`,
+          `Astrojit पारिवारिक प्रोफाइल से ${fm.name} के विवरण प्राप्त किए गए!`
         )
       );
       setTimeout(() => setAutofillSuccessMsg(''), 6000);
@@ -1240,7 +1379,10 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
                         <input
                           type="date"
                           value={formData.dob}
-                          onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
+                          onChange={(e) => {
+                            setFormData({ ...formData, dob: e.target.value });
+                            handleAutoComputeHoroscope(e.target.value, formData.birthTime, formData.birthPlace);
+                          }}
                           className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-rose-400"
                           required
                         />
@@ -1501,9 +1643,15 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
                           {tr('Thirukanitha Vedic astrological details used for 36 Gunas & 10 Poruthams matching.', 'திருக்கணித பஞ்சாங்க முறைப்படி 10 பொருத்தங்கள் மற்றும் 36 குணங்கள் ஆய்வுக்கான விவரங்கள்.', 'ತಿರುಕಣಿತ ಪದ್ಧತಿಯಂತೆ 10 ಹೊಂದಾಣಿಕೆಗಳು ಮತ್ತು 36 ಗುಣಗಳ ಲೆಕ್ಕಾಚಾರ.', 'थिरुकणिता पंचांग अनुसार 10 पोरुथम एवं 36 गुण मिलान विवरण।')}
                         </p>
                       </div>
-                      <span className="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full">
-                        {tr('Vedic Ephemeris', 'திருக்கணித முறை', 'ವೈದಿಕ ಪಂಚಾಂಗ', 'वैदिक पंचांग')}
-                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleAutoComputeHoroscope()}
+                        className="text-[11px] font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 px-3 py-1 rounded-full flex items-center gap-1 cursor-pointer transition-colors shadow-xs"
+                        title={tr('Recalculate Thirukanitha horoscope from DOB & Birth Time', 'பிறந்த நேரம் & தேதியிலிருந்து திருக்கணித ஜாதகத்தை கணக்கிடு', 'ಜನನ ವಿವರಗಳಿಂದ ತಿರುಕಣಿತ ಲೆಕ್ಕಾಚಾರ', 'जन्म विवरण से थिरुकणिता गणना')}
+                      >
+                        <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                        <span>{tr('Auto-Calculate from Profile', 'சுயவிவரத்திலிருந்து கணக்கிடு', 'ಪ್ರೊಫೈಲ್‌ನಿಂದ ಲೆಕ್ಕಾಚಾರ', 'प्रोफाइल से गणना करें')}</span>
+                      </button>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -1563,9 +1711,10 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
                         </label>
                         <select
                           value={formData.padam}
-                          onChange={(e) => setFormData({ ...formData, padam: parseInt(e.target.value) })}
+                          onChange={(e) => setFormData({ ...formData, padam: parseInt(e.target.value) || '' })}
                           className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs bg-white font-bold focus:ring-2 focus:ring-rose-400"
                         >
+                          <option value="">{tr('Select Pada', 'பாதத்தைத் தேர்ந்தெடுக்கவும்', 'ಪಾದ ಆಯ್ಕೆಮಾಡಿ', 'चरण चुनें')}</option>
                           <option value={1}>{tr('Pada 1', '1 ஆம் பாதம்', 'ಪಾದ 1', 'चरण 1')}</option>
                           <option value={2}>{tr('Pada 2', '2 ஆம் பாதம்', 'ಪಾದ 2', 'चरण 2')}</option>
                           <option value={3}>{tr('Pada 3', '3 ஆம் பாதம்', 'ಪಾದ 3', 'चरण 3')}</option>
@@ -1582,7 +1731,7 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
                           onChange={(e) => setFormData({ ...formData, manglikDosha: e.target.value })}
                           className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs bg-white font-medium focus:ring-2 focus:ring-rose-400"
                         >
-                          <option value="No Chevvai Dosha">{tr('No Dosha', 'தோஷம் இல்லை', 'ದೋಷವಿಲ್ಲ', 'दोष मुक्त')}</option>
+                          <option value="No Chevvai Dosha">{tr('No Dosha', 'தோஷம் இல்லை', 'ದೋಷವಿಲ್ಲ', 'ದೋಷ ಮುಕ್ತ')}</option>
                           <option value="Chevvai Dosham Present">{tr('Dosha Present', 'தோஷம் உண்டு', 'ದೋಷವಿದೆ', 'दोष युक्त')}</option>
                           <option value="Dosham Cancelled">{tr('Dosha Cancelled', 'தோஷ நிவர்த்தி', 'ದೋಷ ನಿವಾರಣೆ', 'दोष निवारण')}</option>
                         </select>
@@ -1595,7 +1744,10 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
                         <input
                           type="time"
                           value={formData.birthTime}
-                          onChange={(e) => setFormData({ ...formData, birthTime: e.target.value })}
+                          onChange={(e) => {
+                            setFormData({ ...formData, birthTime: e.target.value });
+                            handleAutoComputeHoroscope(formData.dob, e.target.value, formData.birthPlace);
+                          }}
                           className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-rose-400"
                         />
                       </div>
@@ -2801,7 +2953,7 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
                   value={newFamilyMember.name}
                   onChange={(e) => setNewFamilyMember({ ...newFamilyMember, name: e.target.value })}
                   className="w-full px-3 py-2 border border-slate-200 rounded-xl font-bold"
-                  placeholder="e.g. Vignesh Balaji"
+                  placeholder={tr('Enter Full Name', 'முழுப் பெயரை உள்ளிடவும்', 'ಪೂರ್ಣ ಹೆಸರನ್ನು ನಮೂದಿಸಿ', 'पूरा नाम दर्ज करें')}
                 />
               </div>
 
@@ -2875,7 +3027,7 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
                   value={newFamilyMember.dobPlace}
                   onChange={(e) => setNewFamilyMember({ ...newFamilyMember, dobPlace: e.target.value })}
                   className="w-full px-3 py-2 border border-slate-200 rounded-xl font-medium"
-                  placeholder="e.g. Chennai, India"
+                  placeholder={tr('Enter Birth Place', 'பிறந்த இடம் உள்ளிடவும்', 'ಜನನ ಸ್ಥಳ ನಮೂದಿಸಿ', 'जन्म स्थान दर्ज करें')}
                 />
               </div>
 

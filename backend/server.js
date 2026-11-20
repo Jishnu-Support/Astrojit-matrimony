@@ -2254,16 +2254,24 @@ app.get('/api/matrimony/autofill-sources', (req, res) => {
       clientData = {
         id: client.id,
         name: client.name,
-        gender: 'Groom',
+        gender: (client.gender === 'female' || client.profileType === 'Bride') ? 'Bride' : 'Groom',
         dob: client.dob,
         age: calculateMatrimonyAge(client.dob),
         dobTime: client.dobTime,
-        dobPlace: client.dobPlace,
+        dobPlace: client.dobPlace || client.city || '',
+        country: client.country || 'India',
+        state: client.state || '',
+        city: client.city || client.dobPlace || '',
+        lat: client.lat,
+        lon: client.lon,
         fatherName: client.fatherName || '',
         motherName: client.motherName || '',
         mobile: client.mobile,
-        email: client.email || `${client.name.toLowerCase().replace(/\s+/g, '')}@example.com`,
-        horoscope: null,
+        email: client.email || '',
+        caste: client.caste || '',
+        gotra: client.gotra || '',
+        religion: client.religion || 'Hindu',
+        horoscope: client.horoscope || null,
       };
     }
 
@@ -2271,7 +2279,7 @@ app.get('/api/matrimony/autofill-sources', (req, res) => {
     const familyMembers = (db.familyMembers || []).map(fm => ({
       ...fm,
       age: fm.age || calculateMatrimonyAge(fm.dob),
-      horoscope: null,
+      horoscope: fm.horoscope || null,
     }));
 
     res.json({
