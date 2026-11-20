@@ -377,7 +377,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-100 overflow-x-auto no-scrollbar whitespace-nowrap">
+        <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-100 overflow-x-auto touch-pan-x no-scrollbar whitespace-nowrap">
           <button
             onClick={() => setActiveTab('appointments')}
             className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${

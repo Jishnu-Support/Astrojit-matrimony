@@ -583,7 +583,7 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
 
           <div className="flex items-center gap-2 flex-wrap">
             {/* Format Switcher: 51-Page vs 33-Page vs 25-Page vs 21-Page vs 18-Page vs 7-Page vs 1-Page Sheet */}
-            <div className="flex bg-stone-100 dark:bg-stone-800 p-0.5 rounded-lg border border-stone-300 dark:border-stone-700">
+            <div className="flex bg-stone-100 dark:bg-stone-800 p-0.5 rounded-lg border border-stone-300 dark:border-stone-700 overflow-x-auto touch-pan-x scrollbar-thin max-w-full">
               <button
                 type="button"
                 onClick={() => setPagerType('51page')}
@@ -1692,6 +1692,10 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
 
         {/* ========================================================================= */}
         {/* CONDITIONAL RENDER: 51-PAGE vs 33-PAGE vs 25-PAGE vs 21-PAGE vs 18-PAGE vs 7-PAGE vs 1-PAGE SHEET */}
+        <div className="block sm:hidden text-center text-[10px] text-stone-500 dark:text-stone-400 py-1 italic font-sans no-print">
+          📱 {isTa ? 'அச்சிடும் பக்கத்தை முழுமையாகக் காண கிடைமட்டமாக உருட்டவும்' : 'Swipe horizontally to view full A4 booklet sheet'}
+        </div>
+        <div className="w-full overflow-x-auto touch-pan-x pb-4">
         {/* ========================================================================= */}
         {pagerType === '51page' ? (
           <HoroscopeBooklet51PageView
@@ -1944,6 +1948,7 @@ export default function HoroscopePagerView({ initialBirthData, onClose }) {
           </div>
         </div>
         )}
+        </div>
       </div>
 
       {/* Print Stylesheet for 1-Page A4 Sheet */}

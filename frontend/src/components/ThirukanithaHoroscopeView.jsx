@@ -718,7 +718,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
         {/* ======================================================== */}
         {/* MASTER SECTION DROP LIST & QUICK JUMPER TOOLBAR */}
         {/* ======================================================== */}
-        <div className="bg-white/95 dark:bg-[#251E1A] p-3 sm:p-4 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 sticky top-2 z-20 backdrop-blur-md print:hidden">
+        <div className="bg-white/95 dark:bg-[#251E1A] p-3 sm:p-4 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 sticky top-14 sm:top-16 z-20 backdrop-blur-md print:hidden">
           <div className="flex items-center gap-2 flex-1">
             <span className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 whitespace-nowrap flex items-center gap-1.5">
               <span>📑</span>
@@ -935,7 +935,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
           </div>
 
           {/* 16 Shodashavarga Switcher Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 max-w-full print:hidden scrollbar-thin">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 max-w-full print:hidden scrollbar-thin touch-pan-x overscroll-x-contain">
             {SHODASHAVARGA_DEFS.map(chart => (
               <button
                 key={chart.key}
@@ -2874,7 +2874,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                           {chartData?.occupants?.map((occ, oIdx) => (
                             <span
                               key={oIdx}
-                              className={`text-[9.5px] px-1 py-0.2 rounded font-bold ${
+                              className={`text-[8px] sm:text-[9.5px] px-0.5 sm:px-1 py-0 sm:py-0.2 rounded font-bold leading-tight ${
                                 occ.isBirthMoon
                                   ? 'bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300 ring-1 ring-purple-400'
                                   : occ.isBirthLagna
@@ -6187,7 +6187,7 @@ function SouthIndianChartGrid({ chartData, isTamil, centerTitle, centerSub }) {
                 {signData.occupants.map((occ, oIdx) => (
                   <span
                     key={oIdx}
-                    className={`text-[10px] font-black px-1 py-0.2 rounded ${
+                    className={`text-[8.5px] sm:text-[9.5px] md:text-[10px] font-black px-0.5 sm:px-1 py-0 sm:py-0.2 rounded leading-tight ${
                       occ.isLagna
                         ? 'bg-[#7A1A22] text-amber-100 border border-amber-400 shadow-2xs'
                         : occ.isMandi

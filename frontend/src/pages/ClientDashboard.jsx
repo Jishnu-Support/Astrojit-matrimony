@@ -327,7 +327,7 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
         </div>
 
         {/* Mobile-Friendly Horizontal Scroll Tabs */}
-        <div className="flex items-center gap-1.5 sm:gap-2 mt-4 pt-3 border-t border-slate-950/15 overflow-x-auto scroll-smooth whitespace-nowrap pb-1 scrollbar-none -mx-1 px-1">
+        <div className="flex items-center gap-1.5 sm:gap-2 mt-4 pt-3 border-t border-slate-950/15 overflow-x-auto touch-pan-x scroll-smooth whitespace-nowrap pb-1 scrollbar-none -mx-1 px-1">
           <button
             onClick={() => setActiveTab('panchangam')}
             className={`shrink-0 px-3 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${

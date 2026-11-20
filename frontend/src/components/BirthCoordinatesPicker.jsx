@@ -248,7 +248,7 @@ export default function BirthCoordinatesPicker({
             <select
               value={timeState.hour}
               onChange={(e) => updateTimeField('hour', e.target.value)}
-              className="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-2 font-mono font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
+              className="w-full bg-white border border-slate-300 rounded-xl px-1 sm:px-2.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-mono font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
             >
               {Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0')).map((h) => (
                 <option key={h} value={h}>
@@ -264,7 +264,7 @@ export default function BirthCoordinatesPicker({
             <select
               value={timeState.minute}
               onChange={(e) => updateTimeField('minute', e.target.value)}
-              className="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-2 font-mono font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
+              className="w-full bg-white border border-slate-300 rounded-xl px-1 sm:px-2.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-mono font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
             >
               {Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0')).map((m) => (
                 <option key={m} value={m}>
@@ -280,7 +280,7 @@ export default function BirthCoordinatesPicker({
             <select
               value={timeState.second}
               onChange={(e) => updateTimeField('second', e.target.value)}
-              className="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-2 font-mono font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
+              className="w-full bg-white border border-slate-300 rounded-xl px-1 sm:px-2.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-mono font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
             >
               {Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0')).map((s) => (
                 <option key={s} value={s}>
@@ -297,7 +297,7 @@ export default function BirthCoordinatesPicker({
               <button
                 type="button"
                 onClick={() => updateTimeField('period', 'AM')}
-                className={`flex-1 py-2 font-black text-xs transition-all cursor-pointer ${
+                className={`flex-1 py-1.5 sm:py-2 font-black text-[10px] sm:text-xs transition-all cursor-pointer ${
                   timeState.period === 'AM'
                     ? 'bg-amber-600 text-white shadow-inner'
                     : 'bg-white text-slate-700 hover:bg-slate-100'
@@ -308,7 +308,7 @@ export default function BirthCoordinatesPicker({
               <button
                 type="button"
                 onClick={() => updateTimeField('period', 'PM')}
-                className={`flex-1 py-2 font-black text-xs transition-all cursor-pointer ${
+                className={`flex-1 py-1.5 sm:py-2 font-black text-[10px] sm:text-xs transition-all cursor-pointer ${
                   timeState.period === 'PM'
                     ? 'bg-indigo-700 text-white shadow-inner'
                     : 'bg-white text-slate-700 hover:bg-slate-100'
