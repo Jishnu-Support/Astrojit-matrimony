@@ -261,6 +261,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
     planet: isTamil ? 'கிரகம்' : 'Planet',
     long: isTamil ? 'ஸ்புடம் (பாகை)' : 'Longitude',
     degInSign: isTamil ? 'ராசி பாகை' : 'Degrees in Sign',
+    dignity: isTamil ? 'நிலை' : 'Dignity',
     bhava: isTamil ? 'பாவம்' : 'Bhava',
     sripatiTable: isTamil ? 'ஸ்ரீபதி பாவ ஆரம்பம், மத்திமம், முடிவு' : 'Sripati Bhava Sphutam Table',
     bhavaNum: isTamil ? 'பாவம்' : 'Bhava',
@@ -921,6 +922,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                   <th className="py-2.5 px-3">{T.nakshatra}</th>
                   <th className="py-2.5 px-3">{T.pada}</th>
                   <th className="py-2.5 px-3">{T.d9}</th>
+                  <th className="py-2.5 px-3 text-center">{T.dignity || (isTamil ? 'நிலை' : 'Dignity')}</th>
                   <th className="py-2.5 px-3 text-right">{T.bhava}</th>
                 </tr>
               </thead>
@@ -944,16 +946,6 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                         <span className={isLagna ? 'text-[#7A1A22] dark:text-amber-300 font-black' : isMandi ? 'text-[#8C3A00] dark:text-amber-400 font-black' : ''}>
                           {isTamil ? p.info.ta : p.info.en}
                         </span>
-                        {isLagna && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#7A1A22] text-amber-100 font-bold ml-1">
-                            {isTamil ? 'உதயம்' : 'Lagna'}
-                          </span>
-                        )}
-                        {isMandi && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-200 dark:bg-amber-900/60 text-[#7A1A22] dark:text-amber-200 font-bold ml-1">
-                            {isTamil ? 'உபகிரகம்' : 'Upagraha'}
-                          </span>
-                        )}
                       </td>
                       <td className="py-2 px-3 font-mono">{p.dms}</td>
                       <td className="py-2 px-3 font-mono font-semibold text-[#7A1A22] dark:text-amber-200">{p.degInSign}</td>
@@ -961,6 +953,21 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                       <td className="py-2 px-3">{isTamil ? NAKSHATRAS[p.nakshatra].ta : NAKSHATRAS[p.nakshatra].en}</td>
                       <td className="py-2 px-3 font-bold">{p.pada}</td>
                       <td className="py-2 px-3">{isTamil ? RASHIS[p.navamsa].ta : RASHIS[p.navamsa].en}</td>
+                      <td className="py-2 px-3 text-center font-bold">
+                        {isLagna || isMandi ? (
+                          <span className="text-stone-400 font-mono">---</span>
+                        ) : (
+                          <span className={
+                            p.dignityKey === 'utcha' || p.dignityKey === 'aatchi'
+                              ? 'text-emerald-700 dark:text-emerald-400 font-bold'
+                              : p.dignityKey === 'neecha' || p.dignityKey === 'pagai'
+                              ? 'text-rose-700 dark:text-rose-400 font-bold'
+                              : 'text-stone-700 dark:text-stone-300 font-semibold'
+                          }>
+                            {isTamil ? (p.dignityTa || p.dignity || '---') : (p.dignityEn || p.dignity || '---')}
+                          </span>
+                        )}
+                      </td>
                       <td className="py-2 px-3 text-right font-black text-[#7A1A22] dark:text-amber-300">{p.bhava}</td>
                     </tr>
                   );
