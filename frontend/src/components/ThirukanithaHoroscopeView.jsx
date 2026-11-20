@@ -208,99 +208,9 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
     });
   }, [form, gocharaDate]);
 
-  const applySelection = (cntry, st, cty) => {
-    const preset = PRESETS.find(p => p.name.toLowerCase() === cty.toLowerCase());
-    const cityList = GEO_DATA[cntry]?.[st] || [];
-    const cityObj = cityList.find(c => c.name.toLowerCase() === cty.toLowerCase());
-
-    let lat = 11.65;
-    let lon = 78.20;
-    let tz = '05:30 UTC';
-
-    if (preset) {
-      lat = preset.lat;
-      lon = preset.lon;
-    } else if (cityObj) {
-      lat = cityObj.latDec;
-      lon = cityObj.lonDec;
-      if (cityObj.tz) {
-        const rawTz = cityObj.tz.trim();
-        tz = `${rawTz.startsWith('+') ? rawTz.slice(1) : rawTz} UTC`;
-      }
-    }
-
-    setForm(prev => ({
-      ...prev,
-      country: cntry,
-      state: st,
-      placeName: cty,
-      city: cty,
-      lat,
-      lon,
-      utcOffset: tz
-    }));
-  };
-
-  const handleCountryChange = (e) => {
-    const cName = e.target.value;
-    setSelectedCountry(cName);
-    setCitySearch('');
-    const countryObj = COUNTRIES.find(c => c.name === cName);
-    const availableStates = Object.keys(GEO_DATA[cName] || {});
-    const newState = countryObj?.defaultState || availableStates[0] || '';
-    setSelectedState(newState);
-
-    const availableCities = GEO_DATA[cName]?.[newState] || [];
-    const newCity = countryObj?.defaultCity || availableCities[0]?.name || '';
-    setSelectedCity(newCity);
-
-    applySelection(cName, newState, newCity);
-  };
-
-  const handleStateChange = (e) => {
-    const sName = e.target.value;
-    setSelectedState(sName);
-    setCitySearch('');
-    const availableCities = GEO_DATA[selectedCountry]?.[sName] || [];
-    const newCity = availableCities[0]?.name || '';
-    setSelectedCity(newCity);
-
-    applySelection(selectedCountry, sName, newCity);
-  };
-
-  const handleCityChange = (e) => {
-    const cty = e.target.value;
-    setSelectedCity(cty);
-    applySelection(selectedCountry, selectedState, cty);
-  };
-
-  const updateTimeField = (field, val) => {
-    const nextTime = { ...timeState, [field]: val };
-    setTimeState(nextTime);
-
-    let hNum = parseInt(nextTime.hour, 10) || 12;
-    let h24 = hNum % 12;
-    if (nextTime.period === 'PM') h24 += 12;
-
-    const time24Str = `${String(h24).padStart(2, '0')}:${nextTime.minute}:${nextTime.second}`;
-    const time12Str = `${nextTime.hour}:${nextTime.minute}:${nextTime.second} ${nextTime.period}`;
-
-    setForm(prev => ({
-      ...prev,
-      dobTime: time24Str,
-      dobTime12: time12Str
-    }));
-  };
-
   const handlePrint = () => {
     window.print();
   };
-
-  const availableStates = Object.keys(GEO_DATA[selectedCountry] || {});
-  const availableCities = GEO_DATA[selectedCountry]?.[selectedState] || [];
-  const filteredCities = citySearch.trim()
-    ? availableCities.filter(c => c.name.toLowerCase().includes(citySearch.toLowerCase()))
-    : availableCities;
 
   const isTamil = lang === 'ta';
 
