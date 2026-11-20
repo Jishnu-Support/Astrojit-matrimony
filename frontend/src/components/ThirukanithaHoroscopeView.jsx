@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useLang } from '../i18n';
 import {
   PRESETS,
   RASHIS,
@@ -90,32 +91,54 @@ const MINUTES_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0
 const SECONDS_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 
 export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
-  const [lang, setLang] = useState('ta'); // 'ta' or 'en'
+  const { lang: globalLang } = useLang();
+  const [lang, setLang] = useState(globalLang || 'ta'); // 'ta' or 'en'
   const [theme, setTheme] = useState('light'); // 'light' or 'dark'
 
-  const [selectedCountry, setSelectedCountry] = useState(initialData?.country || 'India');
-  const [selectedState, setSelectedState] = useState(initialData?.state || 'Tamil Nadu');
-  const [selectedCity, setSelectedCity] = useState(initialData?.city || initialData?.placeName || 'Salem');
-  const [citySearch, setCitySearch] = useState('');
+  useEffect(() => {
+    if (globalLang) setLang(globalLang);
+  }, [globalLang]);
 
-  const [timeState, setTimeState] = useState(() =>
-    parseInitialTime(initialData?.dobTime12 || initialData?.dobTime || '21:04:00')
-  );
-
-  // Form State
+  // Form State initialized from parent initialData
   const [form, setForm] = useState(() => ({
-    name: initialData?.name || 'Aarav Kumar',
+    name: initialData?.name || 'Sample',
     dob: initialData?.dob || '2026-11-05',
     dobTime: initialData?.dobTime || '21:04:00',
     dobTime12: initialData?.dobTime12 || '09:04:00 PM',
     country: initialData?.country || 'India',
     state: initialData?.state || 'Tamil Nadu',
-    placeName: initialData?.placeName || 'Salem',
+    placeName: initialData?.placeName || initialData?.city || 'Salem',
     city: initialData?.city || 'Salem',
-    lat: initialData?.lat !== undefined ? initialData.lat : 11.65,
-    lon: initialData?.lon !== undefined ? initialData.lon : 78.20,
-    utcOffset: (typeof initialData?.utcOffset === 'number' ? (initialData.utcOffset === 5.5 ? '05:30 UTC' : formatUtcOffset(initialData.utcOffset)) : (initialData?.utcOffset || '05:30 UTC'))
+    lat: initialData?.lat !== undefined ? initialData.lat : 11.6643,
+    lon: initialData?.lon !== undefined ? initialData.lon : 78.1460,
+    utcOffset: (typeof initialData?.utcOffset === 'number' ? (initialData.utcOffset === 5.5 ? '05:30 UTC' : formatUtcOffset(initialData.utcOffset)) : (initialData?.utcOffset || '05:30 UTC')),
+    father: initialData?.father || '',
+    mother: initialData?.mother || '',
+    nativePlace: initialData?.nativePlace || '',
+    gender: initialData?.gender || 'male'
   }));
+
+  useEffect(() => {
+    if (initialData) {
+      setForm({
+        name: initialData.name || 'Sample',
+        dob: initialData.dob || '2026-11-05',
+        dobTime: initialData.dobTime || '21:04:00',
+        dobTime12: initialData.dobTime12 || '09:04:00 PM',
+        country: initialData.country || 'India',
+        state: initialData.state || 'Tamil Nadu',
+        placeName: initialData.placeName || initialData.city || 'Salem',
+        city: initialData.city || 'Salem',
+        lat: initialData.lat !== undefined ? initialData.lat : 11.6643,
+        lon: initialData.lon !== undefined ? initialData.lon : 78.1460,
+        utcOffset: (typeof initialData.utcOffset === 'number' ? (initialData.utcOffset === 5.5 ? '05:30 UTC' : formatUtcOffset(initialData.utcOffset)) : (initialData.utcOffset || '05:30 UTC')),
+        father: initialData.father || '',
+        mother: initialData.mother || '',
+        nativePlace: initialData.nativePlace || '',
+        gender: initialData.gender || 'male'
+      });
+    }
+  }, [initialData]);
 
   const [activeChartKey, setActiveChartKey] = useState('D1');
   const [showVargaMasterTable, setShowVargaMasterTable] = useState(true);
@@ -406,309 +429,8 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
       }}
     >
       <div className="max-w-6xl mx-auto space-y-6">
-        {/* Top Control Bar (Screen Only) */}
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-white/70 dark:bg-[#251E1A] p-3 sm:p-4 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs backdrop-blur-xs print:hidden">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">🪐</span>
-            <div>
-              <h1 className="text-base sm:text-lg font-black text-[#7A1A22] dark:text-[#E8838B] tracking-tight">
-                {T.title}
-              </h1>
-              <p className="text-[11px] text-[#7A1A22]/80 dark:text-stone-400 font-medium">
-                {T.subtitle}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            {/* Language Toggle */}
-            <div className="flex items-center bg-amber-900/10 dark:bg-stone-800 p-0.5 rounded-xl border border-amber-900/20">
-              <button
-                type="button"
-                onClick={() => setLang('ta')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  isTamil ? 'bg-[#7A1A22] text-amber-100 shadow-xs' : 'text-stone-700 dark:text-stone-300 hover:text-stone-900'
-                }`}
-              >
-                {isTamil ? 'தமிழ்' : 'Tamil'}
-              </button>
-              <button
-                type="button"
-                onClick={() => setLang('en')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  !isTamil ? 'bg-[#7A1A22] text-amber-100 shadow-xs' : 'text-stone-700 dark:text-stone-300 hover:text-stone-900'
-                }`}
-              >
-                {isTamil ? 'ஆங்கிலம்' : 'English'}
-              </button>
-            </div>
-
-            {/* Dark / Light Toggle */}
-            <button
-              type="button"
-              onClick={() => setTheme(isDark ? 'light' : 'dark')}
-              className="px-3 py-1.5 rounded-xl border border-stone-300 dark:border-stone-700 text-xs font-bold hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
-            >
-              {T.darkToggle}
-            </button>
-
-            {/* Print Button */}
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-amber-100 hover:from-[#5C1017] hover:to-[#7A1A22] text-xs font-bold shadow-md shadow-red-950/20 transition-all cursor-pointer flex items-center gap-1.5"
-            >
-              <span>🖨️</span>
-              <span>{T.printPdf}</span>
-            </button>
-
-            {onClose && (
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-3 py-1.5 rounded-xl border border-stone-300 dark:border-stone-700 text-xs font-bold hover:bg-stone-100 dark:hover:bg-stone-800 cursor-pointer"
-              >
-                {T.close}
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* SECTION 1: Input Form (Hidden on Print) */}
-        <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-6 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs print:hidden space-y-4">
-          <div className="flex items-center justify-between border-b border-amber-900/10 pb-2 flex-wrap gap-2">
-            <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
-              <span>📝</span>
-              <span>{T.calcForm}</span>
-            </h2>
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono font-bold text-amber-950 dark:text-amber-200 bg-amber-100 dark:bg-stone-800 px-2.5 py-0.5 rounded-full border border-amber-300 dark:border-stone-700">
-                🕒 {timeState.hour}:{timeState.minute}:{timeState.second} {timeState.period}
-              </span>
-              <span className="text-[11px] font-mono font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800">
-                🌐 {form.utcOffset}
-              </span>
-            </div>
-          </div>
-
-          {/* ROW 1: Name, DOB, 12-Hour Birth Time */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-            <div>
-              <label className="block font-bold mb-1 opacity-90">{T.name}</label>
-              <input
-                type="text"
-                value={form.name}
-                onChange={e => setForm({ ...form, name: e.target.value })}
-                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#7A1A22]"
-              />
-            </div>
-
-            <div>
-              <label className="block font-bold mb-1 opacity-90">{T.dob}</label>
-              <input
-                type="date"
-                value={form.dob}
-                onChange={e => setForm({ ...form, dob: e.target.value })}
-                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#7A1A22]"
-              />
-            </div>
-
-            {/* 12-Hour Time Format with AM/PM */}
-            <div>
-              <label className="block font-bold mb-1 opacity-90">{T.time}</label>
-              <div className="grid grid-cols-4 gap-1">
-                <div>
-                  <span className="text-[9px] text-stone-500 font-bold block mb-0.5">{T.hour}</span>
-                  <select
-                    value={timeState.hour}
-                    onChange={e => updateTimeField('hour', e.target.value)}
-                    className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-lg px-1.5 py-1.5 text-xs font-mono font-bold focus:outline-none focus:border-[#7A1A22] cursor-pointer"
-                  >
-                    {HOURS_12.map(h => (
-                      <option key={h} value={h}>{h}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <span className="text-[9px] text-stone-500 font-bold block mb-0.5">{T.minute}</span>
-                  <select
-                    value={timeState.minute}
-                    onChange={e => updateTimeField('minute', e.target.value)}
-                    className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-lg px-1.5 py-1.5 text-xs font-mono font-bold focus:outline-none focus:border-[#7A1A22] cursor-pointer"
-                  >
-                    {MINUTES_60.map(m => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <span className="text-[9px] text-stone-500 font-bold block mb-0.5">{T.second}</span>
-                  <select
-                    value={timeState.second}
-                    onChange={e => updateTimeField('second', e.target.value)}
-                    className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-lg px-1.5 py-1.5 text-xs font-mono font-bold focus:outline-none focus:border-[#7A1A22] cursor-pointer"
-                  >
-                    {SECONDS_60.map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <span className="text-[9px] text-stone-500 font-bold block mb-0.5">{T.period}</span>
-                  <div className="flex bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-lg p-0.5">
-                    <button
-                      type="button"
-                      onClick={() => updateTimeField('period', 'AM')}
-                      className={`flex-1 py-1 rounded text-[11px] font-black cursor-pointer transition-all ${
-                        timeState.period === 'AM'
-                          ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
-                          : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
-                      }`}
-                    >
-                      AM
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => updateTimeField('period', 'PM')}
-                      className={`flex-1 py-1 rounded text-[11px] font-black cursor-pointer transition-all ${
-                        timeState.period === 'PM'
-                          ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
-                          : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
-                      }`}
-                    >
-                      PM
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ROW 2: Hierarchical Place of Birth (Country -> State -> City / Place) */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-1 border-t border-amber-900/10">
-            {/* 1. Country */}
-            <div>
-              <label className="block font-bold mb-1 opacity-90">🌐 {T.country}</label>
-              <select
-                value={selectedCountry}
-                onChange={handleCountryChange}
-                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#7A1A22] cursor-pointer"
-              >
-                {COUNTRIES.map(c => (
-                  <option key={c.code} value={c.name}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* 2. State */}
-            <div>
-              <label className="block font-bold mb-1 opacity-90">🏛️ {T.state}</label>
-              <select
-                value={selectedState}
-                onChange={handleStateChange}
-                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#7A1A22] cursor-pointer"
-              >
-                {availableStates.map(st => (
-                  <option key={st} value={st}>
-                    {st}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* 3. City / Place */}
-            <div>
-              <div className="flex justify-between items-center mb-1">
-                <label className="font-bold opacity-90">📍 {T.city}</label>
-                {availableCities.length > 8 && (
-                  <input
-                    type="text"
-                    placeholder={T.searchCity}
-                    value={citySearch}
-                    onChange={e => setCitySearch(e.target.value)}
-                    className="w-28 text-[10px] bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded px-1.5 py-0.5 focus:outline-none"
-                  />
-                )}
-              </div>
-              <select
-                value={selectedCity}
-                onChange={handleCityChange}
-                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:border-[#7A1A22] cursor-pointer"
-              >
-                {filteredCities.map(c => (
-                  <option key={c.name} value={c.name}>
-                    {c.name} ({c.latDec}°N, {c.lonDec}°E)
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* ROW 3: Exact Coordinates & UTC Offset (auto-matched and fine-tunable) */}
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs pt-1 border-t border-amber-900/10">
-            <div>
-              <label className="block font-bold mb-1 opacity-90">{T.latitude}</label>
-              <input
-                type="number"
-                step="0.0001"
-                value={form.lat}
-                onChange={e => setForm({ ...form, lat: parseFloat(e.target.value) || 0 })}
-                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:border-[#7A1A22]"
-              />
-            </div>
-
-            <div>
-              <label className="block font-bold mb-1 opacity-90">{T.longitude}</label>
-              <input
-                type="number"
-                step="0.0001"
-                value={form.lon}
-                onChange={e => setForm({ ...form, lon: parseFloat(e.target.value) || 0 })}
-                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-mono focus:outline-none focus:border-[#7A1A22]"
-              />
-            </div>
-
-            <div>
-              <label className="block font-bold mb-1 opacity-90">{T.utcOffset}</label>
-              <input
-                type="text"
-                list="thirukanitha-utc-presets"
-                value={form.utcOffset}
-                onChange={e => setForm({ ...form, utcOffset: e.target.value })}
-                placeholder="05:30 UTC"
-                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-sm font-mono font-bold focus:outline-none focus:border-[#7A1A22]"
-              />
-              <datalist id="thirukanitha-utc-presets">
-                <option value="05:30 UTC">05:30 UTC (IST - India)</option>
-                <option value="+05:30 UTC">+05:30 UTC (IST - India)</option>
-                <option value="+00:00 UTC">+00:00 UTC (GMT/UTC)</option>
-                <option value="+04:00 UTC">+04:00 UTC (GST - UAE)</option>
-                <option value="+08:00 UTC">+08:00 UTC (SGT/MYT - Singapore/Malaysia)</option>
-                <option value="-05:00 UTC">-05:00 UTC (EST - USA)</option>
-                <option value="-08:00 UTC">-08:00 UTC (PST - USA)</option>
-              </datalist>
-            </div>
-
-            <div className="flex items-end">
-              <button
-                type="button"
-                onClick={() => setForm({ ...form })}
-                className="w-full bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-amber-100 hover:from-[#5C1017] hover:to-[#7A1A22] py-2 px-3 rounded-xl font-bold text-xs shadow-md shadow-red-950/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 h-[38px]"
-              >
-                <span>🪐</span>
-                <span>{T.calculate}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
         {/* PRINT HEADER (Shown in Print Mode / Clean Official Header) */}
-        <div className="text-center pb-2 border-b-2 border-[#7A1A22] space-y-1">
+        <div className="text-center pb-2 border-b-2 border-[#7A1A22] space-y-1 hidden print:block">
           <div className="text-xs uppercase tracking-widest text-[#B8860B] dark:text-[#E5C158] font-black">
             {T.omHeader}
           </div>
@@ -720,12 +442,10 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
           </p>
         </div>
 
-        
-
         {/* ======================================================== */}
         {/* MASTER SECTION DROP LIST & QUICK JUMPER TOOLBAR */}
         {/* ======================================================== */}
-        <div className="bg-white/95 dark:bg-[#251E1A] p-3 sm:p-4 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 sticky top-14 sm:top-16 z-20 backdrop-blur-md print:hidden">
+        <div className="bg-white/95 dark:bg-[#251E1A] p-3 sm:p-4 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3 sticky top-14 sm:top-16 z-20 backdrop-blur-md print:hidden">
           <div className="flex items-center gap-2 flex-1">
             <span className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 whitespace-nowrap flex items-center gap-1.5">
               <span>📑</span>
@@ -762,7 +482,29 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
             </select>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 flex-wrap">
+            {/* Quick Language Toggle */}
+            <div className="flex items-center bg-amber-900/10 dark:bg-stone-800 p-0.5 rounded-xl border border-amber-900/20">
+              <button
+                type="button"
+                onClick={() => setLang('ta')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  isTamil ? 'bg-[#7A1A22] text-amber-100 shadow-xs' : 'text-stone-700 dark:text-stone-300 hover:text-stone-900'
+                }`}
+              >
+                தமிழ்
+              </button>
+              <button
+                type="button"
+                onClick={() => setLang('en')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  !isTamil ? 'bg-[#7A1A22] text-amber-100 shadow-xs' : 'text-stone-700 dark:text-stone-300 hover:text-stone-900'
+                }`}
+              >
+                English
+              </button>
+            </div>
+
             <button
               type="button"
               onClick={expandAllSections}
@@ -779,6 +521,35 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
               <span>▲</span>
               <span>{isTamil ? 'அனைத்தும் சுருக்கு' : 'Collapse All'}</span>
             </button>
+
+            <button
+              type="button"
+              onClick={() => setTheme(isDark ? 'light' : 'dark')}
+              className="px-2.5 py-1.5 rounded-xl border border-stone-300 dark:border-stone-700 text-xs font-bold hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
+              title="Toggle Theme"
+            >
+              {isDark ? '☀️' : '🌙'}
+            </button>
+
+            <button
+              type="button"
+              onClick={handlePrint}
+              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-amber-100 hover:from-[#5C1017] hover:to-[#7A1A22] text-xs font-bold shadow-md shadow-red-950/20 transition-all cursor-pointer flex items-center gap-1"
+              title="Print Horoscope"
+            >
+              <span>🖨️</span>
+              <span>{isTamil ? 'அச்சு' : 'Print'}</span>
+            </button>
+
+            {onClose && (
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-2.5 py-1.5 rounded-xl border border-stone-300 dark:border-stone-700 text-xs font-bold hover:bg-stone-100 dark:hover:bg-stone-800 cursor-pointer"
+              >
+                ✕
+              </button>
+            )}
           </div>
         </div>
 
