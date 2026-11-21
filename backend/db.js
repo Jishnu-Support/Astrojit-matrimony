@@ -1,19 +1,24 @@
 /**
- * Astrojit Persistent File Database
- * Stores clients, astrologers, vendors, company admin, products, and consultations
+ * Astrojit Database Adapter
+ * Supports PostgreSQL via DATABASE_URL with seamless in-memory cache and write-through persistence.
+ * Also provides automatic fallback to local persistent JSON file (astrojit_db.json) if DATABASE_URL is not set.
  */
 
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
+const { Pool } = require('pg');
 
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
 const DB_FILE = process.env.DATABASE_FILE || (process.env.DATABASE_URL && process.env.DATABASE_URL.endsWith('.json') ? path.resolve(process.env.DATABASE_URL) : path.join(DATA_DIR, 'astrojit_db.json'));
 
-// Ensure data folder exists
 if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  } catch (e) {
+    // ignore
+  }
 }
 
 // Initial DB Schema (Production - Strictly only jit_admin, no demo data)
@@ -40,41 +45,231 @@ const defaultDb = {
   matrimonyShortlists: [],
 };
 
-function readDb() {
-  try {
-    if (!fs.existsSync(DB_FILE)) {
-      writeDb(defaultDb);
-      return JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
-    }
-    const data = fs.readFileSync(DB_FILE, 'utf-8');
-    const parsed = JSON.parse(data);
-    if (!parsed.matchmakingRequests) parsed.matchmakingRequests = [];
-    if (!parsed.matrimonyProfiles) parsed.matrimonyProfiles = [];
-    if (!parsed.familyMembers) parsed.familyMembers = [];
-    if (!parsed.matrimonyInterests) parsed.matrimonyInterests = [];
-    if (!parsed.matrimonyShortlists) parsed.matrimonyShortlists = [];
-    if (!parsed.appointments) parsed.appointments = [];
-    if (!parsed.subscribers) parsed.subscribers = [];
-    if (!parsed.clients) parsed.clients = [];
-    if (!parsed.astrologers) parsed.astrologers = [];
-    if (!parsed.vendors) parsed.vendors = [];
-    if (!parsed.products) parsed.products = [];
-    if (!parsed.consultations) parsed.consultations = [];
-    return parsed;
-  } catch (err) {
-    console.error('Error reading DB:', err);
-    return defaultDb;
-  }
+const COLLECTIONS = [
+  'company',
+  'clients',
+  'astrologers',
+  'vendors',
+  'products',
+  'consultations',
+  'matchmakingRequests',
+  'appointments',
+  'subscribers',
+  'familyMembers',
+  'matrimonyProfiles',
+  'matrimonyInterests',
+  'matrimonyShortlists',
+];
+
+// In-memory working cache
+let memoryDb = null;
+let pool = null;
+let isPgConnected = false;
+let pgConnectionError = null;
+
+// Determine if PostgreSQL DATABASE_URL is provided
+const rawDbUrl = process.env.DATABASE_URL || '';
+const isPostgresUrl = rawDbUrl.startsWith('postgres://') || rawDbUrl.startsWith('postgresql://');
+
+if (isPostgresUrl) {
+  const isLocalhost = rawDbUrl.includes('localhost') || rawDbUrl.includes('127.0.0.1');
+  pool = new Pool({
+    connectionString: rawDbUrl,
+    ssl: isLocalhost ? false : { rejectUnauthorized: false },
+    max: 10,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 8000,
+  });
+
+  pool.on('error', (err) => {
+    console.error('[PostgreSQL] Unexpected pool client error:', err.message);
+  });
 }
 
-function writeDb(data) {
+/**
+ * Reads local JSON file as backup or initial bootstrap
+ */
+function readLocalFileDb() {
+  try {
+    if (fs.existsSync(DB_FILE)) {
+      const data = fs.readFileSync(DB_FILE, 'utf-8');
+      const parsed = JSON.parse(data);
+      for (const col of COLLECTIONS) {
+        if (col === 'company') {
+          if (!parsed.company) parsed.company = { ...defaultDb.company };
+        } else if (!Array.isArray(parsed[col])) {
+          parsed[col] = [];
+        }
+      }
+      return parsed;
+    }
+  } catch (err) {
+    console.warn('[DB] Error reading local JSON fallback:', err.message);
+  }
+  return JSON.parse(JSON.stringify(defaultDb));
+}
+
+/**
+ * Writes local JSON file as backup
+ */
+function writeLocalFileDb(data) {
   try {
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
   } catch (err) {
-    console.error('Error writing DB:', err);
+    console.error('[DB] Error writing local JSON backup:', err.message);
   }
 }
 
+/**
+ * Initializes database connection, creates tables if missing, and hydrates memory cache.
+ */
+async function initDb() {
+  // Always initialize memoryDb with local file first for immediate availability
+  if (!memoryDb) {
+    memoryDb = readLocalFileDb();
+  }
+
+  if (!pool) {
+    console.log('[DB] No PostgreSQL DATABASE_URL detected. Running on persistent local storage:', DB_FILE);
+    seedInitialData();
+    return true;
+  }
+
+  console.log('[PostgreSQL] Connecting to database specified in DATABASE_URL...');
+  try {
+    const client = await pool.connect();
+    try {
+      // 1. Create storage table if it does not exist
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS astrojit_store (
+          key VARCHAR(100) PRIMARY KEY,
+          data JSONB NOT NULL,
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+
+      // 2. Fetch existing records
+      const res = await client.query('SELECT key, data FROM astrojit_store;');
+      if (res.rows && res.rows.length > 0) {
+        // Hydrate from PostgreSQL
+        const pgData = {};
+        for (const row of res.rows) {
+          pgData[row.key] = row.data;
+        }
+
+        for (const col of COLLECTIONS) {
+          if (pgData[col] !== undefined) {
+            memoryDb[col] = pgData[col];
+          } else if (memoryDb[col] === undefined) {
+            memoryDb[col] = col === 'company' ? { ...defaultDb.company } : [];
+          }
+        }
+        console.log(`[PostgreSQL] Successfully loaded ${res.rows.length} collections from PostgreSQL store.`);
+      } else {
+        // First run on new PostgreSQL database: seed existing local data to PostgreSQL
+        console.log('[PostgreSQL] astrojit_store is empty. Migrating local data to PostgreSQL...');
+        for (const col of COLLECTIONS) {
+          const val = memoryDb[col] !== undefined ? memoryDb[col] : (col === 'company' ? defaultDb.company : []);
+          await client.query(`
+            INSERT INTO astrojit_store (key, data, updated_at)
+            VALUES ($1, $2, CURRENT_TIMESTAMP)
+            ON CONFLICT (key) DO UPDATE SET data = EXCLUDED.data, updated_at = CURRENT_TIMESTAMP;
+          `, [col, JSON.stringify(val)]);
+        }
+        console.log('[PostgreSQL] Migration of local data to PostgreSQL complete.');
+      }
+
+      isPgConnected = true;
+      pgConnectionError = null;
+      console.log('[PostgreSQL] Connected and synchronized successfully via DATABASE_URL.');
+    } finally {
+      client.release();
+    }
+  } catch (err) {
+    isPgConnected = false;
+    pgConnectionError = err.message;
+    console.error('[PostgreSQL] Connection failed:', err.message);
+    console.log('[PostgreSQL] Falling back to local file storage for continuity.');
+  }
+
+  seedInitialData();
+  return isPgConnected;
+}
+
+/**
+ * Synchronous readDb for zero-refactor compatibility with server.js endpoints
+ */
+function readDb() {
+  if (!memoryDb) {
+    memoryDb = readLocalFileDb();
+  }
+  for (const col of COLLECTIONS) {
+    if (col === 'company') {
+      if (!memoryDb.company) memoryDb.company = { ...defaultDb.company };
+    } else if (!Array.isArray(memoryDb[col])) {
+      memoryDb[col] = [];
+    }
+  }
+  return memoryDb;
+}
+
+// Write debounce queue to avoid hammering PostgreSQL
+let saveTimeout = null;
+let pendingCollections = new Set();
+
+/**
+ * Synchronous writeDb with instant memory update + async PostgreSQL persistence
+ */
+function writeDb(data) {
+  memoryDb = data;
+  writeLocalFileDb(data);
+
+  if (pool && isPgConnected) {
+    for (const col of COLLECTIONS) {
+      if (data[col] !== undefined) {
+        pendingCollections.add(col);
+      }
+    }
+
+    if (saveTimeout) clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(flushPendingToPostgres, 100);
+  }
+}
+
+async function flushPendingToPostgres() {
+  if (!pool || !isPgConnected || pendingCollections.size === 0) return;
+  const colsToSave = Array.from(pendingCollections);
+  pendingCollections.clear();
+
+  try {
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      for (const col of colsToSave) {
+        const val = memoryDb[col];
+        if (val !== undefined) {
+          await client.query(`
+            INSERT INTO astrojit_store (key, data, updated_at)
+            VALUES ($1, $2, CURRENT_TIMESTAMP)
+            ON CONFLICT (key) DO UPDATE SET data = EXCLUDED.data, updated_at = CURRENT_TIMESTAMP;
+          `, [col, JSON.stringify(val)]);
+        }
+      }
+      await client.query('COMMIT');
+    } catch (err) {
+      await client.query('ROLLBACK');
+      console.error('[PostgreSQL] Error writing collections to PostgreSQL:', err.message);
+    } finally {
+      client.release();
+    }
+  } catch (err) {
+    console.error('[PostgreSQL] Failed to acquire client for saving:', err.message);
+  }
+}
+
+/**
+ * Ensures company admin and required arrays are initialized
+ */
 function seedInitialData() {
   const db = readDb();
   let modified = false;
@@ -102,15 +297,9 @@ function seedInitialData() {
     }
   }
 
-  // 2. Ensure all collections exist as arrays, but NEVER wipe existing client or user data!
-  const collections = [
-    'clients', 'astrologers', 'vendors', 'products', 'consultations',
-    'matchmakingRequests', 'appointments', 'subscribers', 'familyMembers',
-    'matrimonyProfiles', 'matrimonyInterests', 'matrimonyShortlists'
-  ];
-
-  for (const col of collections) {
-    if (!Array.isArray(db[col])) {
+  // 2. Ensure all collections exist as arrays
+  for (const col of COLLECTIONS) {
+    if (col !== 'company' && !Array.isArray(db[col])) {
       db[col] = [];
       modified = true;
     }
@@ -121,12 +310,22 @@ function seedInitialData() {
   }
 }
 
-// Initial check & seed on load
+// Initial bootstrap
 readDb();
-seedInitialData();
+initDb().catch((e) => console.error('[DB] Initial bootstrap error:', e));
 
 module.exports = {
   readDb,
   writeDb,
+  initDb,
   seedInitialData,
+  pool,
+  isPgConnected: () => isPgConnected,
+  getPgStatus: () => ({
+    configured: isPostgresUrl,
+    connected: isPgConnected,
+    error: pgConnectionError,
+    activeCollections: COLLECTIONS.length,
+    dbFile: DB_FILE
+  })
 };

@@ -13,7 +13,7 @@ const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
-const { readDb, writeDb } = require('./db');
+const { readDb, writeDb, getPgStatus, initDb } = require('./db');
 const { getDailyPanchangam, calculateKundliMatch, calculateTamilPoruthams, evaluateChevvaiDosha } = require('./astroEngine');
 
 const app = express();
@@ -76,6 +76,26 @@ function authenticate(req, res, next) {
     return res.status(401).json({ error: 'Invalid or expired token' });
   }
 }
+
+// --------------------------------------------------------------------------
+// 0. HEALTH & DATABASE STATUS ENDPOINTS
+// --------------------------------------------------------------------------
+app.get('/api/health', (req, res) => {
+  const dbStatus = getPgStatus();
+  return res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    database: {
+      type: dbStatus.configured ? 'PostgreSQL' : 'Local Persistent Storage',
+      connected: dbStatus.configured ? dbStatus.connected : true,
+      error: dbStatus.error,
+    },
+  });
+});
+
+app.get('/api/db/status', (req, res) => {
+  return res.json(getPgStatus());
+});
 
 // --------------------------------------------------------------------------
 // 1. AUTHENTICATION & REGISTRATION
