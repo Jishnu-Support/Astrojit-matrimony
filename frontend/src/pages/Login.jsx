@@ -15,7 +15,8 @@ import {
   EyeOff,
   ArrowLeft,
   RefreshCw,
-  Check
+  Check,
+  Clock
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../i18n';
@@ -23,7 +24,7 @@ import { API } from '../api';
 import Logo from '../components/Logo';
 
 export default function Login({ onSwitchToRegister }) {
-  const { login } = useAuth();
+  const { login, sessionExpiredNotice, clearSessionExpiredNotice } = useAuth();
   const { lang, t } = useLang();
 
   // Mode: 'login' | 'forgot'
@@ -215,6 +216,23 @@ export default function Login({ onSwitchToRegister }) {
                   : tr('Username = Mobile Number', 'பயனர்பெயர் = மொபைல் எண்')}
               </span>
             </div>
+
+            {sessionExpiredNotice && (
+              <div className="mb-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700 text-amber-900 dark:text-amber-200 text-xs p-3.5 rounded-xl font-medium flex items-center justify-between gap-2 shadow-2xs">
+                <div className="flex items-center gap-2.5">
+                  <Clock className="w-4 h-4 text-amber-700 dark:text-amber-400 shrink-0" />
+                  <span>{sessionExpiredNotice}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={clearSessionExpiredNotice}
+                  className="text-amber-700 dark:text-amber-400 hover:text-amber-950 dark:hover:text-amber-100 font-bold p-1 rounded-md transition-colors cursor-pointer shrink-0"
+                  title={tr('Dismiss', 'அகற்று')}
+                >
+                  ✕
+                </button>
+              </div>
+            )}
 
             {error && (
               <div className="mb-4 bg-rose-50 border border-rose-200 text-rose-700 text-xs p-3 rounded-xl font-medium flex items-center gap-2">
