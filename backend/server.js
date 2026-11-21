@@ -107,6 +107,9 @@ const registrationOtpStore = new Map();
 // In-memory store for login OTPs: mobile -> { otp, expiresAt, role }
 const loginOtpStore = new Map();
 
+// In-memory store for forgot-password OTPs: mobile -> { otp, expiresAt, role }
+const forgotPasswordOtpStore = new Map();
+
 // Send registration OTP
 app.post('/api/auth/register-otp/send', (req, res) => {
   try {
@@ -758,14 +761,22 @@ app.post('/api/auth/forgot-password/verify', (req, res) => {
     const maskedMobile = cleanMobile.length >= 4 
       ? cleanMobile.slice(0, 2) + '****' + cleanMobile.slice(-4)
       : '****';
-    const demoOtp = '7788';
+
+    // Generate a real 6-digit OTP and store it with 10-min expiry
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    forgotPasswordOtpStore.set(cleanMobile, {
+      otp: generatedOtp,
+      expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
+      role,
+    });
+    console.log(`[ForgotPwd] OTP generated for ${cleanMobile}: ${generatedOtp}`);
 
     return res.json({
       success: true,
       message: `Account verified for ${account.name || account.shopName || 'User'}. Verification OTP generated.`,
       name: account.name || account.shopName || account.contactPerson || 'User',
       maskedMobile,
-      demoOtp,
+      demoOtp: generatedOtp, // shown in UI since no SMS gateway yet
     });
   } catch (error) {
     console.error('Forgot password verify error:', error);
@@ -788,10 +799,20 @@ app.post('/api/auth/forgot-password/reset', (req, res) => {
     const cleanMobile = isCompany ? mobile.trim() : clean10DigitMobile(mobile);
     const cleanOtp = (otp || '').trim();
 
-    // Verify OTP (demo code '7788' or '1234')
-    if (cleanOtp !== '7788' && cleanOtp !== '1234') {
-      return res.status(400).json({ error: 'Invalid verification OTP. Please use code 7788.' });
+    // Validate OTP from forgotPasswordOtpStore
+    const otpRecord = forgotPasswordOtpStore.get(cleanMobile);
+    if (!otpRecord) {
+      return res.status(400).json({ error: 'OTP not requested or expired. Please restart password recovery.' });
     }
+    if (Date.now() > otpRecord.expiresAt) {
+      forgotPasswordOtpStore.delete(cleanMobile);
+      return res.status(400).json({ error: 'OTP has expired (10 minutes limit). Please request a new one.' });
+    }
+    if (otpRecord.otp !== cleanOtp) {
+      return res.status(400).json({ error: 'Invalid OTP. Please check the code and try again.' });
+    }
+    // OTP is valid — consume it (one-time use)
+    forgotPasswordOtpStore.delete(cleanMobile);
 
     const db = readDb();
     const salt = bcrypt.genSaltSync(8);

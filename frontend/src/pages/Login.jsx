@@ -51,6 +51,7 @@ export default function Login({ onSwitchToRegister }) {
   const [forgotError, setForgotError] = useState('');
   const [forgotSuccess, setForgotSuccess] = useState('');
   const [verifiedUserInfo, setVerifiedUserInfo] = useState(null);
+  const [forgotDemoOtp, setForgotDemoOtp] = useState('');
 
   const tr = (en, ta, hi, kn, te, bn) => {
     if (lang === 'ta') return ta || en;
@@ -91,6 +92,7 @@ export default function Login({ onSwitchToRegister }) {
       });
 
       setVerifiedUserInfo(res);
+      setForgotDemoOtp(res.demoOtp || '');
       setForgotStep(2);
       setForgotOtp('');
       setForgotSuccess(res.message || tr('Account verified. Please enter the verification OTP.', 'கணக்கு சரிபார்க்கப்பட்டது. ஓடிபி குறியீட்டை உள்ளிடவும்.'));
@@ -492,6 +494,15 @@ export default function Login({ onSwitchToRegister }) {
                   <span className="text-xs bg-amber-200/80 text-amber-900 font-black px-2 py-0.5 rounded-full">
                     {forgotRole}
                   </span>
+                </div>
+              )}
+
+              {/* OTP Display (demo — no SMS gateway yet) */}
+              {forgotDemoOtp && (
+                <div className="bg-amber-50 border border-amber-300 rounded-xl px-3.5 py-2.5 flex items-center gap-2">
+                  <span className="text-amber-700 font-bold text-xs">Your OTP:</span>
+                  <span className="font-mono font-black text-lg text-amber-900 tracking-widest">{forgotDemoOtp}</span>
+                  <span className="text-[10px] text-amber-600 ml-auto">(valid 10 min)</span>
                 </div>
               )}
 
