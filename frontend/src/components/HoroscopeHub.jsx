@@ -223,6 +223,7 @@ export default function HoroscopeHub({
     setFather('');
     setMother('');
     setNativePlace('');
+    setMobile('');
     setGender('male');
     setActiveProfileId('new');
     setActionFeedback({
