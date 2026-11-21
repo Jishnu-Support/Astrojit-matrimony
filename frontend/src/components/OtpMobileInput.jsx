@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Phone, ShieldCheck, CheckCircle2, AlertCircle, RefreshCw, KeyRound } from 'lucide-react';
 import { API } from '../api';
+import { clean10DigitMobile } from '../utils/phoneUtils';
 
 export default function OtpMobileInput({
   mobile,
@@ -30,7 +31,7 @@ export default function OtpMobileInput({
 
   // If user edits mobile number after verification, reset verified state
   const handleMobileChange = (e) => {
-    const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
+    const val = clean10DigitMobile(e.target.value);
     setMobile(val);
     if (isVerified) {
       setIsVerified(false);
@@ -122,7 +123,7 @@ export default function OtpMobileInput({
 
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
-            <span className="absolute left-3 top-2.5 text-slate-400 font-bold text-xs select-none">
+            <span className="absolute left-3 top-2.5 text-slate-500 dark:text-stone-400 font-bold text-xs select-none pointer-events-none">
               +91
             </span>
             <input
@@ -130,9 +131,22 @@ export default function OtpMobileInput({
               name="mobile"
               value={mobile}
               onChange={handleMobileChange}
+              onPaste={(e) => {
+                e.preventDefault();
+                const pasted = e.clipboardData.getData('text');
+                const cleaned = clean10DigitMobile(pasted);
+                setMobile(cleaned);
+                if (isVerified) {
+                  setIsVerified(false);
+                  setOtpSent(false);
+                  setOtp('');
+                  setFeedback(null);
+                }
+              }}
               required={required}
-              placeholder="10-digit mobile number (Username)"
-              className={`w-full bg-slate-50 border border-slate-300 rounded-xl pl-11 pr-3 py-2 text-slate-900 font-mono font-bold focus:outline-none ${borderFocusClass}`}
+              maxLength={14}
+              placeholder="----------"
+              className={`w-full bg-slate-50 dark:bg-stone-850 border border-slate-300 dark:border-stone-700 rounded-xl pl-11 pr-3 py-2 text-slate-900 dark:text-white font-mono font-bold focus:outline-none ${borderFocusClass}`}
             />
           </div>
 

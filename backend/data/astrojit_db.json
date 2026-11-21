@@ -1,5 +1,34 @@
 {
-  "clients": [],
+  "clients": [
+    {
+      "id": "client-4a3053f6",
+      "clientCode": "CLI-916798",
+      "name": "Muthu Kumar",
+      "gender": "male",
+      "fatherName": "",
+      "motherName": "",
+      "dob": "1994-06-15",
+      "dobTime": "10:30",
+      "country": "India",
+      "state": "Tamil Nadu",
+      "city": "Chennai",
+      "dobPlace": "Chennai",
+      "nativePlace": "Chennai",
+      "currentResidence": "Chennai",
+      "lat": 11.6643,
+      "lon": 78.146,
+      "mobile": "9962775630",
+      "username": "9962775630",
+      "email": "",
+      "caste": "",
+      "subCaste": "",
+      "gotra": "",
+      "religion": "Hindu",
+      "passwordHash": "$2b$08$xUjEFDXW2rN0itK64GBJlOZw4rh/f/ofQMI0lraKR7D/jjg9T9tZ.",
+      "astrologerReferralCode": "",
+      "createdAt": "2026-11-21T04:00:24.840Z"
+    }
+  ],
   "astrologers": [],
   "vendors": [],
   "company": {

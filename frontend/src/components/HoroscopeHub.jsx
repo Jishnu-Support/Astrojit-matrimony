@@ -29,6 +29,7 @@ import ThirukanithaHoroscopeView from './ThirukanithaHoroscopeView';
 import HoroscopePagerView from './HoroscopePagerView';
 import { COUNTRIES, GEO_DATA, lookupCoordinates, parseCoordinateToDec } from '../data/geoCoordinates';
 import { calculateThirukanithaHoroscope } from '../utils/thirukanithaEngine';
+import { clean10DigitMobile } from '../utils/phoneUtils';
 
 const HOURS_12 = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
 const MINUTES_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
@@ -620,7 +621,8 @@ export default function HoroscopeHub({
       alert(isTa ? 'தயவுசெய்து வாடிக்கையாளர் பெயரை உள்ளிடவும்.' : 'Please enter the client name.');
       return;
     }
-    if (!mobile.trim() || mobile.trim().length < 10) {
+    const cleanMob = clean10DigitMobile(mobile);
+    if (!cleanMob || cleanMob.length !== 10) {
       alert(isTa ? 'கணக்கு உருவாக்க செல்லுபடியாகும் 10-இலக்க மொபைல் எண் தேவை.' : 'A valid 10-digit mobile number is required to create a client account.');
       return;
     }
@@ -669,7 +671,8 @@ export default function HoroscopeHub({
 
       const payload = {
         name: name.trim(),
-        mobile: mobile.trim(),
+        mobile: cleanMob,
+        username: cleanMob,
         dob,
         dobTime: time24,
         dobTime12: time12,
@@ -1248,13 +1251,23 @@ export default function HoroscopeHub({
             </div>
             <div>
               <label className="block font-bold mb-1 opacity-90">📱 {isTa ? 'வாடிக்கையாளர் மொபைல் எண்' : 'Client Mobile No.'}</label>
-              <input
-                type="tel"
-                value={mobile}
-                onChange={e => setMobile(e.target.value)}
-                placeholder={isTa ? "10 இலக்க மொபைல் எண் உள்ளிடவும்" : "Enter 10-digit mobile number"}
-                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-mono font-bold text-[#7A1A22] dark:text-amber-300"
-              />
+              <div className="flex rounded-xl overflow-hidden border border-stone-300 dark:border-stone-700 bg-[#FAF6EF] dark:bg-[#1A1513] focus-within:ring-2 focus-within:ring-amber-500">
+                <span className="inline-flex items-center px-2.5 bg-amber-500/10 text-amber-900 dark:text-amber-200 font-bold border-r border-stone-300 dark:border-stone-700 select-none text-xs">
+                  +91
+                </span>
+                <input
+                  type="tel"
+                  value={mobile}
+                  maxLength={14}
+                  onChange={e => setMobile(clean10DigitMobile(e.target.value))}
+                  onPaste={e => {
+                    e.preventDefault();
+                    setMobile(clean10DigitMobile(e.clipboardData.getData('text')));
+                  }}
+                  placeholder="----------"
+                  className="w-full bg-transparent px-3 py-2 text-xs font-mono font-bold text-[#7A1A22] dark:text-amber-300 focus:outline-hidden tracking-wider"
+                />
+              </div>
             </div>
           </div>
 

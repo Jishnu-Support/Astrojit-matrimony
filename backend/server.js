@@ -21,6 +21,29 @@ const JWT_SECRET = process.env.JWT_SECRET || 'astrojit_super_secret_jwt_key_2026
 app.use(cors());
 app.use(express.json());
 
+/**
+ * Normalizes any phone input into a strict 10-digit Indian mobile number.
+ * Strips '+91', leading '91' (when length >= 11), leading '0', spaces, and all non-digits.
+ */
+function clean10DigitMobile(raw) {
+  if (!raw) return '';
+  let str = String(raw).trim();
+  if (str.startsWith('+91')) {
+    str = str.slice(3);
+  } else if (str.startsWith('+')) {
+    str = str.slice(1);
+  }
+  let digits = str.replace(/\D/g, '');
+  if (digits.length >= 11 && digits.startsWith('91')) {
+    digits = digits.slice(2);
+  } else if (digits.length === 11 && digits.startsWith('0')) {
+    digits = digits.slice(1);
+  } else if (digits.length > 10) {
+    digits = digits.slice(-10);
+  }
+  return digits.slice(0, 10);
+}
+
 // Helper to sign JWT
 function generateToken(user, role) {
   return jwt.sign(
@@ -66,21 +89,21 @@ const loginOtpStore = new Map();
 app.post('/api/auth/register-otp/send', (req, res) => {
   try {
     const { mobile, role = 'client' } = req.body;
-    if (!mobile || !/^\d{10}$/.test(mobile.trim())) {
+    const cleanMobile = clean10DigitMobile(mobile);
+    if (!cleanMobile || cleanMobile.length !== 10) {
       return res.status(400).json({ error: 'Please enter a valid 10-digit mobile number.' });
     }
 
-    const cleanMobile = mobile.trim();
     const db = readDb();
 
     // Check if mobile already exists in the system
     let existing = null;
     if (role === 'client') {
-      existing = db.clients.find((c) => c.mobile === cleanMobile);
+      existing = db.clients.find((c) => clean10DigitMobile(c.mobile) === cleanMobile || clean10DigitMobile(c.username) === cleanMobile);
     } else if (role === 'astrologer') {
-      existing = db.astrologers.find((a) => a.mobile === cleanMobile);
+      existing = db.astrologers.find((a) => clean10DigitMobile(a.mobile) === cleanMobile || clean10DigitMobile(a.username) === cleanMobile);
     } else if (role === 'vendor') {
-      existing = db.vendors.find((v) => v.mobile === cleanMobile);
+      existing = db.vendors.find((v) => clean10DigitMobile(v.mobile) === cleanMobile || clean10DigitMobile(v.username) === cleanMobile);
     }
 
     if (existing) {
@@ -112,11 +135,11 @@ app.post('/api/auth/register-otp/send', (req, res) => {
 app.post('/api/auth/register-otp/verify', (req, res) => {
   try {
     const { mobile, otp } = req.body;
-    if (!mobile || !otp) {
+    const cleanMobile = clean10DigitMobile(mobile);
+    if (!cleanMobile || !otp) {
       return res.status(400).json({ error: 'Mobile number and OTP are required.' });
     }
 
-    const cleanMobile = mobile.trim();
     const cleanOtp = otp.trim();
     const record = registrationOtpStore.get(cleanMobile);
 
@@ -155,11 +178,12 @@ app.post('/api/auth/login-otp/send', (req, res) => {
       return res.status(400).json({ error: 'Please enter your registered mobile number / username.' });
     }
 
-    const cleanMobile = mobile.trim();
+    const isCompany = role === 'company' || mobile.trim() === 'jit_admin' || mobile.trim() === 'admin';
+    const cleanMobile = isCompany ? mobile.trim() : clean10DigitMobile(mobile);
     const db = readDb();
 
     let account = null;
-    if (role === 'company') {
+    if (isCompany) {
       if (
         cleanMobile === db.company.username ||
         cleanMobile === db.company.mobile ||
@@ -169,11 +193,11 @@ app.post('/api/auth/login-otp/send', (req, res) => {
         account = db.company;
       }
     } else if (role === 'client') {
-      account = db.clients.find((c) => c.mobile === cleanMobile || c.username === cleanMobile);
+      account = db.clients.find((c) => clean10DigitMobile(c.mobile) === cleanMobile || clean10DigitMobile(c.username) === cleanMobile);
     } else if (role === 'astrologer') {
-      account = db.astrologers.find((a) => a.mobile === cleanMobile || a.username === cleanMobile);
+      account = db.astrologers.find((a) => clean10DigitMobile(a.mobile) === cleanMobile || clean10DigitMobile(a.username) === cleanMobile);
     } else if (role === 'vendor') {
-      account = db.vendors.find((v) => v.mobile === cleanMobile || v.username === cleanMobile);
+      account = db.vendors.find((v) => clean10DigitMobile(v.mobile) === cleanMobile || clean10DigitMobile(v.username) === cleanMobile);
     }
 
     if (!account) {
@@ -208,7 +232,8 @@ app.post('/api/auth/login-otp/verify', (req, res) => {
       return res.status(400).json({ error: 'Mobile number / username and OTP are required.' });
     }
 
-    const cleanMobile = mobile.trim();
+    const isCompany = role === 'company' || mobile.trim() === 'jit_admin' || mobile.trim() === 'admin';
+    const cleanMobile = isCompany ? mobile.trim() : clean10DigitMobile(mobile);
     const cleanOtp = otp.trim();
     const record = loginOtpStore.get(cleanMobile);
 
@@ -223,7 +248,7 @@ app.post('/api/auth/login-otp/verify', (req, res) => {
 
     const db = readDb();
 
-    if (role === 'company') {
+    if (isCompany) {
       const company = db.company;
       if (
         cleanMobile === company.username ||
@@ -248,7 +273,7 @@ app.post('/api/auth/login-otp/verify', (req, res) => {
     }
 
     if (role === 'client') {
-      const client = db.clients.find((c) => c.mobile === cleanMobile || c.username === cleanMobile);
+      const client = db.clients.find((c) => clean10DigitMobile(c.mobile) === cleanMobile || clean10DigitMobile(c.username) === cleanMobile);
       if (client) {
         const token = generateToken(client, 'client');
         const { passwordHash: _, ...clientData } = client;
@@ -261,7 +286,7 @@ app.post('/api/auth/login-otp/verify', (req, res) => {
     }
 
     if (role === 'astrologer') {
-      const astro = db.astrologers.find((a) => a.mobile === cleanMobile || a.username === cleanMobile);
+      const astro = db.astrologers.find((a) => clean10DigitMobile(a.mobile) === cleanMobile || clean10DigitMobile(a.username) === cleanMobile);
       if (astro) {
         const token = generateToken(astro, 'astrologer');
         const { passwordHash: _, ...astroData } = astro;
@@ -274,7 +299,7 @@ app.post('/api/auth/login-otp/verify', (req, res) => {
     }
 
     if (role === 'vendor') {
-      const vendor = db.vendors.find((v) => v.mobile === cleanMobile || v.username === cleanMobile);
+      const vendor = db.vendors.find((v) => clean10DigitMobile(v.mobile) === cleanMobile || clean10DigitMobile(v.username) === cleanMobile);
       if (vendor) {
         const token = generateToken(vendor, 'vendor');
         const { passwordHash: _, ...vendorData } = vendor;
@@ -314,10 +339,11 @@ app.post('/api/auth/register/client', (req, res) => {
     } = req.body;
 
     const resolvedPlace = (city || dobPlace || '').trim();
+    const cleanMobile = clean10DigitMobile(mobile);
 
-    if (!name || !mobile || !password || !dob || !dobTime || !resolvedPlace) {
+    if (!name || !cleanMobile || !password || !dob || !dobTime || !resolvedPlace) {
       return res.status(400).json({
-        error: 'Name, Mobile, Password, Date of Birth, Birth Time, Country, State, and City/Birth Place are required.',
+        error: 'Name, 10-Digit Mobile Number, Password, Date of Birth, Birth Time, Country, State, and City/Birth Place are required.',
       });
     }
 
@@ -326,7 +352,7 @@ app.post('/api/auth/register/client', (req, res) => {
     }
 
     const db = readDb();
-    const existing = db.clients.find((c) => c.mobile === mobile.trim());
+    const existing = db.clients.find((c) => clean10DigitMobile(c.mobile) === cleanMobile || clean10DigitMobile(c.username) === cleanMobile);
     if (existing) {
       return res.status(400).json({ error: 'Client with this mobile number is already registered.' });
     }
@@ -351,8 +377,8 @@ app.post('/api/auth/register/client', (req, res) => {
       currentResidence: (req.body.currentResidence || resolvedPlace).trim(),
       lat: typeof lat === 'number' ? lat : (parseFloat(lat) || 11.6643),
       lon: typeof lon === 'number' ? lon : (parseFloat(lon) || 78.1460),
-      mobile: mobile.trim(),
-      username: mobile.trim(),
+      mobile: cleanMobile,
+      username: cleanMobile,
       email: (req.body.email || '').trim(),
       caste: (req.body.caste || '').trim(),
       subCaste: (req.body.subCaste || '').trim(),
@@ -400,9 +426,10 @@ app.post('/api/auth/register/astrologer', (req, res) => {
       gstNumber,
     } = req.body;
 
-    if (!name || !mobile || !password || !address) {
+    const cleanMobile = clean10DigitMobile(mobile);
+    if (!name || !cleanMobile || !password || !address) {
       return res.status(400).json({
-        error: 'Name, Mobile Number, Password, and Address are required.',
+        error: 'Name, 10-Digit Mobile Number, Password, and Address are required.',
       });
     }
 
@@ -411,7 +438,7 @@ app.post('/api/auth/register/astrologer', (req, res) => {
     }
 
     const db = readDb();
-    const existing = db.astrologers.find((a) => a.mobile === mobile.trim());
+    const existing = db.astrologers.find((a) => clean10DigitMobile(a.mobile) === cleanMobile || clean10DigitMobile(a.username) === cleanMobile);
     if (existing) {
       return res.status(400).json({ error: 'Astrologer with this mobile number is already registered.' });
     }
@@ -428,8 +455,8 @@ app.post('/api/auth/register/astrologer', (req, res) => {
       type,
       name: name.trim(),
       contactPerson: type === 'company' ? (contactPerson || '').trim() : undefined,
-      mobile: mobile.trim(),
-      username: mobile.trim(),
+      mobile: cleanMobile,
+      username: cleanMobile,
       passwordHash,
       country: country.trim(),
       state: state.trim(),
@@ -487,9 +514,10 @@ app.post('/api/auth/register/vendor', (req, res) => {
       upiId,
     } = req.body;
 
-    if (!shopName || !contactPerson || !mobile || !password || !address) {
+    const cleanMobile = clean10DigitMobile(mobile);
+    if (!shopName || !contactPerson || !cleanMobile || !password || !address) {
       return res.status(400).json({
-        error: 'Shop/Business Name, Contact Person, Mobile, Password, and Address are required.',
+        error: 'Shop/Business Name, Contact Person, 10-Digit Mobile, Password, and Address are required.',
       });
     }
 
@@ -498,7 +526,7 @@ app.post('/api/auth/register/vendor', (req, res) => {
     }
 
     const db = readDb();
-    const existing = db.vendors.find((v) => v.mobile === mobile.trim());
+    const existing = db.vendors.find((v) => clean10DigitMobile(v.mobile) === cleanMobile || clean10DigitMobile(v.username) === cleanMobile);
     if (existing) {
       return res.status(400).json({ error: 'Vendor with this mobile number is already registered.' });
     }
@@ -510,8 +538,8 @@ app.post('/api/auth/register/vendor', (req, res) => {
       id: 'vendor-' + uuidv4().substring(0, 8),
       shopName: shopName.trim(),
       contactPerson: contactPerson.trim(),
-      mobile: mobile.trim(),
-      username: mobile.trim(),
+      mobile: cleanMobile,
+      username: cleanMobile,
       passwordHash,
       country: country.trim(),
       state: state.trim(),
@@ -520,7 +548,7 @@ app.post('/api/auth/register/vendor', (req, res) => {
       pincode: (pincode || '').trim(),
       gstNumber: (gstNumber || 'Unregistered / MSME').trim(),
       category: (category || 'Puja Samagri & Spiritual Essentials').trim(),
-      upiId: (upiId || `${mobile.trim()}@upi`).trim(),
+      upiId: (upiId || `${cleanMobile}@upi`).trim(),
       verified: true,
       createdAt: new Date().toISOString(),
     };
@@ -545,9 +573,11 @@ app.post('/api/auth/register/vendor', (req, res) => {
 app.post('/api/auth/login', (req, res) => {
   try {
     let { role, mobile, username, password } = req.body;
-    const cleanMobile = (mobile || username || '').trim();
+    const rawMobile = (mobile || username || '').trim();
+    const isCompany = role === 'company' || rawMobile === 'jit_admin' || rawMobile === 'admin';
+    const cleanMobile = isCompany ? rawMobile : clean10DigitMobile(rawMobile);
 
-    if (!role && (cleanMobile === 'jit_admin' || cleanMobile === 'admin')) {
+    if (!role && isCompany) {
       role = 'company';
     }
 
@@ -595,7 +625,10 @@ app.post('/api/auth/login', (req, res) => {
     }
 
     if (role === 'client') {
-      const client = db.clients.find((c) => c.mobile === cleanMobile || c.username === cleanMobile);
+      const client = db.clients.find((c) => {
+        const cMob = clean10DigitMobile(c.mobile || c.username);
+        return c.mobile === cleanMobile || c.username === cleanMobile || (cMob && cMob === cleanMobile);
+      });
       if (!client) {
         return res.status(404).json({ error: 'No client found with this mobile number / username.' });
       }
@@ -615,7 +648,10 @@ app.post('/api/auth/login', (req, res) => {
     }
 
     if (role === 'astrologer') {
-      const astro = db.astrologers.find((a) => a.mobile === cleanMobile || a.username === cleanMobile);
+      const astro = db.astrologers.find((a) => {
+        const aMob = clean10DigitMobile(a.mobile || a.username);
+        return a.mobile === cleanMobile || a.username === cleanMobile || (aMob && aMob === cleanMobile);
+      });
       if (!astro) {
         return res.status(404).json({ error: 'No astrologer found with this mobile number / username.' });
       }
@@ -635,7 +671,10 @@ app.post('/api/auth/login', (req, res) => {
     }
 
     if (role === 'vendor') {
-      const vendor = db.vendors.find((v) => v.mobile === cleanMobile || v.username === cleanMobile);
+      const vendor = db.vendors.find((v) => {
+        const vMob = clean10DigitMobile(v.mobile || v.username);
+        return v.mobile === cleanMobile || v.username === cleanMobile || (vMob && vMob === cleanMobile);
+      });
       if (!vendor) {
         return res.status(404).json({ error: 'No vendor found with this mobile number / username.' });
       }
@@ -671,20 +710,21 @@ app.post('/api/auth/forgot-password/verify', (req, res) => {
       return res.status(400).json({ error: 'Mobile number is required for password recovery.' });
     }
 
-    const cleanMobile = mobile.trim();
+    const isCompany = role === 'company' || mobile.trim() === 'jit_admin' || mobile.trim() === 'admin';
+    const cleanMobile = isCompany ? mobile.trim() : clean10DigitMobile(mobile);
     const db = readDb();
     let account = null;
 
-    if (role === 'client') {
-      account = db.clients.find((c) => c.mobile === cleanMobile);
-    } else if (role === 'astrologer') {
-      account = db.astrologers.find((a) => a.mobile === cleanMobile);
-    } else if (role === 'vendor') {
-      account = db.vendors.find((v) => v.mobile === cleanMobile);
-    } else if (role === 'company') {
-      if (cleanMobile === db.company.mobile || cleanMobile === 'admin' || cleanMobile === db.company.email) {
+    if (isCompany) {
+      if (cleanMobile === db.company.mobile || cleanMobile === 'admin' || cleanMobile === db.company.username || cleanMobile === db.company.email) {
         account = db.company;
       }
+    } else if (role === 'client') {
+      account = db.clients.find((c) => clean10DigitMobile(c.mobile) === cleanMobile || clean10DigitMobile(c.username) === cleanMobile);
+    } else if (role === 'astrologer') {
+      account = db.astrologers.find((a) => clean10DigitMobile(a.mobile) === cleanMobile || clean10DigitMobile(a.username) === cleanMobile);
+    } else if (role === 'vendor') {
+      account = db.vendors.find((v) => clean10DigitMobile(v.mobile) === cleanMobile || clean10DigitMobile(v.username) === cleanMobile);
     }
 
     if (!account) {
@@ -722,7 +762,8 @@ app.post('/api/auth/forgot-password/reset', (req, res) => {
       return res.status(400).json({ error: 'New password must be at least 6 characters long.' });
     }
 
-    const cleanMobile = mobile.trim();
+    const isCompany = role === 'company' || mobile.trim() === 'jit_admin' || mobile.trim() === 'admin';
+    const cleanMobile = isCompany ? mobile.trim() : clean10DigitMobile(mobile);
     const cleanOtp = (otp || '').trim();
 
     // Verify OTP (demo code '7788' or '1234')
@@ -735,20 +776,23 @@ app.post('/api/auth/forgot-password/reset', (req, res) => {
     const newPasswordHash = bcrypt.hashSync(newPassword, salt);
     let updated = false;
 
-    if (role === 'client') {
-      const idx = db.clients.findIndex((c) => c.mobile === cleanMobile);
+    if (isCompany) {
+      db.company.passwordHash = newPasswordHash;
+      updated = true;
+    } else if (role === 'client') {
+      const idx = db.clients.findIndex((c) => clean10DigitMobile(c.mobile) === cleanMobile || clean10DigitMobile(c.username) === cleanMobile);
       if (idx !== -1) {
         db.clients[idx].passwordHash = newPasswordHash;
         updated = true;
       }
     } else if (role === 'astrologer') {
-      const idx = db.astrologers.findIndex((a) => a.mobile === cleanMobile);
+      const idx = db.astrologers.findIndex((a) => clean10DigitMobile(a.mobile) === cleanMobile || clean10DigitMobile(a.username) === cleanMobile);
       if (idx !== -1) {
         db.astrologers[idx].passwordHash = newPasswordHash;
         updated = true;
       }
     } else if (role === 'vendor') {
-      const idx = db.vendors.findIndex((v) => v.mobile === cleanMobile);
+      const idx = db.vendors.findIndex((v) => clean10DigitMobile(v.mobile) === cleanMobile || clean10DigitMobile(v.username) === cleanMobile);
       if (idx !== -1) {
         db.vendors[idx].passwordHash = newPasswordHash;
         updated = true;
@@ -1022,9 +1066,9 @@ app.get('/api/client/profile-by-mobile/:mobile', authenticate, (req, res) => {
 app.get('/api/client/profiles', authenticate, (req, res) => {
   try {
     const db = readDb();
-    const cleanMobile = (req.user.mobile || '').replace(/\D/g, '').slice(-10);
+    const cleanMobile = clean10DigitMobile(req.user.mobile || req.user.username);
     const client = db.clients.find(c => {
-      const cMob = (c.mobile || '').replace(/\D/g, '').slice(-10);
+      const cMob = clean10DigitMobile(c.mobile || c.username);
       return (cMob && cMob === cleanMobile) || c.id === req.user.id || c.username === req.user.mobile;
     });
 
@@ -1065,9 +1109,9 @@ app.get('/api/client/profiles', authenticate, (req, res) => {
 app.post('/api/client/profiles', authenticate, (req, res) => {
   try {
     const db = readDb();
-    const cleanMobile = (req.user.mobile || '').replace(/\D/g, '').slice(-10);
+    const cleanMobile = clean10DigitMobile(req.user.mobile || req.user.username);
     const clientIndex = db.clients.findIndex(c => {
-      const cMob = (c.mobile || '').replace(/\D/g, '').slice(-10);
+      const cMob = clean10DigitMobile(c.mobile || c.username);
       return (cMob && cMob === cleanMobile) || c.id === req.user.id || c.username === req.user.mobile;
     });
 
@@ -1143,9 +1187,9 @@ app.post('/api/client/profiles', authenticate, (req, res) => {
 app.delete('/api/client/profiles/:id', authenticate, (req, res) => {
   try {
     const db = readDb();
-    const cleanMobile = (req.user.mobile || '').replace(/\D/g, '').slice(-10);
+    const cleanMobile = clean10DigitMobile(req.user.mobile || req.user.username);
     const clientIndex = db.clients.findIndex(c => {
-      const cMob = (c.mobile || '').replace(/\D/g, '').slice(-10);
+      const cMob = clean10DigitMobile(c.mobile || c.username);
       return (cMob && cMob === cleanMobile) || c.id === req.user.id || c.username === req.user.mobile;
     });
 
@@ -1197,18 +1241,18 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
       starBasis = 'moon',
     } = req.body;
 
-    if (!name || !mobile || !dob || !dobTime || !dobPlace) {
+    const cleanMobile = clean10DigitMobile(mobile);
+    if (!name || !cleanMobile || !dob || !dobTime || !dobPlace) {
       return res.status(400).json({
-        error: 'Client Name, Mobile Number, Date of Birth, Birth Time, and Birth Place are required.',
+        error: 'Client Name, 10-Digit Mobile Number, Date of Birth, Birth Time, and Birth Place are required.',
       });
     }
 
-    const cleanMobile = mobile.trim();
     const cleanPassword = (initialPassword || 'Astro@123').trim();
     const salt = bcrypt.genSaltSync(8);
     const passwordHash = bcrypt.hashSync(cleanPassword, salt);
 
-    let client = db.clients.find((c) => c.mobile === cleanMobile);
+    let client = db.clients.find((c) => clean10DigitMobile(c.mobile) === cleanMobile || clean10DigitMobile(c.username) === cleanMobile);
     const clientCode = client?.clientCode || ('CLI-' + Math.floor(100000 + Math.random() * 900000));
 
     if (client) {
@@ -1235,6 +1279,8 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
       client.clientCode = clientCode;
       client.plainInitialPassword = cleanPassword;
       client.passwordHash = passwordHash;
+      client.mobile = cleanMobile;
+      client.username = cleanMobile;
       client.updatedAt = new Date().toISOString();
     } else {
       // Create new client
@@ -1258,6 +1304,7 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
         dobTime12,
         starBasis,
         mobile: cleanMobile,
+        username: cleanMobile,
         email: email.trim(),
         gotra: gotra.trim(),
         passwordHash,
@@ -1668,6 +1715,12 @@ app.get('/api/astrologer/search-client', authenticate, (req, res) => {
         const dob = (c.dob || '').toLowerCase();
         const pob = (c.dobPlace || c.pob || c.birthPlace || c.place || c.city || c.nativePlace || '').toLowerCase();
         const combined = `${n} ${dob} ${pob} ${m}`;
+
+        const cleanQueryMobile = clean10DigitMobile(rawQuery);
+        const cCleanMobile = clean10DigitMobile(c.mobile || c.username);
+        if (cleanQueryMobile && cleanQueryMobile.length >= 4 && (cCleanMobile.includes(cleanQueryMobile) || m.includes(cleanQueryMobile))) {
+          return true;
+        }
 
         // Match if query is contained directly in mobile, name, dob, or place
         if (m.includes(query) || n.includes(query) || dob.includes(query) || pob.includes(query) || combined.includes(query)) {

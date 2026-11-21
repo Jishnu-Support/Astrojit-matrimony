@@ -22,6 +22,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLang } from '../i18n';
 import { API } from '../api';
 import Logo from '../components/Logo';
+import { clean10DigitMobile } from '../utils/phoneUtils';
 
 export default function Login({ onSwitchToRegister }) {
   const { login, sessionExpiredNotice, clearSessionExpiredNotice } = useAuth();
@@ -65,8 +66,9 @@ export default function Login({ onSwitchToRegister }) {
     setIsLoading(true);
     setError('');
 
+    const finalMobile = selectedRole === 'company' ? mobile.trim() : clean10DigitMobile(mobile);
     try {
-      await login(selectedRole, mobile, password);
+      await login(selectedRole, finalMobile, password);
     } catch (err) {
       setError(err.message || tr('Login failed. Please check your credentials.', 'உள்நுழைவு தோல்வி. உங்கள் விவரங்களை சரிபார்க்கவும்.'));
     } finally {
@@ -81,10 +83,11 @@ export default function Login({ onSwitchToRegister }) {
     setForgotError('');
     setForgotSuccess('');
 
+    const cleanMobile = forgotRole === 'company' ? forgotMobile.trim() : clean10DigitMobile(forgotMobile);
     try {
       const res = await API.forgotPasswordVerify({
         role: forgotRole,
-        mobile: forgotMobile
+        mobile: cleanMobile
       });
 
       setVerifiedUserInfo(res);
@@ -117,10 +120,11 @@ export default function Login({ onSwitchToRegister }) {
       return;
     }
 
+    const cleanMobile = forgotRole === 'company' ? forgotMobile.trim() : clean10DigitMobile(forgotMobile);
     try {
       const res = await API.forgotPasswordReset({
         role: forgotRole,
-        mobile: forgotMobile,
+        mobile: cleanMobile,
         otp: forgotOtp,
         newPassword
       });
@@ -248,17 +252,38 @@ export default function Login({ onSwitchToRegister }) {
                     ? tr('Username (jit_admin) *', 'பயனர்பெயர் (jit_admin) *')
                     : tr('Mobile Number (Username) *', 'மொபைல் எண் (பயனர்பெயர்) *')}
                 </label>
-                <div className="relative">
-                  <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                  <input
-                    type="text"
-                    required
-                    value={mobile}
-                    onChange={(e) => setMobile(e.target.value)}
-                    placeholder={selectedRole === 'company' ? 'jit_admin' : 'Enter 10-digit mobile number'}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
-                  />
-                </div>
+                {selectedRole === 'company' ? (
+                  <div className="relative">
+                    <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <input
+                      type="text"
+                      required
+                      value={mobile}
+                      onChange={(e) => setMobile(e.target.value)}
+                      placeholder="jit_admin"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex rounded-xl overflow-hidden border border-slate-300 focus-within:ring-2 focus-within:ring-amber-500 focus-within:border-amber-500 bg-slate-50 transition-all">
+                    <span className="inline-flex items-center px-3 bg-amber-500/10 text-amber-900 font-bold border-r border-slate-300 select-none text-xs tracking-wider">
+                      +91
+                    </span>
+                    <input
+                      type="tel"
+                      required
+                      maxLength={14}
+                      value={mobile}
+                      onChange={(e) => setMobile(clean10DigitMobile(e.target.value))}
+                      onPaste={(e) => {
+                        e.preventDefault();
+                        setMobile(clean10DigitMobile(e.clipboardData.getData('text')));
+                      }}
+                      placeholder="----------"
+                      className="w-full bg-transparent px-3 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden font-mono text-sm tracking-wider font-bold"
+                    />
+                  </div>
+                )}
               </div>
 
               <div>
@@ -397,19 +422,42 @@ export default function Login({ onSwitchToRegister }) {
 
               <div>
                 <label className="text-slate-700 font-bold block mb-1">
-                  {tr('Registered Mobile Number *', 'பதிவு செய்யப்பட்ட மொபைல் எண் *')}
+                  {forgotRole === 'company'
+                    ? tr('Company Username *', 'நிறுவன பயனர்பெயர் *')
+                    : tr('Registered Mobile Number *', 'பதிவு செய்யப்பட்ட மொபைல் எண் *')}
                 </label>
-                <div className="relative">
-                  <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                  <input
-                    type="text"
-                    required
-                    value={forgotMobile}
-                    onChange={(e) => setForgotMobile(e.target.value)}
-                    placeholder="Enter registered 10-digit mobile number"
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
-                  />
-                </div>
+                {forgotRole === 'company' ? (
+                  <div className="relative">
+                    <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <input
+                      type="text"
+                      required
+                      value={forgotMobile}
+                      onChange={(e) => setForgotMobile(e.target.value)}
+                      placeholder="jit_admin"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex rounded-xl overflow-hidden border border-slate-300 focus-within:ring-2 focus-within:ring-amber-500 focus-within:border-amber-500 bg-slate-50 transition-all">
+                    <span className="inline-flex items-center px-3 bg-amber-500/10 text-amber-900 font-bold border-r border-slate-300 select-none text-xs tracking-wider">
+                      +91
+                    </span>
+                    <input
+                      type="tel"
+                      required
+                      maxLength={14}
+                      value={forgotMobile}
+                      onChange={(e) => setForgotMobile(clean10DigitMobile(e.target.value))}
+                      onPaste={(e) => {
+                        e.preventDefault();
+                        setForgotMobile(clean10DigitMobile(e.clipboardData.getData('text')));
+                      }}
+                      placeholder="----------"
+                      className="w-full bg-transparent px-3 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden font-mono text-sm tracking-wider font-bold"
+                    />
+                  </div>
+                )}
                 <p className="text-[11px] text-slate-400 mt-1">
                   {tr('We will send a 4-digit verification code to verify your identity.', 'உங்கள் அடையாளத்தை சரிபார்க்க 4 இலக்க ஓடிபி குறியீடு உருவாக்கப்படும்.')}
                 </p>
