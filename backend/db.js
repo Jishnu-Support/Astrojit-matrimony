@@ -3,12 +3,13 @@
  * Stores clients, astrologers, vendors, company admin, products, and consultations
  */
 
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 
-const DATA_DIR = path.join(__dirname, 'data');
-const DB_FILE = path.join(DATA_DIR, 'astrojit_db.json');
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
+const DB_FILE = process.env.DATABASE_FILE || (process.env.DATABASE_URL && process.env.DATABASE_URL.endsWith('.json') ? path.resolve(process.env.DATABASE_URL) : path.join(DATA_DIR, 'astrojit_db.json'));
 
 // Ensure data folder exists
 if (!fs.existsSync(DATA_DIR)) {
