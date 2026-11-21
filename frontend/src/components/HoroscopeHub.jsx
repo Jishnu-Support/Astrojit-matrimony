@@ -1287,8 +1287,8 @@ export default function HoroscopeHub({
                 <span>{isTa ? 'ஜாதகம் கணிக்க & காட்சிப்படுத்து' : 'Calculate & View Horoscope'}</span>
               </button>
 
-              {/* Button 2 FOR CLIENT: Save Another Profile in same client account */}
-              {shouldHideLookup && (
+              {/* Button 2 FOR CLIENT: Save Another Profile — only visible when in 'new profile' mode */}
+              {shouldHideLookup && activeProfileId === 'new' && (
                 <button
                   type="button"
                   onClick={handleSaveAnotherProfile}
