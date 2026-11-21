@@ -74,6 +74,66 @@ const DEITY_NAMES = {
   }
 };
 
+// Tithi meanings / significance (deity + nature of the day)
+const TITHI_MEANING = {
+  Prathama:    { deity: 'Agni',       meaning: 'New beginnings, auspicious for starting ventures' },
+  Dwitiya:     { deity: 'Brahma',     meaning: 'Creative work, building foundations' },
+  Tritiya:     { deity: 'Gauri',      meaning: 'Favourable for travel and new undertakings' },
+  Chaturthi:   { deity: 'Ganesha',    meaning: 'Remove obstacles; good for rituals' },
+  Panchami:    { deity: 'Naga',       meaning: 'Learning, education, medicine' },
+  Shashthi:    { deity: 'Kartikeya',  meaning: 'Victory, valour, auspicious for contests' },
+  Saptami:     { deity: 'Surya',      meaning: 'Energy, authority, good for travel' },
+  Ashtami:     { deity: 'Shiva',      meaning: 'Mixed results; good for courage-based tasks' },
+  Navami:      { deity: 'Durga',      meaning: 'Powerful energy; avoid new beginnings' },
+  Dashami:     { deity: 'Vishnu',     meaning: 'Auspicious for religious acts and ceremonies' },
+  Ekadashi:    { deity: 'Vishnu',     meaning: 'Fasting, devotion; highly auspicious' },
+  Dwadashi:    { deity: 'Vishnu',     meaning: 'Charity, religious activity, end of fasting' },
+  Trayodashi:  { deity: 'Kamadeva',   meaning: 'Love, relationships; good for celebrations' },
+  Chaturdashi: { deity: 'Shiva/Kali', meaning: 'Powerful; best for tantric and spiritual work' },
+  Purnima:     { deity: 'Chandra',    meaning: 'Full Moon — peak energy, highly auspicious' },
+  Amavasya:    { deity: 'Pitrs',      meaning: 'New Moon — ancestor reverence, avoid ceremonies' },
+};
+
+// Localized Tithi meanings
+const TITHI_MEANING_DICT = {
+  ta: {
+    Prathama:    'புதிய தொடக்கங்களுக்கு உகந்தது',
+    Dwitiya:     'படைப்பு பணிகள், அடிப்படை அமைக்க சிறந்தது',
+    Tritiya:     'பயணம் மற்றும் புதிய முயற்சிகளுக்கு சாதகம்',
+    Chaturthi:   'தடைகளை நீக்க; சடங்குகளுக்கு நல்லது',
+    Panchami:    'கல்வி, மருத்துவம், கற்றல் பணிகளுக்கு உகந்தது',
+    Shashthi:    'வெற்றி, வீரம்; போட்டிகளுக்கு சாதகம்',
+    Saptami:     'ஆற்றல், அதிகாரம்; பயணத்திற்கு நன்று',
+    Ashtami:     'கலப்பு பலன்கள்; துணிச்சலான செயல்களுக்கு நல்லது',
+    Navami:      'சக்திவாய்ந்த நாள்; புதிய தொடக்கங்களை தவிர்க்கவும்',
+    Dashami:     'சடங்குகள் மற்றும் மத காரியங்களுக்கு சுபமானது',
+    Ekadashi:    'விரதம், பக்தி; மிகவும் மங்கலகரமான நாள்',
+    Dwadashi:    'தர்மம், மத செயல்கள்; விரத முடிவு',
+    Trayodashi:  'காதல், உறவுகள்; கொண்டாட்டங்களுக்கு நல்லது',
+    Chaturdashi: 'சக்திவாய்ந்த நாள்; ஆன்மீக பணிகளுக்கு சிறந்தது',
+    Purnima:     'பௌர்ணமி — உச்ச சக்தி, மிகவும் மங்கலகரமானது',
+    Amavasya:    'அமாவாசை — மூதாதையர் வழிபாடு; சடங்குகளை தவிர்க்கவும்',
+  },
+  hi: {
+    Prathama:    'नई शुरुआत के लिए अनुकूल',
+    Dwitiya:     'रचनात्मक कार्य, नींव रखने के लिए उत्तम',
+    Tritiya:     'यात्रा और नए उद्यमों के लिए शुभ',
+    Chaturthi:   'बाधा निवारण; धार्मिक कार्यों के लिए उत्तम',
+    Panchami:    'शिक्षा, चिकित्सा, अध्ययन के लिए अनुकूल',
+    Shashthi:    'विजय, पराक्रम; प्रतियोगिता के लिए शुभ',
+    Saptami:     'ऊर्जा, अधिकार; यात्रा के लिए अनुकूल',
+    Ashtami:     'मिश्रित फल; साहसिक कार्यों के लिए उत्तम',
+    Navami:      'शक्तिशाली दिन; नई शुरुआत से बचें',
+    Dashami:     'धार्मिक कार्यों और समारोहों के लिए शुभ',
+    Ekadashi:    'व्रत, भक्ति; अत्यंत शुभ दिन',
+    Dwadashi:    'दान-पुण्य, धार्मिक कार्य; व्रत समाप्ति',
+    Trayodashi:  'प्रेम, संबंध; उत्सवों के लिए अनुकूल',
+    Chaturdashi: 'शक्तिशाली; आध्यात्मिक कार्यों के लिए श्रेष्ठ',
+    Purnima:     'पूर्णिमा — उच्च ऊर्जा, अत्यंत शुभ',
+    Amavasya:    'अमावस्या — पितृ तर्पण; समारोह से बचें',
+  },
+};
+
 const TITHI_DICT = {
   ta: {
     Pratipada: 'பிரதமை', Dwitiya: 'துவிதியை', Tritiya: 'திருதியை', Chaturthi: 'சதுர்த்தி',
@@ -298,10 +358,16 @@ export default function DailyPanchangam() {
   };
 
   const getTithiDetails = () => {
-    if (!panchang?.tithi) return { name: '', paksha: '', progress: '' };
-    if (lang === 'en') return panchang.tithi;
-    const cleanName = (panchang.tithi.name || '').replace(/\s*\(.*\)/, '').trim();
-    const localizedName = TITHI_DICT[lang]?.[cleanName] || panchang.tithi.name;
+    if (!panchang?.tithi) return { name: '', paksha: '', progress: '', meaning: '', deity: '', number: '' };
+    // Extract clean tithi name (without paksha suffix like "(Shukla)")
+    const rawName = panchang.tithi.name || '';
+    const cleanName = rawName.replace(/\s*\(.*\)/, '').trim(); // e.g. "Dwadashi"
+    const tithiNumber = panchang.tithi.index || '';
+
+    // Localized name
+    const localizedName = (lang !== 'en' && TITHI_DICT[lang]?.[cleanName]) || cleanName;
+
+    // Localized paksha
     const isShukla = (panchang.tithi.paksha || '').toLowerCase().includes('shukla');
     const localizedPaksha = lang === 'ta'
       ? (isShukla ? 'சுக்ல பட்சம் (வளர்பிறை)' : 'கிருஷ்ண பட்சம் (தேய்பிறை)')
@@ -309,7 +375,12 @@ export default function DailyPanchangam() {
       ? (isShukla ? 'ಶುಕ್ಲ ಪಕ್ಷ (ಬೆಳದಿಂಗಳು)' : 'ಕೃಷ್ಣ ಪಕ್ಷ (ಕತ್ತಲ ತಿಂಗಳು)')
       : lang === 'hi'
       ? (isShukla ? 'शुक्ल पक्ष' : 'कृष्ण पक्ष')
-      : panchang.tithi.paksha;
+      : (panchang.tithi.paksha || '');
+
+    // Meaning & deity
+    const meaningObj = TITHI_MEANING[cleanName] || {};
+    const localizedMeaning = TITHI_MEANING_DICT[lang]?.[cleanName] || meaningObj.meaning || '';
+    const deity = meaningObj.deity || '';
 
     const progressStr = panchang.tithi.progress || '';
     const localizedProgress = lang === 'ta'
@@ -323,7 +394,10 @@ export default function DailyPanchangam() {
     return {
       name: localizedName,
       paksha: localizedPaksha,
-      progress: localizedProgress
+      progress: localizedProgress,
+      meaning: localizedMeaning,
+      deity,
+      number: tithiNumber,
     };
   };
 
@@ -483,9 +557,19 @@ export default function DailyPanchangam() {
 
             <div className="bg-white border border-amber-200/70 rounded-xl p-3.5 shadow-xs hover:border-amber-400 transition-all">
               <span className="text-[10px] uppercase font-bold text-amber-800 tracking-wider block">2. {t('tithi')}</span>
-              <h4 className="text-base font-bold text-slate-900 mt-0.5">{tithiData.name}</h4>
+              <h4 className="text-base font-bold text-slate-900 mt-0.5">
+                {tithiData.name}
+                {tithiData.number ? <span className="ml-1.5 text-xs font-semibold text-slate-400">#{tithiData.number}</span> : null}
+              </h4>
               <p className="text-xs text-indigo-700 font-semibold mt-0.5">{tithiData.paksha}</p>
-              <div className="mt-1.5 text-[11px] text-slate-500 font-medium">{tithiData.progress}</div>
+              {tithiData.deity && (
+                <p className="text-[11px] text-amber-700 font-medium mt-1">
+                  {lang === 'ta' ? 'தெய்வம்:' : lang === 'hi' ? 'देवता:' : 'Deity:'} {tithiData.deity}
+                </p>
+              )}
+              {tithiData.meaning && (
+                <p className="mt-1 text-[10px] text-slate-500 leading-tight line-clamp-2">{tithiData.meaning}</p>
+              )}
             </div>
 
             <div className="bg-white border border-amber-200/70 rounded-xl p-3.5 shadow-xs hover:border-amber-400 transition-all">
