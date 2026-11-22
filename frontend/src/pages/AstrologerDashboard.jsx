@@ -959,7 +959,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
         />
       )}
 
-      {/* TAB 1: Search for Client by Mobile Number & View Horoscope */}
+      {/* TAB 1: Client Horoscope History */}
       {activeTab === 'search' && (
         <div className="space-y-4 sm:space-y-6">
           {/* Unified Birth Details Intake Form with Autocomplete Client Lookup */}
@@ -974,12 +974,12 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
               <div>
                 <h4 className="font-bold text-slate-900 text-sm flex items-center gap-2">
                   <User className="w-4 h-4 text-indigo-600" />
-                  <span>{lang === 'ta' ? 'கிளையண்ட் விபரங்கள் & ஜாதக சுருக்கம்' : 'Active Client Profile & Kundli Snapshot'}</span>
+                  <span>{lang === 'ta' ? 'வாடிக்கையாளர் ஜாதக வரலாறு & விபரங்கள்' : 'Client Horoscope History & Profile Summary'}</span>
                 </h4>
                 <p className="text-xs text-slate-500 mt-0.5">
                   {lang === 'ta'
-                    ? 'மேலே உள்ள படிவத்தில் மாற்றப்படும் விபரங்கள் உடனடியாக இங்கு புதுப்பிக்கப்படும்.'
-                    : 'Details entered in the intake card above are instantly synchronized across all modules.'}
+                    ? 'முந்தைய வாடிக்கையாளர் விவரங்கள் மற்றும் ஜாதக வரலாறு இங்கே காட்டப்படும்.'
+                    : 'Previous client details and horoscope history are displayed here.'}
                 </p>
               </div>
             </div>

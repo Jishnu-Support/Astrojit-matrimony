@@ -92,7 +92,7 @@ export const translations = {
     // Astrologer Dashboard Tabs
     tabAppointments: 'Consultations & Appointments',
     tabHoroscopeDossier: 'Horoscope Dossier (Kundli)',
-    tabClientSearch: 'Client Mobile Search & Kundli',
+    tabClientSearch: 'Client Horoscope History',
     tabMatchmaking: 'Matchmaking Requests',
     tabReferred: 'Referred Clients',
 
@@ -394,7 +394,7 @@ export const translations = {
     // Astrologer Dashboard Tabs
     tabAppointments: 'ஆலோசனைகள் & சந்திப்புகள்',
     tabHoroscopeDossier: 'ஜாதக ஆவணம் (ஜெனன ஜாதகம்)',
-    tabClientSearch: 'வாடிக்கையாளர் மொபைல் தேடல் & ஜாதகம்',
+    tabClientSearch: 'வாடிக்கையாளர் ஜாதக வரலாறு',
     tabMatchmaking: 'திருமணப் பொருத்தக் கோரிக்கைகள்',
     tabReferred: 'பரிந்துரைக்கப்பட்ட வாடிக்கையாளர்கள்',
 
@@ -696,7 +696,7 @@ export const translations = {
     // Astrologer Dashboard Tabs
     tabAppointments: 'ಸಮಾಲೋಚನೆಗಳು & ಅಪಾಯಿಂಟ್‌ಮೆಂಟ್‌ಗಳು',
     tabHoroscopeDossier: 'ಜಾತಕ ಡಾಕ್ಯುಮೆಂಟ್ (ಜನನ ಕುಂಡಲಿ)',
-    tabClientSearch: 'ಗ್ರಾಹಕರ ಮೊಬೈಲ್ ಹುಡುಕಾಟ & ಕುಂಡಲಿ',
+    tabClientSearch: 'ಗ್ರಾಹಕರ ಜಾತಕ ಇತಿಹಾಸ',
     tabMatchmaking: 'ವಿವಾಹ ಹೊಂದಾಣಿಕೆ ವಿನಂತಿಗಳು',
     tabReferred: 'ರೆಫರ್ ಆದ ಗ್ರಾಹಕರು',
 
@@ -998,7 +998,7 @@ export const translations = {
     // Astrologer Dashboard Tabs
     tabAppointments: 'परामर्श एवं नियुक्तियाँ',
     tabHoroscopeDossier: 'कुंडली दस्तावेज़ (जन्म पत्रिका)',
-    tabClientSearch: 'ग्राहक मोबाइल खोज एवं कुंडली',
+    tabClientSearch: 'ग्राहक कुंडली इतिहास',
     tabMatchmaking: 'विवाह मिलान अनुरोध',
     tabReferred: 'रेफर किए गए ग्राहक',
 
@@ -1300,7 +1300,7 @@ export const translations = {
     // Astrologer Dashboard Tabs
     tabAppointments: 'సంప్రదింపులు & అపాయింట్‌మెంట్‌లు',
     tabHoroscopeDossier: 'జాతక పత్రం (జన్మ కుండలి)',
-    tabClientSearch: 'క్లయింట్ మొబైల్ సెర్చ్ & కుండలి',
+    tabClientSearch: 'క్లయింట్ జాతక చరిత్ర',
     tabMatchmaking: 'వివాహ పొంతన అభ్యర్థనలు',
     tabReferred: 'రిఫర్ చేయబడిన క్లయింట్లు',
 
@@ -1602,7 +1602,7 @@ export const translations = {
     // Astrologer Dashboard Tabs
     tabAppointments: 'পরামর্শ ও অ্যাপয়েন্টমেন্ট',
     tabHoroscopeDossier: 'জন্মকুষ্ঠি নথি (জন্ম কুণ্ডলী)',
-    tabClientSearch: 'ক্লায়েন্ট মোবাইল অনুসন্ধান ও কুষ্ঠি',
+    tabClientSearch: 'ক্লায়েন্ট জন্মকুষ্ঠি ইতিহাস',
     tabMatchmaking: 'বিবাহ মিলনের অনুরোধ',
     tabReferred: 'রেফার্ড ক্লায়েন্ট',
 

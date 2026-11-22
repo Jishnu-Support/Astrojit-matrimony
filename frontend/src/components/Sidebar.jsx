@@ -50,7 +50,7 @@ export default function Sidebar({
         return [
           { id: 'appointments', label: tr('Consultations & Slots', 'ஆலோசனை முன்பதிவுகள்'), icon: Clock },
           { id: 'horoscope', label: tr('Horoscope', 'ஜாதகம்'), icon: Compass, badge: 'Drik' },
-          { id: 'search', label: tr('Client Search', 'வாடிக்கையாளர் தேடல்'), icon: Search },
+          { id: 'search', label: tr('Client Horoscope History', 'வாடிக்கையாளர் ஜாதக வரலாறு'), icon: Search },
           { id: 'matchmaking', label: tr('Matchmaking Requests', 'பொருத்த ஆய்வுக் கோரிக்கைகள்'), icon: HeartHandshake, badge: 'Active' },
           { id: 'referred', label: tr('Referred Clients', 'பரிந்துரைக்கப்பட்டோர்'), icon: Users },
         ];

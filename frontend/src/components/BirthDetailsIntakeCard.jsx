@@ -158,7 +158,7 @@ export default function BirthDetailsIntakeCard({
       type: 'success',
       message: isTa
         ? `வாடிக்கையாளர் "${c.name}" விவரங்கள் அனைத்து மாடியூல்களிலும் தானாக புதுப்பிக்கப்பட்டது!`
-        : `Client "${c.name}" details loaded and synchronized across Horoscope, Search & Matchmaking!`
+        : `Client "${c.name}" details loaded and synchronized across Horoscope, Client Horoscope History & Matchmaking!`
     });
     setTimeout(() => setActionFeedback(null), 4000);
   };
@@ -356,7 +356,7 @@ export default function BirthDetailsIntakeCard({
             <div className="flex items-center gap-2.5 flex-wrap">
               <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B]">
                 {module === 'search'
-                  ? (isTa ? 'வாடிக்கையாளர் தேடல் (Client Mobile & Profile Lookup)' : 'Client Mobile & Profile Lookup')
+                  ? (isTa ? 'வாடிக்கையாளர் ஜாதக வரலாறு (Client Horoscope History)' : 'Client Horoscope History')
                   : module === 'matchmaking'
                   ? (isTa ? 'வாடிக்கையாளர் தேடல் (Client Lookup for Matchmaking)' : 'Client Lookup for Matchmaking')
                   : (isTa ? 'பிறப்பு விவரப் படிவம் (Birth Details Intake)' : 'Birth Details Intake (Compute & Generate Pager)')}
@@ -378,15 +378,15 @@ export default function BirthDetailsIntakeCard({
             <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
               {module === 'search'
                 ? (isTa
-                    ? 'முந்தைய வாடிக்கையாளர் விவரங்களை மொபைல் எண், பெயர் அல்லது பிறந்த தேதி மூலம் தேடவும்.'
-                    : 'Search existing clients by mobile number, name, DOB, or place to view active profile.')
+                    ? 'முந்தைய வாடிக்கையாளர் ஜாதக வரலாற்றை மொபைல் எண், பெயர் அல்லது பிறந்த தேதி மூலம் தேடவும்.'
+                    : 'Search existing clients by mobile number, name, DOB, or place to view horoscope history.')
                 : module === 'matchmaking'
                 ? (isTa
                     ? 'பொருத்தம் பார்க்க விரும்பும் வாடிக்கையாளரை தேடி தேர்வு செய்யவும்.'
                     : 'Search and select an active client for Kundli matchmaking comparison.')
                 : (isTa
-                    ? 'முந்தைய வாடிக்கையாளர் விவரங்களை தேடவும் அல்லது புதிய விவரங்களை உள்ளிடவும் (ஜாதகம், மொபைல் தேடல் & பொருத்தம் மூன்றுக்கும் தானாக இணையும்)'
-                    : 'Search existing clients by mobile/name/dob/place, or enter new birth data (syncs automatically across Horoscope, Client Search & Matchmaking)')}
+                    ? 'முந்தைய வாடிக்கையாளர் விவரங்களை தேடவும் அல்லது புதிய விவரங்களை உள்ளிடவும் (ஜாதகம், ஜாதக வரலாறு & பொருத்தம் மூன்றுக்கும் தானாக இணையும்)'
+                    : 'Search existing clients by mobile/name/dob/place, or enter new birth data (syncs automatically across Horoscope, Client Horoscope History & Matchmaking)')}
             </p>
           </div>
         </div>
