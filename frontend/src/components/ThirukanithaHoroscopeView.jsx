@@ -1149,12 +1149,17 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">
                     {isTamil ? `${horoscope.summary.currentDashaToday.progressPct}% முடிந்தது` : `${horoscope.summary.currentDashaToday.progressPct}% Elapsed`}
                   </span>
-                  <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 border border-amber-300 dark:border-amber-700">
-                    {isTamil ? `${horoscope.summary.currentDashaToday.daysRemaining} நாட்கள் மீதம்` : `${horoscope.summary.currentDashaToday.daysRemaining} days left`}
+                  <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 border border-amber-300 dark:border-amber-700 flex items-center gap-1 shadow-2xs">
+                    <span>⏳</span>
+                    <span>
+                      {isTamil
+                        ? `நடப்பு திசை: ${horoscope.summary.currentDashaToday.mahadasha?.nameTa || ''} திசை - ${horoscope.summary.currentDashaToday.dashaDaysRemaining || horoscope.summary.currentDashaToday.daysRemaining} நாட்கள் மீதம்`
+                        : `Current Dasha: ${horoscope.summary.currentDashaToday.mahadasha?.nameEn || ''} Dasha - ${horoscope.summary.currentDashaToday.dashaDaysRemaining || horoscope.summary.currentDashaToday.daysRemaining} days left`}
+                    </span>
                   </span>
                 </div>
               </div>
@@ -1245,6 +1250,13 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white shadow-2xs flex items-center gap-1">
                           <span>🌟</span>
                           <span>{T.dashaCurrentToday}</span>
+                          {(horoscope.summary?.currentDashaToday?.dashaDaysRemaining !== undefined || horoscope.summary?.currentDashaToday?.daysRemaining !== undefined) && (
+                            <span className="bg-emerald-800/60 dark:bg-emerald-950/80 px-1.5 py-0.2 rounded text-[9px] font-mono font-medium ml-0.5">
+                              {isTamil
+                                ? `நடப்பு திசை: ${horoscope.summary.currentDashaToday.mahadasha?.nameTa || md.lord.nameTa} திசை - ${horoscope.summary.currentDashaToday.dashaDaysRemaining || horoscope.summary.currentDashaToday.daysRemaining} நாட்கள் மீதம்`
+                                : `Current Dasha: ${horoscope.summary.currentDashaToday.mahadasha?.nameEn || md.lord.nameEn} Dasha - ${horoscope.summary.currentDashaToday.dashaDaysRemaining || horoscope.summary.currentDashaToday.daysRemaining} days left`}
+                            </span>
+                          )}
                         </span>
                       )}
 
@@ -1418,9 +1430,16 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
 
                                 <div>
                                   {isOngoingToday && (
-                                    <span className="text-[9.5px] px-1.5 py-0.5 rounded font-bold bg-emerald-600 text-white flex items-center gap-0.5 shadow-2xs">
+                                    <span className="text-[9.5px] px-1.5 py-0.5 rounded font-bold bg-emerald-600 text-white flex items-center gap-1 shadow-2xs">
                                       <span>🌟</span>
                                       <span>{T.bhuktiCurrentToday}</span>
+                                      {horoscope.summary?.currentDashaToday?.daysRemaining !== undefined && (
+                                        <span className="bg-emerald-800/60 dark:bg-emerald-950/80 px-1 py-0.2 rounded text-[8.5px] font-mono font-medium">
+                                          ({isTamil
+                                            ? `நடப்பு திசை: ${horoscope.summary.currentDashaToday.mahadasha?.nameTa || ''} திசை - ${horoscope.summary.currentDashaToday.daysRemaining} நாட்கள் மீதம்`
+                                            : `Current Dasha: ${horoscope.summary.currentDashaToday.mahadasha?.nameEn || ''} Dasha - ${horoscope.summary.currentDashaToday.daysRemaining} days left`})
+                                        </span>
+                                      )}
                                     </span>
                                   )}
                                   {!isOngoingToday && isOngoingAtBirth && (

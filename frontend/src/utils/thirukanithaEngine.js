@@ -3171,17 +3171,22 @@ export function calculateThirukanithaHoroscope({
 
         let progressPct = 0;
         let daysRemaining = 0;
+        const parseDMY = (s) => {
+          const p = s.split('-').map(Number);
+          return new Date(p[2], p[1] - 1, p[0]);
+        };
         if (curBh) {
-          const parseDMY = (s) => {
-            const p = s.split('-').map(Number);
-            return new Date(p[2], p[1] - 1, p[0]);
-          };
           const bStart = parseDMY(curBh.startDate);
           const bEnd = parseDMY(curBh.endDate);
           const totalMs = Math.max(1, bEnd.getTime() - bStart.getTime());
           const elapsedMs = Math.max(0, Math.min(totalMs, now.getTime() - bStart.getTime()));
           progressPct = Math.min(100, Math.max(0, Math.round((elapsedMs / totalMs) * 100)));
           daysRemaining = Math.max(0, Math.ceil((bEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+        }
+        let dashaDaysRemaining = daysRemaining;
+        if (curMd && curMd.endDate) {
+          const mdEnd = parseDMY(curMd.endDate);
+          dashaDaysRemaining = Math.max(0, Math.ceil((mdEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
         }
 
         return {
@@ -3194,6 +3199,7 @@ export function calculateThirukanithaHoroscope({
           antaraEndDate: curAntara?.endDate || '',
           progressPct,
           daysRemaining,
+          dashaDaysRemaining,
           textTa: `${curMd.lord.nameTa} திசை${curBh ? ' - ' + curBh.bhuktiLord.nameTa + ' புக்தி' : ''}${curAntara ? ' - ' + curAntara.lord.nameTa + ' அந்தரம்' : ''}`,
           textEn: `${curMd.lord.nameEn} Dasha${curBh ? ' - ' + curBh.bhuktiLord.nameEn + ' Bhukti' : ''}${curAntara ? ' - ' + curAntara.lord.nameEn + ' Antara' : ''}`
         };
