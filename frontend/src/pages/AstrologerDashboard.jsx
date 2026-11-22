@@ -330,36 +330,15 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
     }
   };
 
-  // Real-time debounced search for astrologer database lookup (from 1st character)
-  useEffect(() => {
-    const q = searchQuery.trim();
+  const astroSearchTimeoutRef = useRef(null);
+
+  const performAstroSearch = async (val) => {
+    const q = (typeof val === 'string' ? val : searchQuery).trim();
     if (!q) {
       setSearchResults([]);
+      setIsSearching(false);
       return;
     }
-    const timer = setTimeout(async () => {
-      setIsSearching(true);
-      try {
-        const res = await API.searchClients(q);
-        setSearchResults(res.clients || []);
-      } catch (err) {
-        console.warn('Error searching clients:', err);
-        setSearchResults([]);
-      } finally {
-        setIsSearching(false);
-      }
-    }, 120);
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  const handleSearch = async (e) => {
-    if (e && e.preventDefault) e.preventDefault();
-    const q = searchQuery.trim();
-    if (!q) {
-      setSearchResults([]);
-      return;
-    }
-
     setIsSearching(true);
     setSelectedClientMobile(null);
     setClientProfile(null);
@@ -368,9 +347,35 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
       setSearchResults(res.clients || []);
     } catch (err) {
       console.warn('Error searching clients:', err);
+      setSearchResults([]);
     } finally {
       setIsSearching(false);
     }
+  };
+
+  const handleAstroSearchInputChange = (e) => {
+    const val = e.target.value;
+    setSearchQuery(val);
+    if (astroSearchTimeoutRef.current) {
+      clearTimeout(astroSearchTimeoutRef.current);
+    }
+    if (!val.trim()) {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+    setIsSearching(true);
+    astroSearchTimeoutRef.current = setTimeout(() => {
+      performAstroSearch(val);
+    }, 60);
+  };
+
+  const handleSearch = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (astroSearchTimeoutRef.current) {
+      clearTimeout(astroSearchTimeoutRef.current);
+    }
+    await performAstroSearch(searchQuery);
   };
 
   const handleSelectClient = async (mobile) => {
@@ -1140,7 +1145,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleAstroSearchInputChange}
                 placeholder={t('searchMobilePlaceholder')}
                 className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500"
               />

@@ -128,69 +128,77 @@ export default function BirthDetailsIntakeCard({
     return availableCities.filter(c => (c.name || '').toLowerCase().includes(q));
   }, [availableCities, citySearch]);
 
-  // Track programmatic selection to prevent reopening dropdown
-  const isSelectingClientRef = useRef(false);
+  // Search debounce timer ref
+  const searchTimeoutRef = useRef(null);
 
-  // Real-time search: runs automatically even from the 1st character typed
-  useEffect(() => {
-    if (isSelectingClientRef.current) {
-      isSelectingClientRef.current = false;
-      return;
-    }
-
-    const q = searchQuery.trim();
+  // Core search executor: searches matching clients and displays results dropdown
+  const performClientSearch = async (queryText) => {
+    const q = (typeof queryText === 'string' ? queryText : searchQuery).trim();
     if (!q) {
       setSearchResults([]);
       setShowDropdown(false);
+      setIsSearching(false);
       return;
     }
 
     setIsSearching(true);
     setShowDropdown(true);
 
-    const timer = setTimeout(async () => {
-      try {
-        const res = await API.searchClients(q);
-        const list = Array.isArray(res) ? res : (res?.clients || []);
-        setSearchResults(list);
-      } catch (err) {
-        console.warn('Real-time client search error:', err);
-        setSearchResults([]);
-      } finally {
-        setIsSearching(false);
-      }
-    }, 120);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  // Handle manual previous client lookup search (Enter or Search button)
-  const handleClientSearch = async (e) => {
-    if (e && e.preventDefault) e.preventDefault();
-    const q = searchQuery.trim();
-    if (!q) {
-      setShowDropdown(false);
-      setSearchResults([]);
-      return;
-    }
-    setIsSearching(true);
-    setShowDropdown(true);
     try {
       const res = await API.searchClients(q);
       const list = Array.isArray(res) ? res : (res?.clients || []);
       setSearchResults(list);
+      setShowDropdown(true);
     } catch (err) {
-      console.warn('Failed to search clients:', err);
+      console.warn('Real-time client search error:', err);
       setSearchResults([]);
     } finally {
       setIsSearching(false);
     }
   };
 
+  // Immediate search trigger as the user types even a single letter/digit
+  const handleSearchInputChange = (e) => {
+    const val = e.target.value;
+    setSearchQuery(val);
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    if (!val.trim()) {
+      setSearchResults([]);
+      setShowDropdown(false);
+      setIsSearching(false);
+      return;
+    }
+
+    // Immediately open dropdown and display loading status
+    setShowDropdown(true);
+    setIsSearching(true);
+
+    // Debounce fast typing with 60ms (imperceptible delay, instant update)
+    searchTimeoutRef.current = setTimeout(() => {
+      performClientSearch(val);
+    }, 60);
+  };
+
+  // Handle manual search (pressing Enter or clicking Search button)
+  const handleClientSearch = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    await performClientSearch(searchQuery);
+  };
+
   const handleSelectClient = (c) => {
-    isSelectingClientRef.current = true;
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
     selectClient(c);
     setShowDropdown(false);
+    setIsSearching(false);
     setSearchQuery(`${c.name} (${c.mobile || c.dob || ''})`);
     setActionFeedback({
       type: 'success',
@@ -202,11 +210,14 @@ export default function BirthDetailsIntakeCard({
   };
 
   const handleClearForNewProfile = () => {
-    isSelectingClientRef.current = true;
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
     clearClientData();
     setSearchQuery('');
     setSearchResults([]);
     setShowDropdown(false);
+    setIsSearching(false);
     setActiveProfileId('new');
     setActionFeedback({
       type: 'info',
@@ -464,7 +475,7 @@ export default function BirthDetailsIntakeCard({
 
       {/* Previous Client Lookup Bar */}
       {!shouldHideLookup && (
-        <div ref={searchBoxRef} className="relative">
+        <div ref={searchBoxRef} className="relative z-30">
           <label className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
             🔍 {isTa ? 'முந்தைய வாடிக்கையாளர் தேடல் (மொபைல் எண் அல்லது பெயர் + பிறந்த தேதி + இடம்):' : 'Previous Client Lookup (Search by Mobile No. or Name + D.O.B + Place):'}
           </label>
@@ -473,8 +484,8 @@ export default function BirthDetailsIntakeCard({
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => { isSelectingClientRef.current = false; setSearchQuery(e.target.value); }}
-                onFocus={() => { if (searchQuery.trim().length > 0) setShowDropdown(true); }}
+                onChange={handleSearchInputChange}
+                onFocus={() => { if (searchQuery.trim().length > 0) performClientSearch(searchQuery); }}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleClientSearch(e); }}
                 placeholder={isTa ? 'மொபைல் எண் அல்லது பெயர் + தேதி உள்ளிடவும்...' : 'Enter Mobile No. OR Name + D.O.B + Place...'}
                 className="w-full pl-9 pr-8 py-2 rounded-xl border border-stone-300 dark:border-stone-700 bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 text-xs focus:ring-2 focus:ring-[#7A1A22] outline-none"
@@ -483,7 +494,13 @@ export default function BirthDetailsIntakeCard({
               {searchQuery && (
                 <button
                   type="button"
-                  onClick={() => { isSelectingClientRef.current = true; setSearchQuery(''); setSearchResults([]); setShowDropdown(false); }}
+                  onClick={() => {
+                    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+                    setSearchQuery('');
+                    setSearchResults([]);
+                    setShowDropdown(false);
+                    setIsSearching(false);
+                  }}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -503,7 +520,7 @@ export default function BirthDetailsIntakeCard({
 
           {/* Search Dropdown Results */}
           {showDropdown && searchQuery.trim().length > 0 && (
-            <div className="absolute left-0 right-0 top-full mt-1.5 z-40 bg-white dark:bg-[#1E1815] rounded-2xl border border-amber-900/20 dark:border-amber-500/20 shadow-2xl max-h-60 overflow-y-auto divide-y divide-amber-900/10 dark:divide-amber-500/10">
+            <div className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white dark:bg-[#1E1815] rounded-2xl border border-amber-900/20 dark:border-amber-500/20 shadow-2xl max-h-72 overflow-y-auto divide-y divide-amber-900/10 dark:divide-amber-500/10">
               {isSearching && searchResults.length === 0 ? (
                 <div className="p-4 text-center text-xs text-stone-500 flex items-center justify-center gap-2">
                   <Sparkles className="w-3.5 h-3.5 animate-spin text-[#7A1A22]" />
