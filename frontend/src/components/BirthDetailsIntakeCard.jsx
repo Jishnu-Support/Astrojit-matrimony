@@ -349,41 +349,59 @@ export default function BirthDetailsIntakeCard({
       {/* Header & Client Lookup Strip */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-amber-900/10 dark:border-amber-500/15 pb-3">
         <div className="flex items-center gap-2.5">
-          <span className="text-xl">📝</span>
+          <span className="text-xl">
+            {module === 'search' || module === 'matchmaking' ? '🔍' : '📝'}
+          </span>
           <div>
             <div className="flex items-center gap-2.5 flex-wrap">
               <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B]">
-                {isTa ? 'பிறப்பு விவரப் படிவம் (Birth Details Intake)' : 'Birth Details Intake (Compute & Generate Pager)'}
+                {module === 'search'
+                  ? (isTa ? 'வாடிக்கையாளர் தேடல் (Client Mobile & Profile Lookup)' : 'Client Mobile & Profile Lookup')
+                  : module === 'matchmaking'
+                  ? (isTa ? 'வாடிக்கையாளர் தேடல் (Client Lookup for Matchmaking)' : 'Client Lookup for Matchmaking')
+                  : (isTa ? 'பிறப்பு விவரப் படிவம் (Birth Details Intake)' : 'Birth Details Intake (Compute & Generate Pager)')}
               </h2>
 
-              {/* + New Profile Button */}
-              <button
-                type="button"
-                onClick={handleClearForNewProfile}
-                className="px-3 py-1 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white text-xs font-black shadow-xs hover:shadow-md transition-all cursor-pointer flex items-center gap-1.5"
-                title={isTa ? 'படிவத்தை அழித்து புதிய விவரங்களை உள்ளிடவும்' : 'Clear all fields to enter a new client profile'}
-              >
-                <PlusCircle className="w-3.5 h-3.5" />
-                <span>{isTa ? '+ புதிய சுயவிவரம் (New Profile)' : '+ New Profile'}</span>
-              </button>
+              {/* + New Profile Button - ONLY for horoscope module */}
+              {module === 'horoscope' && (
+                <button
+                  type="button"
+                  onClick={handleClearForNewProfile}
+                  className="px-3 py-1 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white text-xs font-black shadow-xs hover:shadow-md transition-all cursor-pointer flex items-center gap-1.5"
+                  title={isTa ? 'படிவத்தை அழித்து புதிய விவரங்களை உள்ளிடவும்' : 'Clear all fields to enter a new client profile'}
+                >
+                  <PlusCircle className="w-3.5 h-3.5" />
+                  <span>{isTa ? '+ புதிய சுயவிவரம் (New Profile)' : '+ New Profile'}</span>
+                </button>
+              )}
             </div>
             <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
-              {isTa
-                ? 'முந்தைய வாடிக்கையாளர் விவரங்களை தேடவும் அல்லது புதிய விவரங்களை உள்ளிடவும் (ஜாதகம், மொபைல் தேடல் & பொருத்தம் மூன்றுக்கும் தானாக இணையும்)'
-                : 'Search existing clients by mobile/name/dob/place, or enter new birth data (syncs automatically across Horoscope, Client Search & Matchmaking)'}
+              {module === 'search'
+                ? (isTa
+                    ? 'முந்தைய வாடிக்கையாளர் விவரங்களை மொபைல் எண், பெயர் அல்லது பிறந்த தேதி மூலம் தேடவும்.'
+                    : 'Search existing clients by mobile number, name, DOB, or place to view active profile.')
+                : module === 'matchmaking'
+                ? (isTa
+                    ? 'பொருத்தம் பார்க்க விரும்பும் வாடிக்கையாளரை தேடி தேர்வு செய்யவும்.'
+                    : 'Search and select an active client for Kundli matchmaking comparison.')
+                : (isTa
+                    ? 'முந்தைய வாடிக்கையாளர் விவரங்களை தேடவும் அல்லது புதிய விவரங்களை உள்ளிடவும் (ஜாதகம், மொபைல் தேடல் & பொருத்தம் மூன்றுக்கும் தானாக இணையும்)'
+                    : 'Search existing clients by mobile/name/dob/place, or enter new birth data (syncs automatically across Horoscope, Client Search & Matchmaking)')}
             </p>
           </div>
         </div>
 
-        {/* Quick Badges: Time & Timezone */}
-        <div className="flex items-center gap-2 self-start md:self-auto">
-          <span className="text-[11px] font-mono font-bold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-stone-800 px-2.5 py-1 rounded-lg border border-amber-900/10">
-            🕒 {clientData.timeState?.hour || '12'}:{clientData.timeState?.minute || '00'}:{clientData.timeState?.second || '00'} {clientData.timeState?.period || 'AM'}
-          </span>
-          <span className="text-[11px] font-mono font-bold text-indigo-800 dark:text-indigo-300 bg-indigo-50 dark:bg-stone-800 px-2.5 py-1 rounded-lg border border-indigo-900/10">
-            🌐 {clientData.utcOffset || '05:30 UTC'}
-          </span>
-        </div>
+        {/* Quick Badges: Time & Timezone - shown only in horoscope module */}
+        {module === 'horoscope' && (
+          <div className="flex items-center gap-2 self-start md:self-auto">
+            <span className="text-[11px] font-mono font-bold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-stone-800 px-2.5 py-1 rounded-lg border border-amber-900/10">
+              🕒 {clientData.timeState?.hour || '12'}:{clientData.timeState?.minute || '00'}:{clientData.timeState?.second || '00'} {clientData.timeState?.period || 'AM'}
+            </span>
+            <span className="text-[11px] font-mono font-bold text-indigo-800 dark:text-indigo-300 bg-indigo-50 dark:bg-stone-800 px-2.5 py-1 rounded-lg border border-indigo-900/10">
+              🌐 {clientData.utcOffset || '05:30 UTC'}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Action feedback banner */}
@@ -487,8 +505,9 @@ export default function BirthDetailsIntakeCard({
         </div>
       )}
 
-      {/* Main Intake Form */}
-      <form onSubmit={handleCalculateClick} className="space-y-3 pt-1">
+      {/* Main Intake Form - ONLY rendered for horoscope module */}
+      {module === 'horoscope' && (
+        <form onSubmit={handleCalculateClick} className="space-y-3 pt-1">
         {/* ROW 1: Name, DOB, 12-Hour AM/PM Time */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* Full Name */}
@@ -799,6 +818,7 @@ export default function BirthDetailsIntakeCard({
           </div>
         </div>
       </form>
+      )}
 
       {/* Password Modal when Astrologer clicks 'Create Client Account & Share' */}
       {showPasswordModal && (

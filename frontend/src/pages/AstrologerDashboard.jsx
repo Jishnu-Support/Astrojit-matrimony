@@ -982,16 +982,6 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                     : 'Details entered in the intake card above are instantly synchronized across all modules.'}
                 </p>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowSearchKundli(!showSearchKundli)}
-                  className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-3 py-1.5 rounded-xl text-xs border border-indigo-200 transition-all flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-                  <span>{showSearchKundli ? (lang === 'ta' ? 'ஜாதகத்தை மறை' : 'Hide Full Kundli') : (lang === 'ta' ? 'முழு ஜாதகம் காண்க' : 'View Full Kundli')}</span>
-                </button>
-              </div>
             </div>
 
             {/* Profile Grid */}
@@ -1043,16 +1033,6 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                 </span>
               </div>
             </div>
-
-            {/* Expandable Live Kundli Screen View */}
-            {showSearchKundli && (
-              <div className="mt-4 pt-4 border-t border-slate-200">
-                <ThirukanithaHoroscopeView
-                  key={`search-horo-${calcKey}`}
-                  initialData={activeBirthData}
-                />
-              </div>
-            )}
           </div>
 
           {/* Consultation Notes Section */}
