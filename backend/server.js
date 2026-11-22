@@ -629,7 +629,7 @@ app.post('/api/auth/login', (req, res) => {
       ) {
         const isMatch = bcrypt.compareSync(password, company.passwordHash) || isOtpMatch;
         if (!isMatch) {
-          return res.status(401).json({ error: 'Invalid Company password or OTP.' });
+          return res.status(401).json({ error: 'Invalid username and password.' });
         }
 
         const token = generateToken(company, 'company');
@@ -646,7 +646,7 @@ app.post('/api/auth/login', (req, res) => {
           },
         });
       }
-      return res.status(404).json({ error: 'Company Admin credentials not found.' });
+      return res.status(401).json({ error: 'Invalid username and password.' });
     }
 
     if (role === 'client') {
@@ -655,12 +655,12 @@ app.post('/api/auth/login', (req, res) => {
         return c.mobile === cleanMobile || c.username === cleanMobile || (cMob && cMob === cleanMobile);
       });
       if (!client) {
-        return res.status(404).json({ error: 'No client found with this mobile number / username.' });
+        return res.status(401).json({ error: 'Invalid username and password.' });
       }
 
       const isMatch = bcrypt.compareSync(password, client.passwordHash) || isOtpMatch;
       if (!isMatch) {
-        return res.status(401).json({ error: 'Invalid password or OTP.' });
+        return res.status(401).json({ error: 'Invalid username and password.' });
       }
 
       const token = generateToken(client, 'client');
@@ -678,12 +678,12 @@ app.post('/api/auth/login', (req, res) => {
         return a.mobile === cleanMobile || a.username === cleanMobile || (aMob && aMob === cleanMobile);
       });
       if (!astro) {
-        return res.status(404).json({ error: 'No astrologer found with this mobile number / username.' });
+        return res.status(401).json({ error: 'Invalid username and password.' });
       }
 
       const isMatch = bcrypt.compareSync(password, astro.passwordHash) || isOtpMatch;
       if (!isMatch) {
-        return res.status(401).json({ error: 'Invalid password or OTP.' });
+        return res.status(401).json({ error: 'Invalid username and password.' });
       }
 
       const token = generateToken(astro, 'astrologer');
@@ -701,12 +701,12 @@ app.post('/api/auth/login', (req, res) => {
         return v.mobile === cleanMobile || v.username === cleanMobile || (vMob && vMob === cleanMobile);
       });
       if (!vendor) {
-        return res.status(404).json({ error: 'No vendor found with this mobile number / username.' });
+        return res.status(401).json({ error: 'Invalid username and password.' });
       }
 
       const isMatch = bcrypt.compareSync(password, vendor.passwordHash) || isOtpMatch;
       if (!isMatch) {
-        return res.status(401).json({ error: 'Invalid password or OTP.' });
+        return res.status(401).json({ error: 'Invalid username and password.' });
       }
 
       const token = generateToken(vendor, 'vendor');

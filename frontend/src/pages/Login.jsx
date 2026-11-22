@@ -71,7 +71,20 @@ export default function Login({ onSwitchToRegister }) {
     try {
       await login(selectedRole, finalMobile, password);
     } catch (err) {
-      setError(err.message || tr('Login failed. Please check your credentials.', 'உள்நுழைவு தோல்வி. உங்கள் விவரங்களை சரிபார்க்கவும்.'));
+      const rawMsg = (err.message || '').toLowerCase();
+      if (
+        rawMsg.includes('invalid') ||
+        rawMsg.includes('not found') ||
+        rawMsg.includes('password') ||
+        rawMsg.includes('credentials') ||
+        rawMsg.includes('failed') ||
+        rawMsg.includes('401') ||
+        rawMsg.includes('404')
+      ) {
+        setError(tr('Invalid username and password.', 'தவறான பயனர்பெயர் மற்றும் கடவுச்சொல்.'));
+      } else {
+        setError(err.message || tr('Invalid username and password.', 'தவறான பயனர்பெயர் மற்றும் கடவுச்சொல்.'));
+      }
     } finally {
       setIsLoading(false);
     }
