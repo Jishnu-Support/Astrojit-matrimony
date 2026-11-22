@@ -182,11 +182,14 @@ export default function Login({ onSwitchToRegister }) {
   ];
 
   return (
-    <div className="max-w-md mx-auto my-4 sm:my-8 space-y-4 sm:space-y-6">
-      {/* Brand Header */}
+    <div className="max-w-md mx-auto my-4 sm:my-8 space-y-4 sm:space-y-6 relative z-10">
+      {/* Brand Header with 3D Celestial Aura */}
       <div className="text-center space-y-2 flex flex-col items-center">
-        <Logo size="lg" showTagline={false} />
-        <h2 className="text-sm sm:text-base font-bold tracking-tight text-slate-800 dark:text-stone-100">
+        <div className="relative group transition-all duration-300 hover:scale-[1.03]">
+          <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/15 via-yellow-500/20 to-amber-600/15 rounded-full blur-2xl opacity-80 group-hover:opacity-100 transition duration-700 animate-pulse pointer-events-none" />
+          <Logo size="lg" showTagline={false} className="relative z-10 drop-shadow-xl" />
+        </div>
+        <h2 className="text-sm sm:text-base font-bold tracking-tight text-slate-800 dark:text-stone-100 drop-shadow-xs">
           {tr('Vedic Astrology & Spiritual Platform', 'வேத ஜோதிடம் & ஆன்மீக தளம்', 'वैदिक ज्योतिष एवं आध्यात्मिक मंच')}
         </h2>
         <p className="text-xs text-slate-500 dark:text-stone-400">
@@ -198,7 +201,7 @@ export default function Login({ onSwitchToRegister }) {
       {viewMode === 'login' && (
         <>
           {/* Role Selection Tabs */}
-          <div className="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-stone-900 p-1.5 rounded-2xl border border-slate-200 dark:border-stone-800">
+          <div className="grid grid-cols-2 gap-2 bg-slate-100/90 dark:bg-stone-900/90 backdrop-blur-sm p-1.5 rounded-2xl border border-slate-200/80 dark:border-stone-800 shadow-sm">
             {roles.map((r) => {
               const Icon = r.icon;
               const isSelected = selectedRole === r.id;
@@ -211,8 +214,8 @@ export default function Login({ onSwitchToRegister }) {
                   }}
                   className={`flex items-center justify-center gap-2 p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-white dark:bg-stone-800 text-slate-900 dark:text-stone-100 shadow-xs border border-slate-300 dark:border-stone-700'
-                      : 'text-slate-600 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100'
+                      ? 'bg-white dark:bg-stone-800 text-slate-900 dark:text-stone-100 shadow-md border border-slate-300/80 dark:border-stone-700'
+                      : 'text-slate-600 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100 hover:bg-white/60 dark:hover:bg-stone-800/60'
                   }`}
                 >
                   <Icon className={`w-4 h-4 ${isSelected ? r.color : 'text-slate-400'}`} />
@@ -222,8 +225,8 @@ export default function Login({ onSwitchToRegister }) {
             })}
           </div>
 
-          {/* Login Box */}
-          <div className="bg-white dark:bg-[#1A1513] border border-amber-200/80 dark:border-stone-800 rounded-2xl p-5 sm:p-7 shadow-xs relative overflow-hidden">
+          {/* Login Box with Glassmorphism & Depth */}
+          <div className="bg-white/92 dark:bg-[#1A1513]/92 backdrop-blur-md border border-amber-900/15 dark:border-amber-500/25 rounded-2xl p-5 sm:p-7 shadow-2xl relative overflow-hidden transition-all">
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-stone-800">
               <h3 className="text-sm font-bold text-slate-900 dark:text-stone-100 flex items-center gap-1.5">
                 <span>{tr('Sign in as', 'உள்நுழைக:')}</span>
