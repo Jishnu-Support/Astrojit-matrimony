@@ -330,18 +330,44 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
     }
   };
 
+  // Real-time debounced search for astrologer database lookup (from 1st character)
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if (!q) {
+      setSearchResults([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const res = await API.searchClients(q);
+        setSearchResults(res.clients || []);
+      } catch (err) {
+        console.warn('Error searching clients:', err);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 120);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   const handleSearch = async (e) => {
-    if (e) e.preventDefault();
-    if (!searchQuery.trim()) return;
+    if (e && e.preventDefault) e.preventDefault();
+    const q = searchQuery.trim();
+    if (!q) {
+      setSearchResults([]);
+      return;
+    }
 
     setIsSearching(true);
     setSelectedClientMobile(null);
     setClientProfile(null);
     try {
-      const res = await API.searchClients(searchQuery);
+      const res = await API.searchClients(q);
       setSearchResults(res.clients || []);
     } catch (err) {
-      alert('Error searching clients: ' + err.message);
+      console.warn('Error searching clients:', err);
     } finally {
       setIsSearching(false);
     }

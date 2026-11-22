@@ -128,20 +128,57 @@ export default function BirthDetailsIntakeCard({
     return availableCities.filter(c => (c.name || '').toLowerCase().includes(q));
   }, [availableCities, citySearch]);
 
-  // Handle previous client lookup search
-  const handleClientSearch = async (e) => {
-    if (e) e.preventDefault();
+  // Track programmatic selection to prevent reopening dropdown
+  const isSelectingClientRef = useRef(false);
+
+  // Real-time search: runs automatically even from the 1st character typed
+  useEffect(() => {
+    if (isSelectingClientRef.current) {
+      isSelectingClientRef.current = false;
+      return;
+    }
+
     const q = searchQuery.trim();
     if (!q) {
+      setSearchResults([]);
       setShowDropdown(false);
       return;
     }
+
     setIsSearching(true);
+    setShowDropdown(true);
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await API.searchClients(q);
+        const list = Array.isArray(res) ? res : (res?.clients || []);
+        setSearchResults(list);
+      } catch (err) {
+        console.warn('Real-time client search error:', err);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 120);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Handle manual previous client lookup search (Enter or Search button)
+  const handleClientSearch = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const q = searchQuery.trim();
+    if (!q) {
+      setShowDropdown(false);
+      setSearchResults([]);
+      return;
+    }
+    setIsSearching(true);
+    setShowDropdown(true);
     try {
       const res = await API.searchClients(q);
       const list = Array.isArray(res) ? res : (res?.clients || []);
       setSearchResults(list);
-      setShowDropdown(true);
     } catch (err) {
       console.warn('Failed to search clients:', err);
       setSearchResults([]);
@@ -151,6 +188,7 @@ export default function BirthDetailsIntakeCard({
   };
 
   const handleSelectClient = (c) => {
+    isSelectingClientRef.current = true;
     selectClient(c);
     setShowDropdown(false);
     setSearchQuery(`${c.name} (${c.mobile || c.dob || ''})`);
@@ -164,6 +202,7 @@ export default function BirthDetailsIntakeCard({
   };
 
   const handleClearForNewProfile = () => {
+    isSelectingClientRef.current = true;
     clearClientData();
     setSearchQuery('');
     setSearchResults([]);
@@ -434,8 +473,8 @@ export default function BirthDetailsIntakeCard({
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => { if (searchResults.length > 0) setShowDropdown(true); }}
+                onChange={(e) => { isSelectingClientRef.current = false; setSearchQuery(e.target.value); }}
+                onFocus={() => { if (searchQuery.trim().length > 0) setShowDropdown(true); }}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleClientSearch(e); }}
                 placeholder={isTa ? 'மொபைல் எண் அல்லது பெயர் + தேதி உள்ளிடவும்...' : 'Enter Mobile No. OR Name + D.O.B + Place...'}
                 className="w-full pl-9 pr-8 py-2 rounded-xl border border-stone-300 dark:border-stone-700 bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 text-xs focus:ring-2 focus:ring-[#7A1A22] outline-none"
@@ -444,7 +483,7 @@ export default function BirthDetailsIntakeCard({
               {searchQuery && (
                 <button
                   type="button"
-                  onClick={() => { setSearchQuery(''); setSearchResults([]); setShowDropdown(false); }}
+                  onClick={() => { isSelectingClientRef.current = true; setSearchQuery(''); setSearchResults([]); setShowDropdown(false); }}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -463,11 +502,16 @@ export default function BirthDetailsIntakeCard({
           </div>
 
           {/* Search Dropdown Results */}
-          {showDropdown && (
+          {showDropdown && searchQuery.trim().length > 0 && (
             <div className="absolute left-0 right-0 top-full mt-1.5 z-40 bg-white dark:bg-[#1E1815] rounded-2xl border border-amber-900/20 dark:border-amber-500/20 shadow-2xl max-h-60 overflow-y-auto divide-y divide-amber-900/10 dark:divide-amber-500/10">
-              {searchResults.length === 0 ? (
+              {isSearching && searchResults.length === 0 ? (
+                <div className="p-4 text-center text-xs text-stone-500 flex items-center justify-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 animate-spin text-[#7A1A22]" />
+                  <span>{isTa ? 'தேடப்படுகிறது...' : `Searching...`}</span>
+                </div>
+              ) : searchResults.length === 0 ? (
                 <div className="p-4 text-center text-xs text-stone-500">
-                  {isTa ? 'வாடிக்கையாளர் கிடைக்கவில்லை' : 'No clients found matching query'}
+                  {isTa ? `"${searchQuery}" க்கு வாடிக்கையாளர் கிடைக்கவில்லை` : `No clients found matching "${searchQuery}"`}
                 </div>
               ) : (
                 searchResults.map(c => (
@@ -484,12 +528,16 @@ export default function BirthDetailsIntakeCard({
                       </div>
                       <div className="text-[11px] text-stone-500 dark:text-stone-400 flex flex-wrap items-center gap-2 mt-0.5">
                         <span>📱 {c.mobile}</span>
-                        <span>•</span>
-                        <span>📅 {c.dob} ({c.dobTime})</span>
-                        {c.dobPlace && (
+                        {c.dob && (
                           <>
                             <span>•</span>
-                            <span>📍 {c.dobPlace}</span>
+                            <span>📅 {c.dob} {c.dobTime ? `(${c.dobTime})` : ''}</span>
+                          </>
+                        )}
+                        {(c.dobPlace || c.nativePlace || c.city) && (
+                          <>
+                            <span>•</span>
+                            <span>📍 {c.dobPlace || c.nativePlace || c.city}</span>
                           </>
                         )}
                       </div>

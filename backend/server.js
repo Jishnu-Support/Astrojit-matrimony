@@ -1794,16 +1794,18 @@ app.get('/api/astrologer/search-client', authenticate, (req, res) => {
         const n = (c.name || '').toLowerCase();
         const dob = (c.dob || '').toLowerCase();
         const pob = (c.dobPlace || c.pob || c.birthPlace || c.place || c.city || c.nativePlace || '').toLowerCase();
-        const combined = `${n} ${dob} ${pob} ${m}`;
+        const fn = (c.fatherName || '').toLowerCase();
+        const mn = (c.motherName || '').toLowerCase();
+        const combined = `${n} ${fn} ${mn} ${dob} ${pob} ${m}`;
 
         const cleanQueryMobile = clean10DigitMobile(rawQuery);
         const cCleanMobile = clean10DigitMobile(c.mobile || c.username);
-        if (cleanQueryMobile && cleanQueryMobile.length >= 4 && (cCleanMobile.includes(cleanQueryMobile) || m.includes(cleanQueryMobile))) {
+        if (cleanQueryMobile && cleanQueryMobile.length >= 1 && (cCleanMobile.includes(cleanQueryMobile) || m.includes(cleanQueryMobile))) {
           return true;
         }
 
-        // Match if query is contained directly in mobile, name, dob, or place
-        if (m.includes(query) || n.includes(query) || dob.includes(query) || pob.includes(query) || combined.includes(query)) {
+        // Match if query is contained directly in mobile, name, dob, or place (even 1 character)
+        if (m.includes(query) || n.includes(query) || dob.includes(query) || pob.includes(query) || fn.includes(query) || mn.includes(query) || combined.includes(query)) {
           return true;
         }
 
