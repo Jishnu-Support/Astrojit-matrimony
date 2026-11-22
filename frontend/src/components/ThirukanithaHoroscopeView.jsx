@@ -1157,8 +1157,8 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                     <span>⏳</span>
                     <span>
                       {isTamil
-                        ? `நடப்பு திசை: ${horoscope.summary.currentDashaToday.mahadasha?.nameTa || ''} திசை - ${horoscope.summary.currentDashaToday.dashaDaysRemaining || horoscope.summary.currentDashaToday.daysRemaining} நாட்கள் மீதம்`
-                        : `Current Dasha: ${horoscope.summary.currentDashaToday.mahadasha?.nameEn || ''} Dasha - ${horoscope.summary.currentDashaToday.dashaDaysRemaining || horoscope.summary.currentDashaToday.daysRemaining} days left`}
+                        ? `நடப்பு மகாதிசை: ${horoscope.summary.currentDashaToday.mahadasha?.nameTa || ''} திசை (${horoscope.summary.currentDashaToday.dashaDaysRemaining || horoscope.summary.currentDashaToday.daysRemaining} நாட்கள் மீதம்) | நடப்பு புக்தி: ${horoscope.summary.currentDashaToday.bhukti?.nameTa || ''} புக்தி (${horoscope.summary.currentDashaToday.daysRemaining} நாட்கள் மீதம்)`
+                        : `Current Mahadasha: ${horoscope.summary.currentDashaToday.mahadasha?.nameEn || ''} Dasha (${horoscope.summary.currentDashaToday.dashaDaysRemaining || horoscope.summary.currentDashaToday.daysRemaining} days left) | Current Bhukti: ${horoscope.summary.currentDashaToday.bhukti?.nameEn || ''} Bhukti (${horoscope.summary.currentDashaToday.daysRemaining} days left)`}
                     </span>
                   </span>
                 </div>
@@ -1253,8 +1253,8 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                           {(horoscope.summary?.currentDashaToday?.dashaDaysRemaining !== undefined || horoscope.summary?.currentDashaToday?.daysRemaining !== undefined) && (
                             <span className="bg-emerald-800/60 dark:bg-emerald-950/80 px-1.5 py-0.2 rounded text-[9px] font-mono font-medium ml-0.5">
                               {isTamil
-                                ? `நடப்பு திசை: ${horoscope.summary.currentDashaToday.mahadasha?.nameTa || md.lord.nameTa} திசை - ${horoscope.summary.currentDashaToday.dashaDaysRemaining || horoscope.summary.currentDashaToday.daysRemaining} நாட்கள் மீதம்`
-                                : `Current Dasha: ${horoscope.summary.currentDashaToday.mahadasha?.nameEn || md.lord.nameEn} Dasha - ${horoscope.summary.currentDashaToday.dashaDaysRemaining || horoscope.summary.currentDashaToday.daysRemaining} days left`}
+                                ? `நடப்பு மகாதிசை: ${horoscope.summary.currentDashaToday.mahadasha?.nameTa || md.lord.nameTa} மகாதிசை - ${horoscope.summary.currentDashaToday.dashaDaysRemaining || horoscope.summary.currentDashaToday.daysRemaining} நாட்கள் மீதம்`
+                                : `Current Mahadasha: ${horoscope.summary.currentDashaToday.mahadasha?.nameEn || md.lord.nameEn} Mahadasha - ${horoscope.summary.currentDashaToday.dashaDaysRemaining || horoscope.summary.currentDashaToday.daysRemaining} days left`}
                             </span>
                           )}
                         </span>
@@ -1436,8 +1436,8 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
                                       {horoscope.summary?.currentDashaToday?.daysRemaining !== undefined && (
                                         <span className="bg-emerald-800/60 dark:bg-emerald-950/80 px-1 py-0.2 rounded text-[8.5px] font-mono font-medium">
                                           ({isTamil
-                                            ? `நடப்பு திசை: ${horoscope.summary.currentDashaToday.mahadasha?.nameTa || ''} திசை - ${horoscope.summary.currentDashaToday.daysRemaining} நாட்கள் மீதம்`
-                                            : `Current Dasha: ${horoscope.summary.currentDashaToday.mahadasha?.nameEn || ''} Dasha - ${horoscope.summary.currentDashaToday.daysRemaining} days left`})
+                                            ? `நடப்பு புக்தி: ${horoscope.summary.currentDashaToday.bhukti?.nameTa || bh.bhuktiLord?.nameTa || ''} புக்தி - ${horoscope.summary.currentDashaToday.daysRemaining} நாட்கள் மீதம்`
+                                            : `Current Bhukti: ${horoscope.summary.currentDashaToday.bhukti?.nameEn || bh.bhuktiLord?.nameEn || ''} Bhukti - ${horoscope.summary.currentDashaToday.daysRemaining} days left`})
                                         </span>
                                       )}
                                     </span>
