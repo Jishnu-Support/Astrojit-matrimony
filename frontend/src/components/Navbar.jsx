@@ -62,18 +62,18 @@ export default function Navbar({ activeTab, setActiveTab, onOpenMatrimony, onTog
               window.location.hash = '#/matrimony';
             }
           }}
-          className="group flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-rose-500/10 via-pink-500/10 to-amber-500/10 hover:from-rose-500/20 hover:to-amber-500/20 text-rose-950 border border-rose-300/80 hover:border-rose-400 px-1.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full shadow-2xs hover:shadow-xs transition-all duration-300 cursor-pointer shrink-0"
+          className="group flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-rose-500/10 via-pink-500/10 to-amber-500/10 hover:from-rose-500/20 hover:to-amber-500/20 text-rose-950 dark:text-rose-200 border border-rose-300/80 dark:border-rose-700/60 hover:border-rose-400 px-1.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full shadow-2xs hover:shadow-xs transition-all duration-300 cursor-pointer shrink-0"
           title={t('weAlsoHaveMatrimony')}
         >
           <span className="flex h-2 w-2 relative shrink-0">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
           </span>
-          <HeartHandshake className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-600 transition-transform group-hover:scale-110 shrink-0" />
-          <span className="text-[11px] sm:text-xs font-black tracking-tight text-rose-950 whitespace-nowrap hidden sm:inline">
+          <HeartHandshake className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-600 dark:text-rose-400 transition-transform group-hover:scale-110 shrink-0" />
+          <span className="text-[11px] sm:text-xs font-black tracking-tight text-rose-950 dark:text-rose-200 whitespace-nowrap hidden sm:inline">
             {t('weAlsoHaveMatrimony')}
           </span>
-          <span className="text-[11px] font-black tracking-tight text-rose-950 whitespace-nowrap sm:hidden">
+          <span className="text-[11px] font-black tracking-tight text-rose-950 dark:text-rose-200 whitespace-nowrap sm:hidden">
             {lang === 'ta' ? 'மேட்ரிமோனி' : lang === 'kn' ? 'ಮ್ಯಾಟ್ರಿಮೋನಿ' : lang === 'hi' ? 'मैट्रिमोनी' : 'Matrimony'}
           </span>
           <span className="hidden sm:inline-flex bg-gradient-to-r from-rose-600 to-pink-600 text-white text-[9px] font-black uppercase px-1.5 py-0.2 rounded-full tracking-wider shadow-2xs">

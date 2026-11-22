@@ -203,52 +203,52 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
       {/* Brand & Header */}
       <div className="text-center space-y-1.5 flex flex-col items-center">
         <Logo size="md" showTagline={false} />
-        <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-          Create Your <span className="text-amber-600">Astrojit</span> Account
+        <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-stone-100 tracking-tight">
+          Create Your <span className="text-amber-600 dark:text-amber-400">Astrojit</span> Account
         </h2>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-slate-500 dark:text-stone-400">
           Mobile Number is your Username (verified via OTP for security)
         </p>
       </div>
 
       {/* Role Picker */}
-      <div className="grid grid-cols-3 gap-1.5 sm:gap-2 bg-slate-100 p-1 rounded-2xl border border-slate-200">
+      <div className="grid grid-cols-3 gap-1.5 sm:gap-2 bg-slate-100 dark:bg-stone-900 p-1 rounded-2xl border border-slate-200 dark:border-stone-800">
         <button
           onClick={() => handleRoleChange('client')}
           className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             selectedRole === 'client'
-              ? 'bg-white text-slate-950 shadow-xs border border-slate-300'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-white dark:bg-stone-800 text-slate-950 dark:text-stone-100 shadow-xs border border-slate-300 dark:border-stone-700'
+              : 'text-slate-600 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100'
           }`}
         >
-          <User className="w-3.5 h-3.5 text-amber-600" /> Client
+          <User className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" /> Client
         </button>
 
         <button
           onClick={() => handleRoleChange('astrologer')}
           className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             selectedRole === 'astrologer'
-              ? 'bg-white text-slate-950 shadow-xs border border-slate-300'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-white dark:bg-stone-800 text-slate-950 dark:text-stone-100 shadow-xs border border-slate-300 dark:border-stone-700'
+              : 'text-slate-600 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100'
           }`}
         >
-          <Compass className="w-3.5 h-3.5 text-indigo-600" /> Astrologer
+          <Compass className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" /> Astrologer
         </button>
 
         <button
           onClick={() => handleRoleChange('vendor')}
           className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             selectedRole === 'vendor'
-              ? 'bg-white text-slate-950 shadow-xs border border-slate-300'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-white dark:bg-stone-800 text-slate-950 dark:text-stone-100 shadow-xs border border-slate-300 dark:border-stone-700'
+              : 'text-slate-600 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100'
           }`}
         >
-          <Store className="w-3.5 h-3.5 text-emerald-600" /> Vendor
+          <Store className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> Vendor
         </button>
       </div>
 
       {/* Form Container */}
-      <div className="bg-white border border-amber-200/80 rounded-2xl p-4 sm:p-7 shadow-xs">
+      <div className="bg-white dark:bg-[#1A1513] border border-amber-200/80 dark:border-stone-800 rounded-2xl p-4 sm:p-7 shadow-xs">
         {error && (
           <div className="mb-4 bg-rose-50 border border-rose-200 text-rose-700 text-xs p-3 rounded-xl font-medium flex items-center gap-2">
             <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />

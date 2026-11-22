@@ -154,11 +154,11 @@ export default function Sidebar({
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold transition-all cursor-pointer relative group text-left ${
                       isSelected
                         ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/20'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                        : 'text-slate-600 dark:text-stone-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-stone-800'
                     } ${isCollapsed ? 'justify-center px-2' : ''}`}
                     title={isCollapsed ? mod.label : undefined}
                   >
-                    <Icon className={`w-4 h-4 shrink-0 ${isSelected ? 'text-white' : 'text-slate-500 group-hover:text-amber-600'}`} />
+                    <Icon className={`w-4 h-4 shrink-0 ${isSelected ? 'text-white' : 'text-slate-500 dark:text-stone-400 group-hover:text-amber-600 dark:group-hover:text-amber-400'}`} />
                     
                     {!isCollapsed && (
                       <span className="truncate flex-1">{mod.label}</span>
@@ -170,7 +170,7 @@ export default function Sidebar({
                           ? 'bg-white/20 text-white'
                           : mod.badge === 'NEW'
                           ? 'bg-rose-100 text-rose-700 animate-pulse font-extrabold'
-                          : 'bg-amber-100 text-amber-800'
+                          : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300'
                       }`}>
                         {mod.badge}
                       </span>
@@ -182,25 +182,25 @@ export default function Sidebar({
           </div>
 
           {/* SECTION 2: PROFILE */}
-          <div className="space-y-1 pt-2 border-t border-slate-100">
+          <div className="space-y-1 pt-2 border-t border-slate-100 dark:border-stone-800">
             {!isCollapsed && (
-              <div className="px-2.5 pb-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400">
+              <div className="px-2.5 pb-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-stone-500">
                 <span>{tr('PROFILE', 'சுயவிவரம்')}</span>
               </div>
             )}
 
             <button
               onClick={() => { if (onOpenProfile) onOpenProfile(); if (onCloseMobile) onCloseMobile(); }}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all cursor-pointer group text-left ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-slate-600 dark:text-stone-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-stone-800 transition-all cursor-pointer group text-left ${
                 isCollapsed ? 'justify-center px-2' : ''
               }`}
               title={isCollapsed ? tr('Profile & Kundli', 'சுயவிவரம்') : undefined}
             >
-              <User className="w-4 h-4 text-slate-500 group-hover:text-amber-600 shrink-0" />
+              <User className="w-4 h-4 text-slate-500 dark:text-stone-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 shrink-0" />
               {!isCollapsed && (
                 <div className="truncate flex-1">
                   <span className="truncate block">{tr('Profile & Kundli', 'சுயவிவரம் & ஜாதகம்')}</span>
-                  <span className="text-[10px] text-slate-400 font-normal truncate block">
+                  <span className="text-[10px] text-slate-400 dark:text-stone-500 font-normal truncate block">
                     {tr('View coordinates & bio', 'ஜாதகக் குறிப்புகள்')}
                   </span>
                 </div>
@@ -275,10 +275,10 @@ export default function Sidebar({
 
             {!isCollapsed && (
               <div className="truncate flex-1">
-                <span className="font-bold text-slate-900 text-xs block truncate">
+                <span className="font-bold text-slate-900 dark:text-stone-100 text-xs block truncate">
                   {displayName}
                 </span>
-                <span className="text-[10px] text-slate-500 font-mono block truncate">
+                <span className="text-[10px] text-slate-500 dark:text-stone-400 font-mono block truncate">
                   {user?.mobile || user?.role}
                 </span>
               </div>
@@ -287,7 +287,7 @@ export default function Sidebar({
             {/* Logout Action */}
             <button
               onClick={logout}
-              className={`p-2 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer shrink-0 ${
+              className={`p-2 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer shrink-0 ${
                 isCollapsed ? 'hidden' : ''
               }`}
               title={t('logout')}

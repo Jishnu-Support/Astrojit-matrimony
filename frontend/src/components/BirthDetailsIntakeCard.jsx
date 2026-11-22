@@ -578,8 +578,8 @@ export default function BirthDetailsIntakeCard({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* Full Name */}
           <div>
-            <label className="block font-bold mb-1 opacity-90">
-              <User className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22]" />
+            <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
+              <User className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
               {isTa ? 'பெயர் (Full Name)' : 'Full Name'}
             </label>
             <input
@@ -588,14 +588,14 @@ export default function BirthDetailsIntakeCard({
               onChange={e => updateField('name', e.target.value)}
               placeholder={isTa ? 'முழு பெயரை உள்ளிடவும்' : 'Enter Full Name'}
               required
-              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-[#7A1A22]"
+              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-[#7A1A22] dark:focus:border-amber-500"
             />
           </div>
 
           {/* Date of Birth */}
           <div>
-            <label className="block font-bold mb-1 opacity-90">
-              <Calendar className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22]" />
+            <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
+              <Calendar className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
               {isTa ? 'பிறந்த தேதி (Date of Birth)' : 'Date of Birth'}
             </label>
             <input
@@ -603,21 +603,21 @@ export default function BirthDetailsIntakeCard({
               value={clientData.dob}
               onChange={e => updateField('dob', e.target.value)}
               required
-              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-[#7A1A22]"
+              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-[#7A1A22] dark:focus:border-amber-500"
             />
           </div>
 
           {/* 12-Hour AM/PM Time (Hours, Mins, Secs, Period) */}
           <div>
-            <label className="block font-bold mb-1 opacity-90">
-              <Clock className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22]" />
+            <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
+              <Clock className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
               {isTa ? 'பிறந்த நேரம் (12-Hour AM/PM)' : 'Birth Time (12-Hour AM/PM)'}
             </label>
             <div className="flex items-center gap-1">
               <select
                 value={clientData.timeState?.hour || '12'}
                 onChange={e => updateField('timeState', { ...clientData.timeState, hour: e.target.value })}
-                className="bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-lg px-2 py-2 text-xs font-mono font-bold focus:outline-none"
+                className="bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-lg px-2 py-2 text-xs font-mono font-bold focus:outline-none"
               >
                 {HOURS_12.map(h => <option key={h} value={h}>{h}</option>)}
               </select>
@@ -625,7 +625,7 @@ export default function BirthDetailsIntakeCard({
               <select
                 value={clientData.timeState?.minute || '00'}
                 onChange={e => updateField('timeState', { ...clientData.timeState, minute: e.target.value })}
-                className="bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-lg px-2 py-2 text-xs font-mono font-bold focus:outline-none"
+                className="bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-lg px-2 py-2 text-xs font-mono font-bold focus:outline-none"
               >
                 {MINUTES_60.map(m => <option key={m} value={m}>{m}</option>)}
               </select>
@@ -633,7 +633,7 @@ export default function BirthDetailsIntakeCard({
               <select
                 value={clientData.timeState?.second || '00'}
                 onChange={e => updateField('timeState', { ...clientData.timeState, second: e.target.value })}
-                className="bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-lg px-2 py-2 text-xs font-mono font-bold focus:outline-none"
+                className="bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-lg px-2 py-2 text-xs font-mono font-bold focus:outline-none"
               >
                 {SECONDS_60.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
@@ -660,14 +660,14 @@ export default function BirthDetailsIntakeCard({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* Country */}
           <div>
-            <label className="block font-bold mb-1 opacity-90">
-              <Globe className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22]" />
+            <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
+              <Globe className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
               {isTa ? 'நாடு (Country)' : 'Country'}
             </label>
             <select
               value={currentCountry}
               onChange={e => handleCountryChange(e.target.value)}
-              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
+              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
             >
               <option value="">{isTa ? '-- நாடு தேர்ந்தெடுக்கவும் --' : '-- Select Country --'}</option>
               {COUNTRIES.map(c => {
@@ -684,14 +684,14 @@ export default function BirthDetailsIntakeCard({
 
           {/* State */}
           <div>
-            <label className="block font-bold mb-1 opacity-90">
-              <Building className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22]" />
+            <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
+              <Building className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
               {isTa ? 'மாநிலம் (State)' : 'State'}
             </label>
             <select
               value={currentState}
               onChange={e => handleStateChange(e.target.value)}
-              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
+              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
             >
               <option value="">{isTa ? '-- மாநிலம் தேர்ந்தெடுக்கவும் --' : '-- Select State --'}</option>
               {availableStates.map(s => {
@@ -707,8 +707,8 @@ export default function BirthDetailsIntakeCard({
 
           {/* City / Place */}
           <div>
-            <label className="block font-bold mb-1 opacity-90">
-              <MapPin className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22]" />
+            <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
+              <MapPin className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
               {isTa ? 'பிறந்த இடம் (City / Place)' : 'City / Place'}
             </label>
             <div className="relative">
@@ -720,7 +720,7 @@ export default function BirthDetailsIntakeCard({
                   updateField('city', e.target.value);
                 }}
                 placeholder={isTa ? 'ஊரைத் தேடுக...' : 'Search place...'}
-                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
+                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
               />
               {citySearch && filteredCities.length > 0 && (
                 <div className="absolute left-0 right-0 top-full mt-1 z-30 bg-white dark:bg-[#1E1815] rounded-xl border border-stone-300 dark:border-stone-700 max-h-48 overflow-y-auto shadow-xl">
@@ -747,7 +747,7 @@ export default function BirthDetailsIntakeCard({
         {/* ROW 3: Latitude, Longitude, UTC Offset */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label className="block font-bold mb-1 opacity-90">
+            <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
               {isTa ? 'அட்சரேகை (Latitude °N)' : 'Latitude (°N)'}
             </label>
             <input
@@ -755,12 +755,12 @@ export default function BirthDetailsIntakeCard({
               value={clientData.lat !== undefined && clientData.lat !== null ? clientData.lat : ''}
               onChange={e => updateField('lat', e.target.value)}
               placeholder="11.6643"
-              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-mono font-bold focus:outline-none placeholder:text-stone-400 placeholder:font-normal"
+              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-mono font-bold focus:outline-none placeholder:text-stone-400 placeholder:font-normal"
             />
           </div>
 
           <div>
-            <label className="block font-bold mb-1 opacity-90">
+            <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
               {isTa ? 'தீர்க்கரேகை (Longitude °E)' : 'Longitude (°E)'}
             </label>
             <input
@@ -768,12 +768,12 @@ export default function BirthDetailsIntakeCard({
               value={clientData.lon !== undefined && clientData.lon !== null ? clientData.lon : ''}
               onChange={e => updateField('lon', e.target.value)}
               placeholder="78.1460"
-              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-mono font-bold focus:outline-none placeholder:text-stone-400 placeholder:font-normal"
+              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-mono font-bold focus:outline-none placeholder:text-stone-400 placeholder:font-normal"
             />
           </div>
 
           <div>
-            <label className="block font-bold mb-1 opacity-90">
+            <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
               {isTa ? 'நேர மண்டலம் (UTC Offset)' : 'UTC Offset (Timezone)'}
             </label>
             <input
@@ -781,7 +781,7 @@ export default function BirthDetailsIntakeCard({
               value={clientData.utcOffset || ''}
               onChange={e => updateField('utcOffset', e.target.value)}
               placeholder="05:30 UTC"
-              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-mono font-bold focus:outline-none placeholder:text-stone-400 placeholder:font-normal"
+              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-mono font-bold focus:outline-none placeholder:text-stone-400 placeholder:font-normal"
             />
           </div>
         </div>
@@ -789,8 +789,8 @@ export default function BirthDetailsIntakeCard({
         {/* ROW 4: Father, Mother, Native Place, Mobile No. */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
           <div>
-            <label className="block font-bold mb-1 opacity-90">
-              <User className="w-3.5 h-3.5 inline mr-1 text-purple-700" />
+            <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
+              <User className="w-3.5 h-3.5 inline mr-1 text-purple-700 dark:text-purple-400" />
               {isTa ? 'தந்தை பெயர் (Father)' : "Father's Name"}
             </label>
             <input
@@ -798,13 +798,13 @@ export default function BirthDetailsIntakeCard({
               value={clientData.father}
               onChange={e => updateField('father', e.target.value)}
               placeholder={isTa ? 'தந்தை பெயர்' : "Enter Father's Name"}
-              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
+              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block font-bold mb-1 opacity-90">
-              <User className="w-3.5 h-3.5 inline mr-1 text-rose-600" />
+            <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
+              <User className="w-3.5 h-3.5 inline mr-1 text-rose-600 dark:text-rose-400" />
               {isTa ? 'தாய் பெயர் (Mother)' : "Mother's Name"}
             </label>
             <input
@@ -812,13 +812,13 @@ export default function BirthDetailsIntakeCard({
               value={clientData.mother}
               onChange={e => updateField('mother', e.target.value)}
               placeholder={isTa ? 'தாய் பெயர்' : "Enter Mother's Name"}
-              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
+              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block font-bold mb-1 opacity-90">
-              <MapPin className="w-3.5 h-3.5 inline mr-1 text-emerald-700" />
+            <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
+              <MapPin className="w-3.5 h-3.5 inline mr-1 text-emerald-700 dark:text-emerald-400" />
               {isTa ? 'சொந்த ஊர் (Native Place)' : 'Native Place / Town'}
             </label>
             <input
@@ -826,13 +826,13 @@ export default function BirthDetailsIntakeCard({
               value={clientData.nativePlace}
               onChange={e => updateField('nativePlace', e.target.value)}
               placeholder={isTa ? 'சொந்த ஊர்' : 'Native Place / Town'}
-              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
+              className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block font-bold mb-1 opacity-90">
-              <Phone className="w-3.5 h-3.5 inline mr-1 text-blue-700" />
+            <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
+              <Phone className="w-3.5 h-3.5 inline mr-1 text-blue-700 dark:text-blue-400" />
               {isTa ? 'வாடிக்கையாளர் மொபைல்' : 'Client Mobile No.'}
             </label>
             <div className="flex items-center">
@@ -845,7 +845,7 @@ export default function BirthDetailsIntakeCard({
                 value={clean10DigitMobile(clientData.mobile)}
                 onChange={e => updateField('mobile', clean10DigitMobile(e.target.value))}
                 placeholder="----------"
-                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] border border-stone-300 dark:border-stone-700 rounded-r-xl px-3 py-2 text-xs font-mono font-bold focus:outline-none"
+                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-r-xl px-3 py-2 text-xs font-mono font-bold focus:outline-none"
               />
             </div>
           </div>

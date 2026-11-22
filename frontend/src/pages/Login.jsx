@@ -186,10 +186,10 @@ export default function Login({ onSwitchToRegister }) {
       {/* Brand Header */}
       <div className="text-center space-y-2 flex flex-col items-center">
         <Logo size="lg" showTagline={false} />
-        <h2 className="text-sm sm:text-base font-bold tracking-tight text-slate-800">
+        <h2 className="text-sm sm:text-base font-bold tracking-tight text-slate-800 dark:text-stone-100">
           {tr('Vedic Astrology & Spiritual Platform', 'வேத ஜோதிடம் & ஆன்மீக தளம்', 'वैदिक ज्योतिष एवं आध्यात्मिक मंच')}
         </h2>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-slate-500 dark:text-stone-400">
           {tr('Integrated Portal for Clients, Astrologers, Vendors & JIT Admin', 'வாடிக்கையாளர்கள், ஜோதிடர்கள் & வணிகர்களுக்கான ஒருங்கிணைந்த போர்ட்டல்')}
         </p>
       </div>
@@ -198,7 +198,7 @@ export default function Login({ onSwitchToRegister }) {
       {viewMode === 'login' && (
         <>
           {/* Role Selection Tabs */}
-          <div className="grid grid-cols-2 gap-2 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+          <div className="grid grid-cols-2 gap-2 bg-slate-100 dark:bg-stone-900 p-1.5 rounded-2xl border border-slate-200 dark:border-stone-800">
             {roles.map((r) => {
               const Icon = r.icon;
               const isSelected = selectedRole === r.id;
@@ -211,8 +211,8 @@ export default function Login({ onSwitchToRegister }) {
                   }}
                   className={`flex items-center justify-center gap-2 p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-white text-slate-900 shadow-xs border border-slate-300'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-white dark:bg-stone-800 text-slate-900 dark:text-stone-100 shadow-xs border border-slate-300 dark:border-stone-700'
+                      : 'text-slate-600 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100'
                   }`}
                 >
                   <Icon className={`w-4 h-4 ${isSelected ? r.color : 'text-slate-400'}`} />
@@ -223,13 +223,13 @@ export default function Login({ onSwitchToRegister }) {
           </div>
 
           {/* Login Box */}
-          <div className="bg-white border border-amber-200/80 rounded-2xl p-5 sm:p-7 shadow-xs relative overflow-hidden">
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+          <div className="bg-white dark:bg-[#1A1513] border border-amber-200/80 dark:border-stone-800 rounded-2xl p-5 sm:p-7 shadow-xs relative overflow-hidden">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-stone-800">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-stone-100 flex items-center gap-1.5">
                 <span>{tr('Sign in as', 'உள்நுழைக:')}</span>
-                <span className="text-amber-700 capitalize font-extrabold">{selectedRole}</span>
+                <span className="text-amber-700 dark:text-amber-400 capitalize font-extrabold">{selectedRole}</span>
               </h3>
-              <span className="text-[11px] text-slate-500 font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+              <span className="text-[11px] text-slate-500 dark:text-amber-300 font-bold bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-900/40">
                 {selectedRole === 'company'
                   ? tr('Username = jit_admin', 'பயனர்பெயர் = jit_admin')
                   : tr('Username = Mobile Number', 'பயனர்பெயர் = மொபைல் எண்')}
@@ -254,15 +254,15 @@ export default function Login({ onSwitchToRegister }) {
             )}
 
             {error && (
-              <div className="mb-4 bg-rose-50 border border-rose-200 text-rose-700 text-xs p-3 rounded-xl font-medium flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+              <div className="mb-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs p-3 rounded-xl font-medium flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
                 <span>{error}</span>
               </div>
             )}
 
             <form onSubmit={handleLoginSubmit} className="space-y-3.5 text-xs">
               <div>
-                <label className="text-slate-700 font-bold block mb-1">
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">
                   {selectedRole === 'company'
                     ? tr('Username (jit_admin) *', 'பயனர்பெயர் (jit_admin) *')
                     : tr('Mobile Number (Username) *', 'மொபைல் எண் (பயனர்பெயர்) *')}
@@ -276,12 +276,12 @@ export default function Login({ onSwitchToRegister }) {
                       value={mobile}
                       onChange={(e) => setMobile(e.target.value)}
                       placeholder="jit_admin"
-                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
+                      className="w-full bg-slate-50 dark:bg-stone-900 border border-slate-300 dark:border-stone-700 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 dark:text-stone-100 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
                     />
                   </div>
                 ) : (
-                  <div className="flex rounded-xl overflow-hidden border border-slate-300 focus-within:ring-2 focus-within:ring-amber-500 focus-within:border-amber-500 bg-slate-50 transition-all">
-                    <span className="inline-flex items-center px-3 bg-amber-500/10 text-amber-900 font-bold border-r border-slate-300 select-none text-xs tracking-wider">
+                  <div className="flex rounded-xl overflow-hidden border border-slate-300 dark:border-stone-700 focus-within:ring-2 focus-within:ring-amber-500 focus-within:border-amber-500 bg-slate-50 dark:bg-stone-900 transition-all">
+                    <span className="inline-flex items-center px-3 bg-amber-500/10 text-amber-900 dark:text-amber-300 font-bold border-r border-slate-300 dark:border-stone-700 select-none text-xs tracking-wider">
                       +91
                     </span>
                     <input
@@ -295,7 +295,7 @@ export default function Login({ onSwitchToRegister }) {
                         setMobile(clean10DigitMobile(e.clipboardData.getData('text')));
                       }}
                       placeholder="----------"
-                      className="w-full bg-transparent px-3 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden font-mono text-sm tracking-wider font-bold"
+                      className="w-full bg-transparent px-3 py-2.5 text-slate-900 dark:text-stone-100 placeholder-slate-400 focus:outline-hidden font-mono text-sm tracking-wider font-bold"
                     />
                   </div>
                 )}
@@ -303,16 +303,16 @@ export default function Login({ onSwitchToRegister }) {
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-slate-700 font-bold">
+                  <label className="text-slate-700 dark:text-stone-300 font-bold">
                     {tr('Password *', 'கடவுச்சொல் *')}
                   </label>
                   {/* FORGOT PASSWORD LINK */}
                   <button
                     type="button"
                     onClick={handleOpenForgot}
-                    className="text-[11px] font-bold text-amber-700 hover:text-amber-900 hover:underline inline-flex items-center gap-1 cursor-pointer transition-colors"
+                    className="text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-300 hover:underline inline-flex items-center gap-1 cursor-pointer transition-colors"
                   >
-                    <KeyRound className="w-3 h-3 text-amber-600" />
+                    <KeyRound className="w-3 h-3 text-amber-600 dark:text-amber-400" />
                     <span>{tr('Forgot Password?', 'கடவுச்சொல் மறந்துவிட்டதா?', 'पासवर्ड भूल गए?')}</span>
                   </button>
                 </div>
@@ -325,12 +325,12 @@ export default function Login({ onSwitchToRegister }) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={tr('Enter password', 'கடவுச்சொல்லை உள்ளிடவும்')}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-10 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
+                    className="w-full bg-slate-50 dark:bg-stone-900 border border-slate-300 dark:border-stone-700 rounded-xl pl-9 pr-10 py-2.5 text-slate-900 dark:text-stone-100 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 dark:hover:text-stone-200 cursor-pointer"
                     title={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -349,12 +349,12 @@ export default function Login({ onSwitchToRegister }) {
             </form>
 
             {selectedRole !== 'company' && (
-              <div className="mt-5 pt-4 border-t border-slate-100 text-center text-xs text-slate-500">
+              <div className="mt-5 pt-4 border-t border-slate-100 dark:border-stone-800 text-center text-xs text-slate-500 dark:text-stone-400">
                 {tr("Don't have an account yet?", 'இன்னும் கணக்கு இல்லையா?')}{' '}
                 <button
                   type="button"
                   onClick={() => onSwitchToRegister(selectedRole)}
-                  className="text-amber-700 hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5"
+                  className="text-amber-700 dark:text-amber-400 hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5"
                 >
                   <span>{tr('Register as', 'பதிவு செய்க:')} {selectedRole}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
