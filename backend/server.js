@@ -1259,7 +1259,9 @@ app.delete('/api/client/profiles/:id', authenticate, (req, res) => {
 app.post('/api/astrologer/register-client', authenticate, (req, res) => {
   try {
     const db = readDb();
-    const astro = db.astrologers.find((a) => a.mobile === req.user.mobile || a.id === req.user.id) || db.astrologers[0];
+    const astro = (db.astrologers || []).find((a) => a.mobile === req.user.mobile || a.id === req.user.id)
+      || (db.astrologers && db.astrologers.length > 0 ? db.astrologers[0] : null)
+      || { id: 'admin-jit', name: 'Astrojit Headquarters', mobile: req.user.mobile || 'jit_admin', referralCode: 'JIT' };
 
     const {
       name,
@@ -1468,7 +1470,9 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
 app.get('/api/astrologer/client-receipt/:clientId', authenticate, (req, res) => {
   try {
     const db = readDb();
-    const astro = db.astrologers.find((a) => a.mobile === req.user.mobile || a.id === req.user.id) || db.astrologers[0];
+    const astro = (db.astrologers || []).find((a) => a.mobile === req.user.mobile || a.id === req.user.id)
+      || (db.astrologers && db.astrologers.length > 0 ? db.astrologers[0] : null)
+      || { id: 'admin-jit', name: 'Astrojit Headquarters', mobile: req.user.mobile || 'jit_admin', referralCode: 'JIT' };
     const client = db.clients.find((c) => c.id === req.params.clientId || c.mobile === req.params.clientId || c.clientCode === req.params.clientId);
 
     if (!client) {

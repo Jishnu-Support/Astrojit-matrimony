@@ -370,7 +370,8 @@ export default function BirthDetailsIntakeCard({
         utcOffset: clientData.utcOffset
       };
 
-      const res = await API.registerClientFromAstrologer(payload);
+      const registerFn = API.registerClientFromAstrologer || API.registerClientByAstrologer;
+      const res = await registerFn(payload);
 
       setReceiptModalData({
         client: res.client,

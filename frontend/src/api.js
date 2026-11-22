@@ -68,6 +68,7 @@ export const API = {
   saveClientProfile: (data) => apiRequest('/client/profiles', 'POST', data),
   deleteClientProfile: (id) => apiRequest(`/client/profiles/${id}`, 'DELETE'),
   registerClientByAstrologer: (data) => apiRequest('/astrologer/register-client', 'POST', data),
+  registerClientFromAstrologer: (data) => apiRequest('/astrologer/register-client', 'POST', data),
   getClientReceipt: (clientId) => apiRequest(`/astrologer/client-receipt/${clientId}`, 'GET'),
 
   // 1-A: Matchmaking & Astrologer Review Workflow
