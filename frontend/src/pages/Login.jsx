@@ -182,17 +182,17 @@ export default function Login({ onSwitchToRegister }) {
   ];
 
   return (
-    <div className="max-w-md mx-auto my-4 sm:my-8 space-y-4 sm:space-y-6 relative z-10">
+    <div className="max-w-md w-full mx-auto my-auto space-y-2 sm:space-y-3 relative z-10">
       {/* Brand Header with 3D Celestial Aura */}
-      <div className="text-center space-y-2 flex flex-col items-center">
-        <div className="relative group transition-all duration-300 hover:scale-[1.03]">
-          <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/15 via-yellow-500/20 to-amber-600/15 rounded-full blur-2xl opacity-80 group-hover:opacity-100 transition duration-700 animate-pulse pointer-events-none" />
-          <Logo size="lg" showTagline={false} className="relative z-10 drop-shadow-xl" />
+      <div className="text-center space-y-1 flex flex-col items-center">
+        <div className="relative group transition-all duration-300 hover:scale-[1.02]">
+          <div className="absolute -inset-3 bg-gradient-to-r from-amber-500/15 via-yellow-500/20 to-amber-600/15 rounded-full blur-xl opacity-80 group-hover:opacity-100 transition duration-700 pointer-events-none" />
+          <Logo size="sm" showTagline={false} className="relative z-10 drop-shadow-md" />
         </div>
-        <h2 className="text-sm sm:text-base font-bold tracking-tight text-slate-800 dark:text-stone-100 drop-shadow-xs">
+        <h2 className="text-xs sm:text-sm font-bold tracking-tight text-slate-800 dark:text-stone-100 drop-shadow-xs">
           {tr('Vedic Astrology & Spiritual Platform', 'வேத ஜோதிடம் & ஆன்மீக தளம்', 'वैदिक ज्योतिष एवं आध्यात्मिक मंच')}
         </h2>
-        <p className="text-xs text-slate-500 dark:text-stone-400">
+        <p className="text-[11px] text-slate-500 dark:text-stone-400">
           {tr('Integrated Portal for Clients, Astrologers, Vendors & JIT Admin', 'வாடிக்கையாளர்கள், ஜோதிடர்கள் & வணிகர்களுக்கான ஒருங்கிணைந்த போர்ட்டல்')}
         </p>
       </div>
@@ -201,7 +201,7 @@ export default function Login({ onSwitchToRegister }) {
       {viewMode === 'login' && (
         <>
           {/* Role Selection Tabs */}
-          <div className="grid grid-cols-2 gap-2 bg-slate-100/90 dark:bg-stone-900/90 backdrop-blur-sm p-1.5 rounded-2xl border border-slate-200/80 dark:border-stone-800 shadow-sm">
+          <div className="grid grid-cols-2 gap-1.5 bg-slate-100/90 dark:bg-stone-900/90 backdrop-blur-sm p-1 rounded-xl border border-slate-200/80 dark:border-stone-800 shadow-xs">
             {roles.map((r) => {
               const Icon = r.icon;
               const isSelected = selectedRole === r.id;
@@ -212,13 +212,13 @@ export default function Login({ onSwitchToRegister }) {
                     setSelectedRole(r.id);
                     setError('');
                   }}
-                  className={`flex items-center justify-center gap-2 p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  className={`flex items-center justify-center gap-1.5 p-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-white dark:bg-stone-800 text-slate-900 dark:text-stone-100 shadow-md border border-slate-300/80 dark:border-stone-700'
+                      ? 'bg-white dark:bg-stone-800 text-slate-900 dark:text-stone-100 shadow-xs border border-slate-300/80 dark:border-stone-700'
                       : 'text-slate-600 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100 hover:bg-white/60 dark:hover:bg-stone-800/60'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isSelected ? r.color : 'text-slate-400'}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isSelected ? r.color : 'text-slate-400'}`} />
                   <span className="truncate">{r.label}</span>
                 </button>
               );
@@ -226,13 +226,13 @@ export default function Login({ onSwitchToRegister }) {
           </div>
 
           {/* Login Box with Glassmorphism & Depth */}
-          <div className="bg-white/92 dark:bg-[#1A1513]/92 backdrop-blur-md border border-amber-900/15 dark:border-amber-500/25 rounded-2xl p-5 sm:p-7 shadow-2xl relative overflow-hidden transition-all">
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-stone-800">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-stone-100 flex items-center gap-1.5">
+          <div className="bg-white/92 dark:bg-[#1A1513]/92 backdrop-blur-md border border-amber-900/15 dark:border-amber-500/25 rounded-2xl p-4 sm:p-5 shadow-xl relative overflow-hidden transition-all">
+            <div className="flex items-center justify-between mb-3 pb-2.5 border-b border-slate-100 dark:border-stone-800">
+              <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-stone-100 flex items-center gap-1.5">
                 <span>{tr('Sign in as', 'உள்நுழைக:')}</span>
                 <span className="text-amber-700 dark:text-amber-400 capitalize font-extrabold">{selectedRole}</span>
               </h3>
-              <span className="text-[11px] text-slate-500 dark:text-amber-300 font-bold bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-900/40">
+              <span className="text-[10px] text-slate-500 dark:text-amber-300 font-bold bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-900/40">
                 {selectedRole === 'company'
                   ? tr('Username = jit_admin', 'பயனர்பெயர் = jit_admin')
                   : tr('Username = Mobile Number', 'பயனர்பெயர் = மொபைல் எண்')}
@@ -240,15 +240,15 @@ export default function Login({ onSwitchToRegister }) {
             </div>
 
             {sessionExpiredNotice && (
-              <div className="mb-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700 text-amber-900 dark:text-amber-200 text-xs p-3.5 rounded-xl font-medium flex items-center justify-between gap-2 shadow-2xs">
-                <div className="flex items-center gap-2.5">
-                  <Clock className="w-4 h-4 text-amber-700 dark:text-amber-400 shrink-0" />
-                  <span>{sessionExpiredNotice}</span>
+              <div className="mb-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700 text-amber-900 dark:text-amber-200 text-xs p-2.5 rounded-xl font-medium flex items-center justify-between gap-2 shadow-2xs">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400 shrink-0" />
+                  <span className="text-[11px]">{sessionExpiredNotice}</span>
                 </div>
                 <button
                   type="button"
                   onClick={clearSessionExpiredNotice}
-                  className="text-amber-700 dark:text-amber-400 hover:text-amber-950 dark:hover:text-amber-100 font-bold p-1 rounded-md transition-colors cursor-pointer shrink-0"
+                  className="text-amber-700 dark:text-amber-400 hover:text-amber-950 dark:hover:text-amber-100 font-bold p-1 rounded-md transition-colors cursor-pointer shrink-0 text-xs"
                   title={tr('Dismiss', 'அகற்று')}
                 >
                   ✕
@@ -257,34 +257,34 @@ export default function Login({ onSwitchToRegister }) {
             )}
 
             {error && (
-              <div className="mb-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs p-3 rounded-xl font-medium flex items-center gap-2">
+              <div className="mb-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs p-2.5 rounded-xl font-medium flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
-                <span>{error}</span>
+                <span className="text-[11px]">{error}</span>
               </div>
             )}
 
-            <form onSubmit={handleLoginSubmit} className="space-y-3.5 text-xs">
+            <form onSubmit={handleLoginSubmit} className="space-y-2.5 text-xs">
               <div>
-                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1 text-[11px]">
                   {selectedRole === 'company'
                     ? tr('Username (jit_admin) *', 'பயனர்பெயர் (jit_admin) *')
                     : tr('Mobile Number (Username) *', 'மொபைல் எண் (பயனர்பெயர்) *')}
                 </label>
                 {selectedRole === 'company' ? (
                   <div className="relative">
-                    <Phone className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <Phone className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
                     <input
                       type="text"
                       required
                       value={mobile}
                       onChange={(e) => setMobile(e.target.value)}
                       placeholder="jit_admin"
-                      className="w-full bg-slate-50 dark:bg-stone-900 border border-slate-300 dark:border-stone-700 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 dark:text-stone-100 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
+                      className="w-full bg-slate-50 dark:bg-stone-900 border border-slate-300 dark:border-stone-700 rounded-xl pl-9 pr-3 py-2 text-slate-900 dark:text-stone-100 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium text-xs"
                     />
                   </div>
                 ) : (
                   <div className="flex rounded-xl overflow-hidden border border-slate-300 dark:border-stone-700 focus-within:ring-2 focus-within:ring-amber-500 focus-within:border-amber-500 bg-slate-50 dark:bg-stone-900 transition-all">
-                    <span className="inline-flex items-center px-3 bg-amber-500/10 text-amber-900 dark:text-amber-300 font-bold border-r border-slate-300 dark:border-stone-700 select-none text-xs tracking-wider">
+                    <span className="inline-flex items-center px-2.5 bg-amber-500/10 text-amber-900 dark:text-amber-300 font-bold border-r border-slate-300 dark:border-stone-700 select-none text-[11px] tracking-wider">
                       +91
                     </span>
                     <input
@@ -298,7 +298,7 @@ export default function Login({ onSwitchToRegister }) {
                         setMobile(clean10DigitMobile(e.clipboardData.getData('text')));
                       }}
                       placeholder="----------"
-                      className="w-full bg-transparent px-3 py-2.5 text-slate-900 dark:text-stone-100 placeholder-slate-400 focus:outline-hidden font-mono text-sm tracking-wider font-bold"
+                      className="w-full bg-transparent px-3 py-2 text-slate-900 dark:text-stone-100 placeholder-slate-400 focus:outline-hidden font-mono text-xs tracking-wider font-bold"
                     />
                   </div>
                 )}
@@ -306,37 +306,37 @@ export default function Login({ onSwitchToRegister }) {
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-slate-700 dark:text-stone-300 font-bold">
+                  <label className="text-slate-700 dark:text-stone-300 font-bold text-[11px]">
                     {tr('Password *', 'கடவுச்சொல் *')}
                   </label>
                   {/* FORGOT PASSWORD LINK */}
                   <button
                     type="button"
                     onClick={handleOpenForgot}
-                    className="text-[11px] font-bold text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-300 hover:underline inline-flex items-center gap-1 cursor-pointer transition-colors"
+                    className="text-[10px] font-bold text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-300 hover:underline inline-flex items-center gap-1 cursor-pointer transition-colors"
                   >
-                    <KeyRound className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+                    <KeyRound className="w-2.5 h-2.5 text-amber-600 dark:text-amber-400" />
                     <span>{tr('Forgot Password?', 'கடவுச்சொல் மறந்துவிட்டதா?', 'पासवर्ड भूल गए?')}</span>
                   </button>
                 </div>
 
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                  <Lock className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={tr('Enter password', 'கடவுச்சொல்லை உள்ளிடவும்')}
-                    className="w-full bg-slate-50 dark:bg-stone-900 border border-slate-300 dark:border-stone-700 rounded-xl pl-9 pr-10 py-2.5 text-slate-900 dark:text-stone-100 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
+                    className="w-full bg-slate-50 dark:bg-stone-900 border border-slate-300 dark:border-stone-700 rounded-xl pl-9 pr-10 py-2 text-slate-900 dark:text-stone-100 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium text-xs"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 dark:hover:text-stone-200 cursor-pointer"
+                    className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-stone-200 cursor-pointer"
                     title={showPassword ? 'Hide password' : 'Show password'}
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                   </button>
                 </div>
               </div>
@@ -344,15 +344,15 @@ export default function Login({ onSwitchToRegister }) {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-black py-2.5 rounded-xl transition-all shadow-md shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer text-sm"
+                className="w-full bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-black py-2.5 rounded-xl transition-all shadow-md shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm mt-1"
               >
-                {isLoading ? <Sparkles className="w-4 h-4 animate-spin" /> : null}
+                {isLoading ? <Sparkles className="w-3.5 h-3.5 animate-spin" /> : null}
                 <span>{tr('Sign In to Astrojit', 'அஸ்ட்ரோஜித்தில் உள்நுழைக')}</span>
               </button>
             </form>
 
             {selectedRole !== 'company' && (
-              <div className="mt-5 pt-4 border-t border-slate-100 dark:border-stone-800 text-center text-xs text-slate-500 dark:text-stone-400">
+              <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-stone-800 text-center text-[11px] text-slate-500 dark:text-stone-400">
                 {tr("Don't have an account yet?", 'இன்னும் கணக்கு இல்லையா?')}{' '}
                 <button
                   type="button"
@@ -360,7 +360,7 @@ export default function Login({ onSwitchToRegister }) {
                   className="text-amber-700 dark:text-amber-400 hover:underline font-bold cursor-pointer inline-flex items-center gap-0.5"
                 >
                   <span>{tr('Register as', 'பதிவு செய்க:')} {selectedRole}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-3 h-3" />
                 </button>
               </div>
             )}

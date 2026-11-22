@@ -80,12 +80,12 @@ function AppContent() {
 
   if (!user || !role) {
     return (
-      <div className="min-h-screen bg-[#FBF8F1] dark:bg-[#0F0D0C] text-slate-800 dark:text-slate-100 relative overflow-hidden flex flex-col justify-between">
+      <div className="min-h-screen lg:h-screen lg:max-h-screen bg-[#FBF8F1] dark:bg-[#0F0D0C] text-slate-800 dark:text-slate-100 relative overflow-x-hidden overflow-y-auto lg:overflow-hidden flex flex-col justify-between">
         {/* 3D Vedic Celestial Astrolabe & Navagraha Background */}
         <CosmicZodiac3DBackground />
 
         <Navbar onOpenMatrimony={openMatrimony} />
-        <main className="max-w-7xl mx-auto px-3 sm:px-6 py-6 sm:py-8 relative z-10 w-full flex-1 flex flex-col justify-center">
+        <main className="max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-3 relative z-10 w-full flex-1 flex flex-col justify-center items-center">
           {authView === 'login' ? (
             <Login
               onSwitchToRegister={(role) => {
