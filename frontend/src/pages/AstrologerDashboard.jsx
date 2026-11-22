@@ -40,19 +40,52 @@ import HoroscopeHub from '../components/HoroscopeHub';
 import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
 import HoroscopePagerView from '../components/HoroscopePagerView';
 import { MATCH_I18N } from '../matchmakingI18n';
+import { useClientBirth } from '../context/ClientBirthContext';
+import BirthDetailsIntakeCard from '../components/BirthDetailsIntakeCard';
 
 export default function AstrologerDashboard({ activeTab: propTab, onTabChange }) {
   const { user, setUser } = useAuth();
   const { lang, t } = useLang();
+  const {
+    clientData,
+    activeBirthData,
+    calculatedHoroscope,
+    selectClient,
+    refreshCalculations,
+    calcKey
+  } = useClientBirth();
+
   const [internalTab, setInternalTab] = useState('appointments');
   const activeTab = propTab || internalTab;
   const setActiveTab = (tab) => {
+    refreshCalculations();
     setInternalTab(tab);
     if (onTabChange) onTabChange(tab);
   };
+
+  // Re-run calculations whenever the active tab changes (e.g. shuffling between pagers/tabs)
+  useEffect(() => {
+    refreshCalculations();
+  }, [activeTab, refreshCalculations]);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [showSearchKundli, setShowSearchKundli] = useState(false);
+
+  // Live Matchmaking with Partner State
+  const [partnerDetails, setPartnerDetails] = useState({
+    name: '',
+    gender: 'female',
+    dob: '',
+    dobTime: '',
+    dobPlace: '',
+    lat: 13.0827,
+    lon: 80.2707
+  });
+  const [activeClientMatchReport, setActiveClientMatchReport] = useState(null);
+  const [calculatingActiveMatch, setCalculatingActiveMatch] = useState(false);
+  const [activeMatchTab, setActiveMatchTab] = useState('tamil');
 
   // Astrologer Profile & 1-Pager Header Form State
   const [profileForm, setProfileForm] = useState({
@@ -319,12 +352,68 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
     setLoadingClient(true);
     try {
       const data = await API.getClientProfileByMobile(mobile);
-      setClientProfile(data.client || data);
+      const cl = data.client || data;
+      setClientProfile(cl);
       setClientNotes(data.consultationHistory || []);
+      // Keep shared ClientBirthContext updated across Horoscope, Search, and Matchmaking
+      selectClient(cl);
+      refreshCalculations();
     } catch (err) {
       alert('Failed to load client details: ' + err.message);
     } finally {
       setLoadingClient(false);
+    }
+  };
+
+  const handleCalculateActiveMatch = async () => {
+    if (!partnerDetails.name?.trim() || !partnerDetails.dob?.trim()) {
+      alert(lang === 'ta' ? 'தயவுசெய்து வரனின் பெயர் மற்றும் பிறந்த தேதியை உள்ளிடவும்.' : 'Please enter Partner Name and Birth Date.');
+      return;
+    }
+    setCalculatingActiveMatch(true);
+    try {
+      const isClientMale = (activeBirthData.gender || 'male').toLowerCase() !== 'female';
+      const boyData = isClientMale
+        ? {
+            name: activeBirthData.name || 'Groom',
+            dob: activeBirthData.dob,
+            dobTime: activeBirthData.dobTime || '10:30',
+            dobPlace: activeBirthData.city || activeBirthData.placeName || 'Salem',
+            lat: activeBirthData.lat || 11.6643,
+            lon: activeBirthData.lon || 78.1460
+          }
+        : {
+            name: partnerDetails.name?.trim() || 'Groom',
+            dob: partnerDetails.dob,
+            dobTime: partnerDetails.dobTime || '12:00',
+            dobPlace: partnerDetails.dobPlace || 'Chennai',
+            lat: partnerDetails.lat || 13.0827,
+            lon: partnerDetails.lon || 80.2707
+          };
+      const girlData = isClientMale
+        ? {
+            name: partnerDetails.name?.trim() || 'Bride',
+            dob: partnerDetails.dob,
+            dobTime: partnerDetails.dobTime || '12:00',
+            dobPlace: partnerDetails.dobPlace || 'Chennai',
+            lat: partnerDetails.lat || 13.0827,
+            lon: partnerDetails.lon || 80.2707
+          }
+        : {
+            name: activeBirthData.name || 'Bride',
+            dob: activeBirthData.dob,
+            dobTime: activeBirthData.dobTime || '10:30',
+            dobPlace: activeBirthData.city || activeBirthData.placeName || 'Salem',
+            lat: activeBirthData.lat || 11.6643,
+            lon: activeBirthData.lon || 78.1460
+          };
+
+      const report = await API.calculateMatch(boyData, girlData);
+      setActiveClientMatchReport(report);
+    } catch (err) {
+      alert((lang === 'ta' ? 'பொருத்தம் கணக்கிட முடியவில்லை: ' : 'Failed to calculate matchmaking: ') + err.message);
+    } finally {
+      setCalculatingActiveMatch(false);
     }
   };
 
@@ -855,18 +944,184 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
         </div>
       )}
 
-      {/* TAB: Unified Horoscope Hub (Intake + Previous Clients Search + Screen View + Print Page) */}
-      {(activeTab === 'horoscope' || activeTab === 'thirukanitha' || activeTab === 'horoscope_pagers' || activeTab === 'pager') && (
+      {/* TAB: Unified Horoscope Hub (Intake + Previous Clients Search + Full Horoscope View) */}
+      {(activeTab === 'horoscope' || activeTab === 'thirukanitha') && (
         <HoroscopeHub
-          initialSubView={activeTab === 'horoscope_pagers' || activeTab === 'pager' ? 'print' : 'screen'}
           hideClientLookup={false}
+        />
+      )}
+
+      {/* 1-Pager Letterhead Preview (Accessed from Profile & 1-Pager Tab) */}
+      {(activeTab === 'horoscope_pagers' || activeTab === 'pager') && (
+        <HoroscopePagerView
+          initialBirthData={activeBirthData}
+          onClose={() => setActiveTab('profile')}
         />
       )}
 
       {/* TAB 1: Search for Client by Mobile Number & View Horoscope */}
       {activeTab === 'search' && (
         <div className="space-y-4 sm:space-y-6">
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-xs">
+          {/* Unified Birth Details Intake Form with Autocomplete Client Lookup */}
+          <BirthDetailsIntakeCard
+            module="search"
+            onCalculate={() => refreshCalculations()}
+          />
+
+          {/* Active Client Details & Kundli Snapshot */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-3 border-b border-slate-100">
+              <div>
+                <h4 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                  <User className="w-4 h-4 text-indigo-600" />
+                  <span>{lang === 'ta' ? 'கிளையண்ட் விபரங்கள் & ஜாதக சுருக்கம்' : 'Active Client Profile & Kundli Snapshot'}</span>
+                </h4>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {lang === 'ta'
+                    ? 'மேலே உள்ள படிவத்தில் மாற்றப்படும் விபரங்கள் உடனடியாக இங்கு புதுப்பிக்கப்படும்.'
+                    : 'Details entered in the intake card above are instantly synchronized across all modules.'}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowSearchKundli(!showSearchKundli)}
+                  className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-3 py-1.5 rounded-xl text-xs border border-indigo-200 transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>{showSearchKundli ? (lang === 'ta' ? 'ஜாதகத்தை மறை' : 'Hide Full Kundli') : (lang === 'ta' ? 'முழு ஜாதகம் காண்க' : 'View Full Kundli')}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Profile Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-slate-500 block text-[10px] uppercase font-bold">Full Name</span>
+                <span className="font-bold text-slate-900 text-sm">{activeBirthData?.name || clientProfile?.name || '—'}</span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-slate-500 block text-[10px] uppercase font-bold">Mobile</span>
+                <span className="font-bold text-slate-900 font-mono">{activeBirthData?.mobile || clientProfile?.mobile || selectedClientMobile || '—'}</span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-slate-500 block text-[10px] uppercase font-bold">Gender</span>
+                <span className="font-bold text-slate-900 capitalize">{activeBirthData?.gender || clientProfile?.gender || 'male'}</span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-slate-500 block text-[10px] uppercase font-bold">Date of Birth & Time</span>
+                <span className="font-bold text-slate-900">{activeBirthData?.dob ? `${activeBirthData.dob} (${activeBirthData.dobTime12 || activeBirthData.dobTime})` : '—'}</span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-slate-500 block text-[10px] uppercase font-bold">Place of Birth</span>
+                <span className="font-bold text-slate-900">{activeBirthData?.placeName || activeBirthData?.city || clientProfile?.dobPlace || '—'}</span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-slate-500 block text-[10px] uppercase font-bold">Nakshatra / Moon Sign</span>
+                <span className="font-bold text-slate-900">
+                  {calculatedHoroscope?.summary?.nakshatra || clientProfile?.nakshatra || '—'} / {calculatedHoroscope?.summary?.moonSign || clientProfile?.rasi || '—'}
+                </span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-slate-500 block text-[10px] uppercase font-bold">Lagna (Ascendant)</span>
+                <span className="font-bold text-indigo-700">
+                  {calculatedHoroscope?.summary?.lagna || '—'}
+                </span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-slate-500 block text-[10px] uppercase font-bold">Current Dasha Balance</span>
+                <span className="font-bold text-amber-800">
+                  {typeof calculatedHoroscope?.summary?.dashaBalance === 'object'
+                    ? (calculatedHoroscope.summary.dashaBalance.textTa || calculatedHoroscope.summary.dashaBalance.textEn || `${calculatedHoroscope.summary.dashaBalance.lord} (${calculatedHoroscope.summary.dashaBalance.years}y)`)
+                    : (calculatedHoroscope?.summary?.dashaBalance || '—')}
+                </span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-slate-500 block text-[10px] uppercase font-bold">Parents</span>
+                <span className="font-bold text-slate-900">
+                  {activeBirthData?.father || '—'} / {activeBirthData?.mother || '—'}
+                </span>
+              </div>
+            </div>
+
+            {/* Expandable Live Kundli Screen View */}
+            {showSearchKundli && (
+              <div className="mt-4 pt-4 border-t border-slate-200">
+                <ThirukanithaHoroscopeView
+                  key={`search-horo-${calcKey}`}
+                  initialData={activeBirthData}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Consultation Notes Section */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4">
+            <h4 className="font-bold text-slate-900 text-sm flex items-center gap-2 border-b border-slate-100 pb-2">
+              <FileText className="w-4 h-4 text-indigo-600" />
+              <span>{lang === 'ta' ? 'ஆலோசனை குறிப்புகள் & பரிகாரங்கள்' : 'Consultation History & Astrologer Notes'}</span>
+              {(activeBirthData?.mobile || selectedClientMobile) && (
+                <span className="text-xs font-mono font-normal text-slate-500">({activeBirthData?.mobile || selectedClientMobile})</span>
+              )}
+            </h4>
+
+            {/* Add note form */}
+            <form onSubmit={handleAddNote} className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
+              <div>
+                <label className="font-bold text-slate-900 block mb-1">Add Consultation Note</label>
+                <textarea
+                  name="notes"
+                  rows={3}
+                  required
+                  placeholder="Record client questions, observations, life events, recommendations..."
+                  className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-indigo-500 leading-relaxed font-medium"
+                />
+              </div>
+              <div>
+                <label className="font-bold text-slate-900 block mb-1">Prescribed Remedies / Pariharam</label>
+                <textarea
+                  name="remediesSuggested"
+                  rows={2}
+                  placeholder="Recommended pujas, mantras, gemstones, temple visits..."
+                  className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-indigo-500 leading-relaxed"
+                />
+              </div>
+              <button
+                type="submit"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <Check className="w-3.5 h-3.5" />
+                <span>Save Consultation Note</span>
+              </button>
+            </form>
+
+            {/* Notes List */}
+            {clientNotes.length === 0 ? (
+              <div className="text-center py-6 text-slate-400 text-xs bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                No previous consultation notes recorded for this client.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {clientNotes.map((note, idx) => (
+                  <div key={idx} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1.5">
+                    <div className="flex justify-between items-center text-slate-500 text-[10px]">
+                      <span>Astrologer: <strong>{note.astrologerName || 'Astrologer'}</strong></span>
+                      <span>{note.date || 'Recent'}</span>
+                    </div>
+                    <p className="text-slate-800 leading-relaxed whitespace-pre-line font-medium">{note.notes}</p>
+                    {note.remediesSuggested && (
+                      <div className="pt-1.5 border-t border-slate-200 text-amber-900">
+                        <strong>Remedies:</strong> {note.remediesSuggested}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Database Client Lookup by Mobile */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-xs space-y-3">
             <h3 className="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
               <Search className="w-5 h-5 text-indigo-600" />
               {t('clientSearchTitle')}
@@ -892,189 +1147,244 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                 {t('searchBtn')}
               </button>
             </form>
+
+            {searchResults.length > 0 && (
+              <div className="pt-3 space-y-3 border-t border-slate-100">
+                <h4 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center justify-between">
+                  <span>{t('matchingClientsFound')} ({searchResults.length} {t('foundSuffix')})</span>
+                  <span className="text-[11px] text-slate-500 font-normal">{t('clickClientToGen')}</span>
+                </h4>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {searchResults.map((cl) => (
+                    <div
+                      key={cl.id}
+                      onClick={() => handleSelectClient(cl.mobile)}
+                      className="bg-slate-50/70 border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/30 p-4 rounded-xl transition-all cursor-pointer group flex justify-between items-center"
+                    >
+                      <div>
+                        <h5 className="font-bold text-slate-900 text-sm sm:text-base group-hover:text-indigo-700 transition-colors">
+                          {cl.name}
+                        </h5>
+                        <div className="text-xs text-slate-600 space-y-0.5 mt-1.5">
+                          <p className="flex items-center gap-1 text-amber-700 font-bold">
+                            <Phone className="w-3.5 h-3.5" /> {cl.mobile}
+                          </p>
+                          <p className="flex items-center gap-1">
+                            <Calendar className="w-3.5 h-3.5 text-slate-400" /> {t('born')}: {cl.dob} ({cl.dobTime})
+                          </p>
+                          <p className="flex items-center gap-1 truncate max-w-[200px]">
+                            <MapPin className="w-3.5 h-3.5 text-slate-400" /> {cl.dobPlace}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="bg-white border border-slate-200 group-hover:border-indigo-400 p-2 rounded-lg transition-colors">
+                        <ArrowRight className="w-4 h-4 text-indigo-600" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-
-          {searchResults.length > 0 && !selectedClientMobile && (
-            <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-xs space-y-3">
-              <h4 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center justify-between">
-                <span>{t('matchingClientsFound')} ({searchResults.length} {t('foundSuffix')})</span>
-                <span className="text-[11px] text-slate-500 font-normal">{t('clickClientToGen')}</span>
-              </h4>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {searchResults.map((cl) => (
-                  <div
-                    key={cl.id}
-                    onClick={() => handleSelectClient(cl.mobile)}
-                    className="bg-slate-50/70 border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/30 p-4 rounded-xl transition-all cursor-pointer group flex justify-between items-center"
-                  >
-                    <div>
-                      <h5 className="font-bold text-slate-900 text-sm sm:text-base group-hover:text-indigo-700 transition-colors">
-                        {cl.name}
-                      </h5>
-                      <div className="text-xs text-slate-600 space-y-0.5 mt-1.5">
-                        <p className="flex items-center gap-1 text-amber-700 font-bold">
-                          <Phone className="w-3.5 h-3.5" /> {cl.mobile}
-                        </p>
-                        <p className="flex items-center gap-1">
-                          <Calendar className="w-3.5 h-3.5 text-slate-400" /> {t('born')}: {cl.dob} ({cl.dobTime})
-                        </p>
-                        <p className="flex items-center gap-1 truncate max-w-[200px]">
-                          <MapPin className="w-3.5 h-3.5 text-slate-400" /> {cl.dobPlace}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="bg-white border border-slate-200 group-hover:border-indigo-400 p-2 rounded-lg transition-colors">
-                      <ArrowRight className="w-4 h-4 text-indigo-600" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {selectedClientMobile && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
-                <span className="text-xs text-slate-700">
-                  Viewing Details For <strong className="text-amber-800">{clientProfile?.name} ({selectedClientMobile})</strong>
-                </span>
-                <button
-                  onClick={() => {
-                    setSelectedClientMobile(null);
-                    setClientProfile(null);
-                  }}
-                  className="text-xs font-bold text-indigo-700 hover:underline cursor-pointer"
-                >
-                  {t('backToSearch')}
-                </button>
-              </div>
-
-              {loadingClient ? (
-                <div className="p-10 text-center bg-white rounded-2xl border border-slate-200">
-                  <Sparkles className="w-8 h-8 text-amber-500 mx-auto animate-spin mb-3" />
-                  <p className="text-slate-500 text-xs">Loading client profile...</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {/* Client Details Summary Card */}
-                  <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
-                    <h4 className="font-bold text-slate-900 text-sm mb-3 flex items-center gap-2 border-b border-slate-100 pb-2">
-                      <User className="w-4 h-4 text-indigo-600" />
-                      Client Profile & Birth Details
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Full Name</span>
-                        <span className="font-bold text-slate-900 text-sm">{clientProfile?.name || '—'}</span>
-                      </div>
-                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Mobile</span>
-                        <span className="font-bold text-slate-900 font-mono">{clientProfile?.mobile || selectedClientMobile}</span>
-                      </div>
-                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Gender</span>
-                        <span className="font-bold text-slate-900 capitalize">{clientProfile?.gender || '—'}</span>
-                      </div>
-                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Date of Birth & Time</span>
-                        <span className="font-bold text-slate-900">{clientProfile?.dob} ({clientProfile?.dobTime})</span>
-                      </div>
-                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Place of Birth</span>
-                        <span className="font-bold text-slate-900">{clientProfile?.dobPlace || '—'}</span>
-                      </div>
-                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Nakshatra / Rasi</span>
-                        <span className="font-bold text-slate-900">{clientProfile?.nakshatra || '—'} / {clientProfile?.rasi || '—'}</span>
-                      </div>
-                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Father's Name</span>
-                        <span className="font-bold text-slate-900">{clientProfile?.fatherName || '—'}</span>
-                      </div>
-                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Mother's Name</span>
-                        <span className="font-bold text-slate-900">{clientProfile?.motherName || '—'}</span>
-                      </div>
-                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <span className="text-slate-500 block text-[10px] uppercase font-bold">Gotra</span>
-                        <span className="font-bold text-slate-900">{clientProfile?.gotra || '—'}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Consultation Notes Section */}
-                  <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4">
-                    <h4 className="font-bold text-slate-900 text-sm flex items-center gap-2 border-b border-slate-100 pb-2">
-                      <FileText className="w-4 h-4 text-indigo-600" />
-                      Consultation History & Astrologer Notes
-                    </h4>
-
-                    {/* Add note form */}
-                    <form onSubmit={handleAddNote} className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
-                      <div>
-                        <label className="font-bold text-slate-900 block mb-1">Add Consultation Note</label>
-                        <textarea
-                          name="notes"
-                          rows={3}
-                          required
-                          placeholder="Record client questions, observations, life events, recommendations..."
-                          className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-indigo-500 leading-relaxed font-medium"
-                        />
-                      </div>
-                      <div>
-                        <label className="font-bold text-slate-900 block mb-1">Prescribed Remedies / Pariharam</label>
-                        <textarea
-                          name="remediesSuggested"
-                          rows={2}
-                          placeholder="Recommended pujas, mantras, gemstones, temple visits..."
-                          className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-indigo-500 leading-relaxed"
-                        />
-                      </div>
-                      <button
-                        type="submit"
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
-                      >
-                        <Check className="w-3.5 h-3.5" />
-                        <span>Save Consultation Note</span>
-                      </button>
-                    </form>
-
-                    {/* Notes List */}
-                    {clientNotes.length === 0 ? (
-                      <div className="text-center py-6 text-slate-400 text-xs bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                        No previous consultation notes recorded for this client.
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        {clientNotes.map((note, idx) => (
-                          <div key={idx} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1.5">
-                            <div className="flex justify-between items-center text-slate-500 text-[10px]">
-                              <span>Astrologer: <strong>{note.astrologerName || 'Astrologer'}</strong></span>
-                              <span>{note.date || 'Recent'}</span>
-                            </div>
-                            <p className="text-slate-800 leading-relaxed whitespace-pre-line font-medium">{note.notes}</p>
-                            {note.remediesSuggested && (
-                              <div className="pt-1.5 border-t border-slate-200 text-amber-900">
-                                <strong>Remedies:</strong> {note.remediesSuggested}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
         </div>
       )}
 
       {/* TAB 2: Kundli Matchmaking Requests & Review Panel */}
       {activeTab === 'matchmaking' && (
         <div className="space-y-4 sm:space-y-6">
+          {/* Shared Birth Details Intake Card */}
+          <BirthDetailsIntakeCard
+            module="matchmaking"
+            onCalculate={() => refreshCalculations()}
+          />
+
+          {/* Live Client Matchmaking (10 Poruthams & Compatibility) Analyzer */}
+          <div className="bg-white border border-rose-200/80 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-3 border-b border-rose-100">
+              <div>
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <Heart className="w-5 h-5 text-rose-600 fill-rose-600/20" />
+                  <span>{lang === 'ta' ? 'நேரலை திருமணப் பொருத்தம் (10 பொருத்தங்கள் & குணங்கள்)' : 'Live Client Matchmaking (10 Poruthams & Gunas)'}</span>
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {lang === 'ta'
+                    ? 'மேலே உள்ள கிளையண்ட் விபரங்களுடன் வரவிருக்கும் வரனின் ஜாதகத்தை ஒப்பிட்டு உடனடியாக 10 பொருத்தங்களை கணக்கிடுங்கள்.'
+                    : 'Compare the active client above with prospective partner and evaluate full 10 Poruthams & Ashtakoota.'}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleCalculateActiveMatch}
+                disabled={calculatingActiveMatch}
+                className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-xs transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                {calculatingActiveMatch ? <Sparkles className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                <span>{lang === 'ta' ? 'பொருத்தம் கணக்கிடுக' : 'Calculate 10 Poruthams'}</span>
+              </button>
+            </div>
+
+            {/* Comparison Input Grid: Active Client vs Partner */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              {/* Active Client (Person 1) */}
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2.5">
+                <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+                  <span className="font-bold text-indigo-900 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-indigo-600" />
+                    {(activeBirthData?.gender || 'male').toLowerCase() === 'female'
+                      ? (lang === 'ta' ? 'மணமகள் (Active Client)' : 'Bride (Active Client)')
+                      : (lang === 'ta' ? 'மணமகன் (Active Client)' : 'Groom (Active Client)')}
+                  </span>
+                  <span className="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-full">
+                    {activeBirthData?.gender || 'male'}
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  <p className="font-bold text-slate-900 text-sm">{activeBirthData?.name || '—'}</p>
+                  <p className="text-slate-600">
+                    <strong>DOB:</strong> {activeBirthData?.dob ? `${activeBirthData.dob} (${activeBirthData.dobTime12 || activeBirthData.dobTime})` : '—'}
+                  </p>
+                  <p className="text-slate-600">
+                    <strong>Place:</strong> {activeBirthData?.placeName || activeBirthData?.city || '—'}{activeBirthData?.state ? `, ${typeof activeBirthData.state === 'object' && activeBirthData.state !== null ? activeBirthData.state.name || '' : activeBirthData.state}` : ''}
+                  </p>
+                  <p className="text-slate-700 font-medium pt-1 border-t border-slate-200">
+                    <strong>Nakshatra / Moon Sign:</strong> {calculatedHoroscope?.summary?.nakshatra || '—'} / {calculatedHoroscope?.summary?.moonSign || '—'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Partner Details (Person 2) */}
+              <div className="bg-rose-50/40 p-4 rounded-xl border border-rose-200 space-y-2.5">
+                <div className="flex justify-between items-center pb-2 border-b border-rose-200">
+                  <span className="font-bold text-rose-900 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                    <Heart className="w-3.5 h-3.5 text-rose-600" />
+                    {(activeBirthData?.gender || 'male').toLowerCase() === 'female'
+                      ? (lang === 'ta' ? 'மணமகன் (Prospective Partner)' : 'Groom (Prospective Partner)')
+                      : (lang === 'ta' ? 'மணமகள் (Prospective Partner)' : 'Bride (Prospective Partner)')}
+                  </span>
+                  <span className="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full">
+                    {(activeBirthData?.gender || 'male').toLowerCase() === 'female' ? 'male' : 'female'}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">Partner Name</label>
+                    <input
+                      type="text"
+                      value={partnerDetails.name}
+                      onChange={(e) => setPartnerDetails({ ...partnerDetails, name: e.target.value })}
+                      placeholder={lang === 'ta' ? 'வரன் பெயர்' : 'Enter Partner Name'}
+                      className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400 placeholder:text-slate-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">Birth Date</label>
+                    <input
+                      type="date"
+                      value={partnerDetails.dob}
+                      onChange={(e) => setPartnerDetails({ ...partnerDetails, dob: e.target.value })}
+                      className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">Birth Time (24h)</label>
+                    <input
+                      type="text"
+                      value={partnerDetails.dobTime}
+                      onChange={(e) => setPartnerDetails({ ...partnerDetails, dobTime: e.target.value })}
+                      placeholder="HH:MM (e.g. 09:15)"
+                      className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400 placeholder:text-slate-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">Birth City / Place</label>
+                    <input
+                      type="text"
+                      value={partnerDetails.dobPlace}
+                      onChange={(e) => setPartnerDetails({ ...partnerDetails, dobPlace: e.target.value })}
+                      placeholder={lang === 'ta' ? 'பிறந்த ஊர்' : 'Enter Birth City / Place'}
+                      className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400 placeholder:text-slate-400"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Calculated Match Results View */}
+            {activeClientMatchReport && (
+              <div className="pt-3 border-t border-rose-200 space-y-3">
+                <div className="flex border-b border-slate-200 text-xs font-bold gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveMatchTab('tamil')}
+                    className={`pb-2 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                      activeMatchTab === 'tamil'
+                        ? 'border-amber-600 text-amber-900 font-bold'
+                        : 'border-transparent text-slate-500 hover:text-slate-700'
+                    }`}
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>{MATCH_I18N.tabTamilPorutham[lang] || MATCH_I18N.tabTamilPorutham.en}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveMatchTab('ashtakoota')}
+                    className={`pb-2 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                      activeMatchTab === 'ashtakoota'
+                        ? 'border-indigo-600 text-indigo-900 font-bold'
+                        : 'border-transparent text-slate-500 hover:text-slate-700'
+                    }`}
+                  >
+                    <Heart className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>{MATCH_I18N.tabAshtakoota[lang] || MATCH_I18N.tabAshtakoota.en}</span>
+                  </button>
+                </div>
+
+                {activeMatchTab === 'tamil' ? (
+                  <TamilPoruthamCard matchReport={activeClientMatchReport} />
+                ) : (
+                  <div className="space-y-3 bg-amber-50/50 p-4 rounded-xl border border-amber-200 text-xs">
+                    <div className="flex justify-between items-center pb-2 border-b border-amber-200">
+                      <div>
+                        <span className="text-[10px] font-bold text-amber-900 uppercase tracking-wider block">
+                          Engine Computed Compatibility
+                        </span>
+                        <span className="font-bold text-slate-800">
+                          {activeClientMatchReport.compatibility} ({activeClientMatchReport.percentage}%)
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-2xl font-black text-amber-700">
+                          {activeClientMatchReport.totalScore} / 36
+                        </span>
+                        <span className="text-[10px] text-slate-500 block">Total Gunas</span>
+                      </div>
+                    </div>
+
+                    {/* Compact 8 Kootas */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                      {activeClientMatchReport.kootas?.map((k, i) => (
+                        <div key={i} className="bg-white p-1.5 rounded-lg border border-amber-100 flex justify-between">
+                          <span className="font-semibold text-slate-700">{k.koota}</span>
+                          <span className="font-bold text-amber-800">{k.obtained}/{k.max}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Manglik status */}
+                    <div className="text-[11px] text-slate-700 pt-1 border-t border-amber-200 flex flex-col sm:flex-row justify-between gap-1">
+                      <span><strong>{t('groomBoyLabel')}</strong> {activeClientMatchReport.manglik?.boy?.details}</span>
+                      <span><strong>{t('brideGirlLabel')}</strong> {activeClientMatchReport.manglik?.girl?.details}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
           {/* Header Strip */}
           <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>

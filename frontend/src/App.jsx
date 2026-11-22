@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ClientBirthProvider } from './context/ClientBirthContext';
 import { LanguageProvider, useLang } from './i18n';
 import Navbar from './components/Navbar';
 import Logo from './components/Logo';
@@ -196,7 +197,9 @@ export default function App() {
       <ThemeProvider>
         <LanguageProvider>
           <AuthProvider>
-            <AppContent />
+            <ClientBirthProvider>
+              <AppContent />
+            </ClientBirthProvider>
           </AuthProvider>
         </LanguageProvider>
       </ThemeProvider>

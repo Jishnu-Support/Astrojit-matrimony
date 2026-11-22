@@ -1299,6 +1299,13 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
     const clientCode = client?.clientCode || ('CLI-' + Math.floor(100000 + Math.random() * 900000));
 
     if (client) {
+      // If client is already registered under another astrologer, block hijacking
+      if (client.registeredByAstrologerId && client.registeredByAstrologerId !== astro.id) {
+        return res.status(400).json({
+          error: 'A client with this mobile number is already registered under another astrologer.',
+        });
+      }
+
       // Update existing client with latest particulars and associate with this astrologer
       client.name = name.trim();
       client.fatherName = fatherName.trim();
@@ -1319,6 +1326,12 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
       client.dobTime12 = dobTime12;
       client.starBasis = starBasis;
       client.astrologerReferralCode = astro.referralCode || req.user.referralCode || '';
+      client.registeredByAstrologerId = astro.id;
+      client.registeredByAstrologerName = astro.name || '';
+      client.referredByAstrologerId = astro.id;
+      client.referredByAstrologerName = astro.name || '';
+      client.defaultAstrologerId = astro.id;
+      client.defaultAstrologerName = astro.name || '';
       client.clientCode = clientCode;
       client.plainInitialPassword = cleanPassword;
       client.passwordHash = passwordHash;
@@ -1354,6 +1367,11 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
         plainInitialPassword: cleanPassword,
         astrologerReferralCode: astro.referralCode || req.user.referralCode || '',
         registeredByAstrologerId: astro.id,
+        registeredByAstrologerName: astro.name || '',
+        referredByAstrologerId: astro.id,
+        referredByAstrologerName: astro.name || '',
+        defaultAstrologerId: astro.id,
+        defaultAstrologerName: astro.name || '',
         createdAt: new Date().toISOString(),
         isMatchmakingSubscribed: false,
       };
@@ -1596,11 +1614,13 @@ app.post('/api/matchmaking/subscribe', authenticate, (req, res) => {
 app.post('/api/matchmaking/calculate-self', authenticate, (req, res) => {
   try {
     const db = readDb();
-    const client = db.clients.find((c) => c.id === req.user.id || c.mobile === req.user.mobile);
-    if (!client || !client.isMatchmakingSubscribed) {
-      return res.status(403).json({
-        error: 'Subscription required for instant self-checking. Please activate subscription or request an astrologer for review.',
-      });
+    if (req.user.role !== 'astrologer' && req.user.role !== 'company') {
+      const client = db.clients.find((c) => c.id === req.user.id || c.mobile === req.user.mobile);
+      if (!client || !client.isMatchmakingSubscribed) {
+        return res.status(403).json({
+          error: 'Subscription required for instant self-checking. Please activate subscription or request an astrologer for review.',
+        });
+      }
     }
 
     const { boy, girl } = req.body;
@@ -1751,8 +1771,25 @@ app.get('/api/astrologer/search-client', authenticate, (req, res) => {
     const queryParts = query.split(/[\s,+/]+/).filter(Boolean);
 
     const db = readDb();
+    const isAstrologer = req.user && req.user.role === 'astrologer';
+    const currentAstro = isAstrologer
+      ? (db.astrologers || []).find((a) => a.id === req.user.id || a.mobile === req.user.mobile)
+      : null;
+
     const matchedClients = (db.clients || [])
       .filter((c) => {
+        // DATA PRIVACY: If astrologer is searching, ONLY return clients belonging to this astrologer!
+        if (isAstrologer && currentAstro) {
+          const isOwnClient =
+            c.registeredByAstrologerId === currentAstro.id ||
+            c.referredByAstrologerId === currentAstro.id ||
+            c.defaultAstrologerId === currentAstro.id ||
+            (currentAstro.referralCode &&
+              c.astrologerReferralCode &&
+              c.astrologerReferralCode.toUpperCase() === currentAstro.referralCode.toUpperCase());
+          if (!isOwnClient) return false;
+        }
+
         const m = (c.mobile || '').toLowerCase();
         const n = (c.name || '').toLowerCase();
         const dob = (c.dob || '').toLowerCase();
@@ -1840,8 +1877,17 @@ app.get('/api/astrologer/referred-clients', authenticate, (req, res) => {
       return res.status(404).json({ error: 'Astrologer not found' });
     }
 
-    const referredClients = db.clients
-      .filter((c) => (c.astrologerReferralCode || '').toUpperCase() === (astro.referralCode || '').toUpperCase())
+    const referredClients = (db.clients || [])
+      .filter((c) => {
+        return (
+          c.registeredByAstrologerId === astro.id ||
+          c.referredByAstrologerId === astro.id ||
+          c.defaultAstrologerId === astro.id ||
+          (astro.referralCode &&
+            c.astrologerReferralCode &&
+            c.astrologerReferralCode.toUpperCase() === astro.referralCode.toUpperCase())
+        );
+      })
       .map((c) => {
         const { passwordHash, ...data } = c;
         return data;

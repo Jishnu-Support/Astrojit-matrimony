@@ -22,22 +22,44 @@ import Logo from './Logo';
 
 export default function ClientRegistrationReceiptModal({
   receipt,
+  data,
   onClose
 }) {
   const [copied, setCopied] = useState(false);
   const [copiedPass, setCopiedPass] = useState(false);
 
-  if (!receipt) return null;
+  const rawReceipt = receipt || data?.receipt || data;
+  if (!rawReceipt) return null;
 
   const {
     receiptNumber = 'REC-' + Date.now().toString().slice(-6),
-    clientCode = 'CLI-1001',
-    registrationDate = new Date().toISOString(),
-    astrologer = {},
-    client = {},
-    astrologicalSnapshot = {},
-    credentials = {}
-  } = receipt;
+    clientCode = rawReceipt.clientCode || rawReceipt.client?.clientCode || 'CLI-1001',
+    registrationDate = rawReceipt.registrationDate || new Date().toISOString(),
+    astrologer = rawReceipt.astrologer || {},
+    client = rawReceipt.client || {},
+    astrologicalSnapshot = rawReceipt.astrologicalSnapshot || rawReceipt.client?.astrologicalSnapshot || {},
+    credentials = rawReceipt.credentials || {
+      portalUrl: rawReceipt.loginUrl || `${window.location.origin}/login`,
+      username: rawReceipt.client?.mobile || '',
+      initialPassword: rawReceipt.plainPassword || 'Astro@123'
+    }
+  } = rawReceipt;
+
+  const formatDashaBalance = (dbVal) => {
+    if (!dbVal) return '';
+    if (typeof dbVal === 'string') return dbVal;
+    if (typeof dbVal === 'object') {
+      return dbVal.textEn || dbVal.textTa || `${dbVal.lord?.nameEn || dbVal.lord?.nameTa || ''} ${dbVal.years || 0}y ${dbVal.months || 0}m ${dbVal.days || 0}d`;
+    }
+    return String(dbVal);
+  };
+
+  const safeText = (val, fallback = '') => {
+    if (val === null || val === undefined) return fallback;
+    if (typeof val === 'string' || typeof val === 'number') return String(val);
+    if (typeof val === 'object') return val.textEn || val.textTa || val.en || val.ta || val.name || fallback;
+    return String(val);
+  };
 
   const formattedDate = new Date(registrationDate).toLocaleString('en-IN', {
     dateStyle: 'medium',
@@ -300,18 +322,18 @@ Client Code: ${clientCode}`;
                       {(client.starBasis === 'sun' || astrologicalSnapshot.starBasis === 'sun') ? 'Sun Star (Surya Nakshatra):' : 'Janma Nakshatra (Moon Star):'}
                     </span>
                     <span className="font-bold text-amber-900">
-                      {astrologicalSnapshot.nakshatra || 'Magha'} ({astrologicalSnapshot.pada || 1} Pada)
+                      {safeText(astrologicalSnapshot.nakshatra, 'Magha')} ({safeText(astrologicalSnapshot.pada, 1)} Pada)
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600">
                       {(client.starBasis === 'sun' || astrologicalSnapshot.starBasis === 'sun') ? 'Rashi (Surya Rashi):' : 'Rashi (Moon Sign):'}
                     </span>
-                    <span className="font-bold text-slate-950">{astrologicalSnapshot.moonSign || 'Leo'}</span>
+                    <span className="font-bold text-slate-950">{safeText(astrologicalSnapshot.moonSign, 'Leo')}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600">Lagna (Ascendant):</span>
-                    <span className="font-bold text-slate-950">{astrologicalSnapshot.lagna || 'Leo'}</span>
+                    <span className="font-bold text-slate-950">{safeText(astrologicalSnapshot.lagna, 'Leo')}</span>
                   </div>
                   {(astrologicalSnapshot.lagnaSubhas || astrologicalSnapshot.lagnaSubhaPavar) && (
                     <div className="flex justify-between items-center text-xs">
@@ -326,7 +348,7 @@ Client Code: ${clientCode}`;
                   {astrologicalSnapshot.dashaBalance && (
                     <div className="flex justify-between">
                       <span className="text-slate-600">Dasha Balance at Birth:</span>
-                      <span className="font-mono text-slate-900 font-bold">{astrologicalSnapshot.dashaBalance}</span>
+                      <span className="font-mono text-slate-900 font-bold">{formatDashaBalance(astrologicalSnapshot.dashaBalance)}</span>
                     </div>
                   )}
                 </div>
