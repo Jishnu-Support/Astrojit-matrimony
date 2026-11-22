@@ -1,7 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Sparkles,
-  Printer
+  Printer,
+  Monitor,
+  FileText,
+  Clock,
+  ArrowLeft
 } from 'lucide-react';
 import { useLang } from '../i18n';
 import { useAuth } from '../context/AuthContext';
@@ -17,6 +21,9 @@ export default function HoroscopeHub({
   const { lang } = useLang();
   const { user } = useAuth();
   const isTa = lang === 'ta';
+
+  // Toggle Mode: 'screen' (Horoscope Screen View) | 'print' (Horoscope Print)
+  const [horoscopeMode, setHoroscopeMode] = useState('screen');
 
   // Client view should not have the previous client search bar; astrologer portal requires it
   const shouldHideLookup = Boolean(hideClientLookup || user?.role === 'client');
@@ -42,7 +49,7 @@ export default function HoroscopeHub({
   return (
     <div className="space-y-5">
       {/* ======================================================== */}
-      {/* 1. HOROSCOPE MAIN TITLE & PRINT ACTION */}
+      {/* 1. HOROSCOPE MAIN TITLE & SCREEN/PRINT TOGGLE BAR */}
       {/* ======================================================== */}
       <div className="bg-white/95 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -64,38 +71,100 @@ export default function HoroscopeHub({
           </div>
         </div>
 
-        {/* Print Horoscope Button */}
-        <div className="flex items-center gap-2 self-start md:self-auto">
+        {/* View Mode Toggle: Horoscope Screen View & Horoscope Print */}
+        <div className="flex items-center gap-1.5 p-1 bg-stone-100 dark:bg-stone-900/80 rounded-2xl border border-stone-200 dark:border-stone-800 self-start md:self-auto shadow-2xs">
           <button
             type="button"
-            onClick={handlePrintHoroscope}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-amber-100 hover:from-[#5C1017] hover:to-[#7A1A22] text-xs font-bold shadow-sm transition-all cursor-pointer flex items-center gap-2"
+            onClick={() => setHoroscopeMode('screen')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+              horoscopeMode === 'screen'
+                ? 'bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-amber-100 shadow-sm'
+                : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-200/60 dark:hover:bg-stone-800/60'
+            }`}
           >
-            <Printer className="w-4 h-4" />
-            <span>{isTa ? 'ஜாதகம் அச்சிடுக (Print Horoscope)' : 'Print Horoscope'}</span>
+            <Monitor className="w-3.5 h-3.5" />
+            <span>{isTa ? 'ஜாதகத் திரை பார்வை' : 'Horoscope Screen View'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setHoroscopeMode('print')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+              horoscopeMode === 'print'
+                ? 'bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-amber-100 shadow-sm'
+                : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-200/60 dark:hover:bg-stone-800/60'
+            }`}
+          >
+            <Printer className="w-3.5 h-3.5" />
+            <span>{isTa ? 'ஜாதகம் அச்சு' : 'Horoscope Print'}</span>
           </button>
         </div>
       </div>
 
       {/* ======================================================== */}
-      {/* 2. BIRTH DETAILS INTAKE FORM WITH PREVIOUS CLIENT SEARCH */}
+      {/* 2. CONDITIONAL VIEW: SCREEN VIEW vs PRINT VIEW */}
       {/* ======================================================== */}
-      <BirthDetailsIntakeCard
-        module="horoscope"
-        hideClientLookup={shouldHideLookup}
-        onCalculate={() => refreshCalculations()}
-      />
+      {horoscopeMode === 'screen' ? (
+        <>
+          {/* BIRTH DETAILS INTAKE FORM WITH PREVIOUS CLIENT SEARCH */}
+          <BirthDetailsIntakeCard
+            module="horoscope"
+            hideClientLookup={shouldHideLookup}
+            onCalculate={() => refreshCalculations()}
+          />
 
-      {/* ======================================================== */}
-      {/* 3. THIRUKANITHA HOROSCOPE VIEW */}
-      {/* ======================================================== */}
-      <div className="space-y-4">
-        <ThirukanithaHoroscopeView
-          key={`horo-${calcKey}`}
-          initialData={activeBirthData}
-          onClose={onClose}
-        />
-      </div>
+          {/* THIRUKANITHA HOROSCOPE VIEW */}
+          <div className="space-y-4">
+            <ThirukanithaHoroscopeView
+              key={`horo-${calcKey}`}
+              initialData={activeBirthData}
+              onClose={onClose}
+            />
+          </div>
+        </>
+      ) : (
+        /* HOROSCOPE PRINT VIEW (To be configured later) */
+        <div className="bg-white/95 dark:bg-[#251E1A] p-6 sm:p-10 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs text-center space-y-5 animate-in fade-in duration-200">
+          <div className="w-16 h-16 mx-auto rounded-3xl bg-amber-50 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-700/60 text-amber-700 dark:text-amber-400 flex items-center justify-center text-3xl shadow-sm">
+            🖨️
+          </div>
+          
+          <div className="max-w-xl mx-auto space-y-2">
+            <h2 className="text-xl sm:text-2xl font-black text-[#7A1A22] dark:text-[#E8838B] tracking-tight">
+              {isTa ? 'ஜாதகம் அச்சு காட்சி (Horoscope Print View)' : 'Horoscope Print View'}
+            </h2>
+            <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300">
+              {isTa
+                ? 'அச்சிடக்கூடிய ஜாதகப் பக்க வடிவமைப்பு, பல பக்க A4 லேஅவுட் மற்றும் PDF அமைப்புகள் பின்னர் கட்டமைக்கப்படும்.'
+                : 'Dedicated Multi-Page Print Layout, PDF Generation & Formatted Printable Horoscope will be configured here.'}
+            </p>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100/80 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700">
+              <span>⚙️</span>
+              <span>{isTa ? 'அச்சு காட்சி பின்னர் கட்டமைக்கப்படும்' : 'Print View will be configured later'}</span>
+            </div>
+          </div>
+
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => setHoroscopeMode('screen')}
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-amber-100 hover:from-[#5C1017] hover:to-[#7A1A22] text-xs font-bold shadow-sm transition-all cursor-pointer flex items-center gap-2"
+            >
+              <Monitor className="w-4 h-4" />
+              <span>{isTa ? 'திரை காட்சிக்குச் செல்க' : 'Switch to Horoscope Screen View'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handlePrintHoroscope}
+              className="px-4 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700 text-xs font-bold transition-all cursor-pointer flex items-center gap-2"
+            >
+              <Printer className="w-4 h-4" />
+              <span>{isTa ? 'தற்போதைய பக்கத்தை நேரடியாக அச்சிடுக' : 'Quick Print Browser Page'}</span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
