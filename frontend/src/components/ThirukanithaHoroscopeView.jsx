@@ -93,13 +93,9 @@ const MINUTES_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0
 const SECONDS_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 
 export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
-  const { lang: globalLang } = useLang();
+  const { lang } = useLang();
   const { theme, isDark } = useTheme();
-  const [lang, setLang] = useState(globalLang || 'ta'); // 'ta' or 'en'
-
-  useEffect(() => {
-    if (globalLang) setLang(globalLang);
-  }, [globalLang]);
+  const isTamil = lang === 'ta';
 
   // Form State initialized from parent initialData
   const [form, setForm] = useState(() => ({
@@ -279,8 +275,6 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
   const handlePrint = () => {
     window.print();
   };
-
-  const isTamil = lang === 'ta';
 
   // Labels Dictionary
   const T = {
@@ -466,28 +460,6 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
           </div>
 
           <div className="flex items-center gap-2 shrink-0 flex-wrap">
-            {/* Quick Language Toggle */}
-            <div className="flex items-center bg-amber-900/10 dark:bg-stone-800 p-0.5 rounded-xl border border-amber-900/20">
-              <button
-                type="button"
-                onClick={() => setLang('ta')}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  isTamil ? 'bg-[#7A1A22] text-amber-100 shadow-xs' : 'text-stone-700 dark:text-stone-300 hover:text-stone-900'
-                }`}
-              >
-                தமிழ்
-              </button>
-              <button
-                type="button"
-                onClick={() => setLang('en')}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  !isTamil ? 'bg-[#7A1A22] text-amber-100 shadow-xs' : 'text-stone-700 dark:text-stone-300 hover:text-stone-900'
-                }`}
-              >
-                English
-              </button>
-            </div>
-
             <button
               type="button"
               onClick={expandAllSections}

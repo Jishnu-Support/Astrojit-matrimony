@@ -10582,17 +10582,28 @@ export function computeJathagaYogasSection19(allPlanetRows = [], lagnaRasiIdx = 
           planet: np,
           dispositor,
           uchaLord,
-          rulesMatched: [r1 ? 'விதி 1 (நீசாதிபதி கேந்திரம்)' : '', r2 ? 'விதி 2 (உச்ச நாதன் கேந்திரம்)' : '', r3 ? 'விதி 3 (நீசனுக்கு அதிபதி பார்வை)' : '', r4 ? 'விதி 4 (உச்ச கிரக சேர்க்கை)' : ''].filter(Boolean)
+          rulesMatchedTa: [
+            r1 ? 'விதி 1 (நீசாதிபதி கேந்திரம்)' : '',
+            r2 ? 'விதி 2 (உச்ச நாதன் கேந்திரம்)' : '',
+            r3 ? 'விதி 3 (நீசனுக்கு அதிபதி பார்வை)' : '',
+            r4 ? 'விதி 4 (உச்ச கிரக சேர்க்கை)' : ''
+          ].filter(Boolean),
+          rulesMatchedEn: [
+            r1 ? 'Rule 1 (Neecha Lord in Kendra)' : '',
+            r2 ? 'Rule 2 (Exaltation Lord in Kendra)' : '',
+            r3 ? 'Rule 3 (Dispositor Aspects Neecha Graha)' : '',
+            r4 ? 'Rule 4 (Conjunction with Exalted Graha)' : ''
+          ].filter(Boolean)
         });
       }
     }
 
     const isPresent = cancelledPlanets.length > 0;
     const obsTa = isPresent
-      ? `நீசபங்கமான கிரகங்கள்: ${cancelledPlanets.map(cp => `${GRAHA_NAMES_TA[cp.planet]} (${cp.rulesMatched.join(', ')})`).join('; ')}.`
+      ? `நீசபங்கமான கிரகங்கள்: ${cancelledPlanets.map(cp => `${GRAHA_NAMES_TA[cp.planet]} (${cp.rulesMatchedTa.join(', ')})`).join('; ')}.`
       : (neechaPlanets.length ? `${neechaPlanets.map(p => GRAHA_NAMES_TA[p]).join(', ')} நீசம் பெற்றுள்ளது (முழு நீசபங்கம் பூர்த்தியாகவில்லை).` : 'ஜாதகத்தில் நீச கிரகங்கள் எதுவுமில்லை (கிரகங்கள் சுப பலத்துடன் உள்ளன).');
     const obsEn = isPresent
-      ? `Debilitation cancelled for: ${cancelledPlanets.map(cp => `${GRAHA_NAMES_EN[cp.planet]} via ${cp.rulesMatched.join(', ')}`).join('; ')}.`
+      ? `Debilitation cancelled for: ${cancelledPlanets.map(cp => `${GRAHA_NAMES_EN[cp.planet]} via ${cp.rulesMatchedEn.join(', ')}`).join('; ')}.`
       : (neechaPlanets.length ? `${neechaPlanets.map(p => GRAHA_NAMES_EN[p]).join(', ')} in debilitation without full cancellation.` : 'No debilitated planets found in the horoscope.');
 
     yogas.push({
@@ -10604,6 +10615,8 @@ export function computeJathagaYogasSection19(allPlanetRows = [], lagnaRasiIdx = 
       categoryEn: 'Special Elevation Raja Yoga',
       isPresent,
       strength: isPresent ? 'உயர்நிலை ராஜ யோகம் (Imperial 95%)' : 'இல்லை (Absent)',
+      strengthTa: isPresent ? 'உயர்நிலை ராஜ யோகம் (95%)' : 'இல்லை',
+      strengthEn: isPresent ? 'Imperial Raja Yoga (95%)' : 'Absent',
       planets: cancelledPlanets.map(cp => cp.planet),
       ruleTa: 'நீச கிரகத்தின் வீட்டு அதிபதியோ அல்லது அக்கிரகம் உச்சம் பெரும் வீட்டு அதிபதியோ லக்ன/சந்திர கேந்திரத்தில் அமைய வேண்டும்.',
       ruleEn: 'The dispositor of the debilitated planet or its exaltation lord must occupy a Kendra from Lagna or Moon.',
@@ -10628,17 +10641,27 @@ export function computeJathagaYogasSection19(allPlanetRows = [], lagnaRasiIdx = 
     const isSarala = [6, 8, 12].includes(h8Pos);
     const isVimala = [6, 8, 12].includes(h12Pos);
 
-    const viparitasFound = [];
-    if (isHarsha) viparitasFound.push(`ஹர்ஷ யோகம் (6-க்குடைய ${GRAHA_NAMES_TA[l6]} ${h6Pos}-ல்)`);
-    if (isSarala) viparitasFound.push(`சரள யோகம் (8-க்குடைய ${GRAHA_NAMES_TA[l8]} ${h8Pos}-ல்)`);
-    if (isVimala) viparitasFound.push(`விமல யோகம் (12-க்குடைய ${GRAHA_NAMES_TA[l12]} ${h12Pos}-ல்)`);
+    const viparitasFoundTa = [];
+    const viparitasFoundEn = [];
+    if (isHarsha) {
+      viparitasFoundTa.push(`ஹர்ஷ யோகம் (6-க்குடைய ${GRAHA_NAMES_TA[l6]} ${h6Pos}-ல்)`);
+      viparitasFoundEn.push(`Harsha Yoga (6th Lord ${GRAHA_NAMES_EN[l6]} in House ${h6Pos})`);
+    }
+    if (isSarala) {
+      viparitasFoundTa.push(`சரள யோகம் (8-க்குடைய ${GRAHA_NAMES_TA[l8]} ${h8Pos}-ல்)`);
+      viparitasFoundEn.push(`Sarala Yoga (8th Lord ${GRAHA_NAMES_EN[l8]} in House ${h8Pos})`);
+    }
+    if (isVimala) {
+      viparitasFoundTa.push(`விமல யோகம் (12-க்குடைய ${GRAHA_NAMES_TA[l12]} ${h12Pos}-ல்)`);
+      viparitasFoundEn.push(`Vimala Yoga (12th Lord ${GRAHA_NAMES_EN[l12]} in House ${h12Pos})`);
+    }
 
-    const isPresent = viparitasFound.length > 0;
+    const isPresent = viparitasFoundTa.length > 0;
     const obsTa = isPresent
-      ? `அமைந்துள்ள விபரீத யோகங்கள்: ${viparitasFound.join(', ')}.`
+      ? `அமைந்துள்ள விபரீத யோகங்கள்: ${viparitasFoundTa.join(', ')}.`
       : `மறைவு ஸ்தானாதிபதிகள் மறைவு வீடுகளில் அமையவில்லை (6-அதிபதி: ${h6Pos}, 8-அதிபதி: ${h8Pos}, 12-அதிபதி: ${h12Pos}).`;
     const obsEn = isPresent
-      ? `Formed Viparita Yogas: ${viparitasFound.join(', ')}.`
+      ? `Formed Viparita Yogas: ${viparitasFoundEn.join(', ')}.`
       : `Dusthana lords are not situated in Dusthanas (6th Lord in H${h6Pos}, 8th Lord in H${h8Pos}, 12th Lord in H${h12Pos}).`;
 
     yogas.push({
@@ -10650,6 +10673,8 @@ export function computeJathagaYogasSection19(allPlanetRows = [], lagnaRasiIdx = 
       categoryEn: 'Inverted Victory Raja Yoga',
       isPresent,
       strength: isPresent ? 'வெற்றி யோக பலம் (Triumph 85%)' : 'இல்லை (Absent)',
+      strengthTa: isPresent ? 'வெற்றி யோக பலம் (85%)' : 'இல்லை',
+      strengthEn: isPresent ? 'Triumph Yoga Strength (85%)' : 'Absent',
       planets: [l6, l8, l12],
       ruleTa: '6, 8, 12-ம் அதிபதிகள் தங்களுக்குள் 6, 8, 12-ம் மறைவு வீடுகளில் அமர வேண்டும்.',
       ruleEn: 'Lords of the 6th, 8th, or 12th houses must occupy the 6th, 8th, or 12th houses.',
