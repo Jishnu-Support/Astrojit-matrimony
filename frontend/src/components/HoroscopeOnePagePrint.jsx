@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
-import { Printer, Monitor, ShieldCheck } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { Printer, Monitor, ShieldCheck, Edit, FileText } from 'lucide-react';
 import { useLang } from '../i18n';
 import { useAuth } from '../context/AuthContext';
+import LetterheadBrandingModal, { getInitialLetterhead } from './LetterheadBrandingModal';
 import {
   calculateThirukanithaHoroscope,
   RASHIS,
@@ -158,19 +159,25 @@ export default function HoroscopeOnePagePrint({
   const { user } = useAuth();
   const isTa = lang === 'ta';
 
+  // Letterhead Branding State (synced with profile / localStorage)
+  const [letterhead, setLetterhead] = useState(() => getInitialLetterhead(user, isTa));
+  const [brandingModalOpen, setBrandingModalOpen] = useState(false);
+
   // Compute Full Thirukanitha Horoscope Calculations
   const horoscope = useMemo(() => {
     return calculateThirukanithaHoroscope(birthData || {});
   }, [birthData]);
 
-  // Extract Astrologer Profile Details (Title & Brand from profile only)
+  // Extract Astrologer Profile Details (Title & Brand from letterhead state or profile)
   const astrologerTitle =
+    letterhead?.line1 ||
     user?.pagerHeader?.line1 ||
     user?.brandLine1 ||
     user?.name ||
-    (isTa ? 'ஆஸ்ட்ரோஜித் வேத ஜோதிட மையம்' : 'Astrojit Vedic Astrology & Spiritual Center');
+    (isTa ? 'ஸ்ரீ பாலாஜி ஜோதிட நிலையம் • திருக்கணித பஞ்சாங்கம்' : 'ASTROJIT VEDIC ASTROLOGY & SPIRITUAL RESEARCH CENTRE');
 
   const astrologerSubTitle =
+    letterhead?.line2 ||
     user?.pagerHeader?.line2 ||
     user?.brandLine2 ||
     (isTa
@@ -178,15 +185,22 @@ export default function HoroscopeOnePagePrint({
       : 'Authentic Thirukanitha Parashara Vedic Natal Horoscope Dossier');
 
   const astrologerContact =
+    letterhead?.phoneEmail ||
     user?.pagerHeader?.phoneEmail ||
     user?.mobile ||
     user?.email ||
-    'www.astrojit.co.in';
+    '9962775630';
 
   const astrologerAddress =
+    [letterhead?.address1, letterhead?.address2].filter(Boolean).join(' • ') ||
     [user?.pagerHeader?.address1 || user?.address1, user?.pagerHeader?.address2 || user?.address2]
       .filter(Boolean)
       .join(' • ') || '';
+
+  const invocationText =
+    letterhead?.invocation ||
+    user?.pagerHeader?.invocation ||
+    (isTa ? '|| ஓம் ஸ்ரீ கணேசாய நமஹ ||' : '|| Om Sri Ganeshayah Namaha ||');
 
   // Father & Mother Names from birthData
   const fatherName =
@@ -680,6 +694,17 @@ export default function HoroscopeOnePagePrint({
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Edit Letterhead Branding Button */}
+          <button
+            type="button"
+            onClick={() => setBrandingModalOpen(true)}
+            className="px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 dark:bg-amber-900/40 dark:hover:bg-amber-900/70 text-[#7A1A22] dark:text-amber-200 border border-amber-300 dark:border-amber-700 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
+            title={isTa ? 'லெட்டர்ஹெட் அமைப்புகளைத் திருத்துக' : 'Edit Letterhead Branding Details'}
+          >
+            <FileText className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
+            <span>{isTa ? 'லெட்டர்ஹெட் திருத்து' : 'Edit Letterhead'}</span>
+          </button>
+
           {/* Astrologer Profile Sync Notice */}
           <div className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[11px] font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700/60">
             <ShieldCheck className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
@@ -753,10 +778,24 @@ export default function HoroscopeOnePagePrint({
               {/* ======================================================== */}
               {/* BLOCK 1: OFFICIAL VEDIC HEADER (Top Box)                 */}
               {/* ======================================================== */}
-              <div className="p-2.5 text-center bg-[#FAF6EE] border-[1.5px] border-black rounded-none">
+              <div
+                onClick={() => setBrandingModalOpen(true)}
+                className="p-2.5 text-center bg-[#FAF6EE] border-[1.5px] border-black rounded-none relative group cursor-pointer hover:ring-2 hover:ring-amber-600/40 transition-all"
+                title={isTa ? 'லெட்டர்ஹெட் அமைப்புகளைத் திருத்த கிளிக் செய்க' : 'Click to edit letterhead branding details'}
+              >
+                {/* On-hover edit pill */}
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setBrandingModalOpen(true); }}
+                  className="no-print absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity bg-[#7A1A22] text-white text-[9px] font-bold px-2 py-0.5 rounded shadow cursor-pointer flex items-center gap-1 z-10"
+                >
+                  <Edit className="w-2.5 h-2.5" />
+                  <span>{isTa ? 'திருத்து' : 'Edit Header'}</span>
+                </button>
+
                 {/* Auspicious Invocation */}
                 <div className="text-[11.5px] font-black text-[#7A1A22] tracking-widest mb-1">
-                  {isTa ? '|| ஓம் ஸ்ரீ கணேசாய நமஹ ||' : '|| Om Sri Ganeshayah Namaha ||'}
+                  {invocationText}
                 </div>
 
                 <div className="flex items-center justify-between gap-3 px-2">
@@ -781,9 +820,11 @@ export default function HoroscopeOnePagePrint({
                     <h1 className="text-base sm:text-lg font-black tracking-tight text-black leading-tight">
                       {astrologerTitle}
                     </h1>
-                    <div className="text-[10px] font-bold text-stone-800 leading-snug mt-0.5">
-                      {astrologerSubTitle}
-                    </div>
+                    {astrologerSubTitle && (
+                      <div className="text-[10px] font-bold text-stone-800 leading-snug mt-0.5">
+                        {astrologerSubTitle}
+                      </div>
+                    )}
                     {astrologerAddress && (
                       <div className="text-[8.5px] text-stone-600 leading-tight mt-0.5">
                         {astrologerAddress}
@@ -1010,6 +1051,15 @@ export default function HoroscopeOnePagePrint({
           }
         }
       `}</style>
+
+      {/* Letterhead Branding Modal */}
+      <LetterheadBrandingModal
+        isOpen={brandingModalOpen}
+        onClose={() => setBrandingModalOpen(false)}
+        letterhead={letterhead}
+        onSave={(updated) => setLetterhead(updated)}
+        isTa={isTa}
+      />
     </div>
   );
 }

@@ -4,10 +4,12 @@ import {
   FileText,
   CheckSquare,
   Square,
-  Sparkles
+  Sparkles,
+  Edit
 } from 'lucide-react';
 import { useLang } from '../i18n';
 import { useAuth } from '../context/AuthContext';
+import LetterheadBrandingModal, { getInitialLetterhead } from './LetterheadBrandingModal';
 import {
   compute51PageBookletData,
   calculateThirukanithaHoroscope
@@ -80,6 +82,10 @@ export default function HoroscopeMultiPagePrint({
   const isTa = lang === 'ta';
   const { user } = useAuth();
 
+  // Letterhead Branding State (synced with profile / localStorage)
+  const [letterhead, setLetterhead] = useState(() => getInitialLetterhead(user, isTa));
+  const [brandingModalOpen, setBrandingModalOpen] = useState(false);
+
   // Selected Section IDs (Defaults to ALL 20 sections = Full 51 Pages)
   const [selectedIds, setSelectedIds] = useState(() =>
     HOROSCOPE_20_SECTIONS.map(s => s.id)
@@ -92,12 +98,26 @@ export default function HoroscopeMultiPagePrint({
 
   // Astrologer branding
   const astrologerTitle =
+    letterhead?.line1 ||
+    user?.pagerHeader?.line1 ||
     user?.branding?.title ||
     user?.displayName ||
-    (isTa ? 'ஜிஷ்ணு அஸ்ட்ரோ & வாஸ்து ரிசர்ச் சென்டர்' : 'Jishnu Astro & Vasthu Research Centre');
+    (isTa ? 'ஸ்ரீ பாலாஜி ஜோதிட நிலையம் • திருக்கணித பஞ்சாங்கம்' : 'SAI BALAJI ASTROLOGICAL RESEARCH CENTRE');
+
+  const astrologerSubTitle =
+    letterhead?.line2 ||
+    user?.pagerHeader?.line2 ||
+    '';
+
   const astrologerContact =
+    letterhead?.phoneEmail ||
+    user?.pagerHeader?.phoneEmail ||
     user?.branding?.phone ||
-    'Ph: 99947 83643 / 90430 22219 • email: g.v_71@yahoo.com';
+    'Ph: +91 98765 43210 • email: astro@astrojit.com';
+
+  const astrologerAddress =
+    [letterhead?.address1, letterhead?.address2].filter(Boolean).join(' • ') ||
+    [user?.pagerHeader?.address1, user?.pagerHeader?.address2].filter(Boolean).join(' • ') || '';
 
   const printedDateTime = useMemo(() => {
     const now = new Date();
@@ -241,12 +261,29 @@ export default function HoroscopeMultiPagePrint({
         renderTopHalf: () => (
           <div className="space-y-1 text-black">
             {/* Top Astrologer Header Box */}
-            <div className="border border-black p-1 text-center bg-[#FAF6EE]">
+            <div
+              onClick={() => setBrandingModalOpen(true)}
+              className="border border-black p-1 text-center bg-[#FAF6EE] relative group cursor-pointer hover:ring-2 hover:ring-amber-600/40 transition-all"
+              title={isTa ? 'லெட்டர்ஹெட் அமைப்புகளைத் திருத்த கிளிக் செய்க' : 'Click to edit letterhead branding details'}
+            >
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setBrandingModalOpen(true); }}
+                className="no-print absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-[#7A1A22] text-white text-[8px] font-bold px-1.5 py-0.2 rounded shadow cursor-pointer flex items-center gap-0.5"
+              >
+                <span>✏️</span>
+                <span>{isTa ? 'திருத்து' : 'Edit'}</span>
+              </button>
               <div className="text-[10px] font-black uppercase text-[#7A1A22] tracking-wider">
                 {astrologerTitle}
               </div>
-              <div className="text-[7px] text-stone-700 font-medium">
-                {astrologerContact}
+              {astrologerSubTitle && (
+                <div className="text-[8px] font-bold text-stone-800 leading-tight">
+                  {astrologerSubTitle}
+                </div>
+              )}
+              <div className="text-[7px] text-stone-700 font-medium mt-0.5">
+                {[astrologerAddress, astrologerContact].filter(Boolean).join(' • ')}
               </div>
             </div>
 
@@ -2206,6 +2243,17 @@ export default function HoroscopeMultiPagePrint({
                 : `${selectedIds.length} Sections Selected • ${generatedSheets.length} A4 Pages`}
             </div>
 
+            {/* Edit Letterhead Branding Button */}
+            <button
+              type="button"
+              onClick={() => setBrandingModalOpen(true)}
+              className="px-3 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 dark:bg-amber-900/40 dark:hover:bg-amber-900/70 text-[#7A1A22] dark:text-amber-200 border border-amber-300 dark:border-amber-700 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
+              title={isTa ? 'லெட்டர்ஹெட் அமைப்புகளைத் திருத்துக' : 'Edit Letterhead Branding Details'}
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
+              <span>{isTa ? 'லெட்டர்ஹெட் திருத்து' : 'Edit Letterhead'}</span>
+            </button>
+
             {onSwitchToOnePage && (
               <button
                 type="button"
@@ -2389,6 +2437,15 @@ export default function HoroscopeMultiPagePrint({
           )}
         </div>
       </div>
+
+      {/* Letterhead Branding Modal */}
+      <LetterheadBrandingModal
+        isOpen={brandingModalOpen}
+        onClose={() => setBrandingModalOpen(false)}
+        letterhead={letterhead}
+        onSave={(updated) => setLetterhead(updated)}
+        isTa={isTa}
+      />
     </div>
   );
 }
