@@ -14,6 +14,7 @@ import {
   SHODASHAVARGA_DEFS
 } from '../utils/thirukanithaEngine';
 import { COUNTRIES, GEO_DATA, lookupCoordinates } from '../data/geoCoordinates';
+import ShadbalaBarChart from './ShadbalaBarChart';
 
 // South Indian Chart Fixed Sign Layout (4x4 Grid)
 // [Pisces(11), Aries(0),   Taurus(1),  Gemini(2) ]
@@ -164,6 +165,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
   const [expandedMdIndex, setExpandedMdIndex] = useState(0);
   const [expandedBhuktiKey, setExpandedBhuktiKey] = useState(null);
   const [selectedShodhanaPlanet, setSelectedShodhanaPlanet] = useState('sun');
+  const [shadbalaDisplayMode, setShadbalaDisplayMode] = useState('both'); // 'both' | 'chart' | 'table'
 
   const [openSections, setOpenSections] = useState(() => {
     const isInitEmpty = !initialData?.name?.trim() || !initialData?.dob?.trim();
@@ -1604,96 +1606,149 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
           {/* Collapsible Dropdown Content */}
           {openSections[6] && (
             <div className="p-4 sm:p-5 pt-0 border-t border-amber-900/10 dark:border-amber-500/15 space-y-4">
-              {/* SECTION 5B: Shadbala & Bhava Bala Analysis (ஜாதகத்தில் ஷட்பலம் & பாவக பலம் ஆய்வு) */}
-        {horoscope.shadbala && (
-          <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
-            {/* Table 1: Graha Shadbala */}
-            <div className="space-y-1.5">
-              <h3 className="text-xs font-bold text-[#7A1A22] dark:text-amber-300">
-                {T.grahaShadbala}
-              </h3>
-              <div className="overflow-x-auto rounded-xl border border-amber-900/15 dark:border-amber-500/20 shadow-2xs">
-                <table className="w-full text-xs text-center border-collapse">
-                  <thead>
-                    <tr className="bg-amber-100/70 dark:bg-amber-900/30 text-[#7A1A22] dark:text-amber-200 font-bold border-b border-amber-900/15 dark:border-amber-500/20">
-                      <th className="py-2 px-3 text-left">{T.strength}</th>
-                      {(isTamil ? horoscope.shadbala.grahaHeaders.slice(1) : horoscope.shadbala.grahaHeadersEn.slice(1)).map((gh, idx) => (
-                        <th key={idx} className="py-2 px-2.5">{gh}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-amber-900/10 dark:divide-amber-500/15">
-                    {horoscope.shadbala.grahaRows.map((row, rIdx) => {
-                      const isTot = row.isTotal;
-                      return (
-                        <tr
-                          key={rIdx}
-                          className={
-                            isTot
-                              ? 'bg-amber-200/50 dark:bg-amber-900/40 font-bold text-[#7A1A22] dark:text-amber-200'
-                              : 'hover:bg-amber-50/50 dark:hover:bg-amber-900/10 transition-colors'
-                          }
-                        >
-                          <td className="py-1.5 px-3 text-left font-semibold">
-                            {isTamil ? row.label : row.labelEn}
-                          </td>
-                          {row.vals.map((v, vIdx) => (
-                            <td key={vIdx} className="py-1.5 px-2.5 font-mono text-[11px]">
-                              {v}
-                            </td>
-                          ))}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+              {/* SECTION 6: Shadbala & Bhava Bala Analysis (ஜாதகத்தில் ஷட்பலம் & பாவக பலம் ஆய்வு) */}
+              {horoscope.shadbala && (
+                <div className="space-y-4">
+                  {/* Mode Selector Toggle: Visual Bar Charts vs Detailed Tables */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 bg-amber-50/70 dark:bg-amber-950/20 p-2 sm:p-2.5 rounded-xl border border-amber-900/10 dark:border-amber-500/15">
+                    <div className="text-xs font-semibold text-stone-700 dark:text-stone-300 flex items-center gap-1.5">
+                      <span>👁️</span>
+                      <span>{isTamil ? 'காட்சி முறை (Display Mode):' : 'Display Mode:'}</span>
+                    </div>
+                    <div className="inline-flex rounded-lg bg-white dark:bg-stone-800 p-0.5 border border-amber-900/15 dark:border-amber-500/20 shadow-2xs">
+                      <button
+                        type="button"
+                        onClick={() => setShadbalaDisplayMode('chart')}
+                        className={`px-3 py-1 text-xs font-bold rounded-md transition-all cursor-pointer ${
+                          shadbalaDisplayMode === 'chart'
+                            ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
+                            : 'text-stone-600 dark:text-stone-300 hover:text-[#7A1A22]'
+                        }`}
+                      >
+                        {isTamil ? '📊 வரைபட பலம் (Visual Bar Charts)' : '📊 Visual Bar Charts'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShadbalaDisplayMode('table')}
+                        className={`px-3 py-1 text-xs font-bold rounded-md transition-all cursor-pointer ${
+                          shadbalaDisplayMode === 'table'
+                            ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
+                            : 'text-stone-600 dark:text-stone-300 hover:text-[#7A1A22]'
+                        }`}
+                      >
+                        {isTamil ? '📋 விரிவான அட்டவணை (Tables)' : '📋 Detailed Tables'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShadbalaDisplayMode('both')}
+                        className={`px-3 py-1 text-xs font-bold rounded-md transition-all cursor-pointer ${
+                          shadbalaDisplayMode === 'both'
+                            ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
+                            : 'text-stone-600 dark:text-stone-300 hover:text-[#7A1A22]'
+                        }`}
+                      >
+                        {isTamil ? '✨ இரண்டும் (Both)' : '✨ Both'}
+                      </button>
+                    </div>
+                  </div>
 
-            {/* Table 2: Bhava Bala */}
-            <div className="space-y-1.5 pt-2">
-              <h3 className="text-xs font-bold text-[#7A1A22] dark:text-amber-300">
-                {T.bhavaBala}
-              </h3>
-              <div className="overflow-x-auto rounded-xl border border-amber-900/15 dark:border-amber-500/20 shadow-2xs">
-                <table className="w-full text-xs text-center border-collapse">
-                  <thead>
-                    <tr className="bg-amber-100/70 dark:bg-amber-900/30 text-[#7A1A22] dark:text-amber-200 font-bold border-b border-amber-900/15 dark:border-amber-500/20">
-                      <th className="py-2 px-3 text-left">{T.house}</th>
-                      {horoscope.shadbala.bhavaHeaders.map(bh => (
-                        <th key={bh} className="py-2 px-2 font-mono">{bh}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-amber-900/10 dark:divide-amber-500/15">
-                    {horoscope.shadbala.bhavaRows.map((row, rIdx) => {
-                      const isTot = row.isTotal;
-                      return (
-                        <tr
-                          key={rIdx}
-                          className={
-                            isTot
-                              ? 'bg-amber-200/50 dark:bg-amber-900/40 font-bold text-[#7A1A22] dark:text-amber-200'
-                              : 'hover:bg-amber-50/50 dark:hover:bg-amber-900/10 transition-colors'
-                          }
-                        >
-                          <td className="py-1.5 px-3 text-left font-semibold">
-                            {isTamil ? row.label : row.labelEn}
-                          </td>
-                          {row.vals.map((v, vIdx) => (
-                            <td key={vIdx} className="py-1.5 px-2 font-mono text-[11px]">
-                              {v}
-                            </td>
-                          ))}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
+                  {/* Render Visual Bar Charts */}
+                  {(shadbalaDisplayMode === 'chart' || shadbalaDisplayMode === 'both') && (
+                    <ShadbalaBarChart shadbalaData={horoscope.shadbala} isTamil={isTamil} />
+                  )}
+
+                  {/* Render Numerical Tables */}
+                  {(shadbalaDisplayMode === 'table' || shadbalaDisplayMode === 'both') && (
+                    <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
+                      {/* Table 1: Graha Shadbala */}
+                      <div className="space-y-1.5">
+                        <h3 className="text-xs font-bold text-[#7A1A22] dark:text-amber-300">
+                          {T.grahaShadbala}
+                        </h3>
+                        <div className="overflow-x-auto rounded-xl border border-amber-900/15 dark:border-amber-500/20 shadow-2xs">
+                          <table className="w-full text-xs text-center border-collapse">
+                            <thead>
+                              <tr className="bg-amber-100/70 dark:bg-amber-900/30 text-[#7A1A22] dark:text-amber-200 font-bold border-b border-amber-900/15 dark:border-amber-500/20">
+                                <th className="py-2 px-3 text-left">{T.strength}</th>
+                                {(isTamil ? horoscope.shadbala.grahaHeaders.slice(1) : horoscope.shadbala.grahaHeadersEn.slice(1)).map((gh, idx) => (
+                                  <th key={idx} className="py-2 px-2.5">{gh}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-amber-900/10 dark:divide-amber-500/15">
+                              {horoscope.shadbala.grahaRows.map((row, rIdx) => {
+                                const isTot = row.isTotal;
+                                return (
+                                  <tr
+                                    key={rIdx}
+                                    className={
+                                      isTot
+                                        ? 'bg-amber-200/50 dark:bg-amber-900/40 font-bold text-[#7A1A22] dark:text-amber-200'
+                                        : 'hover:bg-amber-50/50 dark:hover:bg-amber-900/10 transition-colors'
+                                    }
+                                  >
+                                    <td className="py-1.5 px-3 text-left font-semibold">
+                                      {isTamil ? row.label : row.labelEn}
+                                    </td>
+                                    {row.vals.map((v, vIdx) => (
+                                      <td key={vIdx} className="py-1.5 px-2.5 font-mono text-[11px]">
+                                        {v}
+                                      </td>
+                                    ))}
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      {/* Table 2: Bhava Bala */}
+                      <div className="space-y-1.5 pt-2">
+                        <h3 className="text-xs font-bold text-[#7A1A22] dark:text-amber-300">
+                          {T.bhavaBala}
+                        </h3>
+                        <div className="overflow-x-auto rounded-xl border border-amber-900/15 dark:border-amber-500/20 shadow-2xs">
+                          <table className="w-full text-xs text-center border-collapse">
+                            <thead>
+                              <tr className="bg-amber-100/70 dark:bg-amber-900/30 text-[#7A1A22] dark:text-amber-200 font-bold border-b border-amber-900/15 dark:border-amber-500/20">
+                                <th className="py-2 px-3 text-left">{T.house}</th>
+                                {horoscope.shadbala.bhavaHeaders.map(bh => (
+                                  <th key={bh} className="py-2 px-2 font-mono">{bh}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-amber-900/10 dark:divide-amber-500/15">
+                              {horoscope.shadbala.bhavaRows.map((row, rIdx) => {
+                                const isTot = row.isTotal;
+                                return (
+                                  <tr
+                                    key={rIdx}
+                                    className={
+                                      isTot
+                                        ? 'bg-amber-200/50 dark:bg-amber-900/40 font-bold text-[#7A1A22] dark:text-amber-200'
+                                        : 'hover:bg-amber-50/50 dark:hover:bg-amber-900/10 transition-colors'
+                                    }
+                                  >
+                                    <td className="py-1.5 px-3 text-left font-semibold">
+                                      {isTamil ? row.label : row.labelEn}
+                                    </td>
+                                    {row.vals.map((v, vIdx) => (
+                                      <td key={vIdx} className="py-1.5 px-2 font-mono text-[11px]">
+                                        {v}
+                                      </td>
+                                    ))}
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>
