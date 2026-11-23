@@ -84,20 +84,34 @@ export function printElementById(elementId, customTitle = 'Astrojit_Document') {
             box-sizing: border-box !important;
           }
           #astrojit-horoscope-1page {
-            max-height: 268mm !important;
-            height: auto !important;
+            width: 200mm !important;
+            max-width: 200mm !important;
+            height: 286mm !important;
+            min-height: 286mm !important;
+            max-height: 287mm !important;
+            box-sizing: border-box !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
             page-break-after: avoid !important;
             break-after: avoid !important;
             overflow: hidden !important;
           }
+          #astrojit-horoscope-1page > div {
+            height: 100% !important;
+            min-height: 284mm !important;
+            max-height: 285mm !important;
+            box-sizing: border-box !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+          }
         </style>
       </head>
       <body>
-        <div class="astrojit-isolated-print-target">
-          ${element.innerHTML}
-        </div>
+        ${element.outerHTML}
       </body>
     </html>
   `);
