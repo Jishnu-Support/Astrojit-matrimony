@@ -719,7 +719,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5 text-xs">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-2.5 text-xs">
                   <div className="p-2.5 bg-amber-50/70 dark:bg-amber-950/20 rounded-xl border border-amber-400/40 text-center">
                     <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'லக்னாதிபதி' : 'Lagnathipathi'}</span>
                     <strong className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block break-words">
@@ -759,6 +759,22 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     <span className="block text-[10px] text-indigo-800 dark:text-indigo-400 uppercase font-bold">{isTamil ? 'யோகி - அவயோகி' : 'Yogi - Avayogi'}</span>
                     <strong className="text-xs sm:text-sm font-bold text-indigo-950 dark:text-indigo-300 mt-0.5 block break-words whitespace-normal leading-snug">
                       {isTamil ? horoscope.summary?.yogiAvayogi?.textTa : horoscope.summary?.yogiAvayogi?.textEn}
+                    </strong>
+                  </div>
+
+                  <div className={`p-2.5 rounded-xl border text-center ${
+                    horoscope.summary?.vakraCount > 0
+                      ? 'bg-amber-100/70 dark:bg-amber-950/40 border-amber-500/50'
+                      : 'bg-[#FAF6EF] dark:bg-[#1A1513] border-amber-900/10 dark:border-amber-500/15'
+                  }`}>
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold flex items-center justify-center gap-1">
+                      <span>🌀</span>
+                      <span>{isTamil ? 'வக்ர நிலை' : 'Retrograde Status'}</span>
+                    </span>
+                    <strong className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block break-words whitespace-normal leading-snug">
+                      {horoscope.summary?.vakraCount > 0
+                        ? (isTamil ? horoscope.summary.vakraNamesTa : horoscope.summary.vakraNamesEn)
+                        : (isTamil ? 'நேர்கதி' : 'All Direct')}
                     </strong>
                   </div>
                 </div>
@@ -2015,17 +2031,42 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                       <tr className="bg-amber-100/80 dark:bg-amber-950/40 text-[#7A1A22] dark:text-amber-200 font-bold border-b border-amber-900/15 text-[11px]">
                         <th className="py-2.5 px-3 text-left">{isTamil ? 'வர்க்கம்' : 'Varga'}</th>
                         <th className="py-2.5 px-2 text-left hidden sm:table-cell">{isTamil ? 'காரகத்துவம்' : 'Domain'}</th>
-                        <th className="py-2.5 px-1 text-center text-[#7A1A22] dark:text-amber-300 font-bold">{isTamil ? 'லக்' : 'Lag'}</th>
-                        <th className="py-2.5 px-1 text-center">{isTamil ? 'சூரி' : 'Sun'}</th>
-                        <th className="py-2.5 px-1 text-center">{isTamil ? 'சந்' : 'Moo'}</th>
-                        <th className="py-2.5 px-1 text-center">{isTamil ? 'செவ்' : 'Mar'}</th>
-                        <th className="py-2.5 px-1 text-center">{isTamil ? 'புத' : 'Mer'}</th>
-                        <th className="py-2.5 px-1 text-center">{isTamil ? 'குரு' : 'Jup'}</th>
-                        <th className="py-2.5 px-1 text-center">{isTamil ? 'சுக்' : 'Ven'}</th>
-                        <th className="py-2.5 px-1 text-center">{isTamil ? 'சனி' : 'Sat'}</th>
-                        <th className="py-2.5 px-1 text-center">{isTamil ? 'ராகு' : 'Rah'}</th>
-                        <th className="py-2.5 px-1 text-center">{isTamil ? 'கேது' : 'Ket'}</th>
-                        <th className="py-2.5 px-1 text-center text-stone-500">{isTamil ? 'மாந்' : 'Man'}</th>
+                        {[
+                          { id: 'lagna', ta: 'லக்', en: 'Lag', isLagna: true },
+                          { id: 'sun', ta: 'சூரி', en: 'Sun' },
+                          { id: 'moon', ta: 'சந்', en: 'Moo' },
+                          { id: 'mars', ta: 'செவ்', en: 'Mar' },
+                          { id: 'mercury', ta: 'புத', en: 'Mer' },
+                          { id: 'jupiter', ta: 'குரு', en: 'Jup' },
+                          { id: 'venus', ta: 'சுக்', en: 'Ven' },
+                          { id: 'saturn', ta: 'சனி', en: 'Sat' },
+                          { id: 'rahu', ta: 'ராகு', en: 'Rah' },
+                          { id: 'ketu', ta: 'கேது', en: 'Ket' },
+                          { id: 'mandi', ta: 'மாந்', en: 'Man', isMandi: true }
+                        ].map(c => {
+                          const pl = horoscope.planets?.find(p => p.id === c.id);
+                          const isR = Boolean(pl?.isRetrograde);
+                          const label = isTamil
+                            ? (isR ? `${c.ta}(வ)` : c.ta)
+                            : (isR ? `${c.en}(R)` : c.en);
+                          return (
+                            <th
+                              key={c.id}
+                              className={`py-2.5 px-1 text-center ${
+                                c.isLagna
+                                  ? 'text-[#7A1A22] dark:text-amber-300 font-bold'
+                                  : c.isMandi
+                                  ? 'text-stone-500'
+                                  : isR
+                                  ? 'text-amber-900 dark:text-amber-300 font-black'
+                                  : ''
+                              }`}
+                              title={isR ? (isTamil ? 'வக்ர கதி' : 'Retrograde Motion') : undefined}
+                            >
+                              {label}
+                            </th>
+                          );
+                        })}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-amber-900/10 dark:divide-stone-800 text-[11px]">
@@ -2947,6 +2988,11 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                             <td className="py-2 px-2.5 font-bold text-[#7A1A22] dark:text-amber-200 whitespace-nowrap">
                               <span className="mr-1">{p.symbol}</span>
                               <span>{isTamil ? p.nameTa : p.nameEn}</span>
+                              {p.isRetrograde && (
+                                <span className="ml-1 px-1.5 py-0.2 rounded text-[10px] font-black bg-amber-500/20 text-amber-900 dark:bg-amber-400/20 dark:text-amber-200 border border-amber-600/30" title={isTamil ? 'வக்ர சஞ்சாரம்' : 'Retrograde Transit'}>
+                                  {isTamil ? '(வ)' : '(R)'}
+                                </span>
+                              )}
                             </td>
                             <td className="py-2 px-2.5 whitespace-nowrap">
                               <div className="font-semibold text-stone-800 dark:text-stone-200">

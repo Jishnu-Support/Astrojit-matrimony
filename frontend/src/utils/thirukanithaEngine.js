@@ -1237,6 +1237,9 @@ export function computeGocharamData({
       id: p.id,
       nameTa: p.info?.ta || p.id,
       nameEn: p.info?.en || p.id,
+      isRetrograde: Boolean(p.isRetrograde),
+      nameWithVakraTa: p.isRetrograde ? `${p.info?.ta}(வ)` : (p.info?.ta || p.id),
+      nameWithVakraEn: p.isRetrograde ? `${p.info?.en} (R)` : (p.info?.en || p.id),
       symbol: p.info?.symbol || '🪐',
       transitRasi: p.rasi,
       transitRasiTa: RASHIS[p.rasi]?.ta || '',
@@ -1369,11 +1372,15 @@ export function computeGocharamData({
     }
     for (const pr of planetRows) {
       if (pr.transitRasi === rasiIdx) {
+        const isR = Boolean(pr.isRetrograde);
+        const baseTa = PLANET_INFO.find(pi => pi.id === pr.id)?.shortTa || pr.nameTa.slice(0, 3);
+        const baseEn = PLANET_INFO.find(pi => pi.id === pr.id)?.shortEn || pr.nameEn.slice(0, 3);
         occupants.push({
           id: pr.id,
-          labelTa: PLANET_INFO.find(pi => pi.id === pr.id)?.shortTa || pr.nameTa.slice(0, 3),
-          labelEn: PLANET_INFO.find(pi => pi.id === pr.id)?.shortEn || pr.nameEn.slice(0, 3),
+          labelTa: isR ? `${baseTa}(வ)` : baseTa,
+          labelEn: isR ? `${baseEn}(R)` : baseEn,
           isTransitPlanet: true,
+          isRetrograde: isR,
           statusType: pr.statusType
         });
       }
@@ -2919,14 +2926,15 @@ export function calculateThirukanithaHoroscope({
       const dignityTa = (p.isLagna || p.isMandi) ? '' : getVargaDignity(p.id, signIdx);
       planetsInVarga[p.id] = {
         id: p.id,
-        nameTa: p.info?.ta || p.info?.nameTa || p.id,
-        nameEn: p.info?.en || p.info?.nameEn || p.id,
+        isRetrograde: Boolean(p.isRetrograde),
+        nameTa: p.isRetrograde ? `${p.info?.ta || p.id}(வ)` : (p.info?.ta || p.info?.nameTa || p.id),
+        nameEn: p.isRetrograde ? `${p.info?.en || p.id} (R)` : (p.info?.en || p.info?.nameEn || p.id),
         symbol: p.info?.symbol || '',
         signIdx,
         signNameTa: RASHIS[signIdx]?.ta || '',
         signNameEn: RASHIS[signIdx]?.en || '',
-        signShortTa: RASHIS[signIdx]?.shortTa || '',
-        signShortEn: RASHIS[signIdx]?.shortEn || '',
+        signShortTa: p.isRetrograde ? `${RASHIS[signIdx]?.shortTa || ''}(வ)` : (RASHIS[signIdx]?.shortTa || ''),
+        signShortEn: p.isRetrograde ? `${RASHIS[signIdx]?.shortEn || ''}(R)` : (RASHIS[signIdx]?.shortEn || ''),
         dignityTa
       };
     }
@@ -2963,8 +2971,16 @@ export function calculateThirukanithaHoroscope({
   ];
 
   const dasavargaGrahaKeys = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn', 'rahu', 'ketu', 'lagna'];
-  const dasavargaGrahaHeadersTa = ['சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு', 'சுக்கிரன்', 'சனி', 'ராகு', 'கேது', 'லக்னம்'];
-  const dasavargaGrahaHeadersEn = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu', 'Lagna'];
+  const dasavargaGrahaHeadersTa = dasavargaGrahaKeys.map(k => {
+    if (k === 'lagna') return 'லக்னம்';
+    const p = planetRows.find(item => item.id === k);
+    return (p && p.isRetrograde) ? `${p.info.ta}(வ)` : (p ? p.info.ta : k);
+  });
+  const dasavargaGrahaHeadersEn = dasavargaGrahaKeys.map(k => {
+    if (k === 'lagna') return 'Lagna';
+    const p = planetRows.find(item => item.id === k);
+    return (p && p.isRetrograde) ? `${p.info.en}(R)` : (p ? p.info.en : k);
+  });
 
   const dasavarga = (() => {
     if (isMrM) {
@@ -3471,8 +3487,8 @@ export const NAKSHATRA_SYLLABLES_TA = [
 ];
 
 export const PLANET_ROW_KEYS = [
-  '1-லக்னம்', 'சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்(வ)', 'குரு',
-  'சுக்கிரன்(வ)', 'சனி(வ)', 'ராகு', 'கேது', 'மாந்தி'
+  '1-லக்னம்', 'சூரியன்', 'சந்திரன்', 'செவ்வாய்', 'புதன்', 'குரு',
+  'சுக்கிரன்', 'சனி', 'ராகு', 'கேது', 'மாந்தி'
 ];
 
 /**
@@ -3697,23 +3713,14 @@ export function computeHoroscopePagerData(horoInput, astrologerProfile) {
   // Authentic Mandi calculation: for Mr. M, 145.4975° (Simham 25° 29' 51" Pooram 4)
   const mandiLong = isMrM ? 145.4975 : (horo.summary?.mandiDeg360 || horo.planets?.find(pl => pl.id === 'mandi')?.longitude || 145.4975);
 
-  const planetMap = {
-    '1-லக்னம்': { lam: lagnaLong, state: 'ஆரம்பம்' },
-    'சூரியன்': { lam: sunLong, state: getPlanetDignity('sun', sunLong) },
-    'சந்திரன்': { lam: moonLong, state: getPlanetDignity('moon', moonLong) },
-    'செவ்வாய்': { lam: getPlanetLong(horo, 'mars'), state: getPlanetDignity('mars', getPlanetLong(horo, 'mars')) },
-    'புதன்(வ)': { lam: getPlanetLong(horo, 'mercury'), state: 'வக்ரம்' },
-    'குரு': { lam: getPlanetLong(horo, 'jupiter'), state: getPlanetDignity('jupiter', getPlanetLong(horo, 'jupiter')) },
-    'சுக்கிரன்(வ)': { lam: getPlanetLong(horo, 'venus'), state: 'வக்ரம்' },
-    'சனி(வ)': { lam: getPlanetLong(horo, 'saturn'), state: 'வக்ரம்' },
-    'ராகு': { lam: getPlanetLong(horo, 'rahu'), state: 'மந்தம்' },
-    'கேது': { lam: getPlanetLong(horo, 'ketu'), state: 'மந்தம்' },
-    'மாந்தி': { lam: mandiLong, state: 'உபகிரகம்' }
-  };
-
   function getPlanetLong(h, id) {
     const pl = h.planets.find(x => x.id === id);
     return pl ? pl.longitude : 0;
+  }
+
+  function getIsRetro(id) {
+    const pl = horo.planets.find(x => x.id === id);
+    return Boolean(pl?.isRetrograde);
   }
 
   function getPlanetDignity(id, lam) {
@@ -3726,14 +3733,24 @@ export function computeHoroscopePagerData(horoInput, astrologerProfile) {
     return 'நட்பு';
   }
 
-  function Lagna_calc_mandi(h, meta) {
-    // Mandi approximate longitude based on Lagna + 140° offset or Saturn's hora
-    const satLong = getPlanetLong(h, 'saturn');
-    return N(satLong + 120);
-  }
+  const planetMap = {
+    '1-லக்னம்': { id: 'lagna', lam: lagnaLong, state: 'ஆரம்பம்' },
+    'சூரியன்': { id: 'sun', lam: sunLong, state: getPlanetDignity('sun', sunLong) },
+    'சந்திரன்': { id: 'moon', lam: moonLong, state: getPlanetDignity('moon', moonLong) },
+    'செவ்வாய்': { id: 'mars', lam: getPlanetLong(horo, 'mars'), state: getIsRetro('mars') ? 'வக்ரம்' : getPlanetDignity('mars', getPlanetLong(horo, 'mars')) },
+    'புதன்': { id: 'mercury', lam: getPlanetLong(horo, 'mercury'), state: getIsRetro('mercury') ? 'வக்ரம்' : getPlanetDignity('mercury', getPlanetLong(horo, 'mercury')) },
+    'குரு': { id: 'jupiter', lam: getPlanetLong(horo, 'jupiter'), state: getIsRetro('jupiter') ? 'வக்ரம்' : getPlanetDignity('jupiter', getPlanetLong(horo, 'jupiter')) },
+    'சுக்கிரன்': { id: 'venus', lam: getPlanetLong(horo, 'venus'), state: getIsRetro('venus') ? 'வக்ரம்' : getPlanetDignity('venus', getPlanetLong(horo, 'venus')) },
+    'சனி': { id: 'saturn', lam: getPlanetLong(horo, 'saturn'), state: getIsRetro('saturn') ? 'வக்ரம்' : getPlanetDignity('saturn', getPlanetLong(horo, 'saturn')) },
+    'ராகு': { id: 'rahu', lam: getPlanetLong(horo, 'rahu'), state: 'மந்தம்' },
+    'கேது': { id: 'ketu', lam: getPlanetLong(horo, 'ketu'), state: 'மந்தம்' },
+    'மாந்தி': { id: 'mandi', lam: mandiLong, state: 'உபகிரகம்' }
+  };
 
   const planetRows = PLANET_ROW_KEYS.map(key => {
     const info = planetMap[key] || { lam: 0, state: '' };
+    const isRetro = info.id ? getIsRetro(info.id) : false;
+    const displayName = isRetro ? `${key}(வ)` : key;
     const lam = info.lam;
     const rasiIdx = Math.floor(lam / 30);
     const nakIdx = Math.floor(lam / (40 / 3));
@@ -3751,14 +3768,15 @@ export function computeHoroscopePagerData(horoInput, astrologerProfile) {
     const degInSign = `${String(rDeg).padStart(2, '0')}° ${String(rMin).padStart(2, '0')}′`;
 
     return {
-      planet: key,
+      planet: displayName,
       degMin,
       nakshatra: nakObj.ta,
       pada: String(pada),
       lord: lordTa,
       rasi: rasiObj.ta,
       degInSign,
-      state: info.state
+      state: info.state,
+      isRetrograde: isRetro
     };
   });
 
@@ -3777,10 +3795,10 @@ export function computeHoroscopePagerData(horoInput, astrologerProfile) {
     'sun': 'சூரி',
     'moon': 'சந்',
     'mars': 'செவ்',
-    'mercury': 'புத(வ)',
+    'mercury': 'புத',
     'jupiter': 'குரு',
-    'venus': 'சுக்(வ)',
-    'saturn': 'சனி(வ)',
+    'venus': 'சுக்',
+    'saturn': 'சனி',
     'rahu': 'ராகு',
     'ketu': 'கேது',
     'mandi': 'மாந்'
@@ -3792,7 +3810,7 @@ export function computeHoroscopePagerData(horoInput, astrologerProfile) {
     const cellIdx = SIGN_ORDER.indexOf(signData.rasi);
     if (cellIdx !== -1) {
       const occupants = Array.isArray(signData.occupants) ? signData.occupants : [];
-      const labels = occupants.map(o => PLANET_SHORT_CODES[o.id] || o.id);
+      const labels = occupants.map(o => o.labelTa || (o.isRetrograde ? `${PLANET_SHORT_CODES[o.id] || o.id}(வ)` : (PLANET_SHORT_CODES[o.id] || o.id)));
       rasiCells[cellIdx] = labels.join(', ');
     }
   });
@@ -3803,7 +3821,7 @@ export function computeHoroscopePagerData(horoInput, astrologerProfile) {
     const cellIdx = SIGN_ORDER.indexOf(signData.rasi);
     if (cellIdx !== -1) {
       const occupants = Array.isArray(signData.occupants) ? signData.occupants : [];
-      const labels = occupants.map(o => PLANET_SHORT_CODES[o.id] || o.id);
+      const labels = occupants.map(o => o.labelTa || (o.isRetrograde ? `${PLANET_SHORT_CODES[o.id] || o.id}(வ)` : (PLANET_SHORT_CODES[o.id] || o.id)));
       navamsaCells[cellIdx] = labels.join(', ');
     }
   });
