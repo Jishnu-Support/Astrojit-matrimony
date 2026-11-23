@@ -149,7 +149,7 @@ export const NAKSHATRAS = [
 ];
 
 export const PLANET_INFO = [
-  { id: 'lagna', en: 'Lagna (Ascendant)', ta: '1-லக்னம்', symbol: '🌅', shortEn: 'Asc', shortTa: 'ல' },
+  { id: 'lagna', en: 'Lagna', ta: '1-லக்னம்', symbol: '🌅', shortEn: 'Asc', shortTa: 'ல' },
   { id: 'sun', en: 'Sun', ta: 'சூரியன்', symbol: '☉', shortEn: 'Su', shortTa: 'சூ' },
   { id: 'moon', en: 'Moon', ta: 'சந்திரன்', symbol: '☽', shortEn: 'Mo', shortTa: 'சந்' },
   { id: 'mars', en: 'Mars', ta: 'செவ்வாய்', symbol: '♂', shortEn: 'Ma', shortTa: 'செவ்' },
@@ -159,7 +159,7 @@ export const PLANET_INFO = [
   { id: 'saturn', en: 'Saturn', ta: 'சனி', symbol: '♄', shortEn: 'Sa', shortTa: 'சனி' },
   { id: 'rahu', en: 'Rahu', ta: 'ராகு', symbol: '☊', shortEn: 'Ra', shortTa: 'ராகு' },
   { id: 'ketu', en: 'Ketu', ta: 'கேது', symbol: '☋', shortEn: 'Ke', shortTa: 'கேது' },
-  { id: 'mandi', en: 'Mandi (Gulika)', ta: 'மாந்தி', symbol: '🪐', shortEn: 'Man', shortTa: 'மாந்' }
+  { id: 'mandi', en: 'Mandi', ta: 'மாந்தி', symbol: '🪐', shortEn: 'Man', shortTa: 'மாந்' }
 ];
 
 export const WEEKDAYS = [
@@ -2512,7 +2512,7 @@ export function calculateThirukanithaHoroscope({
     id: 'lagna',
     isLagna: true,
     isMandi: false,
-    info: PLANET_INFO.find(item => item.id === 'lagna') || { id: 'lagna', en: 'Lagna (Ascendant)', ta: '1-லக்னம்', symbol: '🌅', shortEn: 'Asc', shortTa: 'ல' },
+    info: PLANET_INFO.find(item => item.id === 'lagna') || { id: 'lagna', en: 'Lagna', ta: '1-லக்னம்', symbol: '🌅', shortEn: 'Asc', shortTa: 'ல' },
     longitude: Lagna_nirayana,
     dms: formatDMS(Lagna_nirayana),
     degInSign: formatDegInSign(Lagna_nirayana),
@@ -2536,7 +2536,7 @@ export function calculateThirukanithaHoroscope({
     id: 'mandi',
     isLagna: false,
     isMandi: true,
-    info: PLANET_INFO.find(item => item.id === 'mandi') || { id: 'mandi', en: 'Mandi (Gulika)', ta: 'மாந்தி', symbol: '🪐', shortEn: 'Man', shortTa: 'மாந்' },
+    info: PLANET_INFO.find(item => item.id === 'mandi') || { id: 'mandi', en: 'Mandi', ta: 'மாந்தி', symbol: '🪐', shortEn: 'Man', shortTa: 'மாந்' },
     longitude: mandiLong,
     dms: formatDMS(mandiLong),
     degInSign: formatDegInSign(mandiLong),
