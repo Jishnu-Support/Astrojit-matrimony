@@ -172,6 +172,23 @@ export const WEEKDAYS = [
   { id: 6, en: 'Saturday', ta: 'சனி' }
 ];
 
+export const TITHI_NAMES = [
+  { num: 1,  nameEn: 'Prathama',    nameTa: 'பிரதமை' },
+  { num: 2,  nameEn: 'Dwitiya',     nameTa: 'துவிதியை' },
+  { num: 3,  nameEn: 'Tritiya',     nameTa: 'திருதியை' },
+  { num: 4,  nameEn: 'Chaturthi',   nameTa: 'சதுர்த்தி' },
+  { num: 5,  nameEn: 'Panchami',    nameTa: 'பஞ்சமி' },
+  { num: 6,  nameEn: 'Shashthi',    nameTa: 'சஷ்டி' },
+  { num: 7,  nameEn: 'Saptami',     nameTa: 'சப்தமி' },
+  { num: 8,  nameEn: 'Ashtami',     nameTa: 'அஷ்டமி' },
+  { num: 9,  nameEn: 'Navami',      nameTa: 'நவமி' },
+  { num: 10, nameEn: 'Dashami',     nameTa: 'தசமி' },
+  { num: 11, nameEn: 'Ekadashi',    nameTa: 'ஏகாதசி' },
+  { num: 12, nameEn: 'Dwadashi',    nameTa: 'துவாதசி' },
+  { num: 13, nameEn: 'Trayodashi',  nameTa: 'திரயோதசி' },
+  { num: 14, nameEn: 'Chaturdashi', nameTa: 'சதுர்த்தசி' }
+];
+
 export 
 // Classical Vimshottari Pratyantardasha (Level 3 Antara) & Age at Date calculation
 function computeAntarasForBhukti(bLordId, startDateStr, endDateStr, todayDateObj) {
@@ -2493,13 +2510,39 @@ export function calculateThirukanithaHoroscope({
 
   const allPlanetRows = [lagnaRow, ...planetRows, mandiRow];
 
-  // 12. PANCHANGAM
+  // 12. PANCHANGAM - CLASSICAL 30 TITHI COMPUTATION (Shukla Prathama..Pournami, Krishna Prathama..Amavasya)
   const phase = N(lamMoon_nirayana - lamSun_nirayana);
-  const tithiNum = Math.floor(phase / 12) + 1;
+  const tithiNum = (Math.floor(phase / 12) % 30) + 1;
   const isShukla = tithiNum <= 15;
   const tithiIndex = isShukla ? tithiNum : (tithiNum - 15);
-  const tithiNameEn = `${isShukla ? 'Shukla' : 'Krishna'} Paksha Tithi ${tithiIndex}`;
-  const tithiNameTa = `${isShukla ? 'சுக்ல பக்ஷம்' : 'கிருஷ்ண பக்ஷம்'} திதி ${tithiIndex}`;
+  const pakshaEn = isShukla ? 'Shukla Paksha' : 'Krishna Paksha';
+  const pakshaTa = isShukla ? 'சுக்ல பக்ஷம்' : 'கிருஷ்ண பக்ஷம்';
+
+  let tithiBaseEn = '';
+  let tithiBaseTa = '';
+
+  if (isShukla) {
+    if (tithiNum === 15) {
+      tithiBaseEn = 'Pournami';
+      tithiBaseTa = 'பௌர்ணமி';
+    } else {
+      const tInfo = TITHI_NAMES[tithiNum - 1] || TITHI_NAMES[0];
+      tithiBaseEn = tInfo.nameEn;
+      tithiBaseTa = tInfo.nameTa;
+    }
+  } else {
+    if (tithiIndex === 15) {
+      tithiBaseEn = 'Amavasya';
+      tithiBaseTa = 'அமாவாசை';
+    } else {
+      const tInfo = TITHI_NAMES[tithiIndex - 1] || TITHI_NAMES[0];
+      tithiBaseEn = tInfo.nameEn;
+      tithiBaseTa = tInfo.nameTa;
+    }
+  }
+
+  const tithiNameEn = `${pakshaEn} ${tithiBaseEn}`;
+  const tithiNameTa = `${pakshaTa} ${tithiBaseTa}`;
 
   const birthDateObj = new Date(Y, M - 1, D);
   const weekdayIdx = birthDateObj.getDay();
@@ -3180,6 +3223,18 @@ export function calculateThirukanithaHoroscope({
       moonRasi,
       moonNak,
       moonPada,
+      tithi: {
+        tithiNum,
+        isShukla,
+        pakshaEn,
+        pakshaTa,
+        nameEn: tithiBaseEn,
+        nameTa: tithiBaseTa,
+        tithiNameEn,
+        tithiNameTa,
+        fullNameEn: tithiNameEn,
+        fullNameTa: tithiNameTa
+      },
       tithiNameEn,
       tithiNameTa,
       tithiNum,

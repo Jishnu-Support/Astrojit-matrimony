@@ -325,8 +325,8 @@ export default function HoroscopeOnePagePrint({
 
   // Thithi & Yoga - Karana
   const tithiText = isTa
-    ? (horoscope?.summary?.tithi?.tithiNameTa || 'கிருஷ்ண பக்ஷம் சதுர்த்தி')
-    : (horoscope?.summary?.tithi?.tithiNameEn || 'Krishna Paksha Chaturthi');
+    ? (horoscope?.summary?.tithi?.tithiNameTa || horoscope?.summary?.tithiNameTa || 'சுக்ல பக்ஷம் பௌர்ணமி')
+    : (horoscope?.summary?.tithi?.tithiNameEn || horoscope?.summary?.tithiNameEn || 'Shukla Paksha Pournami');
 
   const yogaKaranaText = isTa
     ? `${horoscope?.summary?.yogaKarana?.yogaTa || 'ஆயுஷ்மான்'} - ${horoscope?.summary?.yogaKarana?.karanaTa || 'பாலவ'}`
