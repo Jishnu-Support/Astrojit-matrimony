@@ -982,11 +982,11 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-amber-900/20 text-[#7A1A22] dark:text-amber-300 font-bold bg-amber-900/5 dark:bg-stone-800">
-                  <th className="py-2.5 px-3">{T.planet}</th>
+                  <th className="py-2.5 px-3">{isTamil ? 'கிரகம்' : 'Planet / Body'}</th>
                   <th className="py-2.5 px-3">{T.long}</th>
                   <th className="py-2.5 px-3">{T.degInSign}</th>
-                  <th className="py-2.5 px-3">{T.rasi}</th>
-                  <th className="py-2.5 px-3">{T.nakshatra}</th>
+                  <th className="py-2.5 px-3">{isTamil ? 'ராசி' : 'Sign (Rasi)'}</th>
+                  <th className="py-2.5 px-3">{isTamil ? 'நட்சத்திரம்' : 'Nakshatra'}</th>
                   <th className="py-2.5 px-3">{T.pada}</th>
                   <th className="py-2.5 px-3">{T.d9}</th>
                   <th className="py-2.5 px-3 text-center">{T.dignity || (isTamil ? 'நிலை' : 'Dignity')}</th>
