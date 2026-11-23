@@ -557,14 +557,14 @@ export default function HoroscopeOnePagePrint({
   // - 4x4 Grid
   // - Traditional decorative inner corners in the center 2x2 box
   // - Diagonal slash in Lagna sign box
-  // - Compact Height 210px to fit on 1 single A4 page with default print margins
+  // - Height 248px to proportionally fill the full size A4 page
   const renderSouthIndianGrid = (chartCells, chartTitle) => {
     return (
       <div className="border-[1.5px] border-black bg-white rounded-none overflow-hidden shadow-2xs">
-        <table className="w-full border-collapse" style={{ tableLayout: 'fixed', height: '210px' }}>
+        <table className="w-full border-collapse" style={{ tableLayout: 'fixed', height: '248px' }}>
           <tbody>
             {[0, 1, 2, 3].map(row => (
-              <tr key={row} style={{ height: '52.5px' }}>
+              <tr key={row} style={{ height: '62px' }}>
                 {[0, 1, 2, 3].map(col => {
                   const isCenter = (row === 1 || row === 2) && (col === 1 || col === 2);
                   if (isCenter) {
@@ -781,7 +781,8 @@ export default function HoroscopeOnePagePrint({
           style={{
             width: '100%',
             maxWidth: '200mm',
-            maxHeight: '268mm',
+            minHeight: '286mm',
+            height: '286mm',
             boxSizing: 'border-box',
             fontFamily: isTa
               ? "'Noto Serif Tamil', 'Source Serif 4', Georgia, serif"
@@ -792,13 +793,13 @@ export default function HoroscopeOnePagePrint({
           <div
             className="border-[3px] border-double border-black p-2.5 sm:p-3 flex flex-col justify-between"
             style={{
-              maxHeight: '266mm',
+              minHeight: '284mm',
               height: '100%',
               boxSizing: 'border-box'
             }}
           >
             {/* Top Container holding all sections with balanced vertical spacing */}
-            <div className="flex flex-col justify-between h-full space-y-1.5">
+            <div className="flex flex-col justify-between h-full space-y-1.5 sm:space-y-2">
               {/* ======================================================== */}
               {/* BLOCK 1: OFFICIAL VEDIC HEADER (Top Box)                 */}
               {/* ======================================================== */}
@@ -917,7 +918,7 @@ export default function HoroscopeOnePagePrint({
               </div>
 
               {/* Parallel Horizontal Double Rule (matches user sketch) */}
-              <div className="border-b-[1.5px] border-double border-black my-0.5" />
+              <div className="border-b-[1.5px] border-double border-black my-0.5 sm:my-1" />
 
               {/* ======================================================== */}
               {/* BLOCK 3: NIRAYANA PLANETARY SPHUTAM TABLE (Middle Block) */}
@@ -932,7 +933,7 @@ export default function HoroscopeOnePagePrint({
                 <div className="border-[1.5px] border-black rounded-none overflow-hidden">
                   <table className="w-full border-collapse text-[8.5px] sm:text-[9px]">
                     <thead>
-                      <tr className="bg-[#FAF6EE] border-b-[1.5px] border-black font-bold text-black" style={{ height: '18px' }}>
+                      <tr className="bg-[#FAF6EE] border-b-[1.5px] border-black font-bold text-black" style={{ height: '19px' }}>
                         <th className="py-0.5 px-1.5 text-left">{isTa ? 'கிரகம்' : 'Planet'}</th>
                         <th className="py-0.5 px-1.5 text-center font-mono">{isTa ? 'பாகை-கலை' : 'Deg-Min'}</th>
                         <th className="py-0.5 px-1.5 text-left">{isTa ? 'நட்சத்திரம்' : 'Nakshatra'}</th>
@@ -945,7 +946,7 @@ export default function HoroscopeOnePagePrint({
                     </thead>
                     <tbody className="divide-y divide-stone-300">
                       {planetaryTableRows.map((row, idx) => (
-                        <tr key={idx} className="hover:bg-amber-50/40" style={{ height: '17px' }}>
+                        <tr key={idx} className="hover:bg-amber-50/40" style={{ height: '18px' }}>
                           <td className="py-0.2 px-1.5 font-bold text-left text-black">{row.planet}</td>
                           <td className="py-0.2 px-1.5 font-mono font-bold text-center">{row.degMin || '—'}</td>
                           <td className="py-0.2 px-1.5 text-left">{row.nakshatra || '—'}</td>
@@ -962,7 +963,7 @@ export default function HoroscopeOnePagePrint({
               </div>
 
               {/* Horizontal Rule (matches user sketch) */}
-              <div className="border-b-[1.5px] border-black my-0.5" />
+              <div className="border-b-[1.5px] border-black my-0.5 sm:my-1" />
 
               {/* ======================================================== */}
               {/* BLOCK 4: TWIN SOUTH INDIAN CHARTS (Side-by-Side at Bottom)*/}
@@ -984,7 +985,7 @@ export default function HoroscopeOnePagePrint({
               </div>
 
               {/* Horizontal Rule (matches user sketch) */}
-              <div className="border-b-[1.5px] border-double border-black my-0.5" />
+              <div className="border-b-[1.5px] border-double border-black my-0.5 sm:my-1" />
 
               {/* ======================================================== */}
               {/* BLOCK 5: ASTROLOGICAL SUMMARY & 4 ROLES (Footer Row)     */}
@@ -1058,11 +1059,13 @@ export default function HoroscopeOnePagePrint({
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-          body {
+          html, body {
             background: #FFFFFF !important;
             color: #000000 !important;
             margin: 0 !important;
             padding: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
           }
           .no-print {
             display: none !important;
@@ -1072,15 +1075,28 @@ export default function HoroscopeOnePagePrint({
             padding: 0 !important;
             margin: 0 auto !important;
             max-width: 200mm !important;
-            width: 100% !important;
-            height: auto !important;
-            max-height: 268mm !important;
-            min-height: auto !important;
+            width: 200mm !important;
+            height: 287mm !important;
+            min-height: 287mm !important;
+            max-height: 287mm !important;
+            box-sizing: border-box !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
             break-inside: avoid !important;
             page-break-inside: avoid !important;
             break-after: avoid !important;
             page-break-after: avoid !important;
             overflow: hidden !important;
+          }
+          #astrojit-horoscope-1page > div {
+            height: 100% !important;
+            min-height: 285mm !important;
+            max-height: 285mm !important;
+            box-sizing: border-box !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
           }
         }
       `}</style>
