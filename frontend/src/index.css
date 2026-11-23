@@ -75,6 +75,16 @@
   }
 
   /* One-Page Horoscope sheet */
+  .a4-booklet-sheet {
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    height: 282mm !important;
+    max-height: 282mm !important;
+    box-sizing: border-box !important;
+  }
+
   .one-page-sheet {
     page-break-inside: avoid !important;
     break-inside: avoid !important;

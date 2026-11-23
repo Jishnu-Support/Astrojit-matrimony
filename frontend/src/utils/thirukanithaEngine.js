@@ -7819,7 +7819,12 @@ export function compute51PageBookletData(horoInput) {
     grahaHeaders: p25Data.p12?.grahaHeaders || []
   }; // 12x9 Bhava Aspect Matrix
   empty.p20 = p18Data.p7; // Dasavarga Table
-  empty.p21 = p25Data.p23 || {}; // Pancha Pakshi Full Page
+  const fullHoro = calculateThirukanithaHoroscope(horoInput);
+  empty.p21 = {
+    heading: 'பஞ்ச பட்சி விபரம்.',
+    headingEn: 'Pancha Pakshi Shastra Details',
+    panchaPakshiData: fullHoro?.panchaPakshiData
+  }; // Pancha Pakshi Full Page
   // Pages 22 to 30: 9 Mahadasha Parikaram pages
   empty.p22 = p18Data.p8;
   empty.p23 = p18Data.p9;

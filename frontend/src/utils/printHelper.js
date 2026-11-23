@@ -73,8 +73,16 @@ export function printElementById(elementId, customTitle = 'Astrojit_Document') {
             margin: 0 auto !important;
             padding: 0 !important;
             background: #ffffff !important;
+            /* Allow multi-page break */
+          .a4-booklet-sheet {
+            page-break-after: always !important;
+            break-after: page !important;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
+            height: 282mm !important;
+            max-height: 282mm !important;
+            box-sizing: border-box !important;
+          }
           }
         </style>
       </head>

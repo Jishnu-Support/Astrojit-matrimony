@@ -5,13 +5,16 @@ import {
   Monitor,
   FileText,
   Clock,
-  ArrowLeft
+  ArrowLeft,
+  BookOpen
 } from 'lucide-react';
 import { useLang } from '../i18n';
 import { useAuth } from '../context/AuthContext';
 import { useClientBirth } from '../context/ClientBirthContext';
 import ThirukanithaHoroscopeView from './ThirukanithaHoroscopeView';
 import BirthDetailsIntakeCard from './BirthDetailsIntakeCard';
+import HoroscopeOnePagePrint from './HoroscopeOnePagePrint';
+import HoroscopeMultiPagePrint from './HoroscopeMultiPagePrint';
 
 export default function HoroscopeHub({
   initialClient = null,
@@ -24,6 +27,9 @@ export default function HoroscopeHub({
 
   // Toggle Mode: 'screen' (Horoscope Screen View) | 'print' (Horoscope Print)
   const [horoscopeMode, setHoroscopeMode] = useState('screen');
+
+  // Sub-mode under print: 'onepage' (1-Page Janma Patrika) | 'multipage' (Multi-Page 20 Titles Booklet)
+  const [printSubMode, setPrintSubMode] = useState('multipage');
 
   // Client view should not have the previous client search bar; astrologer portal requires it
   const shouldHideLookup = Boolean(hideClientLookup || user?.role === 'client');
@@ -41,10 +47,6 @@ export default function HoroscopeHub({
       selectClient(initialClient);
     }
   }, [initialClient, selectClient]);
-
-  const handlePrintHoroscope = () => {
-    window.print();
-  };
 
   return (
     <div className="space-y-5">
@@ -114,55 +116,87 @@ export default function HoroscopeHub({
           />
 
           {/* THIRUKANITHA HOROSCOPE VIEW */}
-          <div className="space-y-4">
+          <div className="space-y-4 print:hidden">
             <ThirukanithaHoroscopeView
               key={`horo-${calcKey}`}
               initialData={activeBirthData}
               onClose={onClose}
+              onSwitchToPrint={() => {
+                setHoroscopeMode('print');
+                setPrintSubMode('multipage');
+              }}
+            />
+          </div>
+
+          {/* Background Print Container for Direct Ctrl+P from Screen View */}
+          <div className="hidden print:block">
+            <HoroscopeMultiPagePrint
+              key={`print-multi-direct-${calcKey}`}
+              birthData={activeBirthData}
             />
           </div>
         </>
       ) : (
-        /* HOROSCOPE PRINT VIEW (To be configured later) */
-        <div className="bg-white/95 dark:bg-[#251E1A] p-6 sm:p-10 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs text-center space-y-5 animate-in fade-in duration-200">
-          <div className="w-16 h-16 mx-auto rounded-3xl bg-amber-50 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-700/60 text-amber-700 dark:text-amber-400 flex items-center justify-center text-3xl shadow-sm">
-            🖨️
-          </div>
-          
-          <div className="max-w-xl mx-auto space-y-2">
-            <h2 className="text-xl sm:text-2xl font-black text-[#7A1A22] dark:text-[#E8838B] tracking-tight">
-              {isTa ? 'ஜாதகம் அச்சு காட்சி (Horoscope Print View)' : 'Horoscope Print View'}
-            </h2>
-            <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300">
-              {isTa
-                ? 'அச்சிடக்கூடிய ஜாதகப் பக்க வடிவமைப்பு, பல பக்க A4 லேஅவுட் மற்றும் PDF அமைப்புகள் பின்னர் கட்டமைக்கப்படும்.'
-                : 'Dedicated Multi-Page Print Layout, PDF Generation & Formatted Printable Horoscope will be configured here.'}
-            </p>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100/80 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700">
-              <span>⚙️</span>
-              <span>{isTa ? 'அச்சு காட்சி பின்னர் கட்டமைக்கப்படும்' : 'Print View will be configured later'}</span>
+        /* HOROSCOPE PRINT VIEW: Sub-Mode Switcher + Render */
+        <div className="space-y-4">
+          {/* Sub-mode selector bar between 1-Page and Multi-Page */}
+          <div className="bg-white/95 dark:bg-[#251E1A] p-2.5 sm:p-3 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs flex items-center justify-between gap-3 no-print">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-stone-500 dark:text-stone-400">
+                {isTa ? 'அச்சு வடிவம்:' : 'Print Layout:'}
+              </span>
+              <div className="flex items-center gap-1.5 bg-stone-100 dark:bg-stone-900 p-1 rounded-xl border border-stone-200 dark:border-stone-800">
+                <button
+                  type="button"
+                  onClick={() => setPrintSubMode('onepage')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    printSubMode === 'onepage'
+                      ? 'bg-white dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 shadow-xs border border-stone-300 dark:border-stone-700'
+                      : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                  }`}
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>{isTa ? '1-பக்க ஜாதக ஏடு' : '1-Page Janma Patrika'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setPrintSubMode('multipage')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    printSubMode === 'multipage'
+                      ? 'bg-white dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 shadow-xs border border-stone-300 dark:border-stone-700'
+                      : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                  }`}
+                >
+                  <BookOpen className="w-3.5 h-3.5" />
+                  <span>{isTa ? 'பல பக்க புத்தகம் (20 தலைப்புகள்)' : 'Multi-Page Booklet (20 Titles)'}</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="text-[11px] font-semibold text-stone-500 dark:text-stone-400 hidden sm:block">
+              {printSubMode === 'onepage'
+                ? (isTa ? 'முழு A4 பக்கத்தில் அடங்கும் விரைவு ஜாதகம்' : 'Single-page quick natal summary sheet')
+                : (isTa ? '20 தலைப்புகளைக் கொண்ட விரிவான அரைப்பக்க A4 புத்தகம்' : 'Comprehensive half-page A4 booklet across 20 titles')}
             </div>
           </div>
 
-          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={() => setHoroscopeMode('screen')}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-amber-100 hover:from-[#5C1017] hover:to-[#7A1A22] text-xs font-bold shadow-sm transition-all cursor-pointer flex items-center gap-2"
-            >
-              <Monitor className="w-4 h-4" />
-              <span>{isTa ? 'திரை காட்சிக்குச் செல்க' : 'Switch to Horoscope Screen View'}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handlePrintHoroscope}
-              className="px-4 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700 text-xs font-bold transition-all cursor-pointer flex items-center gap-2"
-            >
-              <Printer className="w-4 h-4" />
-              <span>{isTa ? 'தற்போதைய பக்கத்தை நேரடியாக அச்சிடுக' : 'Quick Print Browser Page'}</span>
-            </button>
-          </div>
+          {/* Render Active Print Sub-Mode */}
+          {printSubMode === 'onepage' ? (
+            <HoroscopeOnePagePrint
+              key={`print-one-${calcKey}`}
+              birthData={activeBirthData}
+              onSwitchToScreen={() => setHoroscopeMode('screen')}
+              onSwitchToMultiPage={() => setPrintSubMode('multipage')}
+            />
+          ) : (
+            <HoroscopeMultiPagePrint
+              key={`print-multi-${calcKey}`}
+              birthData={activeBirthData}
+              onSwitchToScreen={() => setHoroscopeMode('screen')}
+              onSwitchToOnePage={() => setPrintSubMode('onepage')}
+            />
+          )}
         </div>
       )}
     </div>

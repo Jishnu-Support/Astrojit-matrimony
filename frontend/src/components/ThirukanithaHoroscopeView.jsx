@@ -93,7 +93,7 @@ const HOURS_12 = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '1
 const MINUTES_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 const SECONDS_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 
-export default function ThirukanithaHoroscopeView({ initialData, onClose }) {
+export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwitchToPrint }) {
   const { lang } = useLang();
   const { theme, isDark } = useTheme();
   const isTamil = lang === 'ta';
