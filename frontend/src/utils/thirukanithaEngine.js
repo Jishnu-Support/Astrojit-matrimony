@@ -623,15 +623,14 @@ export function computeMandiLongitude({
     segmentDuration = todaySRSS.dinamana;
   }
 
-  // 8 equal parts of day/night (Khandas)
-  // Day order starts with effWeekday. Night order starts with 5th lord: (effWeekday + 4) % 7
-  const startLord = isNight ? (effWeekday + 4) % 7 : effWeekday;
-  // Saturn is planet index 6 (0=Sun, 1=Moon, 2=Mars, 3=Mercury, 4=Jupiter, 5=Venus, 6=Saturn)
-  const saturnSlot = ((6 - startLord + 7) % 7) + 1; // 1-based slot (1..7)
+  // Classical Ghatikas (Phaladeepika Ch. 25 Slokas 1-3 & Brihat Parashara Hora Shastra)
+  // Day birth ghatikas from Sunday onwards: 26, 22, 18, 14, 10, 6, 2
+  // Night birth ghatikas from Sunday onwards: 10, 6, 2, 26, 22, 18, 14
+  const DAY_GHATIKAS = [26, 22, 18, 14, 10, 6, 2];
+  const NIGHT_GHATIKAS = [10, 6, 2, 26, 22, 18, 14];
 
-  // Classical Mandi is evaluated at the END of Saturn's portion
-  const partLen = segmentDuration / 8;
-  const mandiHour = baseHour + saturnSlot * partLen;
+  const ghatika = isNight ? NIGHT_GHATIKAS[effWeekday] : DAY_GHATIKAS[effWeekday];
+  const mandiHour = baseHour + (ghatika / 30.0) * segmentDuration;
 
   let normMandiH = mandiHour >= 24 ? mandiHour - 24 : mandiHour;
   if (normMandiH < 0) normMandiH += 24;
@@ -3013,6 +3012,36 @@ export function calculateThirukanithaHoroscope({
       dobFormatted: dob ? dob.split('-').reverse().join('-') : '',
       dobTime: dobTime12 || dobTime,
       placeName: city || placeName || '',
+      age: (() => {
+        if (!dob) return { years: 0, months: 0, days: 0 };
+        const parts = String(dob).split(/[-/.]/);
+        let y, m, d;
+        if (parts.length === 3) {
+          if (parts[0].length === 4) {
+            y = parseInt(parts[0], 10);
+            m = parseInt(parts[1], 10);
+            d = parseInt(parts[2], 10);
+          } else {
+            d = parseInt(parts[0], 10);
+            m = parseInt(parts[1], 10);
+            y = parseInt(parts[2], 10);
+          }
+        }
+        if (!y || isNaN(y)) return { years: 0, months: 0, days: 0 };
+        const now = new Date();
+        let years = now.getFullYear() - y;
+        let months = (now.getMonth() + 1) - (m || 1);
+        let days = now.getDate() - (d || 1);
+        if (days < 0) {
+          months--;
+          days += 30;
+        }
+        if (months < 0) {
+          years--;
+          months += 12;
+        }
+        return { years: Math.max(0, years), months: Math.max(0, months), days: Math.max(0, days) };
+      })(),
       tamilDate: computeTamilDate(lamSun_nirayana, dob),
       ayanam: (() => {
         const isUttarayanam = (lamSun_nirayana >= 270 || lamSun_nirayana < 90);

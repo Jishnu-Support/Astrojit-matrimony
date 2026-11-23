@@ -47,7 +47,7 @@ export function printElementById(elementId, customTitle = 'Astrojit_Document') {
         <style>
           @page {
             size: A4 portrait;
-            margin: 6mm 8mm;
+            margin: 4mm 5mm !important;
           }
           *, *::before, *::after {
             box-sizing: border-box !important;
@@ -73,7 +73,7 @@ export function printElementById(elementId, customTitle = 'Astrojit_Document') {
             margin: 0 auto !important;
             padding: 0 !important;
             background: #ffffff !important;
-            /* Allow multi-page break */
+          }
           .a4-booklet-sheet {
             page-break-after: always !important;
             break-after: page !important;
@@ -83,6 +83,14 @@ export function printElementById(elementId, customTitle = 'Astrojit_Document') {
             max-height: 282mm !important;
             box-sizing: border-box !important;
           }
+          #astrojit-horoscope-1page {
+            max-height: 268mm !important;
+            height: auto !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            page-break-after: avoid !important;
+            break-after: avoid !important;
+            overflow: hidden !important;
           }
         </style>
       </head>

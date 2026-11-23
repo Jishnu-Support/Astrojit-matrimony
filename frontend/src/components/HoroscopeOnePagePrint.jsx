@@ -173,7 +173,6 @@ export default function HoroscopeOnePagePrint({
     letterhead?.line1 ||
     user?.pagerHeader?.line1 ||
     user?.brandLine1 ||
-    user?.name ||
     (isTa ? 'ஸ்ரீ பாலாஜி ஜோதிட நிலையம் • திருக்கணித பஞ்சாங்கம்' : 'ASTROJIT VEDIC ASTROLOGY & SPIRITUAL RESEARCH CENTRE');
 
   const astrologerSubTitle =
@@ -277,7 +276,35 @@ export default function HoroscopeOnePagePrint({
   // Gender & Age
   const isFemale = (birthData?.gender || '').toLowerCase() === 'female' || (birthData?.gender || '').includes('பெண்');
   const genderText = isTa ? (isFemale ? 'பெண்' : 'ஆண்') : (isFemale ? 'Female' : 'Male');
-  const ageYears = horoscope?.summary?.age?.years ?? 43;
+  const ageYears = useMemo(() => {
+    if (horoscope?.summary?.age?.years !== undefined && horoscope?.summary?.age?.years !== null) {
+      return horoscope.summary.age.years;
+    }
+    const rawDob = birthData?.dob || birthData?.date || '';
+    if (!rawDob) return 0;
+    const parts = String(rawDob).split(/[-/.]/);
+    let y, m, d;
+    if (parts.length === 3) {
+      if (parts[0].length === 4) {
+        y = parseInt(parts[0], 10);
+        m = parseInt(parts[1], 10);
+        d = parseInt(parts[2], 10);
+      } else {
+        d = parseInt(parts[0], 10);
+        m = parseInt(parts[1], 10);
+        y = parseInt(parts[2], 10);
+      }
+    }
+    if (!y || isNaN(y)) return 0;
+    const now = new Date();
+    let age = now.getFullYear() - y;
+    const currentMonth = now.getMonth() + 1;
+    const currentDay = now.getDate();
+    if (m && (currentMonth < m || (currentMonth === m && currentDay < d))) {
+      age--;
+    }
+    return Math.max(0, age);
+  }, [horoscope?.summary?.age?.years, birthData?.dob, birthData?.date]);
   const ageText = isTa ? `${ageYears} வயது` : `${ageYears} yrs`;
 
   // Yogi & Avayogi
@@ -530,14 +557,14 @@ export default function HoroscopeOnePagePrint({
   // - 4x4 Grid
   // - Traditional decorative inner corners in the center 2x2 box
   // - Diagonal slash in Lagna sign box
-  // - Height 270px to fill the lower page beautifully
+  // - Compact Height 210px to fit on 1 single A4 page with default print margins
   const renderSouthIndianGrid = (chartCells, chartTitle) => {
     return (
       <div className="border-[1.5px] border-black bg-white rounded-none overflow-hidden shadow-2xs">
-        <table className="w-full border-collapse" style={{ tableLayout: 'fixed', height: '270px' }}>
+        <table className="w-full border-collapse" style={{ tableLayout: 'fixed', height: '210px' }}>
           <tbody>
             {[0, 1, 2, 3].map(row => (
-              <tr key={row} style={{ height: '67.5px' }}>
+              <tr key={row} style={{ height: '52.5px' }}>
                 {[0, 1, 2, 3].map(col => {
                   const isCenter = (row === 1 || row === 2) && (col === 1 || col === 2);
                   if (isCenter) {
@@ -566,11 +593,8 @@ export default function HoroscopeOnePagePrint({
                             <span className="w-2 h-2 border-b border-r border-black block" />
                           </div>
 
-                          <div className="font-black text-[13.5px] sm:text-[14.5px] text-[#7A1A22] leading-tight tracking-wider uppercase">
+                          <div className="font-black text-[14px] sm:text-[15px] text-[#7A1A22] leading-none tracking-widest uppercase">
                             {chartTitle}
-                          </div>
-                          <div className="text-[9px] font-mono text-stone-700 mt-1 font-bold">
-                            {isTa ? 'திருக்கணித பராசர முறை' : 'Thirukanitha Parashara System'}
                           </div>
                         </td>
                       );
@@ -607,11 +631,11 @@ export default function HoroscopeOnePagePrint({
                         />
                       )}
 
-                      <div className="flex justify-between items-center text-[8.5px] font-bold text-stone-600 leading-none">
+                      <div className="flex justify-between items-center text-[8px] font-bold text-stone-600 leading-none">
                         <span className="truncate">{isTa ? signInfo.ta : signInfo.en}</span>
-                        <span className="opacity-40 text-[8px] font-mono">{signInfo.num}</span>
+                        <span className="opacity-40 text-[7.5px] font-mono">{signInfo.num}</span>
                       </div>
-                      <div className="text-[9.5px] font-black text-black flex flex-wrap gap-1 leading-snug items-start content-start mt-1.5">
+                      <div className="text-[9px] font-black text-black flex flex-wrap gap-0.5 leading-snug items-start content-start mt-0.5">
                         {content.split(',').map((item, pIdx) => {
                           const trim = item.trim();
                           if (!trim) return null;
@@ -750,14 +774,14 @@ export default function HoroscopeOnePagePrint({
       {/* ======================================================== */}
       {/* 2. STRICT 1-PAGE A4 JANANA JATHAGAM SHEET CONTAINER */}
       {/* ======================================================== */}
-      <div className="w-full overflow-x-auto touch-pan-x pb-6">
+      <div className="w-full overflow-x-auto touch-pan-x pb-4">
         <div
           id="astrojit-horoscope-1page"
-          className="bg-white text-black mx-auto shadow-2xl p-4 sm:p-5 print:p-0 print:shadow-none transition-all"
+          className="bg-white text-black mx-auto shadow-2xl p-3 sm:p-4 print:p-0 print:shadow-none transition-all"
           style={{
             width: '100%',
-            maxWidth: '202mm',
-            minHeight: '282mm',
+            maxWidth: '200mm',
+            maxHeight: '268mm',
             boxSizing: 'border-box',
             fontFamily: isTa
               ? "'Noto Serif Tamil', 'Source Serif 4', Georgia, serif"
@@ -766,21 +790,21 @@ export default function HoroscopeOnePagePrint({
         >
           {/* Traditional Double Line Outer Border (matches user sketch) */}
           <div
-            className="border-[3px] border-double border-black p-3 sm:p-4 flex flex-col justify-between"
+            className="border-[3px] border-double border-black p-2.5 sm:p-3 flex flex-col justify-between"
             style={{
-              minHeight: '282mm',
+              maxHeight: '266mm',
               height: '100%',
               boxSizing: 'border-box'
             }}
           >
             {/* Top Container holding all sections with balanced vertical spacing */}
-            <div className="flex flex-col justify-between h-full space-y-2">
+            <div className="flex flex-col justify-between h-full space-y-1.5">
               {/* ======================================================== */}
               {/* BLOCK 1: OFFICIAL VEDIC HEADER (Top Box)                 */}
               {/* ======================================================== */}
               <div
                 onClick={() => setBrandingModalOpen(true)}
-                className="p-2.5 text-center bg-[#FAF6EE] border-[1.5px] border-black rounded-none relative group cursor-pointer hover:ring-2 hover:ring-amber-600/40 transition-all"
+                className="py-1.5 px-2 text-center bg-[#FAF6EE] border-[1.5px] border-black rounded-none relative group cursor-pointer hover:ring-2 hover:ring-amber-600/40 transition-all"
                 title={isTa ? 'லெட்டர்ஹெட் அமைப்புகளைத் திருத்த கிளிக் செய்க' : 'Click to edit letterhead branding details'}
               >
                 {/* On-hover edit pill */}
@@ -794,70 +818,75 @@ export default function HoroscopeOnePagePrint({
                 </button>
 
                 {/* Auspicious Invocation */}
-                <div className="text-[11.5px] font-black text-[#7A1A22] tracking-widest mb-1">
+                <div className="text-[11px] font-black text-[#7A1A22] tracking-widest mb-0.5">
                   {invocationText}
                 </div>
 
-                <div className="flex items-center justify-between gap-3 px-2">
-                  {/* Left: Astrojit Logo */}
-                  <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center justify-between gap-2 px-1">
+                  {/* Left: Astrojit Logo & Vedic Brand */}
+                  <div className="w-28 sm:w-32 shrink-0 flex items-center gap-2 text-left">
                     <img
                       src="/astrojit-logo.webp"
                       alt="Astrojit"
-                      className="w-11 h-11 object-contain"
+                      className="w-8 h-8 object-contain shrink-0"
                       onError={e => { e.target.style.display = 'none'; }}
                     />
-                    <div className="text-left">
-                      <div className="text-[14px] font-black tracking-tight text-[#7A1A22]">ASTROJIT</div>
-                      <div className="text-[8px] font-bold text-stone-600 uppercase">
+                    <div>
+                      <div className="text-[12px] font-black tracking-tight text-[#7A1A22] leading-none">ASTROJIT</div>
+                      <div className="text-[7.5px] font-bold text-stone-600 uppercase tracking-wider mt-0.5">
                         {isTa ? 'வேத ஜோதிடம்' : 'Vedic Astrology'}
                       </div>
                     </div>
                   </div>
 
-                  {/* Center: Astrologer Profile Title & Subtitle */}
-                  <div className="text-center flex-1 px-2">
-                    <h1 className="text-base sm:text-lg font-black tracking-tight text-black leading-tight">
+                  {/* Center: Astrologer / Organization Letterhead Details */}
+                  <div className="text-center flex-1 px-1">
+                    <h1 className="text-[13px] sm:text-[14px] font-black tracking-tight text-black leading-snug">
                       {astrologerTitle}
                     </h1>
                     {astrologerSubTitle && (
-                      <div className="text-[10px] font-bold text-stone-800 leading-snug mt-0.5">
+                      <div className="text-[9px] sm:text-[9.5px] font-bold text-stone-800 leading-tight mt-0.5">
                         {astrologerSubTitle}
                       </div>
                     )}
                     {astrologerAddress && (
-                      <div className="text-[8.5px] text-stone-600 leading-tight mt-0.5">
+                      <div className="text-[8px] sm:text-[8.5px] text-stone-600 leading-tight mt-0.5">
                         {astrologerAddress}
+                      </div>
+                    )}
+                    {astrologerContact && (
+                      <div className="text-[7.5px] sm:text-[8px] font-mono font-semibold text-stone-700 leading-tight mt-0.5">
+                        {astrologerContact}
                       </div>
                     )}
                   </div>
 
-                  {/* Right: Lahiri Ayanamsa Badge & Contact */}
-                  <div className="text-right shrink-0">
-                    <span className="inline-block px-2 py-0.5 rounded-none text-[8.5px] font-bold bg-amber-100 text-[#7A1A22] border border-black shadow-2xs">
+                  {/* Right: Lahiri Ayanamsa Badge & Degree */}
+                  <div className="w-28 sm:w-32 shrink-0 flex flex-col items-end justify-center text-right">
+                    <span className="inline-block px-1.5 py-0.5 rounded-none text-[8px] font-bold bg-amber-100 text-[#7A1A22] border border-black shadow-2xs">
                       {isTa ? 'திருக்கணித லஹரி' : 'Lahiri Ayanamsa'}
                     </span>
-                    <div className="text-[8.5px] font-mono font-bold text-stone-800 mt-1">
-                      {astrologerContact}
+                    <div className="text-[7.5px] font-mono font-bold text-stone-700 mt-0.5">
+                      {ayanamsaDms}
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Parallel Horizontal Double Rule separating Header and Matrix */}
-              <div className="border-b-[2px] border-double border-black my-1" />
+              <div className="border-b-[1.5px] border-double border-black my-0.5" />
 
               {/* ======================================================== */}
               {/* BLOCK 2: NATIVE & PANCHANGAM 2-COLUMN MATRIX WITH COLONS */}
               {/* (Matches user sketch with vertical dotted colon alignment)*/}
               {/* ======================================================== */}
-              <div className="grid grid-cols-2 gap-x-8 px-2 text-[9.5px] sm:text-[10px] leading-relaxed">
+              <div className="grid grid-cols-2 gap-x-6 px-1 text-[9px] sm:text-[9.5px] leading-tight">
                 {/* Left Column (12 Lines) */}
-                <div className="space-y-1">
+                <div className="space-y-0.5">
                   {leftColumnFields.map((item, idx) => (
                     <div key={idx} className="flex items-baseline">
                       <span className="w-36 sm:w-38 font-bold shrink-0">{item.label}</span>
-                      <span className="w-4 text-center font-bold font-mono shrink-0">:</span>
+                      <span className="w-3 text-center font-bold font-mono shrink-0">:</span>
                       <span
                         className={`text-black flex-1 ${
                           item.bold ? 'font-black text-[#7A1A22]' : 'font-semibold'
@@ -870,11 +899,11 @@ export default function HoroscopeOnePagePrint({
                 </div>
 
                 {/* Right Column (12 Lines) */}
-                <div className="space-y-1">
+                <div className="space-y-0.5">
                   {rightColumnFields.map((item, idx) => (
                     <div key={idx} className="flex items-baseline">
                       <span className="w-38 sm:w-42 font-bold shrink-0">{item.label}</span>
-                      <span className="w-4 text-center font-bold font-mono shrink-0">:</span>
+                      <span className="w-3 text-center font-bold font-mono shrink-0">:</span>
                       <span
                         className={`text-black flex-1 ${
                           item.bold ? 'font-black text-[#7A1A22]' : 'font-semibold'
@@ -888,43 +917,43 @@ export default function HoroscopeOnePagePrint({
               </div>
 
               {/* Parallel Horizontal Double Rule (matches user sketch) */}
-              <div className="border-b-[2px] border-double border-black my-1" />
+              <div className="border-b-[1.5px] border-double border-black my-0.5" />
 
               {/* ======================================================== */}
               {/* BLOCK 3: NIRAYANA PLANETARY SPHUTAM TABLE (Middle Block) */}
               {/* (Sits across full width between Details and Charts)       */}
               {/* ======================================================== */}
               <div>
-                <div className="text-center font-black text-[10px] text-[#7A1A22] tracking-wider mb-1 uppercase">
+                <div className="text-center font-black text-[9.5px] text-[#7A1A22] tracking-wider mb-0.5 uppercase">
                   {isTa
                     ? 'துல்லியமான நிராயண கிரக நிலைகள்'
                     : 'Nirayana Planetary Positions Table'}
                 </div>
                 <div className="border-[1.5px] border-black rounded-none overflow-hidden">
-                  <table className="w-full border-collapse text-[9px] sm:text-[9.5px]">
+                  <table className="w-full border-collapse text-[8.5px] sm:text-[9px]">
                     <thead>
-                      <tr className="bg-[#FAF6EE] border-b-[1.5px] border-black font-bold text-black">
-                        <th className="py-1 px-2 text-left">{isTa ? 'கிரகம்' : 'Planet'}</th>
-                        <th className="py-1 px-2 text-center font-mono">{isTa ? 'பாகை-கலை' : 'Deg-Min'}</th>
-                        <th className="py-1 px-2 text-left">{isTa ? 'நட்சத்திரம்' : 'Nakshatra'}</th>
-                        <th className="py-1 px-2 text-center">{isTa ? 'பாதம்' : 'Pada'}</th>
-                        <th className="py-1 px-2 text-left">{isTa ? 'அதிபதி' : 'Lord'}</th>
-                        <th className="py-1 px-2 text-left">{isTa ? 'ராசி' : 'Sign'}</th>
-                        <th className="py-1 px-2 text-center font-mono">{isTa ? 'ராசிக்குள்' : 'In Sign'}</th>
-                        <th className="py-1 px-2 text-center">{isTa ? 'பலம் / நிலை' : 'Dignity'}</th>
+                      <tr className="bg-[#FAF6EE] border-b-[1.5px] border-black font-bold text-black" style={{ height: '18px' }}>
+                        <th className="py-0.5 px-1.5 text-left">{isTa ? 'கிரகம்' : 'Planet'}</th>
+                        <th className="py-0.5 px-1.5 text-center font-mono">{isTa ? 'பாகை-கலை' : 'Deg-Min'}</th>
+                        <th className="py-0.5 px-1.5 text-left">{isTa ? 'நட்சத்திரம்' : 'Nakshatra'}</th>
+                        <th className="py-0.5 px-1.5 text-center">{isTa ? 'பாதம்' : 'Pada'}</th>
+                        <th className="py-0.5 px-1.5 text-left">{isTa ? 'அதிபதி' : 'Lord'}</th>
+                        <th className="py-0.5 px-1.5 text-left">{isTa ? 'ராசி' : 'Sign'}</th>
+                        <th className="py-0.5 px-1.5 text-center font-mono">{isTa ? 'ராசிக்குள்' : 'In Sign'}</th>
+                        <th className="py-0.5 px-1.5 text-center">{isTa ? 'பலம் / நிலை' : 'Dignity'}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-stone-300">
                       {planetaryTableRows.map((row, idx) => (
-                        <tr key={idx} className="hover:bg-amber-50/40" style={{ height: '20px' }}>
-                          <td className="py-0.5 px-2 font-bold text-left text-black">{row.planet}</td>
-                          <td className="py-0.5 px-2 font-mono font-bold text-center">{row.degMin || '—'}</td>
-                          <td className="py-0.5 px-2 text-left">{row.nakshatra || '—'}</td>
-                          <td className="py-0.5 px-2 text-center font-bold">{row.pada || '—'}</td>
-                          <td className="py-0.5 px-2 text-left">{row.lord || '—'}</td>
-                          <td className="py-0.5 px-2 text-left">{row.rasi || '—'}</td>
-                          <td className="py-0.5 px-2 font-mono text-center font-semibold">{row.degInSign || '—'}</td>
-                          <td className="py-0.5 px-2 text-center font-semibold">{row.dignity || '—'}</td>
+                        <tr key={idx} className="hover:bg-amber-50/40" style={{ height: '17px' }}>
+                          <td className="py-0.2 px-1.5 font-bold text-left text-black">{row.planet}</td>
+                          <td className="py-0.2 px-1.5 font-mono font-bold text-center">{row.degMin || '—'}</td>
+                          <td className="py-0.2 px-1.5 text-left">{row.nakshatra || '—'}</td>
+                          <td className="py-0.2 px-1.5 text-center font-bold">{row.pada || '—'}</td>
+                          <td className="py-0.2 px-1.5 text-left">{row.lord || '—'}</td>
+                          <td className="py-0.2 px-1.5 text-left">{row.rasi || '—'}</td>
+                          <td className="py-0.2 px-1.5 font-mono text-center font-semibold">{row.degInSign || '—'}</td>
+                          <td className="py-0.2 px-1.5 text-center font-semibold">{row.dignity || '—'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -933,21 +962,21 @@ export default function HoroscopeOnePagePrint({
               </div>
 
               {/* Horizontal Rule (matches user sketch) */}
-              <div className="border-b-[1.5px] border-black my-1" />
+              <div className="border-b-[1.5px] border-black my-0.5" />
 
               {/* ======================================================== */}
               {/* BLOCK 4: TWIN SOUTH INDIAN CHARTS (Side-by-Side at Bottom)*/}
               {/* (Matches user sketch with decorative corners and Lagna / )*/}
               {/* ======================================================== */}
-              <div className="grid grid-cols-2 gap-4 pt-0.5">
+              <div className="grid grid-cols-2 gap-3 pt-0.5">
                 <div>
-                  <div className="text-center font-black text-[10px] text-[#7A1A22] mb-1 uppercase tracking-wide">
+                  <div className="text-center font-black text-[9.5px] text-[#7A1A22] mb-0.5 uppercase tracking-wide">
                     {isTa ? 'ராசி கட்டம் (D1)' : 'Rasi Chart (D1)'}
                   </div>
                   {renderSouthIndianGrid(rasiGridContent, isTa ? 'ராசி (D1)' : 'Rasi (D1)')}
                 </div>
                 <div>
-                  <div className="text-center font-black text-[10px] text-[#7A1A22] mb-1 uppercase tracking-wide">
+                  <div className="text-center font-black text-[9.5px] text-[#7A1A22] mb-0.5 uppercase tracking-wide">
                     {isTa ? 'நவாம்ச கட்டம் (D9)' : 'Navamsha Chart (D9)'}
                   </div>
                   {renderSouthIndianGrid(navamsaGridContent, isTa ? 'நவாம்சம் (D9)' : 'Navamsha (D9)')}
@@ -955,14 +984,14 @@ export default function HoroscopeOnePagePrint({
               </div>
 
               {/* Horizontal Rule (matches user sketch) */}
-              <div className="border-b-[2px] border-double border-black my-1" />
+              <div className="border-b-[1.5px] border-double border-black my-0.5" />
 
               {/* ======================================================== */}
               {/* BLOCK 5: ASTROLOGICAL SUMMARY & 4 ROLES (Footer Row)     */}
               {/* ======================================================== */}
-              <div className="border-[1.5px] border-stone-400 p-2.5 bg-[#FFFDF9] text-[9px] sm:text-[9.5px] leading-normal space-y-1.5">
+              <div className="border-[1.5px] border-stone-400 p-2 bg-[#FFFDF9] text-[8.5px] sm:text-[9px] leading-tight space-y-1">
                 {/* Dosha & Raja Yogas Row */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 border-b border-stone-300 pb-1.5">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 border-b border-stone-300 pb-1">
                   <div>
                     <span className="font-bold">{isTa ? 'செவ்வாய் தோஷம்' : 'Sevvai Dosha'}: </span>
                     <span
@@ -986,7 +1015,7 @@ export default function HoroscopeOnePagePrint({
                 </div>
 
                 {/* Four Classical Roles (போதகர், வேதகர், பாசகர், காரகர்) */}
-                <div className="flex flex-wrap items-center justify-between text-[9px] sm:text-[9.5px]">
+                <div className="flex flex-wrap items-center justify-between text-[8.5px] sm:text-[9px]">
                   <span className="font-bold text-[#7A1A22]">
                     {isTa ? 'லக்னாதிபதியின் நால்வகை நிலைகள்:' : 'Lagna Lord Four Roles:'}
                   </span>
@@ -1010,7 +1039,7 @@ export default function HoroscopeOnePagePrint({
               </div>
 
               {/* Bottom Copyright & Timestamp */}
-              <div className="text-center text-[8.5px] font-semibold text-stone-600 pt-0.5 pb-0.5">
+              <div className="text-center text-[8px] font-semibold text-stone-600 pt-0.5 pb-0.5">
                 Astrojit . All rights reserved. • www.astrojit.co.in • {printedDateTime}
               </div>
             </div>
@@ -1023,7 +1052,7 @@ export default function HoroscopeOnePagePrint({
         @media print {
           @page {
             size: A4 portrait;
-            margin: 6mm 8mm;
+            margin: 4mm 5mm !important;
           }
           *, *::before, *::after {
             -webkit-print-color-adjust: exact !important;
@@ -1042,12 +1071,16 @@ export default function HoroscopeOnePagePrint({
             box-shadow: none !important;
             padding: 0 !important;
             margin: 0 auto !important;
-            max-width: 202mm !important;
+            max-width: 200mm !important;
             width: 100% !important;
-            height: 282mm !important;
-            min-height: 282mm !important;
+            height: auto !important;
+            max-height: 268mm !important;
+            min-height: auto !important;
             break-inside: avoid !important;
             page-break-inside: avoid !important;
+            break-after: avoid !important;
+            page-break-after: avoid !important;
+            overflow: hidden !important;
           }
         }
       `}</style>
