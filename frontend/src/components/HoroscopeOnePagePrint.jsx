@@ -180,8 +180,8 @@ export default function HoroscopeOnePagePrint({
     user?.pagerHeader?.line2 ||
     user?.brandLine2 ||
     (isTa
-      ? 'திருக்கணித பராசர முறைப்படி அமைக்கப்பட்ட துல்லியமான வேத ஜனன ஜாதகக் குறிப்பு'
-      : 'Authentic Thirukanitha Parashara Vedic Natal Horoscope Dossier');
+      ? 'துல்லியமான வேத ஜனன ஜாதகக் குறிப்பு'
+      : 'Authentic Vedic Natal Horoscope Dossier');
 
   const astrologerContact =
     letterhead?.phoneEmail ||
@@ -480,13 +480,11 @@ export default function HoroscopeOnePagePrint({
       let dignityDisplay = '—';
       if (id === 'mandi') {
         dignityDisplay = isTa ? 'உபகிரகம்' : 'Sub-planet';
-      } else if (id === 'rahu' || id === 'ketu') {
-        dignityDisplay = isTa ? 'மந்தம்' : 'Direct';
-      } else if (isRetro) {
-        dignityDisplay = isTa ? 'வக்ரம்' : 'Retrograde';
       } else if (pObj?.dignityTa) {
         const mapped = DIGNITY_MAP[pObj.dignityTa];
         dignityDisplay = isTa ? (mapped?.ta || pObj.dignityTa) : (mapped?.en || pObj.dignityEn || 'Neutral');
+      } else if (id === 'rahu' || id === 'ketu') {
+        dignityDisplay = isTa ? 'நட்பு' : 'Friendly';
       } else {
         dignityDisplay = isTa ? 'நட்பு' : 'Friendly';
       }
@@ -685,7 +683,7 @@ export default function HoroscopeOnePagePrint({
     { label: isTa ? 'லக்னாதிபதி' : 'Lagna Lord', value: lagnaLordText },
     { label: isTa ? 'ஜென்ம ராசி' : 'Janma Rasi', value: isTa ? RASHIS[moonRasi]?.ta : RASHIS[moonRasi]?.en, bold: true },
     { label: isTa ? 'ஜென்ம நட்சத்திரம்' : 'Janma Nakshatra', value: isTa ? `${NAKSHATRAS[moonNak]?.ta} (பாதம் ${moonPada})` : `${NAKSHATRAS[moonNak]?.en} (Pada ${moonPada})`, bold: true },
-    { label: isTa ? 'திதி' : 'Thithi', value: tithiText },
+    { label: isTa ? 'திதி' : 'Tithi', value: tithiText },
     { label: isTa ? 'யோகம் - கரணம்' : 'Yoga - Karana', value: yogaKaranaText },
     { label: isTa ? 'சுப கிரகங்கள்' : 'Benefics', value: subharText },
     { label: isTa ? 'அசுப கிரகங்கள்' : 'Malefics', value: asubharText },
