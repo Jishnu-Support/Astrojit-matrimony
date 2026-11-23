@@ -84,11 +84,11 @@ export function printElementById(elementId, customTitle = 'Astrojit_Document') {
             box-sizing: border-box !important;
           }
           #astrojit-horoscope-1page {
-            width: 200mm !important;
-            max-width: 200mm !important;
-            height: 286mm !important;
-            min-height: 286mm !important;
-            max-height: 287mm !important;
+            width: 198mm !important;
+            max-width: 198mm !important;
+            height: 272mm !important;
+            min-height: 272mm !important;
+            max-height: 272mm !important;
             box-sizing: border-box !important;
             display: flex !important;
             flex-direction: column !important;
@@ -101,8 +101,8 @@ export function printElementById(elementId, customTitle = 'Astrojit_Document') {
           }
           #astrojit-horoscope-1page > div {
             height: 100% !important;
-            min-height: 284mm !important;
-            max-height: 285mm !important;
+            min-height: 270mm !important;
+            max-height: 270mm !important;
             box-sizing: border-box !important;
             display: flex !important;
             flex-direction: column !important;
