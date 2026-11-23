@@ -1391,8 +1391,10 @@ export function computeGocharamData({
     transitDateFormatted: `${String(tD).padStart(2, '0')}-${String(tM).padStart(2, '0')}-${tY}`,
     birthMoonRasi,
     birthMoonRasiTa: RASHIS[birthMoonRasi]?.ta || '',
+    birthMoonRasiEn: RASHIS[birthMoonRasi]?.en || '',
     birthLagnaRasi,
     birthLagnaRasiTa: RASHIS[birthLagnaRasi]?.ta || '',
+    birthLagnaRasiEn: RASHIS[birthLagnaRasi]?.en || '',
     sadeSati,
     guruBala,
     rahuKetu,
@@ -8425,11 +8427,11 @@ export function computePlanetaryRelationshipsAndAvasthas(planetRows, lagnaDeg, b
       else if (degInSign < 24) baladi = { ta: 'விருத்த அவஸ்தை', en: 'Vriddha (Old)', potency: '15%', badge: 'bg-stone-200 text-stone-800' };
       else baladi = { ta: 'மிருத அவஸ்தை', en: 'Mrita (Dead)', potency: '0%', badge: 'bg-rose-100 text-rose-800' };
     } else {
-      if (degInSign < 6) baladi = { ta: 'மிருத அவஸ்தை (Mrita)', en: 'Mrita (Dead)', potency: '0% (செயலற்றது)', badge: 'bg-rose-100 text-rose-800' };
-      else if (degInSign < 12) baladi = { ta: 'விருத்த அவஸ்தை (Vriddha)', en: 'Vriddha (Old)', potency: '15% (குறைந்த பலம்)', badge: 'bg-stone-200 text-stone-800' };
-      else if (degInSign < 18) baladi = { ta: 'யுவ அவஸ்தை (Yuva)', en: 'Yuva (Adult)', potency: '100% (முழு பலம்)', badge: 'bg-emerald-200 text-emerald-950 font-bold' };
-      else if (degInSign < 24) baladi = { ta: 'குமார அவஸ்தை (Kumara)', en: 'Kumara (Youth)', potency: '50% (அரை பலம்)', badge: 'bg-blue-100 text-blue-900' };
-      else baladi = { ta: 'பால அவஸ்தை (Bala)', en: 'Bala (Infant)', potency: '25% (கால் பலம்)', badge: 'bg-amber-100 text-amber-900' };
+      if (degInSign < 6) baladi = { ta: 'மிருத அவஸ்தை', en: 'Mrita (Dead)', potency: '0%', badge: 'bg-rose-100 text-rose-800' };
+      else if (degInSign < 12) baladi = { ta: 'விருத்த அவஸ்தை', en: 'Vriddha (Old)', potency: '15%', badge: 'bg-stone-200 text-stone-800' };
+      else if (degInSign < 18) baladi = { ta: 'யுவ அவஸ்தை', en: 'Yuva (Adult)', potency: '100%', badge: 'bg-emerald-200 text-emerald-950 font-bold' };
+      else if (degInSign < 24) baladi = { ta: 'குமார அவஸ்தை', en: 'Kumara (Youth)', potency: '50%', badge: 'bg-blue-100 text-blue-900' };
+      else baladi = { ta: 'பால அவஸ்தை', en: 'Bala (Infant)', potency: '25%', badge: 'bg-amber-100 text-amber-900' };
     }
 
     const panchaP = panchadhaData.find(x => x.id === pId);

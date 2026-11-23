@@ -2473,7 +2473,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                             <td className="py-2 px-3 text-left font-bold flex items-center gap-1.5">
                               <span className="text-amber-800 dark:text-amber-400 font-mono text-sm">{item.symbol}</span>
                               <span className={isLagna ? 'text-[#7A1A22] dark:text-amber-300 font-black' : 'text-stone-800 dark:text-stone-200'}>
-                                {item.nameEn} ({item.nameTa})
+                                {isTamil ? item.nameTa : item.nameEn}
                               </span>
                               {isSelected && (
                                 <span className="text-[9px] px-1.5 py-0.2 rounded bg-[#7A1A22] text-amber-100 font-bold ml-auto">
@@ -2551,7 +2551,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                               }`}
                             >
                               <span>{p.symbol}</span>
-                              <span>{p.nameEn} ({p.nameTa})</span>
+                              <span>{isTamil ? p.nameTa : p.nameEn}</span>
                             </button>
                           ))}
                         </div>
@@ -3445,7 +3445,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     {horoscope.upagrahas?.sunNirayana && (
                       <div className="px-3 py-1 rounded-lg bg-amber-100/80 dark:bg-stone-800 border border-amber-900/20 text-xs font-bold text-[#7A1A22] dark:text-amber-300 flex items-center gap-1.5">
                         <span>☉ {isTamil ? 'சூரியன் ஸ்புடம்' : 'Sun Nirayana'}:</span>
-                        <span className="font-mono">{horoscope.upagrahas.sunNirayana.rasiTa} {horoscope.upagrahas.sunNirayana.degDMS}</span>
+                        <span className="font-mono">{isTamil ? horoscope.upagrahas.sunNirayana.rasiTa : (horoscope.upagrahas.sunNirayana.rasiEn || horoscope.upagrahas.sunNirayana.rasiTa)} {horoscope.upagrahas.sunNirayana.degDMS}</span>
                       </div>
                     )}
                   </div>
@@ -3720,7 +3720,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                           </span>
                         </div>
                         <div className="text-sm font-mono font-bold text-stone-900 dark:text-stone-100">
-                          {horoscope.specialLagnas.auspiciousSphutas.yogi.rasiTa} {horoscope.specialLagnas.auspiciousSphutas.yogi.degDMS}
+                          {isTamil ? horoscope.specialLagnas.auspiciousSphutas.yogi.rasiTa : (horoscope.specialLagnas.auspiciousSphutas.yogi.rasiEn || horoscope.specialLagnas.auspiciousSphutas.yogi.rasiTa)} {horoscope.specialLagnas.auspiciousSphutas.yogi.degDMS}
                         </div>
                         <div className="text-[10px] text-emerald-800 dark:text-emerald-400 font-semibold">
                           {isTamil ? `நட்சத்திரம்: ${horoscope.specialLagnas.auspiciousSphutas.yogi.nakTa} பாதம் ${horoscope.specialLagnas.auspiciousSphutas.yogi.pada}` : `${horoscope.specialLagnas.auspiciousSphutas.yogi.nakEn} Pada ${horoscope.specialLagnas.auspiciousSphutas.yogi.pada}`}
@@ -3744,7 +3744,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                           </span>
                         </div>
                         <div className="text-sm font-mono font-bold text-stone-900 dark:text-stone-100">
-                          {horoscope.specialLagnas.auspiciousSphutas.avayogi.rasiTa} {horoscope.specialLagnas.auspiciousSphutas.avayogi.degDMS}
+                          {isTamil ? horoscope.specialLagnas.auspiciousSphutas.avayogi.rasiTa : (horoscope.specialLagnas.auspiciousSphutas.avayogi.rasiEn || horoscope.specialLagnas.auspiciousSphutas.avayogi.rasiTa)} {horoscope.specialLagnas.auspiciousSphutas.avayogi.degDMS}
                         </div>
                         <div className="text-[10px] text-amber-800 dark:text-amber-400 font-semibold">
                           {isTamil ? `நட்சத்திரம்: ${horoscope.specialLagnas.auspiciousSphutas.avayogi.nakTa} பாதம் ${horoscope.specialLagnas.auspiciousSphutas.avayogi.pada}` : `${horoscope.specialLagnas.auspiciousSphutas.avayogi.nakEn} Pada ${horoscope.specialLagnas.auspiciousSphutas.avayogi.pada}`}
@@ -3779,7 +3779,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                             <span>{isTamil ? 'அதிர்ஷ்டப் பாகை (Fortuna):' : 'Pars Fortuna:'}</span>
                           </span>
                           <span className="font-mono font-bold text-stone-800 dark:text-stone-200 text-xs">
-                            {horoscope.specialLagnas?.auspiciousSphutas?.fortuna?.rasiTa} {horoscope.specialLagnas?.auspiciousSphutas?.fortuna?.degDMS}
+                            {isTamil ? horoscope.specialLagnas?.auspiciousSphutas?.fortuna?.rasiTa : (horoscope.specialLagnas?.auspiciousSphutas?.fortuna?.rasiEn || horoscope.specialLagnas?.auspiciousSphutas?.fortuna?.rasiTa)} {horoscope.specialLagnas?.auspiciousSphutas?.fortuna?.degDMS}
                           </span>
                         </div>
                         <p className="text-[10px] text-stone-600 dark:text-stone-400">
@@ -4448,7 +4448,9 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                               {isTamil ? row.nameTa : row.nameEn}
                             </td>
                             <td className="p-2 sm:p-2.5 font-sans">
-                              <span className="font-semibold text-stone-800 dark:text-stone-200">{row.rasiName}</span>
+                              <span className="font-semibold text-stone-800 dark:text-stone-200">
+                                {isTamil ? (row.rasiNameTa || row.rasiName) : (row.rasiNameEn || row.rasiName)}
+                              </span>
                               <span className="ml-1 text-[10px] text-stone-500">{row.degInSignFormatted}</span>
                             </td>
                             <td className="p-2 sm:p-2.5 font-sans">
