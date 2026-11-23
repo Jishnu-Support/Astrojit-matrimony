@@ -1013,6 +1013,14 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                         <span className={isLagna ? 'text-[#7A1A22] dark:text-amber-300 font-black' : isMandi ? 'text-[#8C3A00] dark:text-amber-400 font-black' : ''}>
                           {isTamil ? p.info.ta : p.info.en}
                         </span>
+                        {p.isRetrograde && (
+                          <span
+                            className="ml-1 px-1 py-0.5 rounded text-[10px] font-black bg-amber-500/20 text-amber-900 dark:bg-amber-400/20 dark:text-amber-200 border border-amber-600/30 shadow-2xs"
+                            title={isTamil ? 'வக்ர கதி (Retrograde Motion)' : 'Retrograde Motion'}
+                          >
+                            {isTamil ? '(வ)' : '(R)'}
+                          </span>
+                        )}
                       </td>
                       <td className="py-2 px-3 font-mono">{p.dms}</td>
                       <td className="py-2 px-3 font-mono font-semibold text-[#7A1A22] dark:text-amber-200">{p.degInSign}</td>

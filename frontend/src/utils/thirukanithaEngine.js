@@ -2300,7 +2300,17 @@ export function calculateThirukanithaHoroscope({
   let lamMoon_nirayana = N(lamMoon_tropical - Ayanamsha);
 
   // 5. MERCURY, VENUS, MARS, JUPITER, SATURN, EARTH
+  // Compute at epoch T and T + dT (dT = 1 day = 1/36525.0 Julian centuries)
+  // to calculate true apparent geocentric daily motion (speed) and retrograde status (Vakram / வக்ரம்).
+  const dT = 1.0 / 36525.0;
+  const T_next = T + dT;
+  const Omega_next = N(125.04452 - 1934.136261 * T_next);
+  const Ls_next = N(280.46646 + 36000.76983 * T_next);
+  const dPsi_next = -17.2 * sinD(Omega_next) - 1.32 * sinD(2 * Ls_next);
+  const Ayanamsha_next = 23.857092 + (5029.0966 * T_next + 1.11161 * T_next * T_next) / 3600.0 + dPsi_next / 3600.0;
+
   const earth = getHelioCoords(PLANET_ELEMENTS.earth, T);
+  const earth_next = getHelioCoords(PLANET_ELEMENTS.earth, T_next);
   const planetLongs = {};
 
   for (const key of ['mercury', 'venus', 'mars', 'jupiter', 'saturn']) {
@@ -2309,7 +2319,24 @@ export function calculateThirukanithaHoroscope({
     const dy = h.y - earth.y;
     const lam_trop = N(atan2D(dy, dx) + 1.3969713 * T);
     const lam_sid = N(lam_trop - Ayanamsha);
-    planetLongs[key] = { trop: lam_trop, sid: lam_sid };
+
+    const h_next = getHelioCoords(PLANET_ELEMENTS[key], T_next);
+    const dx_next = h_next.x - earth_next.x;
+    const dy_next = h_next.y - earth_next.y;
+    const lam_trop_next = N(atan2D(dy_next, dx_next) + 1.3969713 * T_next);
+    const lam_sid_next = N(lam_trop_next - Ayanamsha_next);
+
+    // Apparent sidereal daily motion in degrees/day (-180 to +180)
+    const dailyMotion = (lam_sid_next - lam_sid + 540) % 360 - 180;
+    const isRetrograde = dailyMotion < 0;
+
+    planetLongs[key] = {
+      trop: lam_trop,
+      sid: lam_sid,
+      speed: dailyMotion,
+      dailyMotion,
+      isRetrograde
+    };
   }
 
   // 6. NODES
@@ -2405,15 +2432,15 @@ export function calculateThirukanithaHoroscope({
   // 10 & 11. Planetary List & Divisional Charts Mapping
   // Order: Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu, Ketu
   const rawPlanets = [
-    { key: 'sun', lam: lamSun_nirayana },
-    { key: 'moon', lam: lamMoon_nirayana },
-    { key: 'mars', lam: planetLongs.mars.sid },
-    { key: 'mercury', lam: planetLongs.mercury.sid },
-    { key: 'jupiter', lam: planetLongs.jupiter.sid },
-    { key: 'venus', lam: planetLongs.venus.sid },
-    { key: 'saturn', lam: planetLongs.saturn.sid },
-    { key: 'rahu', lam: Rahu_sid },
-    { key: 'ketu', lam: Ketu_sid }
+    { key: 'sun', lam: lamSun_nirayana, isRetrograde: false, speed: 0.9856 },
+    { key: 'moon', lam: lamMoon_nirayana, isRetrograde: false, speed: 13.176 },
+    { key: 'mars', lam: planetLongs.mars.sid, isRetrograde: Boolean(planetLongs.mars.isRetrograde), speed: planetLongs.mars.speed },
+    { key: 'mercury', lam: planetLongs.mercury.sid, isRetrograde: Boolean(planetLongs.mercury.isRetrograde), speed: planetLongs.mercury.speed },
+    { key: 'jupiter', lam: planetLongs.jupiter.sid, isRetrograde: Boolean(planetLongs.jupiter.isRetrograde), speed: planetLongs.jupiter.speed },
+    { key: 'venus', lam: planetLongs.venus.sid, isRetrograde: Boolean(planetLongs.venus.isRetrograde), speed: planetLongs.venus.speed },
+    { key: 'saturn', lam: planetLongs.saturn.sid, isRetrograde: Boolean(planetLongs.saturn.isRetrograde), speed: planetLongs.saturn.speed },
+    { key: 'rahu', lam: Rahu_sid, isRetrograde: false, speed: -0.0529 },
+    { key: 'ketu', lam: Ketu_sid, isRetrograde: false, speed: -0.0529 }
   ];
 
   function getDivisions(lam) {
@@ -2448,11 +2475,22 @@ export function calculateThirukanithaHoroscope({
     const div = getDivisions(lam);
     const bhava = getPlanetBhava(lam);
     const dig = getPlanetDignityBilingual(p.key, rasi);
+    const isRetro = Boolean(p.isRetrograde);
 
     return {
       id: p.key,
       isLagna: false,
       isMandi: false,
+      isRetrograde: isRetro,
+      isRetro: isRetro,
+      speed: p.speed ?? 0,
+      dailyMotion: p.speed ?? 0,
+      nameWithVakraTa: isRetro ? `${info.ta}(வ)` : info.ta,
+      nameWithVakraEn: isRetro ? `${info.en} (R)` : info.en,
+      shortWithVakraTa: isRetro ? `${info.shortTa}(வ)` : info.shortTa,
+      shortWithVakraEn: isRetro ? `${info.shortEn}(R)` : info.shortEn,
+      vakraStatusTa: isRetro ? 'வக்ரம்' : 'நேர்கதி',
+      vakraStatusEn: isRetro ? 'Retrograde' : 'Direct',
       info,
       longitude: lam,
       dms: formatDMS(lam),
@@ -2484,6 +2522,10 @@ export function calculateThirukanithaHoroscope({
     navamsa: lagnaDivisions.D9,
     bhava: 1,
     div: lagnaDivisions,
+    isRetrograde: false,
+    isRetro: false,
+    speed: 0,
+    dailyMotion: 0,
     dignity: '---',
     dignityTa: '---',
     dignityEn: '---',
@@ -2504,6 +2546,10 @@ export function calculateThirukanithaHoroscope({
     navamsa: mandiDivisions.D9,
     bhava: getPlanetBhava(mandiLong),
     div: mandiDivisions,
+    isRetrograde: false,
+    isRetro: false,
+    speed: 0,
+    dailyMotion: 0,
     dignity: '---',
     dignityTa: '---',
     dignityEn: '---',
@@ -2834,12 +2880,14 @@ export function calculateThirukanithaHoroscope({
     for (const pr of planetRows) {
       const signIdx = pr.div?.[chartKey];
       if (signs[signIdx]) {
+        const isR = Boolean(pr.isRetrograde);
         signs[signIdx].occupants.push({
           id: pr.id,
           isLagna: false,
           isMandi: false,
-          labelEn: pr.info?.shortEn || pr.id,
-          labelTa: pr.info?.shortTa || pr.id
+          isRetrograde: isR,
+          labelEn: isR ? `${pr.info?.shortEn || pr.id}(R)` : (pr.info?.shortEn || pr.id),
+          labelTa: isR ? `${pr.info?.shortTa || pr.id}(வ)` : (pr.info?.shortTa || pr.id)
         });
       }
     }
@@ -3241,6 +3289,16 @@ export function calculateThirukanithaHoroscope({
       tithiNameTa,
       tithiNum,
       weekday: weekdayInfo,
+      vakraPlanets: planetRows.filter(p => p.isRetrograde && p.id !== 'rahu' && p.id !== 'ketu'),
+      vakraCount: planetRows.filter(p => p.isRetrograde && p.id !== 'rahu' && p.id !== 'ketu').length,
+      vakraNamesTa: (() => {
+        const vp = planetRows.filter(p => p.isRetrograde && p.id !== 'rahu' && p.id !== 'ketu');
+        return vp.length > 0 ? vp.map(p => p.info.ta).join(', ') : 'எதுவுமில்லை';
+      })(),
+      vakraNamesEn: (() => {
+        const vp = planetRows.filter(p => p.isRetrograde && p.id !== 'rahu' && p.id !== 'ketu');
+        return vp.length > 0 ? vp.map(p => p.info.en).join(', ') : 'None';
+      })(),
       dashaBalance: {
         lord: DASHA_LORDS[i0],
         years: balY,
@@ -5524,7 +5582,15 @@ export function computeAuthenticShadbala(horoInput, planetPositions, lagnaLon, s
     let kVal = 2.0 + (i % 3) * 0.8;
     kalaVals.push(kVal.toFixed(3));
 
-    let cVal = (i === 0 || i === 1) ? 0.0 : (0.25 + ((s * 7) % 50) / 100);
+    let isR = false;
+    if (Array.isArray(planetPositions)) {
+      const f = planetPositions.find(p => p.id === k);
+      isR = Boolean(f?.isRetrograde);
+    } else if (planetPositions && planetPositions[k]) {
+      isR = Boolean(planetPositions[k].isRetrograde);
+    }
+    // Classical Cheshta Bala: Retrograde planets get full Cheshta Bala (1.000 Rupa / 60 Virupas)
+    let cVal = (i === 0 || i === 1) ? 0.0 : (isR ? 1.000 : (0.35 + ((s * 7) % 40) / 100));
     cheshtaVals.push(cVal.toFixed(3));
 
     let drVal = (((s + i) % 7) - 3) * 0.07;
@@ -9713,7 +9779,7 @@ export function computeDignitiesAspectsSection17(horoInput = {}, allPlanetRows =
     if (pl && k && k !== 'lagna' && k !== 'mandi') {
       planetSigns[k] = pl.rasi !== undefined ? pl.rasi : (pl.rasiIdx !== undefined ? pl.rasiIdx : Math.floor((pl.longitude || 0) / 30) % 12);
       planetLons[k] = pl.longitude || 0;
-      planetRetro[k] = !!(pl.isRetro || (pl.speed && pl.speed < 0));
+      planetRetro[k] = !!(pl.isRetrograde || pl.isRetro || (pl.speed && pl.speed < 0));
     }
   }
 
@@ -9772,7 +9838,7 @@ export function computeDignitiesAspectsSection17(horoInput = {}, allPlanetRows =
     const diffFromLagna = ((s - lagnaRasiIdx + 12) % 12) + 1;
     if ([1, 4, 7, 10].includes(diffFromLagna)) { kendraTa.push(dispNameTa); kendraEn.push(dispNameEn); }
     if ([1, 5, 9].includes(diffFromLagna)) { trikonaTa.push(dispNameTa); trikonaEn.push(dispNameEn); }
-    if (isR) { vakraTa.push(dispNameTa); vakraEn.push(dispNameEn); }
+    if (isR && g !== 'rahu' && g !== 'ketu') { vakraTa.push(dispNameTa); vakraEn.push(dispNameEn); }
 
     // Combustion with Sun
     if (g !== 'sun' && g !== 'rahu' && g !== 'ketu') {
