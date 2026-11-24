@@ -16,6 +16,7 @@ import {
 } from '../utils/thirukanithaEngine';
 import { COUNTRIES, GEO_DATA, lookupCoordinates } from '../data/geoCoordinates';
 import ShadbalaBarChart from './ShadbalaBarChart';
+import NorthIndianChartGrid from './NorthIndianChartGrid';
 
 // South Indian Chart Fixed Sign Layout (4x4 Grid)
 // [Pisces(11), Aries(0),   Taurus(1),  Gemini(2) ]
@@ -160,6 +161,14 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
       });
     }
   }, [isBirthDetailsEmpty]);
+
+  const [chartStyle, setChartStyle] = useState(() => initialData?.chartStyle || 'south');
+
+  useEffect(() => {
+    if (initialData?.chartStyle) {
+      setChartStyle(initialData.chartStyle);
+    }
+  }, [initialData?.chartStyle]);
 
   const [activeChartKey, setActiveChartKey] = useState('D1');
   const [dasavargaMode, setDasavargaMode] = useState('bala'); // 'bala' | 'rasi' | 'shodashavarga'
@@ -927,7 +936,42 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
             );
           })()}
 
-          {/* Render South Indian Chart (Screen: selected active, Print: D1 and D9 side-by-side) */}
+          {/* Chart System Switcher Header: South Indian Box vs North Indian Diamond */}
+          <div className="flex items-center justify-between pb-1 border-b border-amber-900/10">
+            <span className="text-xs font-bold text-stone-600 dark:text-stone-300">
+              {isTamil ? 'சக்கர அமைப்பு முறை:' : 'Chart Display Style:'}
+            </span>
+            <div className="flex items-center gap-1 bg-amber-50 dark:bg-stone-800 p-0.5 rounded-lg border border-amber-900/15">
+              <button
+                type="button"
+                onClick={() => setChartStyle('south')}
+                className={`px-2.5 py-1 rounded text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                  chartStyle === 'south'
+                    ? 'bg-[#7A1A22] text-amber-100 shadow-2xs font-black'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                }`}
+                title={isTamil ? 'தென்னிந்திய கட்டச் சக்கரம்' : 'South Indian Square Box Chart'}
+              >
+                <span>⏹️</span>
+                <span>{isTamil ? 'தென்னிந்திய முறை' : 'South Indian'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setChartStyle('north')}
+                className={`px-2.5 py-1 rounded text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                  chartStyle === 'north'
+                    ? 'bg-[#7A1A22] text-amber-100 shadow-2xs font-black'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                }`}
+                title={isTamil ? 'வடஇந்திய வைரக் குண்டலி சக்கரம்' : 'North Indian Diamond Kundli Chart'}
+              >
+                <span>💠</span>
+                <span>{isTamil ? 'வடஇந்திய முறை' : 'North Indian'}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Render Chart (Screen: selected active, Print: D1 and D9 side-by-side) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:grid-cols-2">
             {/* Chart 1: Active Varga, Bava Chart, or Gocharam */}
             {(() => {
@@ -939,12 +983,21 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                   <div className="text-center font-bold text-xs uppercase tracking-wider text-[#7A1A22] dark:text-[#E8838B]">
                     {title}
                   </div>
-                  <SouthIndianChartGrid
-                    chartData={chartData}
-                    isTamil={isTamil}
-                    centerTitle={title}
-                    centerSub={form.name}
-                  />
+                  {chartStyle === 'north' ? (
+                    <NorthIndianChartGrid
+                      chartData={chartData}
+                      isTamil={isTamil}
+                      centerTitle={title}
+                      centerSub={form.name}
+                    />
+                  ) : (
+                    <SouthIndianChartGrid
+                      chartData={chartData}
+                      isTamil={isTamil}
+                      centerTitle={title}
+                      centerSub={form.name}
+                    />
+                  )}
                 </div>
               );
             })()}
@@ -964,12 +1017,21 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                   <div className="text-center font-bold text-xs uppercase tracking-wider text-[#7A1A22] dark:text-[#E8838B]">
                     {compTitle}
                   </div>
-                  <SouthIndianChartGrid
-                    chartData={horoscope.charts[compKey] || horoscope.charts.D1}
-                    isTamil={isTamil}
-                    centerTitle={compTitle}
-                    centerSub={form.name}
-                  />
+                  {chartStyle === 'north' ? (
+                    <NorthIndianChartGrid
+                      chartData={horoscope.charts[compKey] || horoscope.charts.D1}
+                      isTamil={isTamil}
+                      centerTitle={compTitle}
+                      centerSub={form.name}
+                    />
+                  ) : (
+                    <SouthIndianChartGrid
+                      chartData={horoscope.charts[compKey] || horoscope.charts.D1}
+                      isTamil={isTamil}
+                      centerTitle={compTitle}
+                      centerSub={form.name}
+                    />
+                  )}
                 </div>
               );
             })()}
@@ -3124,72 +3186,83 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
               </div>
             </div>
 
-            {/* South Indian 4x4 Transit Chart + Gocharam Table */}
+            {/* Transit Chart + Gocharam Table */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-              {/* Left: 4x4 Transit Chart */}
+              {/* Left: Transit Chart (South Indian 4x4 or North Indian Diamond) */}
               <div className="lg:col-span-5 space-y-2">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold text-[#7A1A22] dark:text-amber-300">
-                    {isTamil ? 'கோச்சார ராசி சக்கரம் (South Indian 4×4)' : 'Transit Rasi Chart (4×4)'}
+                    {chartStyle === 'north'
+                      ? (isTamil ? 'கோச்சார ராசி சக்கரம் (வடஇந்திய முறை)' : 'Transit Rasi Chart (North Indian)')
+                      : (isTamil ? 'கோச்சார ராசி சக்கரம் (தென்னிந்திய முறை 4×4)' : 'Transit Rasi Chart (South Indian 4×4)')}
                   </h3>
                   <span className="text-[10px] text-stone-500 font-mono">
                     {horoscope.gocharam.transitDateFormatted}
                   </span>
                 </div>
 
-                <div className="aspect-square w-full max-w-[340px] mx-auto border-2 border-amber-900/40 dark:border-amber-700/60 grid grid-cols-4 grid-rows-4 bg-amber-50/30 dark:bg-stone-900/50 rounded-xl overflow-hidden shadow-xs">
-                  {SOUTH_INDIAN_CELLS.map((cell, idx) => {
-                    const chartData = horoscope.gocharam.chart?.[cell.rasi];
-                    const rasiLabel = isTamil ? RASHIS[cell.rasi]?.ta : RASHIS[cell.rasi]?.en;
+                {chartStyle === 'north' ? (
+                  <NorthIndianChartGrid
+                    chartData={horoscope.gocharam.chart}
+                    isTamil={isTamil}
+                    centerTitle={isTamil ? 'கோச்சாரம்' : 'TRANSIT'}
+                    centerSub={horoscope.gocharam.transitDateFormatted}
+                  />
+                ) : (
+                  <div className="aspect-square w-full max-w-[340px] mx-auto border-2 border-amber-900/40 dark:border-amber-700/60 grid grid-cols-4 grid-rows-4 bg-amber-50/30 dark:bg-stone-900/50 rounded-xl overflow-hidden shadow-xs">
+                    {SOUTH_INDIAN_CELLS.map((cell, idx) => {
+                      const chartData = horoscope.gocharam.chart?.[cell.rasi];
+                      const rasiLabel = isTamil ? RASHIS[cell.rasi]?.ta : RASHIS[cell.rasi]?.en;
 
-                    return (
-                      <div
-                        key={idx}
-                        style={{ gridRow: cell.row + 1, gridColumn: cell.col + 1 }}
-                        className="border border-amber-900/20 dark:border-amber-700/40 p-1 flex flex-col justify-between relative bg-white/60 dark:bg-stone-900/60"
-                      >
-                        <div className="flex justify-between items-center text-[9px] text-stone-500 dark:text-stone-400 font-bold">
-                          <span>{isTamil ? RASHIS[cell.rasi]?.ta : RASHIS[cell.rasi]?.en}</span>
+                      return (
+                        <div
+                          key={idx}
+                          style={{ gridRow: cell.row + 1, gridColumn: cell.col + 1 }}
+                          className="border border-amber-900/20 dark:border-amber-700/40 p-1 flex flex-col justify-between relative bg-white/60 dark:bg-stone-900/60"
+                        >
+                          <div className="flex justify-between items-center text-[9px] text-stone-500 dark:text-stone-400 font-bold">
+                            <span>{isTamil ? RASHIS[cell.rasi]?.ta : RASHIS[cell.rasi]?.en}</span>
+                          </div>
+                          <div className="flex flex-wrap gap-1 items-center justify-center py-1">
+                            {chartData?.occupants?.map((occ, oIdx) => (
+                              <span
+                                key={oIdx}
+                                className={`text-[8px] sm:text-[9.5px] px-0.5 sm:px-1 py-0 sm:py-0.2 rounded font-bold leading-tight ${
+                                  occ.isBirthMoon
+                                    ? 'bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300 ring-1 ring-purple-400'
+                                    : occ.isBirthLagna
+                                    ? 'bg-red-100 text-red-900 dark:bg-red-950 dark:text-red-300 ring-1 ring-red-400'
+                                    : occ.statusType === 'subha'
+                                    ? 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200'
+                                    : occ.statusType === 'vedha'
+                                    ? 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200'
+                                    : 'bg-stone-200 text-stone-800 dark:bg-stone-800 dark:text-stone-300'
+                                }`}
+                              >
+                                {isTamil ? occ.labelTa : occ.labelEn}
+                              </span>
+                            ))}
+                          </div>
                         </div>
-                        <div className="flex flex-wrap gap-1 items-center justify-center py-1">
-                          {chartData?.occupants?.map((occ, oIdx) => (
-                            <span
-                              key={oIdx}
-                              className={`text-[8px] sm:text-[9.5px] px-0.5 sm:px-1 py-0 sm:py-0.2 rounded font-bold leading-tight ${
-                                occ.isBirthMoon
-                                  ? 'bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300 ring-1 ring-purple-400'
-                                  : occ.isBirthLagna
-                                  ? 'bg-red-100 text-red-900 dark:bg-red-950 dark:text-red-300 ring-1 ring-red-400'
-                                  : occ.statusType === 'subha'
-                                  ? 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200'
-                                  : occ.statusType === 'vedha'
-                                  ? 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200'
-                                  : 'bg-stone-200 text-stone-800 dark:bg-stone-800 dark:text-stone-300'
-                              }`}
-                            >
-                              {isTamil ? occ.labelTa : occ.labelEn}
-                            </span>
-                          ))}
-                        </div>
+                      );
+                    })}
+                    {/* Chart Center */}
+                    <div
+                      style={{ gridRow: '2 / span 2', gridColumn: '2 / span 2' }}
+                      className="border border-amber-900/20 dark:border-amber-700/40 p-2 flex flex-col items-center justify-center text-center bg-amber-100/50 dark:bg-amber-950/30"
+                    >
+                      <div className="text-xs font-bold text-[#7A1A22] dark:text-[#E8838B]">
+                        {isTamil ? 'கோச்சார நிலை' : 'Planetary Transit'}
                       </div>
-                    );
-                  })}
-                  {/* Chart Center */}
-                  <div
-                    style={{ gridRow: '2 / span 2', gridColumn: '2 / span 2' }}
-                    className="border border-amber-900/20 dark:border-amber-700/40 p-2 flex flex-col items-center justify-center text-center bg-amber-100/50 dark:bg-amber-950/30"
-                  >
-                    <div className="text-xs font-bold text-[#7A1A22] dark:text-[#E8838B]">
-                      {isTamil ? 'கோச்சார நிலை' : 'Planetary Transit'}
-                    </div>
-                    <div className="text-[10px] text-stone-600 dark:text-stone-400 mt-0.5 font-mono">
-                      {horoscope.gocharam.transitDateFormatted}
-                    </div>
-                    <div className="text-[9px] text-stone-500 mt-1">
-                      {isTamil ? 'சந்திரன் = ஜென்ம ராசி | லக்னம் = ஜென்ம லக்னம்' : 'Moon = Janma Rasi | Lagna = Janma Lagna'}
+                      <div className="text-[10px] text-stone-600 dark:text-stone-400 mt-0.5 font-mono">
+                        {horoscope.gocharam.transitDateFormatted}
+                      </div>
+                      <div className="text-[9px] text-stone-500 mt-1">
+                        {isTamil ? 'சந்திரன் = ஜென்ம ராசி | லக்னம் = ஜென்ம லக்னம்' : 'Moon = Janma Rasi | Lagna = Janma Lagna'}
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Right: Detailed Transit Table */}
@@ -3676,14 +3749,23 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                   </div>
 
                   <div className="flex flex-col lg:flex-row items-center justify-center gap-6 pt-1">
-                    {/* South Indian Chart Grid */}
+                    {/* Chart Grid: South Indian or North Indian */}
                     <div className="w-full max-w-[360px] shrink-0">
-                      <SouthIndianChartGrid
-                        chartData={horoscope.upagrahas?.chart}
-                        isTamil={isTamil}
-                        centerTitle={isTamil ? 'உபகிரகங்கள்' : 'UPAGRAHAS'}
-                        centerSub={isTamil ? '10 உபகிரக நிலை' : '10 Secondary Planets'}
-                      />
+                      {chartStyle === 'north' ? (
+                        <NorthIndianChartGrid
+                          chartData={horoscope.upagrahas?.chart}
+                          isTamil={isTamil}
+                          centerTitle={isTamil ? 'உபகிரகங்கள்' : 'UPAGRAHAS'}
+                          centerSub={isTamil ? '10 உபகிரக நிலை' : '10 Secondary Planets'}
+                        />
+                      ) : (
+                        <SouthIndianChartGrid
+                          chartData={horoscope.upagrahas?.chart}
+                          isTamil={isTamil}
+                          centerTitle={isTamil ? 'உபகிரகங்கள்' : 'UPAGRAHAS'}
+                          centerSub={isTamil ? '10 உபகிரக நிலை' : '10 Secondary Planets'}
+                        />
+                      )}
                     </div>
 
                     {/* Upagrahas Sign Placement Summary Grid */}

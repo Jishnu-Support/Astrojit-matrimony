@@ -13,6 +13,7 @@ import {
   getGrahaFourRoles
 } from '../utils/thirukanithaEngine';
 import { printElementById } from '../utils/printHelper';
+import NorthIndianChartGrid from './NorthIndianChartGrid';
 
 // South Indian Chart Fixed Sign Layout (4x4 Grid)
 // [Pisces(11), Aries(0),   Taurus(1),  Gemini(2) ]
@@ -163,6 +164,13 @@ export default function HoroscopeOnePagePrint({
   // Letterhead Branding State (synced with profile / localStorage)
   const [letterhead, setLetterhead] = useState(() => getInitialLetterhead(user, isTa));
   const [brandingModalOpen, setBrandingModalOpen] = useState(false);
+  const [chartStyle, setChartStyle] = useState(() => birthData?.chartStyle || 'south');
+
+  useEffect(() => {
+    if (birthData?.chartStyle) {
+      setChartStyle(birthData.chartStyle);
+    }
+  }, [birthData?.chartStyle]);
 
   // Compute Full Thirukanitha Horoscope Calculations
   const horoscope = useMemo(() => {
@@ -747,7 +755,37 @@ export default function HoroscopeOnePagePrint({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Chart Style Switcher (South Indian / North Indian) */}
+          <div className="flex items-center gap-1 bg-stone-100 dark:bg-stone-900 p-1 rounded-xl border border-stone-200 dark:border-stone-800">
+            <button
+              type="button"
+              onClick={() => setChartStyle('south')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                chartStyle === 'south'
+                  ? 'bg-amber-600 text-white shadow-xs font-black'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+              }`}
+              title={isTa ? 'தென்னிந்திய கட்டச் சக்கரம்' : 'South Indian Square Box Chart'}
+            >
+              <span>⏹️</span>
+              <span>{isTa ? 'தென்னிந்தியா' : 'South Indian'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setChartStyle('north')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                chartStyle === 'north'
+                  ? 'bg-amber-600 text-white shadow-xs font-black'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+              }`}
+              title={isTa ? 'வடஇந்திய வைரச் சக்கரம் (குண்டலி)' : 'North Indian Diamond Chart (Kundli)'}
+            >
+              <span>💠</span>
+              <span>{isTa ? 'வடஇந்தியா' : 'North Indian'}</span>
+            </button>
+          </div>
+
           {/* Edit Letterhead Branding Button */}
           <button
             type="button"
@@ -1023,14 +1061,38 @@ export default function HoroscopeOnePagePrint({
               </div>
 
               {/* ======================================================== */}
-              {/* BLOCK 4: TWIN SOUTH INDIAN CHARTS (Side-by-Side at Bottom)*/}
+              {/* BLOCK 4: TWIN CHARTS (South Indian Box / North Indian Diamond) */}
               {/* ======================================================== */}
               <div className="grid grid-cols-2 gap-3 my-1">
                 <div>
-                  {renderSouthIndianGrid(rasiGridContent, isTa ? 'ராசி (D1)' : 'Rasi (D1)')}
+                  {chartStyle === 'north' ? (
+                    <div className="border-[1.5px] border-black bg-white p-1">
+                      <NorthIndianChartGrid
+                        chartCells={rasiGridContent}
+                        lagnaRasi={lagnaRasi}
+                        centerTitle={isTa ? 'ராசி (D1)' : 'Rasi (D1)'}
+                        isTamil={isTa}
+                        isPrint={true}
+                      />
+                    </div>
+                  ) : (
+                    renderSouthIndianGrid(rasiGridContent, isTa ? 'ராசி (D1)' : 'Rasi (D1)')
+                  )}
                 </div>
                 <div>
-                  {renderSouthIndianGrid(navamsaGridContent, isTa ? 'நவாம்சம் (D9)' : 'Navamsha (D9)')}
+                  {chartStyle === 'north' ? (
+                    <div className="border-[1.5px] border-black bg-white p-1">
+                      <NorthIndianChartGrid
+                        chartCells={navamsaGridContent}
+                        lagnaRasi={horoscope?.summary?.lagnaNavamsaRasi ?? lagnaRasi}
+                        centerTitle={isTa ? 'நவாம்சம் (D9)' : 'Navamsha (D9)'}
+                        isTamil={isTa}
+                        isPrint={true}
+                      />
+                    </div>
+                  ) : (
+                    renderSouthIndianGrid(navamsaGridContent, isTa ? 'நவாம்சம் (D9)' : 'Navamsha (D9)')
+                  )}
                 </div>
               </div>
 

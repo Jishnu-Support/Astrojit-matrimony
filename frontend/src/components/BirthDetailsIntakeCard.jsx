@@ -18,7 +18,8 @@ import {
   Users,
   Eye,
   EyeOff,
-  UserPlus
+  UserPlus,
+  Compass
 } from 'lucide-react';
 import { useLang } from '../i18n';
 import { useAuth } from '../context/AuthContext';
@@ -651,6 +652,79 @@ export default function BirthDetailsIntakeCard({
                 }`}
               >
                 {clientData.timeState?.period || 'AM'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ROW 1.5: Gender & Chart Format (South Indian Box / North Indian Diamond) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-amber-50/60 dark:bg-stone-900/60 p-2.5 rounded-xl border border-amber-900/10 dark:border-amber-500/15">
+          {/* Gender Selector */}
+          <div>
+            <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
+              <User className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
+              {isTa ? 'பாலினம் (Gender)' : 'Gender'}
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => updateField('gender', 'male')}
+                className={`py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  (clientData.gender || 'male') === 'male'
+                    ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
+                    : 'bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700 hover:bg-stone-50'
+                }`}
+              >
+                <span>👨</span>
+                <span>{isTa ? 'ஆண் (Male)' : 'Male'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => updateField('gender', 'female')}
+                className={`py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  clientData.gender === 'female'
+                    ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
+                    : 'bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700 hover:bg-stone-50'
+                }`}
+              >
+                <span>👩</span>
+                <span>{isTa ? 'பெண் (Female)' : 'Female'}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Chart Format / Style (South Indian / North Indian) */}
+          <div>
+            <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
+              <Compass className="w-3.5 h-3.5 inline mr-1 text-amber-700 dark:text-amber-400" />
+              {isTa ? 'ஜாதக சக்கர வடிவம் (Chart Format)' : 'Chart Format / System'}
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => updateField('chartStyle', 'south')}
+                className={`py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  (clientData.chartStyle || 'south') === 'south'
+                    ? 'bg-amber-600 text-white shadow-xs font-black'
+                    : 'bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700 hover:bg-stone-50'
+                }`}
+                title={isTa ? 'தென்னிந்திய கட்டச் சக்கரம்' : 'South Indian Square Box Chart'}
+              >
+                <span>⏹️</span>
+                <span>{isTa ? 'தென்னிந்தியா' : 'South Indian'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => updateField('chartStyle', 'north')}
+                className={`py-1.5 px-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  clientData.chartStyle === 'north'
+                    ? 'bg-amber-600 text-white shadow-xs font-black'
+                    : 'bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700 hover:bg-stone-50'
+                }`}
+                title={isTa ? 'வடஇந்திய வைரச் சக்கரம் (குண்டலி)' : 'North Indian Diamond Chart (Kundli)'}
+              >
+                <span>💠</span>
+                <span>{isTa ? 'வடஇந்தியா' : 'North Indian'}</span>
               </button>
             </div>
           </div>

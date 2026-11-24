@@ -16,6 +16,7 @@ import {
   calculateThirukanithaHoroscope
 } from '../utils/thirukanithaEngine';
 import { printElementById } from '../utils/printHelper';
+import NorthIndianChartGrid from './NorthIndianChartGrid';
 
 // South Indian Chart Fixed Sign Layout (4x4 Grid)
 const SOUTH_INDIAN_CELLS = [
@@ -87,6 +88,13 @@ export default function HoroscopeMultiPagePrint({
   const [letterhead, setLetterhead] = useState(() => getInitialLetterhead(user, isTa));
   const [brandingModalOpen, setBrandingModalOpen] = useState(false);
   const [aiPromptModalOpen, setAiPromptModalOpen] = useState(false);
+  const [chartStyle, setChartStyle] = useState(() => birthData?.chartStyle || 'south');
+
+  useEffect(() => {
+    if (birthData?.chartStyle) {
+      setChartStyle(birthData.chartStyle);
+    }
+  }, [birthData?.chartStyle]);
 
   // Selected Section IDs (Defaults to ALL 20 sections = Full 51 Pages)
   const [selectedIds, setSelectedIds] = useState(() =>
@@ -146,9 +154,22 @@ export default function HoroscopeMultiPagePrint({
   const selectCore = () => setSelectedIds([1, 2, 3, 4, 5, 7, 19]);
   const clearAll = () => setSelectedIds([]);
 
-  // Helper to render South Indian Chart in half-page block
+  // Helper to render Chart in booklet (supports South Indian Box and North Indian Diamond)
   const renderMiniChart = (chartCells = [], chartTitle = '', chartDomain = '', height = '112px') => {
     const safeCells = Array.isArray(chartCells) ? chartCells : [];
+    if (chartStyle === 'north') {
+      return (
+        <div className="border border-black bg-white rounded-none overflow-hidden p-0.5 flex flex-col items-center justify-center" style={{ height }}>
+          <NorthIndianChartGrid
+            chartCells={safeCells}
+            centerTitle={chartTitle}
+            centerSub={chartDomain}
+            isTamil={isTa}
+            isPrint={true}
+          />
+        </div>
+      );
+    }
     return (
       <div className="border border-black bg-white rounded-none overflow-hidden">
         <table className="w-full border-collapse" style={{ tableLayout: 'fixed', height }}>
@@ -2291,6 +2312,36 @@ export default function HoroscopeMultiPagePrint({
               <Sparkles className="w-3.5 h-3.5 text-stone-950 fill-amber-300" />
               <span>{isTa ? '51-பக்க AI Prompt' : '51-Page AI Prompt'}</span>
             </button>
+
+            {/* Chart Style Switcher (South Indian / North Indian) */}
+            <div className="flex items-center gap-1 bg-stone-100 dark:bg-stone-900 p-1 rounded-xl border border-stone-200 dark:border-stone-800">
+              <button
+                type="button"
+                onClick={() => setChartStyle('south')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                  chartStyle === 'south'
+                    ? 'bg-amber-600 text-white shadow-xs font-black'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                }`}
+                title={isTa ? 'தென்னிந்திய கட்டச் சக்கரம்' : 'South Indian Square Box Chart'}
+              >
+                <span>⏹️</span>
+                <span>{isTa ? 'தென்னிந்தியா' : 'South Indian'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setChartStyle('north')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                  chartStyle === 'north'
+                    ? 'bg-amber-600 text-white shadow-xs font-black'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                }`}
+                title={isTa ? 'வடஇந்திய வைரச் சக்கரம் (குண்டலி)' : 'North Indian Diamond Chart (Kundli)'}
+              >
+                <span>💠</span>
+                <span>{isTa ? 'வடஇந்தியா' : 'North Indian'}</span>
+              </button>
+            </div>
 
             {/* Edit Letterhead Branding Button */}
             <button

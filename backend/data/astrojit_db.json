@@ -85,7 +85,21 @@
       "createdAt": "2026-11-24T10:12:46.952Z"
     }
   ],
-  "astrologers": [],
+  "astrologers": [
+    {
+      "id": "astro-test01",
+      "name": "Balaji Astrologer",
+      "mobile": "9876543210",
+      "username": "9876543210",
+      "passwordHash": "$2b$08$FNJFG7gxXX.VD.HUDbKlZOFSMWcxWam7PsF2MVZobyeE/cPWwwjN6",
+      "country": "India",
+      "state": "Tamil Nadu",
+      "city": "Salem",
+      "address": "Salem, Tamil Nadu",
+      "role": "astrologer",
+      "verified": true
+    }
+  ],
   "vendors": [],
   "company": {
     "username": "jit_admin",

@@ -35,6 +35,8 @@ export default function HoroscopeHub({
   const shouldHideLookup = Boolean(hideClientLookup || user?.role === 'client');
 
   const {
+    clientData,
+    updateField,
     activeBirthData,
     calcKey,
     selectClient,
@@ -73,33 +75,66 @@ export default function HoroscopeHub({
           </div>
         </div>
 
-        {/* View Mode Toggle: Horoscope Screen View & Horoscope Print */}
-        <div className="flex items-center gap-1.5 p-1 bg-stone-100 dark:bg-stone-900/80 rounded-2xl border border-stone-200 dark:border-stone-800 self-start md:self-auto shadow-2xs">
-          <button
-            type="button"
-            onClick={() => setHoroscopeMode('screen')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
-              horoscopeMode === 'screen'
-                ? 'bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-amber-100 shadow-sm'
-                : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-200/60 dark:hover:bg-stone-800/60'
-            }`}
-          >
-            <Monitor className="w-3.5 h-3.5" />
-            <span>{isTa ? 'ஜாதகத் திரை பார்வை' : 'Horoscope Screen View'}</span>
-          </button>
+        {/* Controls: Chart Style (South/North) & View Mode (Screen/Print) */}
+        <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
+          {/* Chart Style Switcher: South Indian vs North Indian */}
+          <div className="flex items-center gap-1 p-1 bg-stone-100 dark:bg-stone-900/80 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => updateField('chartStyle', 'south')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                (clientData?.chartStyle || activeBirthData?.chartStyle || 'south') === 'south'
+                  ? 'bg-amber-600 text-white shadow-xs font-black'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100'
+              }`}
+              title={isTa ? 'தென்னிந்திய கட்டச் சக்கரம்' : 'South Indian Square Box Chart'}
+            >
+              <span>⏹️</span>
+              <span>{isTa ? 'தென்னிந்தியா' : 'South Indian'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => updateField('chartStyle', 'north')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                (clientData?.chartStyle || activeBirthData?.chartStyle) === 'north'
+                  ? 'bg-amber-600 text-white shadow-xs font-black'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100'
+              }`}
+              title={isTa ? 'வடஇந்திய வைரச் சக்கரம் (குண்டலி)' : 'North Indian Diamond Chart (Kundli)'}
+            >
+              <span>💠</span>
+              <span>{isTa ? 'வடஇந்தியா' : 'North Indian'}</span>
+            </button>
+          </div>
 
-          <button
-            type="button"
-            onClick={() => setHoroscopeMode('print')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
-              horoscopeMode === 'print'
-                ? 'bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-amber-100 shadow-sm'
-                : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-200/60 dark:hover:bg-stone-800/60'
-            }`}
-          >
-            <Printer className="w-3.5 h-3.5" />
-            <span>{isTa ? 'ஜாதகம் அச்சு' : 'Horoscope Print'}</span>
-          </button>
+          {/* View Mode Toggle: Horoscope Screen View & Horoscope Print */}
+          <div className="flex items-center gap-1.5 p-1 bg-stone-100 dark:bg-stone-900/80 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setHoroscopeMode('screen')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                horoscopeMode === 'screen'
+                  ? 'bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-amber-100 shadow-sm'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-200/60 dark:hover:bg-stone-800/60'
+              }`}
+            >
+              <Monitor className="w-3.5 h-3.5" />
+              <span>{isTa ? 'ஜாதகத் திரை பார்வை' : 'Horoscope Screen View'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setHoroscopeMode('print')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                horoscopeMode === 'print'
+                  ? 'bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-amber-100 shadow-sm'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 hover:bg-stone-200/60 dark:hover:bg-stone-800/60'
+              }`}
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>{isTa ? 'ஜாதகம் அச்சு' : 'Horoscope Print'}</span>
+            </button>
+          </div>
         </div>
       </div>
 

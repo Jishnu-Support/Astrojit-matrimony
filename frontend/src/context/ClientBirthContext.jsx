@@ -54,6 +54,7 @@ const DEFAULT_CLIENT_DATA = {
   nativePlace: '',
   mobile: '',
   gender: 'male',
+  chartStyle: 'south', // 'south' (South Indian Box) | 'north' (North Indian Diamond)
   selectedClient: null
 };
 
@@ -133,6 +134,7 @@ export function ClientBirthProvider({ children }) {
       nativePlace: clientData.nativePlace?.trim() || '',
       mobile: clientData.mobile?.trim() || '',
       gender: clientData.gender || 'male',
+      chartStyle: clientData.chartStyle || 'south',
       clientId: clientData.selectedClient?.id || null
     };
   }, [clientData, calcKey]);
@@ -212,6 +214,7 @@ export function ClientBirthProvider({ children }) {
       nativePlace: client.nativePlace || '',
       mobile: client.mobile || '',
       gender: client.gender || 'male',
+      chartStyle: client.chartStyle || 'south',
       selectedClient: client
     });
     setCalcKey(k => k + 1);
@@ -234,6 +237,7 @@ export function ClientBirthProvider({ children }) {
       nativePlace: '',
       mobile: '',
       gender: 'male',
+      chartStyle: 'south',
       selectedClient: null
     });
     try {
