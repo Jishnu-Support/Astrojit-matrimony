@@ -1438,6 +1438,8 @@ export function computeUpagrahasData({
     return v;
   };
 
+  const SIGN_LORDS = ['mars', 'venus', 'mercury', 'moon', 'sun', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'saturn', 'jupiter'];
+
   const getPos = (deg) => {
     const d = norm(deg);
     const rasiIdx = Math.floor(d / 30);
@@ -1447,6 +1449,11 @@ export function computeUpagrahasData({
     const secInt = Math.round(((rem - degInt) * 60 - minInt) * 60);
     const nakIdx = Math.floor(d / (40 / 3));
     const pada = Math.floor((d % (40 / 3)) / (10 / 3)) + 1;
+    const lordKey = SIGN_LORDS[rasiIdx];
+    const lordInfo = PLANET_INFO.find(p => p.id === lordKey);
+    const lordTa = lordInfo?.shortTa || lordKey;
+    const lordEn = lordInfo?.shortEn || lordKey;
+    const dmsStr = `${degInt}° ${String(minInt).padStart(2, '0')}′ ${String(secInt).padStart(2, '0')}″`;
     return {
       deg360: d,
       rasiIdx,
@@ -1454,10 +1461,14 @@ export function computeUpagrahasData({
       rasiEn: RASHIS[rasiIdx]?.en || '',
       shortTa: RASHIS[rasiIdx]?.shortTa || '',
       shortEn: RASHIS[rasiIdx]?.shortEn || '',
-      degDMS: `${degInt}° ${String(minInt).padStart(2, '0')}′ ${String(secInt).padStart(2, '0')}″`,
+      degDMS: dmsStr,
+      degDMSTa: dmsStr,
+      degDMSEn: dmsStr,
       nakTa: NAKSHATRAS[nakIdx]?.ta || '',
       nakEn: NAKSHATRAS[nakIdx]?.en || '',
-      pada
+      pada,
+      lordTa,
+      lordEn
     };
   };
 
@@ -1863,6 +1874,8 @@ export function computeSpecialLagnasSphutasData({
     return v;
   };
 
+  const SIGN_LORDS = ['mars', 'venus', 'mercury', 'moon', 'sun', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'saturn', 'jupiter'];
+
   const getPos = (deg) => {
     const d = norm(deg);
     const rasiIdx = Math.floor(d / 30);
@@ -1872,6 +1885,11 @@ export function computeSpecialLagnasSphutasData({
     const secInt = Math.round(((rem - degInt) * 60 - minInt) * 60);
     const nakIdx = Math.floor(d / (40 / 3));
     const pada = Math.floor((d % (40 / 3)) / (10 / 3)) + 1;
+    const lordKey = SIGN_LORDS[rasiIdx];
+    const lordInfo = PLANET_INFO.find(p => p.id === lordKey);
+    const lordTa = lordInfo?.shortTa || lordKey;
+    const lordEn = lordInfo?.shortEn || lordKey;
+    const dmsStr = `${degInt}° ${String(minInt).padStart(2, '0')}′ ${String(secInt).padStart(2, '0')}″`;
     return {
       deg360: d,
       rasiIdx,
@@ -1879,10 +1897,14 @@ export function computeSpecialLagnasSphutasData({
       rasiEn: RASHIS[rasiIdx]?.en || '',
       shortTa: RASHIS[rasiIdx]?.shortTa || '',
       shortEn: RASHIS[rasiIdx]?.shortEn || '',
-      degDMS: `${degInt}° ${String(minInt).padStart(2, '0')}′ ${String(secInt).padStart(2, '0')}″`,
+      degDMS: dmsStr,
+      degDMSTa: dmsStr,
+      degDMSEn: dmsStr,
       nakTa: NAKSHATRAS[nakIdx]?.ta || '',
       nakEn: NAKSHATRAS[nakIdx]?.en || '',
-      pada
+      pada,
+      lordTa,
+      lordEn
     };
   };
 
@@ -1925,6 +1947,8 @@ export function computeSpecialLagnasSphutasData({
         rasiTa: 'மீனம்',
         rasiEn: 'Pisces',
         degDMS: 'மீனம் (முழு ராசி)',
+        degDMSTa: 'மீனம் (முழு ராசி)',
+        degDMSEn: 'Pisces (Whole Sign)',
         deg360: 330.0,
         nakTa: 'உத்திரட்டாதி',
         nakEn: 'Uttara Bhadrapada',
@@ -2005,7 +2029,6 @@ export function computeSpecialLagnasSphutasData({
     // Dynamic calculation
     // Indu Lagna
     const KALA_MAP = { sun: 30, moon: 16, mars: 6, mercury: 8, jupiter: 10, venus: 12, saturn: 1 };
-    const SIGN_LORDS = ['mars', 'venus', 'mercury', 'moon', 'sun', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'saturn', 'jupiter'];
     const lagnaSign = Math.floor(lagnaLong / 30);
     const moonSign = Math.floor(moonLong / 30);
     const k1 = KALA_MAP[SIGN_LORDS[(lagnaSign + 8) % 12]] || 10;
@@ -2025,9 +2048,14 @@ export function computeSpecialLagnasSphutasData({
       arudhaSign = (arudhaSign + 9) % 12;
     }
 
+    const arudhaLordKey = SIGN_LORDS[arudhaSign];
+    const arudhaLordInfo = PLANET_INFO.find(p => p.id === arudhaLordKey);
+    const arudhaLordTa = arudhaLordInfo?.shortTa || arudhaLordKey;
+    const arudhaLordEn = arudhaLordInfo?.shortEn || arudhaLordKey;
+
     specialLagnas = [
       { id: 'hora_lagna', nameTa: 'ஹோரா லக்னம் (Hora Lagna)', nameEn: 'Hora Lagna (HL)', symbol: '💰', ...getPos(norm(sunLong + 30)), purposeTa: 'தன வரவு, செல்வம், பொன் பொருள் சேரும் அமைப்பு', purposeEn: 'Wealth and financial prosperity' },
-      { id: 'arudha_lagna', nameTa: 'ஆரூட லக்னம் (Arudha Lagna)', nameEn: 'Arudha Lagna (AL)', symbol: '👑', rasiTa: RASHIS[arudhaSign]?.ta || '', rasiEn: RASHIS[arudhaSign]?.en || '', degDMS: `${RASHIS[arudhaSign]?.ta || ''} (முழு ராசி)`, purposeTa: 'சமூக அந்தஸ்து, தொழில் புகழ், கௌரவம்', purposeEn: 'Social status and public image' },
+      { id: 'arudha_lagna', nameTa: 'ஆரூட லக்னம் (Arudha Lagna)', nameEn: 'Arudha Lagna (AL)', symbol: '👑', lordTa: arudhaLordTa, lordEn: arudhaLordEn, rasiTa: RASHIS[arudhaSign]?.ta || '', rasiEn: RASHIS[arudhaSign]?.en || '', degDMS: `${RASHIS[arudhaSign]?.ta || ''} (முழு ராசி)`, degDMSTa: `${RASHIS[arudhaSign]?.ta || ''} (முழு ராசி)`, degDMSEn: `${RASHIS[arudhaSign]?.en || ''} (Whole Sign)`, purposeTa: 'சமூக அந்தஸ்து, தொழில் புகழ், கௌரவம்', purposeEn: 'Social status and public image' },
       { id: 'ghatika_lagna', nameTa: 'கடிகா லக்னம் (Ghatika Lagna)', nameEn: 'Ghatika Lagna (GL)', symbol: '🏛️', ...getPos(norm(sunLong + 60)), purposeTa: 'அதிகாரம், அரசு அங்கீகாரம், தலைமைப் பதவி', purposeEn: 'Power, authority, and government honors' },
       { id: 'indu_lagna', nameTa: 'இந்து லக்னம் (Indu Lagna)', nameEn: 'Indu Lagna (Wealth)', symbol: '💎', ...getPos(induDeg), purposeTa: 'திடீர் தன யோகம், அழியாச் செல்வம்', purposeEn: 'Financial windfalls and unearned wealth' },
       { id: 'bhava_lagna', nameTa: 'பாவ லக்னம் (Bhava Lagna)', nameEn: 'Bhava Lagna (BL)', symbol: '🌿', ...getPos(norm(lagnaLong + 15)), purposeTa: 'உடல் ஆரோக்கியம், பிராண சக்தி, ஆயுள்', purposeEn: 'Physical vitality and constitution' },

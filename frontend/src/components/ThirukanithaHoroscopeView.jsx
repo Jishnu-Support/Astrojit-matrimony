@@ -2839,7 +2839,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                           <span className="text-2xl">{selItem.symbol}</span>
                           <div>
                             <div className="text-sm font-bold text-[#7A1A22] dark:text-amber-200">
-                              {isTamil ? `${selItem.nameTa} அஷ்டவர்க்கச் சோதனை.` : `${selItem.nameEn} (${selItem.nameTa}) அஷ்டவர்க்கச் சோதனை.`}
+                              {isTamil ? `${selItem.nameTa} அஷ்டவர்க்கச் சோதனை.` : `${selItem.nameEn} Ashtakavarga Sodhana Analysis.`}
                             </div>
                             <div className="text-[10px] text-stone-500 dark:text-stone-400">
                               {isTamil ? selItem.domainTa : selItem.domainEn}
@@ -3949,14 +3949,14 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                             </td>
                             <td className="py-2.5 px-3 whitespace-nowrap">
                               <span className="px-2 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 font-bold text-[11px] text-[#7A1A22] dark:text-amber-300">
-                                {isTamil ? item.lordTa : item.lordEn}
+                                {isTamil ? (item.lordTa || '---') : (item.lordEn || '---')}
                               </span>
                             </td>
                             <td className="py-2.5 px-3 whitespace-nowrap font-bold text-stone-900 dark:text-stone-100">
                               {isTamil ? item.rasiTa : item.rasiEn}
                             </td>
                             <td className="py-2.5 px-3 whitespace-nowrap font-mono font-bold text-indigo-700 dark:text-indigo-400">
-                              {item.degDMS}
+                              {isTamil ? (item.degDMSTa || item.degDMS) : (item.degDMSEn || item.degDMS)}
                             </td>
                             <td className="py-2.5 px-3 whitespace-nowrap text-stone-700 dark:text-stone-300">
                               {item.nakTa ? `${isTamil ? item.nakTa : item.nakEn} (${item.pada})` : '-'}
@@ -4182,7 +4182,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     <div className="p-3 rounded-xl bg-white/70 dark:bg-stone-900/60 border border-amber-900/15 dark:border-amber-500/20 shadow-2xs space-y-1">
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-stone-800 dark:text-stone-200">{isTamil ? "👁️ அந்தகாம்சம்" : "👁️ Andhakamsa"}</span>
-                        <span className="font-bold text-indigo-700 dark:text-indigo-300 font-mono">{horoscope.specialLagnas?.karmicPoints?.andhakamsa?.planetsTa}</span>
+                        <span className="font-bold text-indigo-700 dark:text-indigo-300 font-mono">{isTamil ? (horoscope.specialLagnas?.karmicPoints?.andhakamsa?.planetsTa || '---') : (horoscope.specialLagnas?.karmicPoints?.andhakamsa?.planetsEn || horoscope.specialLagnas?.karmicPoints?.andhakamsa?.planetsTa || '---')}</span>
                       </div>
                       <div className="text-[10px] text-stone-500">{isTamil ? 'அமைந்துள்ள கிரகம்' : 'Occupying Planet'}</div>
                       <p className="text-[9px] text-stone-600 dark:text-stone-400 leading-tight">
@@ -4194,7 +4194,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     <div className="p-3 rounded-xl bg-white/70 dark:bg-stone-900/60 border border-amber-900/15 dark:border-amber-500/20 shadow-2xs space-y-1">
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-stone-800 dark:text-stone-200">{isTamil ? "✨ புஷ்கராம்சம்" : "✨ Pushkaramsha"}</span>
-                        <span className="font-bold text-stone-500 font-mono">{horoscope.specialLagnas?.karmicPoints?.pushkaramsha?.planetsTa}</span>
+                        <span className="font-bold text-stone-500 font-mono">{isTamil ? (horoscope.specialLagnas?.karmicPoints?.pushkaramsha?.planetsTa || '---') : (horoscope.specialLagnas?.karmicPoints?.pushkaramsha?.planetsEn || horoscope.specialLagnas?.karmicPoints?.pushkaramsha?.planetsTa || '---')}</span>
                       </div>
                       <p className="text-[9px] text-stone-600 dark:text-stone-400 leading-tight">
                         {isTamil ? horoscope.specialLagnas?.karmicPoints?.pushkaramsha?.notesTa : horoscope.specialLagnas?.karmicPoints?.pushkaramsha?.notesEn}
@@ -4205,7 +4205,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     <div className="p-3 rounded-xl bg-white/70 dark:bg-stone-900/60 border border-amber-900/15 dark:border-amber-500/20 shadow-2xs space-y-1">
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-stone-800 dark:text-stone-200">{isTamil ? "🛡️ மிருத்யு பாகை" : "🛡️ Mrityu Bhaga"}</span>
-                        <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono text-[10px]">{horoscope.specialLagnas?.karmicPoints?.mrityuBhaga?.planetsTa}</span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono text-[10px]">{isTamil ? (horoscope.specialLagnas?.karmicPoints?.mrityuBhaga?.planetsTa || '---') : (horoscope.specialLagnas?.karmicPoints?.mrityuBhaga?.planetsEn || horoscope.specialLagnas?.karmicPoints?.mrityuBhaga?.planetsTa || '---')}</span>
                       </div>
                       <p className="text-[9px] text-stone-600 dark:text-stone-400 leading-tight">
                         {isTamil ? horoscope.specialLagnas?.karmicPoints?.mrityuBhaga?.notesTa : horoscope.specialLagnas?.karmicPoints?.mrityuBhaga?.notesEn}
@@ -4216,7 +4216,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     <div className="p-3 rounded-xl bg-white/70 dark:bg-stone-900/60 border border-amber-900/15 dark:border-amber-500/20 shadow-2xs space-y-1 sm:col-span-2">
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-stone-800 dark:text-stone-200">{isTamil ? "⚕️ அவமிருத்யு நட்சத்திரம்" : "⚕️ Avamrityu Nakshatra"}</span>
-                        <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono text-[10px]">{horoscope.specialLagnas?.karmicPoints?.avamrityuNak?.planetsTa}</span>
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono text-[10px]">{isTamil ? (horoscope.specialLagnas?.karmicPoints?.avamrityuNak?.planetsTa || '---') : (horoscope.specialLagnas?.karmicPoints?.avamrityuNak?.planetsEn || horoscope.specialLagnas?.karmicPoints?.avamrityuNak?.planetsTa || '---')}</span>
                       </div>
                       <p className="text-[9px] text-stone-600 dark:text-stone-400 leading-tight">
                         {isTamil ? horoscope.specialLagnas?.karmicPoints?.avamrityuNak?.notesTa : horoscope.specialLagnas?.karmicPoints?.avamrityuNak?.notesEn}
@@ -5767,7 +5767,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                       <p className="text-[11px] text-stone-600 dark:text-stone-400">
                         {isTamil
                           ? `உங்கள் ஜன்ம நட்சத்திரமான "${horoscope?.pasakarBodhakarTaraData?.birthStarNameTa}" முதல் கணக்கிடப்பட்ட 9 நவதாரைகள் மற்றும் 27 நட்சத்திரங்களின் சுப பலன் அட்டவணை`
-                          : `Complete 9-Tara Auspiciousness Matrix computed from your birth star "${horoscope?.pasakarBodhakarTaraData?.birthStarNameTa}"`}
+                          : `Complete 9-Tara Auspiciousness Matrix computed from your birth star "${horoscope?.pasakarBodhakarTaraData?.birthStarNameEn || horoscope?.pasakarBodhakarTaraData?.birthStarNameTa}"`}
                       </p>
                     </div>
                     <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-300 font-medium self-start sm:self-auto">
