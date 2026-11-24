@@ -265,27 +265,63 @@ export default function HoroscopeMultiPagePrint({
             {/* Top Astrologer Header Box */}
             <div
               onClick={() => setBrandingModalOpen(true)}
-              className="border border-black p-1 text-center bg-[#FAF6EE] relative group cursor-pointer hover:ring-2 hover:ring-amber-600/40 transition-all"
+              className="border border-black p-1 bg-[#FAF6EE] relative group cursor-pointer hover:ring-2 hover:ring-amber-600/40 transition-all flex items-center justify-between gap-2"
               title={isTa ? 'லெட்டர்ஹெட் அமைப்புகளைத் திருத்த கிளிக் செய்க' : 'Click to edit letterhead branding details'}
             >
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); setBrandingModalOpen(true); }}
-                className="no-print absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-[#7A1A22] text-white text-[8px] font-bold px-1.5 py-0.2 rounded shadow cursor-pointer flex items-center gap-0.5"
+                className="no-print absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-[#7A1A22] text-white text-[8px] font-bold px-1.5 py-0.2 rounded shadow cursor-pointer flex items-center gap-0.5 z-10"
               >
                 <span>✏️</span>
                 <span>{isTa ? 'திருத்து' : 'Edit'}</span>
               </button>
-              <div className="text-[10px] font-black uppercase text-[#7A1A22] tracking-wider">
-                {astrologerTitle}
-              </div>
-              {astrologerSubTitle && (
-                <div className="text-[8px] font-bold text-stone-800 leading-tight">
-                  {astrologerSubTitle}
+
+              {/* Left Side: Astrojit Logo & Vedic Brand */}
+              <div className="flex items-center gap-1.5 shrink-0 text-left">
+                <img
+                  src="/astrojit-logo.webp"
+                  alt="Astrojit"
+                  className="w-7 h-7 object-contain rounded bg-white p-0.5 border border-amber-900/20"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
+                <div className="leading-tight">
+                  <div className="text-[8.5px] font-black tracking-wider text-[#7A1A22]">ASTROJIT</div>
+                  <div className="text-[6px] font-semibold text-stone-600 uppercase tracking-tight">
+                    {isTa ? 'வேத ஜோதிடம்' : 'VEDIC ASTROLOGY'}
+                  </div>
                 </div>
-              )}
-              <div className="text-[7px] text-stone-700 font-medium mt-0.5">
-                {[astrologerAddress, astrologerContact].filter(Boolean).join(' • ')}
+              </div>
+
+              {/* Center: Astrologer / Centre details */}
+              <div className="flex-1 text-center min-w-0 px-1">
+                <div className="text-[10px] font-black uppercase text-[#7A1A22] tracking-wider truncate">
+                  {astrologerTitle}
+                </div>
+                {astrologerSubTitle && (
+                  <div className="text-[8px] font-bold text-stone-800 leading-tight truncate">
+                    {astrologerSubTitle}
+                  </div>
+                )}
+                <div className="text-[7px] text-stone-700 font-medium mt-0.5 truncate">
+                  {[astrologerAddress, astrologerContact].filter(Boolean).join(' • ')}
+                </div>
+              </div>
+
+              {/* Right Side: Astrologer's Custom Logo */}
+              <div className="shrink-0 flex items-center justify-end min-w-[32px]">
+                {letterhead?.astrologerLogo ? (
+                  <img
+                    src={letterhead.astrologerLogo}
+                    alt="Astrologer Logo"
+                    className="w-7 h-7 object-contain rounded border border-amber-900/30 bg-white p-0.5 shadow-2xs"
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                  />
+                ) : (
+                  <div className="w-7 h-7 rounded border border-dashed border-stone-300 flex items-center justify-center text-[6px] text-stone-400 font-bold bg-white/60">
+                    LOGO
+                  </div>
+                )}
               </div>
             </div>
 

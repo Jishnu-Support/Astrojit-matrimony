@@ -892,14 +892,44 @@ export default function HoroscopeOnePagePrint({
                     )}
                   </div>
 
-                  {/* Right: Lahiri Ayanamsa Badge & Degree */}
-                  <div className="w-28 sm:w-32 shrink-0 flex flex-col items-end justify-center text-right">
-                    <span className="inline-block px-2 py-0.5 rounded-none text-[10.5px] sm:text-[11px] font-bold bg-amber-100 text-[#7A1A22] border border-black shadow-2xs">
-                      {isTa ? 'திருக்கணித லஹரி' : 'Lahiri Ayanamsa'}
-                    </span>
-                    <div className="text-[10px] sm:text-[10.5px] font-mono font-bold text-stone-700 mt-0.5">
-                      {ayanamsaDms}
-                    </div>
+                  {/* Right: Astrologer Custom Logo & Branding */}
+                  <div className="w-28 sm:w-36 shrink-0 flex items-center justify-end gap-2 text-right">
+                    {letterhead?.astrologerLogo ? (
+                      <>
+                        <div className="text-right">
+                          <div className="text-[10px] sm:text-[10.5px] font-black text-[#7A1A22] uppercase leading-tight truncate max-w-[85px]">
+                            {user?.name || (isTa ? 'ஜோதிடர்' : 'Astrologer')}
+                          </div>
+                          <div className="text-[8.5px] font-bold text-stone-600 mt-0.5">
+                            {isTa ? 'லஹரி' : 'Lahiri'}: {ayanamsaDms}
+                          </div>
+                        </div>
+                        <img
+                          src={letterhead.astrologerLogo}
+                          alt="Astrologer Logo"
+                          className="w-10 h-10 object-contain rounded border border-amber-900/30 bg-white p-0.5 shadow-2xs shrink-0"
+                          onError={e => { e.target.style.display = 'none'; }}
+                        />
+                      </>
+                    ) : (
+                      <div className="flex flex-col items-end justify-center">
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); setBrandingModalOpen(true); }}
+                          className="print:hidden text-[9.5px] font-bold text-amber-800 hover:text-amber-950 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded px-2 py-0.5 mb-1 flex items-center gap-1 cursor-pointer transition-colors"
+                          title={isTa ? 'உங்கள் ஜோதிடர் லோகோவைச் சேர்க்க' : 'Add your astrologer logo'}
+                        >
+                          <span>+</span>
+                          <span>{isTa ? 'ஜோதிடர் லோகோ' : 'Add Logo'}</span>
+                        </button>
+                        <span className="inline-block px-2 py-0.5 rounded-none text-[10.5px] sm:text-[11px] font-bold bg-amber-100 text-[#7A1A22] border border-black shadow-2xs">
+                          {isTa ? 'திருக்கணித லஹரி' : 'Lahiri Ayanamsa'}
+                        </span>
+                        <div className="text-[10px] sm:text-[10.5px] font-mono font-bold text-stone-700 mt-0.5">
+                          {ayanamsaDms}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
