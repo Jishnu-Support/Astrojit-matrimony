@@ -247,7 +247,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
     return (
       <div className="flex items-center gap-2.5 shrink-0">
         {customBadge}
-        <span className={`w-6 h-6 rounded-lg bg-amber-900/10 dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 flex items-center justify-center text-xs transition-transform duration-200 ${openSections[secNum] ? 'rotate-180' : 'rotate-0'}`}>
+        <span className={`w-6 h-6 rounded-lg bg-amber-900/10 dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 flex items-center justify-center text-xs transition-transform duration-200 print:hidden ${openSections[secNum] ? 'rotate-180' : 'rotate-0'}`}>
           ▼
         </span>
       </div>
@@ -276,6 +276,15 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
   }, [form, gocharaDate]);
 
   const handlePrint = () => {
+    // If all sections are collapsed, auto-expand so the full horoscope prints!
+    const openCount = Object.values(openSections).filter(Boolean).length;
+    if (openCount === 0) {
+      expandAllSections();
+      setTimeout(() => {
+        window.print();
+      }, 350);
+      return;
+    }
     window.print();
   };
 

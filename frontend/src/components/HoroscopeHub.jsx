@@ -53,7 +53,7 @@ export default function HoroscopeHub({
       {/* ======================================================== */}
       {/* 1. HOROSCOPE MAIN TITLE & SCREEN/PRINT TOGGLE BAR */}
       {/* ======================================================== */}
-      <div className="bg-white/95 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white/95 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 print:hidden">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-[#7A1A22] to-[#99222C] text-amber-200 flex items-center justify-center text-xl sm:text-2xl shadow-md shadow-red-950/20 shrink-0">
             🪐
@@ -109,14 +109,16 @@ export default function HoroscopeHub({
       {horoscopeMode === 'screen' ? (
         <>
           {/* BIRTH DETAILS INTAKE FORM WITH PREVIOUS CLIENT SEARCH */}
-          <BirthDetailsIntakeCard
-            module="horoscope"
-            hideClientLookup={shouldHideLookup}
-            onCalculate={() => refreshCalculations()}
-          />
+          <div className="print:hidden">
+            <BirthDetailsIntakeCard
+              module="horoscope"
+              hideClientLookup={shouldHideLookup}
+              onCalculate={() => refreshCalculations()}
+            />
+          </div>
 
-          {/* THIRUKANITHA HOROSCOPE VIEW */}
-          <div className="space-y-4 print:hidden">
+          {/* THIRUKANITHA HOROSCOPE SCREEN VIEW (DIRECTLY PRINTABLE) */}
+          <div className="space-y-4">
             <ThirukanithaHoroscopeView
               key={`horo-${calcKey}`}
               initialData={activeBirthData}
@@ -125,14 +127,6 @@ export default function HoroscopeHub({
                 setHoroscopeMode('print');
                 setPrintSubMode('multipage');
               }}
-            />
-          </div>
-
-          {/* Background Print Container for Direct Ctrl+P from Screen View */}
-          <div className="hidden print:block">
-            <HoroscopeMultiPagePrint
-              key={`print-multi-direct-${calcKey}`}
-              birthData={activeBirthData}
             />
           </div>
         </>

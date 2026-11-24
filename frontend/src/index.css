@@ -93,4 +93,43 @@
     width: 100% !important;
     margin: 0 auto !important;
   }
+
+  /* Allow Thirukanitha Horoscope Section Accordion Buttons to print as clean headers */
+  [id^="horoscope-section-"] > button {
+    display: flex !important;
+    background: #FAF6EF !important;
+    border-bottom: 1.5px solid #7A1A22 !important;
+    padding: 8px 12px !important;
+    box-shadow: none !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  [id^="horoscope-section-"] {
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+    border: 1px solid rgba(122, 26, 34, 0.25) !important;
+    margin-bottom: 14px !important;
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+
+  /* Prevent charts and tables from splitting awkwardly across print pages */
+  .aspect-square {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  table {
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+  }
+
+  tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
 }
