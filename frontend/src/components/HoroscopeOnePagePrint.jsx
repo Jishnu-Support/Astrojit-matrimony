@@ -585,14 +585,14 @@ export default function HoroscopeOnePagePrint({
   // - 4x4 Grid
   // - Traditional decorative inner corners in the center 2x2 box
   // - Diagonal slash in Lagna sign box
-  // - Height 240px to proportionally fill the full size A4 page without cutoff
+  // - Height 220px to proportionally fill the full size A4 page without cutoff
   const renderSouthIndianGrid = (chartCells, chartTitle) => {
     return (
       <div className="border-[1.5px] border-black bg-white rounded-none overflow-hidden shadow-2xs">
-        <table className="w-full border-collapse" style={{ tableLayout: 'fixed', height: '240px' }}>
+        <table className="w-full border-collapse" style={{ tableLayout: 'fixed', height: '220px' }}>
           <tbody>
             {[0, 1, 2, 3].map(row => (
-              <tr key={row} style={{ height: '60px' }}>
+              <tr key={row} style={{ height: '55px' }}>
                 {[0, 1, 2, 3].map(col => {
                   const isCenter = (row === 1 || row === 2) && (col === 1 || col === 2);
                   if (isCenter) {
@@ -706,10 +706,8 @@ export default function HoroscopeOnePagePrint({
     { label: isTa ? 'அயனாம்சம்' : 'Ayanamsa', value: isTa ? `லஹரி: ${ayanamsaDms}` : `Lahiri: ${ayanamsaDms}`, mono: true },
     { label: isTa ? 'யோகி கிரகம்' : 'Yogi Graha', value: yogiName },
     { label: isTa ? 'அவயோகி கிரகம்' : 'Ayogi Graha', value: avayogiName },
-    { label: isTa ? 'லக்ன போதகர்' : 'Lagna Bodhagar', value: lagnaFourRoles.bhodhagar },
-    { label: isTa ? 'லக்ன வேதகர்' : 'Lagna Vedhagar', value: lagnaFourRoles.vedhagar },
-    { label: isTa ? 'லக்ன பாசகர்' : 'Lagna Pasagar', value: lagnaFourRoles.pasagar },
-    { label: isTa ? 'லக்ன காரகர்' : 'Lagna Karagar', value: lagnaFourRoles.karagar }
+    { label: isTa ? 'லக்ன போதகர் & வேதகர்' : 'Lagna Bodhagar & Vedhagar', value: `${lagnaFourRoles.bhodhagar}, ${lagnaFourRoles.vedhagar}` },
+    { label: isTa ? 'லக்ன பாசகர் & காரகர்' : 'Lagna Pasagar & Karagar', value: `${lagnaFourRoles.pasagar}, ${lagnaFourRoles.karagar}` }
   ];
 
   const rightColumnFields = [
@@ -823,7 +821,7 @@ export default function HoroscopeOnePagePrint({
         >
           {/* Traditional Double Line Outer Border (matches user sketch) */}
           <div
-            className="border-[3px] border-double border-black p-2 sm:p-2.5 flex flex-col justify-between"
+            className="border-[3px] border-double border-black p-2 sm:p-2.5 pb-2.5 sm:pb-3 flex flex-col justify-between"
             style={{
               minHeight: '270mm',
               height: '100%',
@@ -965,7 +963,7 @@ export default function HoroscopeOnePagePrint({
                 <div className="border-[1.5px] border-black rounded-none overflow-hidden">
                   <table className="w-full border-collapse text-[9px] sm:text-[9.5px]">
                     <thead>
-                      <tr className="bg-[#FAF6EE] border-b-[1.5px] border-black font-bold text-black" style={{ height: '19px' }}>
+                      <tr className="bg-[#FAF6EE] border-b-[1.5px] border-black font-bold text-black" style={{ height: '18px' }}>
                         <th className="py-0.2 px-2 text-left">{isTa ? 'கிரகம்' : 'Planet'}</th>
                         <th className="py-0.2 px-2 text-center font-mono">{isTa ? 'பாகை-கலை' : 'Deg-Min'}</th>
                         <th className="py-0.2 px-2 text-left">{isTa ? 'நட்சத்திரம்' : 'Nakshatra'}</th>
@@ -978,7 +976,7 @@ export default function HoroscopeOnePagePrint({
                     </thead>
                     <tbody className="divide-y divide-stone-300">
                       {planetaryTableRows.map((row, idx) => (
-                        <tr key={idx} className="hover:bg-amber-50/40" style={{ height: '18px' }}>
+                        <tr key={idx} className="hover:bg-amber-50/40" style={{ height: '16.5px' }}>
                           <td className="py-0.2 px-2 font-bold text-left text-black">{row.planet}</td>
                           <td className="py-0.2 px-2 font-mono font-bold text-center">{row.degMin || '—'}</td>
                           <td className="py-0.2 px-2 text-left">{row.nakshatra || '—'}</td>
@@ -1074,7 +1072,7 @@ export default function HoroscopeOnePagePrint({
               </div>
 
               {/* Bottom Copyright & Timestamp */}
-              <div className="text-center text-[8px] font-semibold text-stone-600 pt-0.5 pb-0.5">
+              <div className="text-center text-[8px] font-semibold text-stone-600 pt-1 pb-0.5">
                 Astrojit . All rights reserved. • www.astrojit.co.in • {printedDateTime}
               </div>
             </div>
