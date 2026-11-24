@@ -9,7 +9,8 @@ import {
   NAKSHATRAS,
   WEEKDAYS,
   DASHA_LORDS,
-  PLANET_INFO
+  PLANET_INFO,
+  getGrahaFourRoles
 } from '../utils/thirukanithaEngine';
 import { printElementById } from '../utils/printHelper';
 
@@ -364,7 +365,7 @@ export default function HoroscopeOnePagePrint({
   }, [horoscope, isTa]);
 
   // Four Roles of Lagna Lord (போதகர், வேதகர், பாசகர், காரகர்)
-  const fourRoles = useMemo(() => {
+  const lagnaFourRoles = useMemo(() => {
     const lLordKey = LAGNA_LORDS_ORDER_TA[lagnaRasi] || 'செவ்வாய்';
     const g4 = GRAHA_FOUR_ROLES[lLordKey] || GRAHA_FOUR_ROLES['செவ்வாய்'];
     return {
@@ -374,6 +375,33 @@ export default function HoroscopeOnePagePrint({
       karagar: isTa ? g4.karagarTa : g4.karagarEn
     };
   }, [lagnaRasi, isTa]);
+
+  // Four Roles of Current Mahadasha Lord
+  const currentDashaInfo = useMemo(() => {
+    const dTable = horoscope?.dashaTable || [];
+    const curMd = dTable.find(d => d.isOngoingToday) || dTable[0];
+    const mdLordId = curMd?.lord?.id || 'venus';
+    const mdLordNameTa = curMd?.lord?.nameTa || 'சுக்கிரன்';
+    const mdLordNameEn = curMd?.lord?.nameEn || 'Venus';
+
+    const roles = getGrahaFourRoles(mdLordId) || {
+      bodhakarTa: 'புதன்', bodhakarEn: 'Mercury',
+      vedhakarTa: 'சனி', vedhakarEn: 'Saturn',
+      pasakarTa: 'செவ்வாய்', pasakarEn: 'Mars',
+      karagarTa: 'சூரியன்', karagarEn: 'Sun'
+    };
+
+    return {
+      lordId: mdLordId,
+      lordName: isTa ? mdLordNameTa : mdLordNameEn,
+      roles: {
+        bhodhagar: isTa ? (roles.bodhakarTa || roles.bhodhagarTa) : (roles.bodhakarEn || roles.bhodhagarEn),
+        vedhagar: isTa ? (roles.vedhakarTa || roles.vedhagarTa) : (roles.vedhakarEn || roles.vedhagarEn),
+        pasagar: isTa ? (roles.pasakarTa || roles.pasagarTa) : (roles.pasakarEn || roles.pasagarEn),
+        karagar: isTa ? (roles.karagarTa || roles.karagarTa) : (roles.karagarEn || roles.karagarEn)
+      }
+    };
+  }, [horoscope, isTa]);
 
   // Compute Sevvai Dosha Status
   const sevvaiDoshaStatus = useMemo(() => {
@@ -677,7 +705,11 @@ export default function HoroscopeOnePagePrint({
     { label: isTa ? 'உதயம் / அஸ்தமனம்' : 'Sunrise / Sunset', value: isTa ? `உதயம்: ${sunriseTime} AM | அஸ்தமனம்: ${sunsetTime} PM` : `Sunrise: ${sunriseTime} AM | Sunset: ${sunsetTime} PM`, mono: true },
     { label: isTa ? 'அயனாம்சம்' : 'Ayanamsa', value: isTa ? `லஹரி: ${ayanamsaDms}` : `Lahiri: ${ayanamsaDms}`, mono: true },
     { label: isTa ? 'யோகி கிரகம்' : 'Yogi Graha', value: yogiName },
-    { label: isTa ? 'அவயோகி கிரகம்' : 'Ayogi Graha', value: avayogiName }
+    { label: isTa ? 'அவயோகி கிரகம்' : 'Ayogi Graha', value: avayogiName },
+    { label: isTa ? 'லக்ன போதகர்' : 'Lagna Bodhagar', value: lagnaFourRoles.bhodhagar },
+    { label: isTa ? 'லக்ன வேதகர்' : 'Lagna Vedhagar', value: lagnaFourRoles.vedhagar },
+    { label: isTa ? 'லக்ன பாசகர்' : 'Lagna Pasagar', value: lagnaFourRoles.pasagar },
+    { label: isTa ? 'லக்ன காரகர்' : 'Lagna Karagar', value: lagnaFourRoles.karagar }
   ];
 
   const rightColumnFields = [
@@ -1015,26 +1047,28 @@ export default function HoroscopeOnePagePrint({
                   </div>
                 </div>
 
-                {/* Four Classical Roles (போதகர், வேதகர், பாசகர், காரகர்) */}
+                {/* Four Classical Roles of Current Dasha Lord (நடப்பு தசா நாதனின் நால்வகை நிலைகள்) */}
                 <div className="flex flex-wrap items-center justify-between text-[9px] sm:text-[9.5px]">
                   <span className="font-bold text-[#7A1A22]">
-                    {isTa ? 'லக்னாதிபதியின் நால்வகை நிலைகள்:' : 'Lagna Lord Four Roles:'}
+                    {isTa
+                      ? `நடப்பு தசா நாதன் (${currentDashaInfo.lordName}) நால்வகை நிலைகள்:`
+                      : `Current Dasha Lord (${currentDashaInfo.lordName}) Four Roles:`}
                   </span>
                   <div>
                     <span className="font-bold">{isTa ? 'போதகர்' : 'Bodhagar'}: </span>
-                    <span className="font-semibold">{fourRoles.bhodhagar}</span>
+                    <span className="font-semibold">{currentDashaInfo.roles.bhodhagar}</span>
                   </div>
                   <div>
                     <span className="font-bold">{isTa ? 'வேதகர்' : 'Vedhagar'}: </span>
-                    <span className="font-semibold">{fourRoles.vedhagar}</span>
+                    <span className="font-semibold">{currentDashaInfo.roles.vedhagar}</span>
                   </div>
                   <div>
                     <span className="font-bold">{isTa ? 'பாசகர்' : 'Pasagar'}: </span>
-                    <span className="font-semibold">{fourRoles.pasagar}</span>
+                    <span className="font-semibold">{currentDashaInfo.roles.pasagar}</span>
                   </div>
                   <div>
                     <span className="font-bold">{isTa ? 'காரகர்' : 'Karagar'}: </span>
-                    <span className="font-semibold">{fourRoles.karagar}</span>
+                    <span className="font-semibold">{currentDashaInfo.roles.karagar}</span>
                   </div>
                 </div>
               </div>
