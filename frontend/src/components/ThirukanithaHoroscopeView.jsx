@@ -440,7 +440,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                   : (isTamil ? '-- 20 பிரிவுகள் பட்டியல் (தேர்வு செய்க) --' : '-- Select Section to Jump (1 to 20) --')}
               </option>
               <option value="1">{isTamil ? '1. ஜனன விவரக் குறிப்பு' : '1. Birth Summary Details'}</option>
-              <option value="2">{isTamil ? '2. வர்க்கச் சக்கரங்கள் (16 Shodashavarga Charts)' : '2. Divisional Charts (16 Shodashavarga)'}</option>
+              <option value="2">{isTamil ? '2. வர்க்கச் சக்கரங்கள் (Divisional Charts)' : '2. Divisional Charts'}</option>
               <option value="3">{isTamil ? '3. கிரக நிலைகள் அட்டவணை (நிராயண)' : '3. Nirayana Planetary Positions Table'}</option>
               <option value="4">{isTamil ? '4. விம்சோத்தரி திசா புக்தி விபரம் (120 ஆண்டுகள்)' : '4. Vimshottari Dasha & Bhukti Table (120 Years)'}</option>
               <option value="5">{isTamil ? '5. ஸ்ரீபதி பாவ ஆரம்பம், மத்திமம், முடிவு' : '5. Sripati Bhava Sphutam Table'}</option>
@@ -838,7 +838,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
   
 
         {/* ======================================================== */}
-        {/* ITEM 2: 2. வர்க்கச் சக்கரங்கள் (16 Shodashavarga Charts) (2. Divisional Charts (16 Shodashavarga)) */}
+        {/* ITEM 2: 2. வர்க்கச் சக்கரங்கள் (Divisional Charts) */}
         {/* ======================================================== */}
         <div id="horoscope-section-2" className="bg-white/80 dark:bg-[#251E1A] rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs overflow-hidden transition-all">
           {/* Dropdown / Accordion Header Button */}
@@ -854,10 +854,10 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
               <div>
                 <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
                   <span>☸️</span>
-                  <span>{isTamil ? '2. வர்க்கச் சக்கரங்கள் (16 Shodashavarga Charts)' : '2. Divisional Charts (16 Shodashavarga)'}</span>
+                  <span>{isTamil ? '2. வர்க்கச் சக்கரங்கள் (Divisional Charts)' : '2. Divisional Charts'}</span>
                 </h2>
                 <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5 line-clamp-1">
-                  {isTamil ? 'பராசரர் முறைப்படி 16 வர்க்கச் சக்கரங்கள் மற்றும் பாவ சூட்சும பலன்கள்' : 'Parashari 16 Divisional Varga Chakras & Subtle Karakatva Domains'}
+                  {isTamil ? 'பராசரர் முறைப்படி வர்க்கச் சக்கரங்கள் (D1 முதல் D60 வரை) மற்றும் பாவக பலன்கள்' : 'Parashari Divisional Varga Chakras (D1 to D60) & Subtle Karakatva Domains'}
                 </p>
               </div>
             </div>
