@@ -6392,41 +6392,39 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
         {/* ======================================================== */}
         {/* SECTION 19: ஜாதக யோகங்கள் (JATHAGA YOGAS) */}
         {/* ======================================================== */}
-        <div id="horoscope-section-19" className="bg-white/95 dark:bg-[#251E1A] p-4 sm:p-6 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-amber-900/15 dark:border-amber-500/20 pb-3">
-            <div className="flex items-center gap-2">
-              <span className="text-xl">🌟</span>
+        <div id="horoscope-section-19" className="bg-white/80 dark:bg-[#251E1A] rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs overflow-hidden transition-all">
+          {/* Header Button */}
+          <button
+            type="button"
+            onClick={() => toggleSection(19)}
+            className="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-amber-50/50 dark:hover:bg-stone-800/40 transition-colors cursor-pointer select-none"
+          >
+            <div className="flex items-center gap-3">
+              <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-900/10 dark:bg-amber-500/15 text-[#7A1A22] dark:text-amber-300 font-bold flex items-center justify-center text-xs sm:text-sm shrink-0 font-mono">
+                19
+              </span>
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-[#7A1A22] dark:text-amber-300">
-                  {isTamil ? '19. ஜாதக யோகங்கள் (Jathaga Yogas - 16 Classical Combinations)' : '19. Jathaga Yogas (Natal Planetary Combinations)'}
+                <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
+                  <span>🌟</span>
+                  <span>{isTamil ? '19. ஜாதக யோகங்கள் (Jathaga Yogas - 16 Classical Combinations)' : '19. Jathaga Yogas (Natal Planetary Combinations)'}</span>
                 </h2>
-                <p className="text-[11px] text-stone-500 dark:text-stone-400">
+                <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5 line-clamp-1">
                   {isTamil
                     ? 'கஜகேசரி, பஞ்ச மகாபுருஷ, தர்ம-கர்மாதிபதி, புதாதித்ய, சந்திராதி, சூரிய-சந்திர மற்றும் விபரீத ராஜ யோகங்களின் துல்லிய ஆய்வு'
                     : 'Algorithmic evaluation of Gajakesari, Pancha Mahapurusha, Dharma-Karmadhipati, Budhaditya, Adhi, Solar/Lunar & Viparita Raja Yogas'}
                 </p>
               </div>
             </div>
+            {renderSectionBadge(19, (
+              <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">
+                {horoscope?.jathagaYogasSection19Data?.presentCount || 0} {isTamil ? 'யோகங்கள்' : 'Yogas'}
+              </span>
+            ))}
+          </button>
 
-            <div className="flex items-center gap-2">
-              {isBirthDetailsEmpty && (
-                <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-100/90 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/60 px-2 py-0.5 rounded-md flex items-center gap-1 shadow-2xs">
-                  <span>🔒</span>
-                  <span>{isTamil ? 'விவரங்கள் தேவை' : 'Details Required'}</span>
-                </span>
-              )}
-              <button
-                type="button"
-                onClick={() => toggleSection(19)}
-                className="p-1 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500 transition-colors cursor-pointer"
-              >
-                {isBirthDetailsEmpty ? '🔒' : (openSections[19] ? '▲' : '▼')}
-              </button>
-            </div>
-          </div>
-
+          {/* Body */}
           {openSections[19] && (
-            <div className="space-y-4">
+            <div className="p-4 sm:p-6 border-t border-amber-900/10 dark:border-amber-500/10 space-y-4">
               {/* Summary KPI Cards */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
                 <div className="p-3 rounded-xl bg-amber-50/80 dark:bg-stone-800/60 border border-amber-900/10 dark:border-amber-500/20 shadow-2xs">
@@ -6605,41 +6603,39 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
         {/* ======================================================== */}
         {/* SECTION 20: விம்சோத்தரி மகாதிசைகள் & பலன்கள் (VIMSHOTTARI MAHA DASHAS & SIGNIFICATIONS) */}
         {/* ======================================================== */}
-        <div id="horoscope-section-20" className="bg-white/95 dark:bg-[#251E1A] p-4 sm:p-6 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
-          <div className="flex items-center justify-between border-b border-amber-900/15 dark:border-amber-500/20 pb-3">
-            <div className="flex items-center gap-2">
-              <span className="text-xl">🪐</span>
+        <div id="horoscope-section-20" className="bg-white/80 dark:bg-[#251E1A] rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs overflow-hidden transition-all">
+          {/* Header Button */}
+          <button
+            type="button"
+            onClick={() => toggleSection(20)}
+            className="w-full p-4 sm:p-5 flex items-center justify-between text-left hover:bg-amber-50/50 dark:hover:bg-stone-800/40 transition-colors cursor-pointer select-none"
+          >
+            <div className="flex items-center gap-3">
+              <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-900/10 dark:bg-amber-500/15 text-[#7A1A22] dark:text-amber-300 font-bold flex items-center justify-center text-xs sm:text-sm shrink-0 font-mono">
+                20
+              </span>
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-[#7A1A22] dark:text-amber-300">
-                  {isTamil ? '20. விம்சோத்தரி மகாதிசைகள் & பலன்கள்' : '20. Vimshottari Maha Dashas & Significations'}
+                <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
+                  <span>🪐</span>
+                  <span>{isTamil ? '20. விம்சோத்தரி மகாதிசைகள் & பலன்கள்' : '20. Vimshottari Maha Dashas & Significations'}</span>
                 </h2>
-                <p className="text-[11px] text-stone-500 dark:text-stone-400">
+                <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5 line-clamp-1">
                   {isTamil
                     ? '9 கிரகங்களின் மகாதிசை காரகத்துவம், பலன்கள் மற்றும் துல்லியமான கால அட்டவணை'
                     : '9 Planetary Dasha Significations, Classical Manifestations & Exact Timings'}
                 </p>
               </div>
             </div>
+            {renderSectionBadge(20, (
+              <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">
+                {isTamil ? '9 மகாதிசைகள்' : '9 Maha Dashas'}
+              </span>
+            ))}
+          </button>
 
-            <div className="flex items-center gap-2">
-              {isBirthDetailsEmpty && (
-                <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-100/90 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/60 px-2 py-0.5 rounded-md flex items-center gap-1 shadow-2xs">
-                  <span>🔒</span>
-                  <span>{isTamil ? 'விவரங்கள் தேவை' : 'Details Required'}</span>
-                </span>
-              )}
-              <button
-                type="button"
-                onClick={() => toggleSection(20)}
-                className="p-1 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-500 transition-colors cursor-pointer"
-              >
-                {isBirthDetailsEmpty ? '🔒' : (openSections[20] ? '▲' : '▼')}
-              </button>
-            </div>
-          </div>
-
+          {/* Body */}
           {openSections[20] && (
-            <div className="space-y-4">
+            <div className="p-4 sm:p-6 border-t border-amber-900/10 dark:border-amber-500/10 space-y-4">
               {/* Filter Pills */}
               <div className="flex flex-wrap items-center gap-2 border-b border-amber-900/10 dark:border-amber-500/15 pb-2 text-xs">
                 {[
