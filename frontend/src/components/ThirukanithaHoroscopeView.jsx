@@ -3140,7 +3140,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                         className="border border-amber-900/20 dark:border-amber-700/40 p-1 flex flex-col justify-between relative bg-white/60 dark:bg-stone-900/60"
                       >
                         <div className="flex justify-between items-center text-[9px] text-stone-500 dark:text-stone-400 font-bold">
-                          <span>{rasiLabel?.slice(0, 4)}</span>
+                          <span>{isTamil ? RASHIS[cell.rasi]?.ta : RASHIS[cell.rasi]?.en}</span>
                         </div>
                         <div className="flex flex-wrap gap-1 items-center justify-center py-1">
                           {chartData?.occupants?.map((occ, oIdx) => (
@@ -3177,7 +3177,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                       {horoscope.gocharam.transitDateFormatted}
                     </div>
                     <div className="text-[9px] text-stone-500 mt-1">
-                      {isTamil ? 'சந் = ஜென்ம ராசி | ல = லக்னம்' : 'Moon = Janma | Asc = Lagna'}
+                      {isTamil ? 'சந்திரன் = ஜென்ம ராசி | லக்னம் = ஜென்ம லக்னம்' : 'Moon = Janma Rasi | Lagna = Janma Lagna'}
                     </div>
                   </div>
                 </div>
@@ -7019,7 +7019,7 @@ function SouthIndianChartGrid({ chartData, isTamil, centerTitle, centerSub }) {
             >
               {/* Sign label in corner */}
               <div className="flex justify-between items-center text-[9px] font-bold text-stone-500 dark:text-stone-400">
-                <span>{isTamil ? signInfo.shortTa : signInfo.shortEn}</span>
+                <span>{isTamil ? signInfo.ta : signInfo.en}</span>
                 <span className="text-[8px] opacity-60 font-mono">{cellDef.rasi + 1}</span>
               </div>
 
@@ -7033,6 +7033,10 @@ function SouthIndianChartGrid({ chartData, isTamil, centerTitle, centerSub }) {
                         ? 'bg-[#7A1A22] text-amber-100 border border-amber-400 shadow-2xs'
                         : occ.isMandi
                         ? 'bg-amber-200/90 dark:bg-amber-900/60 text-[#7A1A22] dark:text-amber-200 border border-amber-500/50 shadow-2xs'
+                        : occ.isBirthMoon
+                        ? 'bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300 ring-1 ring-purple-400 shadow-2xs'
+                        : occ.isBirthLagna
+                        ? 'bg-red-100 text-red-900 dark:bg-red-950 dark:text-red-300 ring-1 ring-red-400 shadow-2xs'
                         : 'text-[#7A1A22] dark:text-amber-300 font-bold'
                     }`}
                   >

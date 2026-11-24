@@ -149,17 +149,17 @@ export const NAKSHATRAS = [
 ];
 
 export const PLANET_INFO = [
-  { id: 'lagna', en: 'Lagna', ta: '1-லக்னம்', symbol: '🌅', shortEn: 'Asc', shortTa: 'ல' },
-  { id: 'sun', en: 'Sun', ta: 'சூரியன்', symbol: '☉', shortEn: 'Su', shortTa: 'சூ' },
-  { id: 'moon', en: 'Moon', ta: 'சந்திரன்', symbol: '☽', shortEn: 'Mo', shortTa: 'சந்' },
-  { id: 'mars', en: 'Mars', ta: 'செவ்வாய்', symbol: '♂', shortEn: 'Ma', shortTa: 'செவ்' },
-  { id: 'mercury', en: 'Mercury', ta: 'புதன்', symbol: '☿', shortEn: 'Me', shortTa: 'புத' },
-  { id: 'jupiter', en: 'Jupiter', ta: 'குரு', symbol: '♃', shortEn: 'Ju', shortTa: 'குரு' },
-  { id: 'venus', en: 'Venus', ta: 'சுக்கிரன்', symbol: '♀', shortEn: 'Ve', shortTa: 'சுக்' },
-  { id: 'saturn', en: 'Saturn', ta: 'சனி', symbol: '♄', shortEn: 'Sa', shortTa: 'சனி' },
-  { id: 'rahu', en: 'Rahu', ta: 'ராகு', symbol: '☊', shortEn: 'Ra', shortTa: 'ராகு' },
-  { id: 'ketu', en: 'Ketu', ta: 'கேது', symbol: '☋', shortEn: 'Ke', shortTa: 'கேது' },
-  { id: 'mandi', en: 'Mandi', ta: 'மாந்தி', symbol: '🪐', shortEn: 'Man', shortTa: 'மாந்' }
+  { id: 'lagna', en: 'Lagna', ta: '1-லக்னம்', symbol: '🌅', shortEn: 'Lagna', shortTa: 'லக்னம்' },
+  { id: 'sun', en: 'Sun', ta: 'சூரியன்', symbol: '☉', shortEn: 'Sun', shortTa: 'சூரியன்' },
+  { id: 'moon', en: 'Moon', ta: 'சந்திரன்', symbol: '☽', shortEn: 'Moon', shortTa: 'சந்திரன்' },
+  { id: 'mars', en: 'Mars', ta: 'செவ்வாய்', symbol: '♂', shortEn: 'Mars', shortTa: 'செவ்வாய்' },
+  { id: 'mercury', en: 'Mercury', ta: 'புதன்', symbol: '☿', shortEn: 'Mercury', shortTa: 'புதன்' },
+  { id: 'jupiter', en: 'Jupiter', ta: 'குரு', symbol: '♃', shortEn: 'Jupiter', shortTa: 'குரு' },
+  { id: 'venus', en: 'Venus', ta: 'சுக்கிரன்', symbol: '♀', shortEn: 'Venus', shortTa: 'சுக்கிரன்' },
+  { id: 'saturn', en: 'Saturn', ta: 'சனி', symbol: '♄', shortEn: 'Saturn', shortTa: 'சனி' },
+  { id: 'rahu', en: 'Rahu', ta: 'ராகு', symbol: '☊', shortEn: 'Rahu', shortTa: 'ராகு' },
+  { id: 'ketu', en: 'Ketu', ta: 'கேது', symbol: '☋', shortEn: 'Ketu', shortTa: 'கேது' },
+  { id: 'mandi', en: 'Mandi', ta: 'மாந்தி', symbol: '🪐', shortEn: 'Mandi', shortTa: 'மாந்தி' }
 ];
 
 export const WEEKDAYS = [
@@ -1365,20 +1365,21 @@ export function computeGocharamData({
   const transitChartCells = Array.from({ length: 12 }, (_, rasiIdx) => {
     const occupants = [];
     if (rasiIdx === birthMoonRasi) {
-      occupants.push({ id: 'birth_moon', labelTa: 'சந் (ஜென்மம்)', labelEn: 'Moon (Janma)', isBirthMoon: true });
+      occupants.push({ id: 'birth_moon', labelTa: 'சந்திரன் (ஜென்மம்)', labelEn: 'Moon (Janma)', isBirthMoon: true });
     }
     if (rasiIdx === birthLagnaRasi) {
-      occupants.push({ id: 'birth_lagna', labelTa: 'ல (லக்னம்)', labelEn: 'Asc (Lagna)', isBirthLagna: true });
+      occupants.push({ id: 'birth_lagna', labelTa: 'லக்னம் (ஜென்மம்)', labelEn: 'Lagna (Janma)', isBirthLagna: true });
     }
     for (const pr of planetRows) {
       if (pr.transitRasi === rasiIdx) {
         const isR = Boolean(pr.isRetrograde);
-        const baseTa = PLANET_INFO.find(pi => pi.id === pr.id)?.shortTa || pr.nameTa.slice(0, 3);
-        const baseEn = PLANET_INFO.find(pi => pi.id === pr.id)?.shortEn || pr.nameEn.slice(0, 3);
+        const pi = PLANET_INFO.find(item => item.id === pr.id);
+        const baseTa = pi?.shortTa || pr.nameTa;
+        const baseEn = pi?.shortEn || pr.nameEn;
         occupants.push({
           id: pr.id,
-          labelTa: isR ? `${baseTa}(வ)` : baseTa,
-          labelEn: isR ? `${baseEn}(R)` : baseEn,
+          labelTa: isR ? `${baseTa} (வ)` : baseTa,
+          labelEn: isR ? `${baseEn} (R)` : baseEn,
           isTransitPlanet: true,
           isRetrograde: isR,
           statusType: pr.statusType
@@ -2883,8 +2884,8 @@ export function calculateThirukanithaHoroscope({
         id: 'lagna',
         isLagna: true,
         isMandi: false,
-        labelEn: 'Asc',
-        labelTa: 'ல'
+        labelEn: 'Lagna',
+        labelTa: 'லக்னம்'
       });
     }
 
@@ -2893,13 +2894,16 @@ export function calculateThirukanithaHoroscope({
       const signIdx = pr.div?.[chartKey];
       if (signs[signIdx]) {
         const isR = Boolean(pr.isRetrograde);
+        const pi = PLANET_INFO.find(item => item.id === pr.id);
+        const baseTa = pi?.shortTa || pr.nameTa;
+        const baseEn = pi?.shortEn || pr.nameEn;
         signs[signIdx].occupants.push({
           id: pr.id,
           isLagna: false,
           isMandi: false,
           isRetrograde: isR,
-          labelEn: isR ? `${pr.info?.shortEn || pr.id}(R)` : (pr.info?.shortEn || pr.id),
-          labelTa: isR ? `${pr.info?.shortTa || pr.id}(வ)` : (pr.info?.shortTa || pr.id)
+          labelEn: isR ? `${baseEn} (R)` : baseEn,
+          labelTa: isR ? `${baseTa} (வ)` : baseTa
         });
       }
     }
@@ -2911,8 +2915,8 @@ export function calculateThirukanithaHoroscope({
         id: 'mandi',
         isLagna: false,
         isMandi: true,
-        labelEn: 'Man',
-        labelTa: 'மாந்'
+        labelEn: 'Mandi',
+        labelTa: 'மாந்தி'
       });
     }
 
@@ -2938,8 +2942,8 @@ export function calculateThirukanithaHoroscope({
         isLagna: true,
         isMandi: false,
         bhavaNum: 1,
-        labelEn: 'Asc',
-        labelTa: 'ல'
+        labelEn: 'Lagna',
+        labelTa: 'லக்னம்'
       });
     }
 
@@ -2948,6 +2952,9 @@ export function calculateThirukanithaHoroscope({
       const bhavaNum = getPlanetBhava(pr.longitude);
       const bSign = (lagnaRasi + bhavaNum - 1) % 12;
       const isR = Boolean(pr.isRetrograde);
+      const pi = PLANET_INFO.find(item => item.id === pr.id);
+      const baseTa = pi?.shortTa || pr.nameTa;
+      const baseEn = pi?.shortEn || pr.nameEn;
       if (signs[bSign]) {
         signs[bSign].occupants.push({
           id: pr.id,
@@ -2955,8 +2962,8 @@ export function calculateThirukanithaHoroscope({
           isMandi: false,
           isRetrograde: isR,
           bhavaNum,
-          labelEn: isR ? `${pr.info?.shortEn || pr.id}(R)` : (pr.info?.shortEn || pr.id),
-          labelTa: isR ? `${pr.info?.shortTa || pr.id}(வ)` : (pr.info?.shortTa || pr.id)
+          labelEn: isR ? `${baseEn} (R)` : baseEn,
+          labelTa: isR ? `${baseTa} (வ)` : baseTa
         });
       }
     }
@@ -2977,8 +2984,8 @@ export function calculateThirukanithaHoroscope({
           isLagna: false,
           isMandi: true,
           bhavaNum: mandiBhava,
-          labelEn: 'Man',
-          labelTa: 'மாந்'
+          labelEn: 'Mandi',
+          labelTa: 'மாந்தி'
         });
       }
     }
