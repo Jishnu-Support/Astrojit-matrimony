@@ -2863,6 +2863,11 @@ export function calculateThirukanithaHoroscope({
     }
   }
 
+  const moonRasi = Math.floor(lamMoon_nirayana / 30);
+  const moonNak = Math.floor(lamMoon_nirayana / (40 / 3));
+  const moonPada = Math.floor((lamMoon_nirayana % (40 / 3)) / (10 / 3)) + 1;
+  const lagnaRasi = Math.floor(Lagna_nirayana / 30);
+
   // Pre-compute Divisional Charts signs mapping for South Indian layout
   // 12 signs 0..11, with occupants: planets, Lagna, and Mandi
   function buildChartSigns(chartKey) {
@@ -3033,11 +3038,6 @@ export function calculateThirukanithaHoroscope({
       planets: planetsInVarga
     };
   });
-
-  const moonRasi = Math.floor(lamMoon_nirayana / 30);
-  const moonNak = Math.floor(lamMoon_nirayana / (40 / 3));
-  const moonPada = Math.floor((lamMoon_nirayana % (40 / 3)) / (10 / 3)) + 1;
-  const lagnaRasi = Math.floor(Lagna_nirayana / 30);
 
   // 13. DASAVARGA & BALA MATRIX (Page 20: ஜாதகத்தில் கிரகங்களின் தசவர்க்கமும் பலமும்)
   const DASAVARGA_DEFS = [
