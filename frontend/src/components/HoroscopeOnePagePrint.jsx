@@ -992,30 +992,17 @@ export default function HoroscopeOnePagePrint({
                 </div>
               </div>
 
-              {/* Horizontal Rule (matches user sketch) */}
-              <div className="border-b-[1.5px] border-black my-0.5 sm:my-1" />
-
               {/* ======================================================== */}
               {/* BLOCK 4: TWIN SOUTH INDIAN CHARTS (Side-by-Side at Bottom)*/}
-              {/* (Matches user sketch with decorative corners and Lagna / )*/}
               {/* ======================================================== */}
-              <div className="grid grid-cols-2 gap-3 pt-0.5">
+              <div className="grid grid-cols-2 gap-3 my-1">
                 <div>
-                  <div className="text-center font-black text-[12px] sm:text-[12.5px] text-[#7A1A22] mb-0.5 uppercase tracking-wide">
-                    {isTa ? 'ராசி கட்டம் (D1)' : 'Rasi Chart (D1)'}
-                  </div>
                   {renderSouthIndianGrid(rasiGridContent, isTa ? 'ராசி (D1)' : 'Rasi (D1)')}
                 </div>
                 <div>
-                  <div className="text-center font-black text-[12px] sm:text-[12.5px] text-[#7A1A22] mb-0.5 uppercase tracking-wide">
-                    {isTa ? 'நவாம்ச கட்டம் (D9)' : 'Navamsha Chart (D9)'}
-                  </div>
                   {renderSouthIndianGrid(navamsaGridContent, isTa ? 'நவாம்சம் (D9)' : 'Navamsha (D9)')}
                 </div>
               </div>
-
-              {/* Horizontal Rule (matches user sketch) */}
-              <div className="border-b-[1.5px] border-double border-black my-0.5 sm:my-1" />
 
               {/* ======================================================== */}
               {/* BLOCK 5: ASTROLOGICAL SUMMARY & 4 ROLES (Footer Row)     */}
