@@ -2919,6 +2919,89 @@ export function calculateThirukanithaHoroscope({
     charts[def.key] = buildChartSigns(def.key);
   }
 
+  // Pre-compute Bhava Chalit Chart (Sripati House Cusps System)
+  function buildBhavaChalitSigns() {
+    const signs = Array.from({ length: 12 }, (_, i) => ({
+      rasi: i,
+      occupants: []
+    }));
+
+    // Add Lagna at lagnaRasi
+    if (signs[lagnaRasi]) {
+      signs[lagnaRasi].occupants.push({
+        id: 'lagna',
+        isLagna: true,
+        isMandi: false,
+        bhavaNum: 1,
+        labelEn: 'Asc',
+        labelTa: 'ல'
+      });
+    }
+
+    // Add Planets mapped by getPlanetBhava
+    for (const pr of planetRows) {
+      const bhavaNum = getPlanetBhava(pr.longitude);
+      const bSign = (lagnaRasi + bhavaNum - 1) % 12;
+      const isR = Boolean(pr.isRetrograde);
+      if (signs[bSign]) {
+        signs[bSign].occupants.push({
+          id: pr.id,
+          isLagna: false,
+          isMandi: false,
+          isRetrograde: isR,
+          bhavaNum,
+          labelEn: isR ? `${pr.info?.shortEn || pr.id}(R)` : (pr.info?.shortEn || pr.id),
+          labelTa: isR ? `${pr.info?.shortTa || pr.id}(வ)` : (pr.info?.shortTa || pr.id)
+        });
+      }
+    }
+
+    // Add Mandi mapped by getPlanetBhava
+    if (mandiLong) {
+      let mandiBhava = 1;
+      for (const b of sripatiBhavas) {
+        if (N(mandiLong - b.start) < N(b.end - b.start)) {
+          mandiBhava = b.bhava;
+          break;
+        }
+      }
+      const mSign = (lagnaRasi + mandiBhava - 1) % 12;
+      if (signs[mSign]) {
+        signs[mSign].occupants.push({
+          id: 'mandi',
+          isLagna: false,
+          isMandi: true,
+          bhavaNum: mandiBhava,
+          labelEn: 'Man',
+          labelTa: 'மாந்'
+        });
+      }
+    }
+
+    return signs;
+  }
+
+  charts['Bhava'] = buildBhavaChalitSigns();
+
+  // Compute planets that have shifted house between Rasi D1 and Bhava Chalit
+  const bhavaShifts = [];
+  for (const pr of planetRows) {
+    const rasiHouse = ((pr.rasi - lagnaRasi + 12) % 12) + 1;
+    const chalitHouse = getPlanetBhava(pr.longitude);
+    if (rasiHouse !== chalitHouse) {
+      bhavaShifts.push({
+        id: pr.id,
+        nameTa: pr.info?.ta || pr.id,
+        nameEn: pr.info?.en || pr.id,
+        rasiHouse,
+        chalitHouse,
+        shiftDirection: chalitHouse > rasiHouse ? 'forward' : 'backward',
+        explanationTa: `${pr.info?.ta || pr.id} ராசியில் ${rasiHouse}-ம் வீட்டில் உள்ளார், ஆனால் பாவக சக்கரத்தில் ${chalitHouse}-ம் பாவத்திற்கு மாறியுள்ளார்.`,
+        explanationEn: `${pr.info?.en || pr.id} is in House ${rasiHouse} in Rasi, but shifts to Bhava ${chalitHouse} in Chalit.`
+      });
+    }
+  }
+
   const shodashavarga = SHODASHAVARGA_DEFS.map(def => {
     const planetsInVarga = {};
     for (const p of allPlanetRows) {
@@ -3367,6 +3450,7 @@ export function calculateThirukanithaHoroscope({
     },
     planets: allPlanetRows,
     sripatiBhavas,
+    bhavaShifts,
     dashaTable,
     charts,
     shodashavarga,
@@ -4181,6 +4265,12 @@ export const SHODASHAVARGA_DEFS = [
   { key: 'D40', num: 40, nameTa: 'D40 கவேதாம்சம்', nameEn: 'D40 Khavedamsa', group: 'shodashavarga', domainTa: 'சுப-அசுப பலன்கள்', domainEn: 'Auspicious & Inauspicious Karma', divisionDeg: '0° 45′' },
   { key: 'D45', num: 45, nameTa: 'D45 அக்ஷவேதாம்சம்', nameEn: 'D45 Akshavedamsa', group: 'shodashavarga', domainTa: 'சகல நற்குணங்கள் & உண்மை இயல்பு', domainEn: 'General Character & Moral Purity', divisionDeg: '0° 40′' },
   { key: 'D60', num: 60, nameTa: 'D60 சஷ்டியாம்சம்', nameEn: 'D60 Shashtiamsa', group: 'dasavarga', domainTa: 'பூர்வ புண்ணியம் & கர்ம வினை (சூட்சுமம்)', domainEn: 'Past-Life Karma & Subtle Destiny', divisionDeg: '0° 30′' }
+];
+
+export const DIVISIONAL_CHART_DEFS = [
+  { key: 'D1', num: 1, nameTa: 'D1 ராசி', nameEn: 'D1 Rasi', group: 'shadvarga', domainTa: 'ஸ்தூல உடல் & பொது வாழ்க்கை', domainEn: 'Physical Body & General Life', divisionDeg: '30° 00′' },
+  { key: 'Bhava', num: 0, isBhava: true, nameTa: 'பாவக சக்கரம்', nameEn: 'Bhava Chalit', group: 'sripati', domainTa: 'ஸ்ரீபதி பாவக ஆரம்பம், மத்திமம், முடிவு & பாவக பலன்', domainEn: 'Sripati House Cusps, Midpoints & Realized Karma', divisionDeg: 'ஸ்ரீபதி முறை' },
+  ...SHODASHAVARGA_DEFS.filter(d => d.key !== 'D1')
 ];
 
 export function getVargaSign(lon, vargaNum) {

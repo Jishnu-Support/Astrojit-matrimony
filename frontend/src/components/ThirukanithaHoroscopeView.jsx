@@ -11,7 +11,8 @@ import {
   calculateThirukanithaHoroscope,
   parseUtcOffset,
   formatUtcOffset,
-  SHODASHAVARGA_DEFS
+  SHODASHAVARGA_DEFS,
+  DIVISIONAL_CHART_DEFS
 } from '../utils/thirukanithaEngine';
 import { COUNTRIES, GEO_DATA, lookupCoordinates } from '../data/geoCoordinates';
 import ShadbalaBarChart from './ShadbalaBarChart';
@@ -862,18 +863,20 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
             </div>
 
             {renderSectionBadge(2, (
-              <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">{activeChartKey} ({isTamil ? (SHODASHAVARGA_DEFS.find(d => d.key === activeChartKey)?.nameTa || '') : activeChartKey})</span>
+              <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">
+                {activeChartKey} ({isTamil ? (DIVISIONAL_CHART_DEFS.find(d => d.key === activeChartKey)?.nameTa || '') : activeChartKey})
+              </span>
             ))}
           </button>
 
           {/* Collapsible Dropdown Content */}
           {openSections[2] && (
             <div className="p-4 sm:p-5 pt-0 border-t border-amber-900/10 dark:border-amber-500/15 space-y-4">
-              {/* SECTION 3: South Indian Charts (16 Shodashavarga Grid Layout) */}
+              {/* SECTION 3: South Indian Charts (Divisional & Bhava Chalit Grid Layout) */}
         <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
-          {/* 16 Shodashavarga Switcher Pills */}
+          {/* Divisional & Bhava Switcher Pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 max-w-full print:hidden scrollbar-thin touch-pan-x overscroll-x-contain">
-            {SHODASHAVARGA_DEFS.map(chart => (
+            {DIVISIONAL_CHART_DEFS.map(chart => (
               <button
                 key={chart.key}
                 type="button"
@@ -881,7 +884,9 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                 className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
                   activeChartKey === chart.key
                     ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
-                    : 'bg-amber-900/10 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-amber-900/20'
+                    : chart.key === 'Bhava'
+                      ? 'bg-amber-600/15 text-amber-900 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-600/25'
+                      : 'bg-amber-900/10 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-amber-900/20'
                 }`}
               >
                 <span>{isTamil ? chart.nameTa : chart.nameEn}</span>
@@ -891,7 +896,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
 
           {/* Active Varga Information Card */}
           {(() => {
-            const activeDef = SHODASHAVARGA_DEFS.find(d => d.key === activeChartKey) || SHODASHAVARGA_DEFS[0];
+            const activeDef = DIVISIONAL_CHART_DEFS.find(d => d.key === activeChartKey) || DIVISIONAL_CHART_DEFS[0];
             return (
               <div className="p-2.5 rounded-xl bg-amber-50/70 dark:bg-stone-800/50 border border-amber-900/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
                 <div>
@@ -911,17 +916,18 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
 
           {/* Render South Indian Chart (Screen: selected active, Print: D1 and D9 side-by-side) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:grid-cols-2">
-            {/* Chart 1: Active Varga */}
+            {/* Chart 1: Active Varga or Bhava Chalit */}
             {(() => {
-              const activeDef = SHODASHAVARGA_DEFS.find(d => d.key === activeChartKey) || SHODASHAVARGA_DEFS[0];
+              const activeDef = DIVISIONAL_CHART_DEFS.find(d => d.key === activeChartKey) || DIVISIONAL_CHART_DEFS[0];
               const title = isTamil ? activeDef.nameTa : activeDef.nameEn;
+              const chartData = horoscope.charts[activeChartKey] || horoscope.charts.D1;
               return (
                 <div className="space-y-1.5">
                   <div className="text-center font-bold text-xs uppercase tracking-wider text-[#7A1A22] dark:text-[#E8838B]">
                     {title}
                   </div>
                   <SouthIndianChartGrid
-                    chartData={horoscope.charts[activeChartKey] || horoscope.charts.D1}
+                    chartData={chartData}
                     isTamil={isTamil}
                     centerTitle={title}
                     centerSub={form.name}
@@ -930,13 +936,14 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
               );
             })()}
 
-            {/* Chart 2: Comparison Chart (D9 Navamsa when D1 is selected; D1 Rasi for D2, D3 and all other vargas) */}
+            {/* Chart 2: Comparison Chart (D9 Navamsa when D1 is selected; D1 Rasi for Bhava and all other vargas) */}
             {(() => {
               const isD1 = activeChartKey === 'D1';
+              const isBhava = activeChartKey === 'Bhava';
               const compKey = isD1 ? 'D9' : 'D1';
               const compTitle = isTamil
-                ? (isD1 ? 'D9 நவாம்சம்' : 'D1 ராசி')
-                : (isD1 ? 'D9 Navamsa' : 'D1 Rasi');
+                ? (isBhava ? 'D1 ராசி (ஒப்பீடு)' : (isD1 ? 'D9 நவாம்சம்' : 'D1 ராசி'))
+                : (isBhava ? 'D1 Rasi (Comparison)' : (isD1 ? 'D9 Navamsa' : 'D1 Rasi'));
 
               return (
                 <div className="space-y-1.5">
@@ -953,6 +960,83 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
               );
             })()}
           </div>
+
+          {/* Additional Bhava Chalit Diagnostics & Sripati Cusps (Rendered when Bhava Chalit is active) */}
+          {activeChartKey === 'Bhava' && (
+            <div className="pt-2 space-y-3 border-t border-amber-900/15 dark:border-amber-500/20">
+              {/* 1. Bhava Shift (பாவக மாற்றம்) Card */}
+              <div className="p-3.5 rounded-xl bg-amber-50/80 dark:bg-stone-800/60 border border-amber-900/15">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 flex items-center gap-1.5">
+                    <span>🔄</span>
+                    <span>{isTamil ? 'பாவக மாற்றம் ஆய்வு (Bhava Shifts vs Rasi)' : 'Bhava Shifts vs Rasi Analysis'}</span>
+                  </h4>
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-300 border border-amber-900/10">
+                    {horoscope?.bhavaShifts?.length || 0} {isTamil ? 'மாற்றங்கள்' : 'Shifts'}
+                  </span>
+                </div>
+
+                {horoscope?.bhavaShifts && horoscope.bhavaShifts.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    {horoscope.bhavaShifts.map(sh => (
+                      <div key={sh.id} className="p-2.5 rounded-lg bg-white dark:bg-stone-900/80 border border-amber-900/10 flex items-start gap-2 shadow-2xs">
+                        <span className="text-amber-700 dark:text-amber-400 font-bold shrink-0 text-sm">✦</span>
+                        <div>
+                          <div className="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                            <span>{isTamil ? sh.nameTa : sh.nameEn}</span>
+                            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950/60 text-[#7A1A22] dark:text-amber-300 font-bold">
+                              {isTamil ? `ராசி H${sh.rasiHouse} ➔ பாவக H${sh.chalitHouse}` : `Rasi H${sh.rasiHouse} ➔ Bhava H${sh.chalitHouse}`}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5">
+                            {isTamil ? sh.explanationTa : sh.explanationEn}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-stone-600 dark:text-stone-400 italic">
+                    {isTamil
+                      ? '✓ இந்த ஜாதகத்தில் பாவக மாற்றம் ஏதும் இல்லை. ராசியில் உள்ள அதே பாவங்களிலேயே அனைத்து கிரகங்களும் சுபமாக செயல்படுகின்றன.'
+                      : '✓ No house shifts detected in this chart. All planets deliver their effects through their native Rasi houses.'}
+                  </p>
+                )}
+              </div>
+
+              {/* 2. Sripati 12 Bhava Cusps Table (ஆரம்பம், மத்திமம், முடிவு) */}
+              {Array.isArray(horoscope?.sripatiBhavas) && horoscope.sripatiBhavas.length > 0 && (
+                <div className="p-3 rounded-xl bg-white dark:bg-stone-900 border border-amber-900/15 overflow-x-auto">
+                  <div className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 mb-2 flex items-center gap-1.5">
+                    <span>🏛️</span>
+                    <span>{isTamil ? 'ஸ்ரீபதி 12 பாவக ஆரம்ப, மத்திம, முடிவு அட்டவணை' : 'Sripati 12 Bhava Cusps (Start, Madhya, End)'}</span>
+                  </div>
+                  <table className="w-full border-collapse text-[11px] text-left">
+                    <thead>
+                      <tr className="border-b border-amber-900/15 bg-amber-50/60 dark:bg-stone-800/50 font-bold text-stone-800 dark:text-stone-200">
+                        <th className="py-1 px-2">{isTamil ? 'பாவகம்' : 'Bhava'}</th>
+                        <th className="py-1 px-2">{isTamil ? 'ஆரம்பம் (Start)' : 'Start Cusp'}</th>
+                        <th className="py-1 px-2">{isTamil ? 'மத்திமம் (Madhya)' : 'Bhava Madhya'}</th>
+                        <th className="py-1 px-2">{isTamil ? 'முடிவு (End)' : 'End Cusp'}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-amber-900/10 dark:divide-stone-800">
+                      {horoscope.sripatiBhavas.map(b => (
+                        <tr key={b.bhava} className="hover:bg-amber-50/40 dark:hover:bg-stone-800/30">
+                          <td className="py-1 px-2 font-bold text-[#7A1A22] dark:text-amber-400">
+                            {isTamil ? `${b.bhava}-ம் பாவம்` : `Bhava ${b.bhava}`}
+                          </td>
+                          <td className="py-1 px-2 font-mono">{RASHIS[b.startRasi]?.[isTamil ? 'ta' : 'en']} {b.startDMS}</td>
+                          <td className="py-1 px-2 font-mono font-bold text-slate-900 dark:text-slate-100">{RASHIS[b.madhyaRasi]?.[isTamil ? 'ta' : 'en']} {b.madhyaDMS}</td>
+                          <td className="py-1 px-2 font-mono">{RASHIS[b.endRasi]?.[isTamil ? 'ta' : 'en']} {b.endDMS}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
         </div>
             </div>
           )}
