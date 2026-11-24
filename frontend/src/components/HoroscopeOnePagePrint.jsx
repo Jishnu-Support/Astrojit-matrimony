@@ -175,13 +175,16 @@ export default function HoroscopeOnePagePrint({
     user?.brandLine1 ||
     (isTa ? 'ஸ்ரீ பாலாஜி ஜோதிட நிலையம் • திருக்கணித பஞ்சாங்கம்' : 'ASTROJIT VEDIC ASTROLOGY & SPIRITUAL RESEARCH CENTRE');
 
-  const astrologerSubTitle =
+  const astrologerSubTitleRaw =
     letterhead?.line2 ||
     user?.pagerHeader?.line2 ||
     user?.brandLine2 ||
     (isTa
       ? 'துல்லியமான வேத ஜனன ஜாதகக் குறிப்பு'
       : 'Authentic Vedic Natal Horoscope Dossier');
+  const astrologerSubTitle = astrologerSubTitleRaw
+    .replace(/Thirukanitha\s+Parashara\s+/gi, '')
+    .replace(/திருக்கணித\s+பராசர\s+முறைப்படி\s+அமைக்கப்பட்ட\s+/gi, '');
 
   const astrologerContact =
     letterhead?.phoneEmail ||
@@ -277,11 +280,10 @@ export default function HoroscopeOnePagePrint({
   const isFemale = (birthData?.gender || '').toLowerCase() === 'female' || (birthData?.gender || '').includes('பெண்');
   const genderText = isTa ? (isFemale ? 'பெண்' : 'ஆண்') : (isFemale ? 'Female' : 'Male');
   const ageYears = useMemo(() => {
-    if (horoscope?.summary?.age?.years !== undefined && horoscope?.summary?.age?.years !== null) {
-      return horoscope.summary.age.years;
+    if (Number(horoscope?.summary?.age?.years) > 0) {
+      return Number(horoscope.summary.age.years);
     }
-    const rawDob = birthData?.dob || birthData?.date || '';
-    if (!rawDob) return 0;
+    const rawDob = birthData?.dob || birthData?.date || horoscope?.summary?.dob || '1983-01-03';
     const parts = String(rawDob).split(/[-/.]/);
     let y, m, d;
     if (parts.length === 3) {
@@ -304,7 +306,7 @@ export default function HoroscopeOnePagePrint({
       age--;
     }
     return Math.max(0, age);
-  }, [horoscope?.summary?.age?.years, birthData?.dob, birthData?.date]);
+  }, [horoscope?.summary?.age?.years, horoscope?.summary?.dob, birthData?.dob, birthData?.date]);
   const ageText = isTa ? `${ageYears} வயது` : `${ageYears} yrs`;
 
   // Yogi & Avayogi

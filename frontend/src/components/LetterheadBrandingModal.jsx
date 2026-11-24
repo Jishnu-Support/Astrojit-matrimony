@@ -14,7 +14,7 @@ export const DEFAULT_LETTERHEAD_TA = {
 
 export const DEFAULT_LETTERHEAD_EN = {
   line1: 'ASTROJIT VEDIC ASTROLOGY & SPIRITUAL RESEARCH CENTRE',
-  line2: 'Authentic Thirukanitha Parashara Vedic Natal Horoscope Dossier',
+  line2: 'Authentic Vedic Natal Horoscope Dossier',
   address1: 'Salem, Tamil Nadu - 636001',
   address2: 'Chennai & Bengaluru Branches',
   phoneEmail: 'Phone: +91 98765 43210 | Email: astro@astrojit.com',
@@ -27,6 +27,11 @@ export function getInitialLetterhead(user, isTa) {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (parsed && typeof parsed === 'object' && (parsed.line1 || parsed.line2)) {
+        if (parsed.line2) {
+          parsed.line2 = parsed.line2
+            .replace(/Thirukanitha\s+Parashara\s+/gi, '')
+            .replace(/திருக்கணித\s+பராசர\s+முறைப்படி\s+அமைக்கப்பட்ட\s+/gi, '');
+        }
         return parsed;
       }
     }
