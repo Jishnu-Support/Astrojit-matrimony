@@ -120,11 +120,11 @@ export default function NorthIndianChartGrid({
   const bgColor = isPrint ? '#FFFFFF' : '#FFFDF9';
 
   return (
-    <div className={`relative aspect-square w-full max-w-[420px] mx-auto select-none ${className}`}>
-      {/* Title Badge if provided */}
+    <div className={`flex flex-col items-center w-full max-w-[420px] mx-auto select-none ${className}`}>
+      {/* Title Badge if provided - positioned above chart to prevent any overlap with house numbers */}
       {centerTitle && (
-        <div className="absolute top-1 left-1/2 -translate-x-1/2 z-10 text-center pointer-events-none">
-          <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#7A1A22] bg-amber-50/90 dark:bg-stone-900/90 dark:text-amber-300 border border-amber-900/20 px-2 py-0.5 rounded shadow-2xs">
+        <div className="text-center mb-1.5 shrink-0">
+          <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#7A1A22] dark:text-amber-300 bg-amber-50/90 dark:bg-stone-900/90 border border-amber-900/20 px-2.5 py-0.5 rounded shadow-2xs inline-block">
             {centerTitle}
           </span>
           {centerSub && (
@@ -135,99 +135,101 @@ export default function NorthIndianChartGrid({
         </div>
       )}
 
-      <svg
-        viewBox="0 0 400 400"
-        className="w-full h-full drop-shadow-2xs"
-        style={{ fontFamily: isTamil ? "'Noto Serif Tamil', Georgia, serif" : "Georgia, serif" }}
-      >
-        {/* Background */}
-        <rect
-          x="4"
-          y="4"
-          width="392"
-          height="392"
-          fill={bgColor}
-          stroke={strokeColor}
-          strokeWidth={isPrint ? '2.5' : '2'}
-        />
+      <div className="relative aspect-square w-full">
+        <svg
+          viewBox="0 0 400 400"
+          className="w-full h-full drop-shadow-2xs"
+          style={{ fontFamily: isTamil ? "'Noto Serif Tamil', Georgia, serif" : "Georgia, serif" }}
+        >
+          {/* Background */}
+          <rect
+            x="4"
+            y="4"
+            width="392"
+            height="392"
+            fill={bgColor}
+            stroke={strokeColor}
+            strokeWidth={isPrint ? '2.5' : '2'}
+          />
 
-        {/* Diagonal 1: (0,0) to (400,400) */}
-        <line x1="4" y1="4" x2="396" y2="396" stroke={gridStroke} strokeWidth={isPrint ? '1.5' : '1.5'} />
+          {/* Diagonal 1: (0,0) to (400,400) */}
+          <line x1="4" y1="4" x2="396" y2="396" stroke={gridStroke} strokeWidth={isPrint ? '1.5' : '1.5'} />
 
-        {/* Diagonal 2: (0,400) to (400,0) */}
-        <line x1="4" y1="396" x2="396" y2="4" stroke={gridStroke} strokeWidth={isPrint ? '1.5' : '1.5'} />
+          {/* Diagonal 2: (0,400) to (400,0) */}
+          <line x1="4" y1="396" x2="396" y2="4" stroke={gridStroke} strokeWidth={isPrint ? '1.5' : '1.5'} />
 
-        {/* Inner Diamond connecting (200,4), (396,200), (200,396), (4,200) */}
-        <polygon
-          points="200,4 396,200 200,396 4,200"
-          fill="none"
-          stroke={gridStroke}
-          strokeWidth={isPrint ? '1.5' : '1.5'}
-        />
+          {/* Inner Diamond connecting (200,4), (396,200), (200,396), (4,200) */}
+          <polygon
+            points="200,4 396,200 200,396 4,200"
+            fill="none"
+            stroke={gridStroke}
+            strokeWidth={isPrint ? '1.5' : '1.5'}
+          />
 
-        {/* Inner subtle decorative borders */}
-        <rect
-          x="1"
-          y="1"
-          width="398"
-          height="398"
-          fill="none"
-          stroke={strokeColor}
-          strokeWidth="0.8"
-          opacity={isPrint ? '1' : '0.4'}
-        />
+          {/* Inner subtle decorative borders */}
+          <rect
+            x="1"
+            y="1"
+            width="398"
+            height="398"
+            fill="none"
+            stroke={strokeColor}
+            strokeWidth="0.8"
+            opacity={isPrint ? '1' : '0.4'}
+          />
 
-        {/* Render Each House: Sign Number & Occupants */}
-        {houseData.map(h => {
-          const occCount = h.occupants.length;
-          // Calculate vertical step for stacking multiple planets in one house
-          const lineHeight = occCount > 3 ? 12 : 14;
-          const startY = h.cy - ((occCount - 1) * lineHeight) / 2;
+          {/* Render Each House: Sign Number & Occupants */}
+          {houseData.map(h => {
+            const occCount = h.occupants.length;
+            // Calculate vertical step for stacking multiple planets in one house
+            const lineHeight = occCount > 3 ? 12 : 14;
+            const startY = h.cy - ((occCount - 1) * lineHeight) / 2;
 
-          return (
-            <g key={h.h}>
-              {/* Sign Number (Mesha=1 .. Meena=12) */}
-              <text
-                x={h.numX}
-                y={h.numY}
-                textAnchor="middle"
-                dominantBaseline="central"
-                fontSize={isPrint ? '11' : '11.5'}
-                fontWeight="900"
-                fill={isPrint ? '#222' : '#991B1B'}
-                className="font-mono select-none"
-              >
-                {h.signNum}
-              </text>
+            return (
+              <g key={h.h}>
+                {/* Sign Number (Mesha=1 .. Meena=12) */}
+                <text
+                  x={h.numX}
+                  y={h.numY}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fontSize={isPrint ? '11' : '11.5'}
+                  fontWeight="900"
+                  fill={isPrint ? '#222' : '#991B1B'}
+                  className="font-mono select-none"
+                >
+                  {h.signNum}
+                </text>
 
-              {/* Occupants */}
-              {h.occupants.map((occ, oIdx) => {
-                const yPos = startY + oIdx * lineHeight;
-                const isLagna = occ.isLagna;
+                {/* Occupants */}
+                {h.occupants.map((occ, oIdx) => {
+                  const yPos = startY + oIdx * lineHeight;
+                  const isLagna = occ.isLagna;
 
-                return (
-                  <text
-                    key={oIdx}
-                    x={h.cx}
-                    y={yPos}
-                    textAnchor="middle"
-                    dominantBaseline="central"
-                    fontSize={isLagna ? (isPrint ? '11' : '11.5') : (isPrint ? '10' : '10.5')}
-                    fontWeight={isLagna ? '900' : '700'}
-                    fill={
-                      isLagna
-                        ? (isPrint ? '#7A1A22' : '#7A1A22')
-                        : (isPrint ? '#000000' : '#1C1917')
-                    }
-                  >
-                    {occ.label}
-                  </text>
-                );
-              })}
-            </g>
-          );
-        })}
-      </svg>
+                  return (
+                    <text
+                      key={oIdx}
+                      x={h.cx}
+                      y={yPos}
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                      fontSize={isLagna ? (isPrint ? '11' : '11.5') : (isPrint ? '10' : '10.5')}
+                      fontWeight={isLagna ? '900' : '700'}
+                      fill={
+                        isLagna
+                          ? (isPrint ? '#7A1A22' : '#7A1A22')
+                          : (isPrint ? '#000000' : '#1C1917')
+                      }
+                    >
+                      {occ.label}
+                    </text>
+                  );
+                })}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
     </div>
   );
 }
