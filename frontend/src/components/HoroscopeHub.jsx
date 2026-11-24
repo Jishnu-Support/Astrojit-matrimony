@@ -169,7 +169,7 @@ export default function HoroscopeHub({
                   }`}
                 >
                   <BookOpen className="w-3.5 h-3.5" />
-                  <span>{isTa ? 'பல பக்க புத்தகம் (20 தலைப்புகள்)' : 'Multi-Page Booklet (20 Titles)'}</span>
+                  <span>{isTa ? '51-பக்க முழு ஜாதக புத்தகம்' : '51-Page Full Booklet'}</span>
                 </button>
               </div>
             </div>
@@ -177,7 +177,7 @@ export default function HoroscopeHub({
             <div className="text-[11px] font-semibold text-stone-500 dark:text-stone-400 hidden sm:block">
               {printSubMode === 'onepage'
                 ? (isTa ? 'முழு A4 பக்கத்தில் அடங்கும் விரைவு ஜாதகம்' : 'Single-page quick natal summary sheet')
-                : (isTa ? '20 தலைப்புகளைக் கொண்ட விரிவான அரைப்பக்க A4 புத்தகம்' : 'Comprehensive half-page A4 booklet across 20 titles')}
+                : (isTa ? 'அனைத்து விவரங்களையும் கொண்ட விரிவான 51-பக்க ஜாதக புத்தகம் (A4)' : 'Comprehensive 51-page authentic Vedic horoscope booklet (A4)')}
             </div>
           </div>
 

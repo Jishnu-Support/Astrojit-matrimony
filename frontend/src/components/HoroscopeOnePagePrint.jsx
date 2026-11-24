@@ -773,7 +773,7 @@ export default function HoroscopeOnePagePrint({
               className="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 dark:bg-amber-950 dark:hover:bg-amber-900 text-[#7A1A22] dark:text-amber-200 border border-amber-300 dark:border-amber-700 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
             >
               <span>📚</span>
-              <span>{isTa ? 'பல பக்க புத்தகம் (20)' : 'Multi-Page Booklet (20)'}</span>
+              <span>{isTa ? '51-பக்க புத்தகம்' : '51-Page Booklet'}</span>
             </button>
           )}
 

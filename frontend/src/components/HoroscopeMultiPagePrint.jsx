@@ -10,6 +10,7 @@ import {
 import { useLang } from '../i18n';
 import { useAuth } from '../context/AuthContext';
 import LetterheadBrandingModal, { getInitialLetterhead } from './LetterheadBrandingModal';
+import AIPrompt51PageModal from './AIPrompt51PageModal';
 import {
   compute51PageBookletData,
   calculateThirukanithaHoroscope
@@ -85,6 +86,7 @@ export default function HoroscopeMultiPagePrint({
   // Letterhead Branding State (synced with profile / localStorage)
   const [letterhead, setLetterhead] = useState(() => getInitialLetterhead(user, isTa));
   const [brandingModalOpen, setBrandingModalOpen] = useState(false);
+  const [aiPromptModalOpen, setAiPromptModalOpen] = useState(false);
 
   // Selected Section IDs (Defaults to ALL 20 sections = Full 51 Pages)
   const [selectedIds, setSelectedIds] = useState(() =>
@@ -2243,6 +2245,17 @@ export default function HoroscopeMultiPagePrint({
                 : `${selectedIds.length} Sections Selected • ${generatedSheets.length} A4 Pages`}
             </div>
 
+            {/* 51-Page AI Prompt Button */}
+            <button
+              type="button"
+              onClick={() => setAiPromptModalOpen(true)}
+              className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-black text-xs transition-all cursor-pointer flex items-center gap-1.5 shadow-sm border border-amber-400"
+              title={isTa ? '51-பக்க ஜாதகத்திற்கான AI ஆய்வு Prompt-ஐ காண்க' : 'Open 51-Page AI Analysis Prompt'}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-stone-950 fill-amber-300" />
+              <span>{isTa ? '51-பக்க AI Prompt' : '51-Page AI Prompt'}</span>
+            </button>
+
             {/* Edit Letterhead Branding Button */}
             <button
               type="button"
@@ -2445,6 +2458,13 @@ export default function HoroscopeMultiPagePrint({
         letterhead={letterhead}
         onSave={(updated) => setLetterhead(updated)}
         isTa={isTa}
+      />
+
+      {/* 51-Page AI Analysis Prompt Modal */}
+      <AIPrompt51PageModal
+        isOpen={aiPromptModalOpen}
+        onClose={() => setAiPromptModalOpen(false)}
+        birthData={birthData}
       />
     </div>
   );
