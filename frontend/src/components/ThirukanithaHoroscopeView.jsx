@@ -3589,8 +3589,8 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                 </p>
               </div>
 
-              {/* Sub-Tabs: All | Gulikaadi | Dhumadi */}
-              <div className="flex items-center gap-2 border-b border-amber-900/10 dark:border-stone-800 pb-2">
+              {/* Sub-Tabs: All | Chart | Gulikaadi | Dhumadi */}
+              <div className="flex flex-wrap items-center gap-2 border-b border-amber-900/10 dark:border-stone-800 pb-2">
                 <button
                   type="button"
                   onClick={() => setUpagrahaTab('all')}
@@ -3600,7 +3600,19 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                       : 'bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300'
                   }`}
                 >
-                  {isTamil ? 'அனைத்து உபகிரகங்கள் (10)' : 'All Upagrahas (10)'}
+                  {isTamil ? 'அனைத்து விபரங்கள் (10)' : 'All Details (10)'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setUpagrahaTab('chart')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    upagrahaTab === 'chart'
+                      ? 'bg-[#7A1A22] text-white shadow-xs'
+                      : 'bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300'
+                  }`}
+                >
+                  <span>☸</span>
+                  <span>{isTamil ? 'உபகிரகச் சக்கரம்' : 'Upagrahas Chart'}</span>
                 </button>
                 <button
                   type="button"
@@ -3625,6 +3637,101 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                   {isTamil ? '2. தூமாதி ஐவர் (5)' : '2. Dhumadi Five (5)'}
                 </button>
               </div>
+
+              {/* UPAGRAHA RASI CHART */}
+              {(upagrahaTab === 'all' || upagrahaTab === 'chart') && (
+                <div className="bg-amber-50/40 dark:bg-stone-900/40 p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-900/10 dark:border-amber-500/15 pb-2">
+                    <div>
+                      <h3 className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 flex items-center gap-1.5">
+                        <span>☸</span>
+                        <span>{isTamil ? 'உபகிரகங்கள் ராசி சக்கரம்' : 'Upagrahas Rasi Chart'}</span>
+                      </h3>
+                      <p className="text-[11px] text-stone-600 dark:text-stone-400">
+                        {isTamil
+                          ? 'பராசரர் முறைப்படி 5 குளிகாதி உபகிரகங்கள், 5 தூமாதி உபகிரகங்கள் மற்றும் லக்னம் அமைந்த ராசி நிலை'
+                          : 'Positions of the 5 Gulikaadi, 5 Dhumadi secondary planets and Lagna across 12 signs'}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-bold">
+                      <span className="px-2 py-0.5 rounded bg-[#7A1A22] text-amber-100 shadow-2xs">
+                        {isTamil ? 'லக்னம்' : 'Lagna'}
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-200 border border-amber-400/50 shadow-2xs">
+                        {isTamil ? 'குளிகாதி ஐவர்' : 'Gulikaadi 5'}
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-indigo-100 text-indigo-900 dark:bg-indigo-950/80 dark:text-indigo-200 border border-indigo-400/50 shadow-2xs">
+                        {isTamil ? 'தூமாதி ஐவர்' : 'Dhumadi 5'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col lg:flex-row items-center justify-center gap-6 pt-1">
+                    {/* South Indian Chart Grid */}
+                    <div className="w-full max-w-[360px] shrink-0">
+                      <SouthIndianChartGrid
+                        chartData={horoscope.upagrahas?.chart}
+                        isTamil={isTamil}
+                        centerTitle={isTamil ? 'உபகிரகங்கள்' : 'UPAGRAHAS'}
+                        centerSub={isTamil ? '10 உபகிரக நிலை' : '10 Secondary Planets'}
+                      />
+                    </div>
+
+                    {/* Upagrahas Sign Placement Summary Grid */}
+                    <div className="flex-1 w-full space-y-3">
+                      {/* Gulikaadi Summary */}
+                      <div className="p-3 rounded-xl bg-white/70 dark:bg-[#1E1815] border border-amber-900/10 dark:border-amber-500/15 space-y-2">
+                        <div className="text-[11px] font-bold text-[#7A1A22] dark:text-amber-300 flex items-center justify-between">
+                          <span className="flex items-center gap-1">
+                            <span>🪐</span>
+                            <span>{isTamil ? 'குளிகாதி ஐவர் (பராசரர் கணித நிலை):' : 'Gulikaadi Five (Parashara Longitudes):'}</span>
+                          </span>
+                          <span className="text-[10px] text-stone-500 font-mono">5 Upagrahas</span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1.5 text-xs">
+                          {horoscope.upagrahas?.gulikaadi?.map((item, idx) => (
+                            <div key={item.id || idx} className="p-2 rounded-lg bg-amber-50/70 dark:bg-stone-900/60 border border-amber-900/10 dark:border-amber-500/15 flex items-center justify-between">
+                              <div className="flex items-center gap-1.5 min-w-0">
+                                <span>{item.symbol}</span>
+                                <span className="font-bold text-stone-800 dark:text-stone-200 truncate">{isTamil ? item.nameTa : item.nameEn}</span>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <div className="font-bold text-[#7A1A22] dark:text-amber-300 text-[11px]">{isTamil ? item.parashara?.rasiTa : item.parashara?.rasiEn}</div>
+                                <div className="font-mono text-[9.5px] text-stone-500">{item.parashara?.degDMS}</div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Dhumadi Summary */}
+                      <div className="p-3 rounded-xl bg-white/70 dark:bg-[#1E1815] border border-indigo-900/10 dark:border-indigo-500/15 space-y-2">
+                        <div className="text-[11px] font-bold text-indigo-900 dark:text-indigo-300 flex items-center justify-between">
+                          <span className="flex items-center gap-1">
+                            <span>☀️</span>
+                            <span>{isTamil ? 'தூமாதி ஐவர் (சூரியன் கணித நிலை):' : 'Dhumadi Five (Solar Longitudes):'}</span>
+                          </span>
+                          <span className="text-[10px] text-stone-500 font-mono">5 Upagrahas</span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1.5 text-xs">
+                          {horoscope.upagrahas?.dhumadi?.map((item, idx) => (
+                            <div key={item.id || idx} className="p-2 rounded-lg bg-indigo-50/70 dark:bg-stone-900/60 border border-indigo-900/10 dark:border-indigo-500/15 flex items-center justify-between">
+                              <div className="flex items-center gap-1.5 min-w-0">
+                                <span>{item.symbol}</span>
+                                <span className="font-bold text-stone-800 dark:text-stone-200 truncate">{isTamil ? item.nameTa : item.nameEn}</span>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <div className="font-bold text-indigo-700 dark:text-indigo-300 text-[11px]">{isTamil ? item.rasiTa : item.rasiEn}</div>
+                                <div className="font-mono text-[9.5px] text-stone-500">{item.degDMS}</div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* PART A: GULIKAADI FIVE (குளிகாதி ஐவர் விபரங்கள்) */}
               {(upagrahaTab === 'all' || upagrahaTab === 'gulikaadi') && (
@@ -7037,6 +7144,10 @@ function SouthIndianChartGrid({ chartData, isTamil, centerTitle, centerSub }) {
                         ? 'bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300 ring-1 ring-purple-400 shadow-2xs'
                         : occ.isBirthLagna
                         ? 'bg-red-100 text-red-900 dark:bg-red-950 dark:text-red-300 ring-1 ring-red-400 shadow-2xs'
+                        : occ.isGulikaadi
+                        ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-200 border border-amber-400/50 shadow-2xs'
+                        : occ.isDhumadi
+                        ? 'bg-indigo-100 text-indigo-900 dark:bg-indigo-950/80 dark:text-indigo-200 border border-indigo-400/50 shadow-2xs'
                         : 'text-[#7A1A22] dark:text-amber-300 font-bold'
                     }`}
                   >

@@ -1828,11 +1828,78 @@ export function computeUpagrahasData({
     });
   }
 
+  // Pre-compute 12-sign South Indian chart for Upagrahas
+  const chart = Array.from({ length: 12 }, (_, i) => ({
+    rasi: i,
+    occupants: []
+  }));
+
+  // 1. Add Lagna
+  if (typeof Lagna_nirayana === 'number') {
+    const lagnaRasi = Math.floor(norm(Lagna_nirayana) / 30);
+    if (chart[lagnaRasi]) {
+      chart[lagnaRasi].occupants.push({
+        id: 'lagna',
+        isLagna: true,
+        labelTa: 'லக்னம்',
+        labelEn: 'Lagna'
+      });
+    }
+  }
+
+  // 2. Add Gulikaadi (Parashara position)
+  const gulikaLabels = {
+    kaala: { ta: 'காலன்', en: 'Kaala' },
+    mrityu: { ta: 'மிருத்யு', en: 'Mrityu' },
+    ardhaprahara: { ta: 'அர்த்தபிர', en: 'Ardhapra' },
+    yamaghanta: { ta: 'யமகண்டன்', en: 'Yamaghanta' },
+    gulika: { ta: 'குளிகன்', en: 'Gulika' }
+  };
+
+  for (const g of gulikaadi) {
+    const rasi = g.parashara?.rasiIdx;
+    if (typeof rasi === 'number' && chart[rasi]) {
+      const gl = gulikaLabels[g.id] || { ta: g.nameTa, en: g.nameEn };
+      chart[rasi].occupants.push({
+        id: g.id,
+        isUpagraha: true,
+        isGulikaadi: true,
+        isMandi: g.id === 'gulika',
+        labelTa: gl.ta,
+        labelEn: gl.en
+      });
+    }
+  }
+
+  // 3. Add Dhumadi
+  const dhumadiLabels = {
+    dhuma: { ta: 'தூமன்', en: 'Dhuma' },
+    vyatipata: { ta: 'வியதீபாதன்', en: 'Vyatipata' },
+    parivesha: { ta: 'பரிவேஷன்', en: 'Parivesha' },
+    indradhanus: { ta: 'இந்திரதனு', en: 'Indrachapa' },
+    upaketu: { ta: 'உபகேது', en: 'Upaketu' }
+  };
+
+  for (const d of dhumadi) {
+    const rasi = d.rasiIdx;
+    if (typeof rasi === 'number' && chart[rasi]) {
+      const dl = dhumadiLabels[d.id] || { ta: d.nameTa, en: d.nameEn };
+      chart[rasi].occupants.push({
+        id: d.id,
+        isUpagraha: true,
+        isDhumadi: true,
+        labelTa: dl.ta,
+        labelEn: dl.en
+      });
+    }
+  }
+
   return {
     isMrM,
     sunNirayana: getPos(sunLong),
     gulikaadi,
     dhumadi,
+    chart,
     verificationRule: {
       formulaTa: 'உபகேது + 30° = சூரியன் ஸ்புடம்',
       formulaEn: 'Upaketu + 30° = Sun Longitude',
@@ -3507,18 +3574,24 @@ export function calculateThirukanithaHoroscope({
       }
       return g;
     })(),
-    upagrahas: computeUpagrahasData({
-      Y, M, D,
-      localHour,
-      lat, lon,
-      utcOffset: numUtcOffset,
-      Ayanamsha,
-      eps,
-      lamSun_tropical,
-      lamSun_nirayana,
-      Lagna_nirayana,
-      isMrM
-    }),
+    upagrahas: (() => {
+      const u = computeUpagrahasData({
+        Y, M, D,
+        localHour,
+        lat, lon,
+        utcOffset: numUtcOffset,
+        Ayanamsha,
+        eps,
+        lamSun_tropical,
+        lamSun_nirayana,
+        Lagna_nirayana,
+        isMrM
+      });
+      if (u?.chart) {
+        charts['Upagrahas'] = u.chart;
+      }
+      return u;
+    })(),
     planetaryRelationshipsAndAvasthas: computePlanetaryRelationshipsAndAvasthas(
       allPlanetRows,
       Lagna_nirayana,
