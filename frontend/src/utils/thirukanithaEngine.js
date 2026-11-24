@@ -3002,7 +3002,7 @@ export function calculateThirukanithaHoroscope({
         chalitHouse,
         shiftDirection: chalitHouse > rasiHouse ? 'forward' : 'backward',
         explanationTa: `${pr.info?.ta || pr.id} ராசியில் ${rasiHouse}-ம் வீட்டில் உள்ளார், ஆனால் பாவக சக்கரத்தில் ${chalitHouse}-ம் பாவத்திற்கு மாறியுள்ளார்.`,
-        explanationEn: `${pr.info?.en || pr.id} is in House ${rasiHouse} in Rasi, but shifts to Bhava ${chalitHouse} in Chalit.`
+        explanationEn: `${pr.info?.en || pr.id} is in House ${rasiHouse} in Rasi, but shifts to Bhava ${chalitHouse} in Bava Chart.`
       });
     }
   }
@@ -3458,14 +3458,20 @@ export function calculateThirukanithaHoroscope({
     shadbala,
     ashtakavarga,
     orai: oraiData,
-    gocharam: isTransitCalc ? null : computeGocharamData({
-      birthMoonRasi: moonRasi,
-      birthLagnaRasi: lagnaRasi,
-      transitDate: transitDate || (new Date().toISOString().split('T')[0]),
-      lat, lon,
-      utcOffset: numUtcOffset,
-      ashtakavarga
-    }),
+    gocharam: (() => {
+      const g = isTransitCalc ? null : computeGocharamData({
+        birthMoonRasi: moonRasi,
+        birthLagnaRasi: lagnaRasi,
+        transitDate: transitDate || (new Date().toISOString().split('T')[0]),
+        lat, lon,
+        utcOffset: numUtcOffset,
+        ashtakavarga
+      });
+      if (g?.chart) {
+        charts['Gocharam'] = g.chart;
+      }
+      return g;
+    })(),
     upagrahas: computeUpagrahasData({
       Y, M, D,
       localHour,
@@ -4269,7 +4275,8 @@ export const SHODASHAVARGA_DEFS = [
 
 export const DIVISIONAL_CHART_DEFS = [
   { key: 'D1', num: 1, nameTa: 'D1 ராசி', nameEn: 'D1 Rasi', group: 'shadvarga', domainTa: 'ஸ்தூல உடல் & பொது வாழ்க்கை', domainEn: 'Physical Body & General Life', divisionDeg: '30° 00′' },
-  { key: 'Bhava', num: 0, isBhava: true, nameTa: 'பாவக சக்கரம்', nameEn: 'Bhava Chalit', group: 'sripati', domainTa: 'ஸ்ரீபதி பாவக ஆரம்பம், மத்திமம், முடிவு & பாவக பலன்', domainEn: 'Sripati House Cusps, Midpoints & Realized Karma', divisionDeg: 'ஸ்ரீபதி முறை' },
+  { key: 'Bhava', num: 0, isBhava: true, nameTa: 'பாவக சக்கரம்', nameEn: 'Bava Chart', group: 'sripati', domainTa: 'ஸ்ரீபதி பாவக ஆரம்பம், மத்திமம், முடிவு & பாவக பலன்', domainEn: 'Sripati House Cusps, Midpoints & Realized Karma', divisionDeg: 'ஸ்ரீபதி முறை' },
+  { key: 'Gocharam', num: 0, isGocharam: true, nameTa: 'கோச்சாரம்', nameEn: 'Gocharam', group: 'transit', domainTa: 'தற்போதைய கிரக சஞ்சாரம் & பெயர்ச்சி பலன்கள்', domainEn: 'Real-time Planetary Transits & Gochara Phalan', divisionDeg: 'தற்கால நிலை' },
   ...SHODASHAVARGA_DEFS.filter(d => d.key !== 'D1')
 ];
 

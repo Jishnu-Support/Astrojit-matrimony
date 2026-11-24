@@ -872,9 +872,9 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
           {/* Collapsible Dropdown Content */}
           {openSections[2] && (
             <div className="p-4 sm:p-5 pt-0 border-t border-amber-900/10 dark:border-amber-500/15 space-y-4">
-              {/* SECTION 3: South Indian Charts (Divisional & Bhava Chalit Grid Layout) */}
+              {/* SECTION 2: South Indian Charts (Divisional, Bava Chart & Gocharam Grid Layout) */}
         <div className="bg-white/80 dark:bg-[#251E1A] p-4 sm:p-5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4">
-          {/* Divisional & Bhava Switcher Pills */}
+          {/* Divisional, Bava & Gocharam Switcher Pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 max-w-full print:hidden scrollbar-thin touch-pan-x overscroll-x-contain">
             {DIVISIONAL_CHART_DEFS.map(chart => (
               <button
@@ -886,9 +886,13 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     ? 'bg-[#7A1A22] text-amber-100 shadow-xs'
                     : chart.key === 'Bhava'
                       ? 'bg-amber-600/15 text-amber-900 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-600/25'
-                      : 'bg-amber-900/10 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-amber-900/20'
+                      : chart.key === 'Gocharam'
+                        ? 'bg-emerald-600/15 text-emerald-900 dark:text-emerald-300 border border-emerald-500/30 hover:bg-emerald-600/25'
+                        : 'bg-amber-900/10 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-amber-900/20'
                 }`}
               >
+                {chart.key === 'Gocharam' && <span>🪐</span>}
+                {chart.key === 'Bhava' && <span>🏛️</span>}
                 <span>{isTamil ? chart.nameTa : chart.nameEn}</span>
               </button>
             ))}
@@ -916,7 +920,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
 
           {/* Render South Indian Chart (Screen: selected active, Print: D1 and D9 side-by-side) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:grid-cols-2">
-            {/* Chart 1: Active Varga or Bhava Chalit */}
+            {/* Chart 1: Active Varga, Bava Chart, or Gocharam */}
             {(() => {
               const activeDef = DIVISIONAL_CHART_DEFS.find(d => d.key === activeChartKey) || DIVISIONAL_CHART_DEFS[0];
               const title = isTamil ? activeDef.nameTa : activeDef.nameEn;
@@ -936,14 +940,15 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
               );
             })()}
 
-            {/* Chart 2: Comparison Chart (D9 Navamsa when D1 is selected; D1 Rasi for Bhava and all other vargas) */}
+            {/* Chart 2: Comparison Chart (D9 Navamsa when D1 is selected; D1 Rasi for Bava, Gocharam, and all other vargas) */}
             {(() => {
               const isD1 = activeChartKey === 'D1';
               const isBhava = activeChartKey === 'Bhava';
+              const isGocharam = activeChartKey === 'Gocharam';
               const compKey = isD1 ? 'D9' : 'D1';
               const compTitle = isTamil
-                ? (isBhava ? 'D1 ராசி (ஒப்பீடு)' : (isD1 ? 'D9 நவாம்சம்' : 'D1 ராசி'))
-                : (isBhava ? 'D1 Rasi (Comparison)' : (isD1 ? 'D9 Navamsa' : 'D1 Rasi'));
+                ? (isBhava ? 'D1 ராசி (ஒப்பீடு)' : isGocharam ? 'D1 ராசி (ஜென்மம் ஒப்பீடு)' : (isD1 ? 'D9 நவாம்சம்' : 'D1 ராசி'))
+                : (isBhava ? 'D1 Rasi (Comparison)' : isGocharam ? 'D1 Rasi (Janma Comparison)' : (isD1 ? 'D9 Navamsa' : 'D1 Rasi'));
 
               return (
                 <div className="space-y-1.5">
@@ -961,15 +966,15 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
             })()}
           </div>
 
-          {/* Additional Bhava Chalit Diagnostics & Sripati Cusps (Rendered when Bhava Chalit is active) */}
+          {/* Additional Bava Chart Diagnostics & Sripati Cusps (Rendered when Bava Chart is active) */}
           {activeChartKey === 'Bhava' && (
             <div className="pt-2 space-y-3 border-t border-amber-900/15 dark:border-amber-500/20">
-              {/* 1. Bhava Shift (பாவக மாற்றம்) Card */}
+              {/* 1. Bava Shift (பாவக மாற்றம்) Card */}
               <div className="p-3.5 rounded-xl bg-amber-50/80 dark:bg-stone-800/60 border border-amber-900/15">
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 flex items-center gap-1.5">
                     <span>🔄</span>
-                    <span>{isTamil ? 'பாவக மாற்றம் ஆய்வு (Bhava Shifts vs Rasi)' : 'Bhava Shifts vs Rasi Analysis'}</span>
+                    <span>{isTamil ? 'பாவக மாற்றம் ஆய்வு (Bava Shifts vs Rasi)' : 'Bava Shifts vs Rasi Analysis'}</span>
                   </h4>
                   <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-300 border border-amber-900/10">
                     {horoscope?.bhavaShifts?.length || 0} {isTamil ? 'மாற்றங்கள்' : 'Shifts'}
@@ -985,7 +990,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                           <div className="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
                             <span>{isTamil ? sh.nameTa : sh.nameEn}</span>
                             <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950/60 text-[#7A1A22] dark:text-amber-300 font-bold">
-                              {isTamil ? `ராசி H${sh.rasiHouse} ➔ பாவக H${sh.chalitHouse}` : `Rasi H${sh.rasiHouse} ➔ Bhava H${sh.chalitHouse}`}
+                              {isTamil ? `ராசி H${sh.rasiHouse} ➔ பாவக H${sh.chalitHouse}` : `Rasi H${sh.rasiHouse} ➔ Bava H${sh.chalitHouse}`}
                             </span>
                           </div>
                           <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5">
@@ -1004,12 +1009,12 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                 )}
               </div>
 
-              {/* 2. Sripati 12 Bhava Cusps Table (ஆரம்பம், மத்திமம், முடிவு) */}
+              {/* 2. Sripati 12 Bava Cusps Table (ஆரம்பம், மத்திமம், முடிவு) */}
               {Array.isArray(horoscope?.sripatiBhavas) && horoscope.sripatiBhavas.length > 0 && (
                 <div className="p-3 rounded-xl bg-white dark:bg-stone-900 border border-amber-900/15 overflow-x-auto">
                   <div className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 mb-2 flex items-center gap-1.5">
                     <span>🏛️</span>
-                    <span>{isTamil ? 'ஸ்ரீபதி 12 பாவக ஆரம்ப, மத்திம, முடிவு அட்டவணை' : 'Sripati 12 Bhava Cusps (Start, Madhya, End)'}</span>
+                    <span>{isTamil ? 'ஸ்ரீபதி 12 பாவக ஆரம்ப, மத்திம, முடிவு அட்டவணை' : 'Sripati 12 Bava Cusps (Start, Madhya, End)'}</span>
                   </div>
                   <table className="w-full border-collapse text-[11px] text-left">
                     <thead>
@@ -1029,6 +1034,144 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                           <td className="py-1 px-2 font-mono">{RASHIS[b.startRasi]?.[isTamil ? 'ta' : 'en']} {b.startDMS}</td>
                           <td className="py-1 px-2 font-mono font-bold text-slate-900 dark:text-slate-100">{RASHIS[b.madhyaRasi]?.[isTamil ? 'ta' : 'en']} {b.madhyaDMS}</td>
                           <td className="py-1 px-2 font-mono">{RASHIS[b.endRasi]?.[isTamil ? 'ta' : 'en']} {b.endDMS}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Additional Gocharam Transit Diagnostics & Phalan (Rendered when Gocharam is active) */}
+          {activeChartKey === 'Gocharam' && horoscope?.gocharam && (
+            <div className="pt-2 space-y-3.5 border-t border-amber-900/15 dark:border-amber-500/20">
+              {/* Gocharam Header Banner */}
+              <div className="p-3.5 rounded-xl bg-gradient-to-r from-emerald-50 via-teal-50 to-amber-50 dark:from-emerald-950/40 dark:via-stone-900 dark:to-amber-950/30 border border-emerald-600/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">🪐</span>
+                  <div>
+                    <span className="font-bold text-emerald-900 dark:text-emerald-300">
+                      {isTamil ? 'தற்போதைய கோச்சார கிரக நிலைகள்' : 'Real-time Planetary Transits'}
+                    </span>
+                    <span className="text-stone-600 dark:text-stone-400 ml-2">
+                      ({isTamil ? `கணித்த நாள்: ${horoscope.gocharam.transitDateFormatted}` : `Transit Date: ${horoscope.gocharam.transitDateFormatted}`})
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="px-2.5 py-0.5 rounded text-[11px] font-bold bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 border border-amber-900/15">
+                    {isTamil ? `ஜென்ம ராசி: ${horoscope.gocharam.birthMoonRasiTa}` : `Birth Moon: ${horoscope.gocharam.birthMoonRasiEn}`}
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded text-[11px] font-bold bg-rose-100 dark:bg-rose-950 text-rose-900 dark:text-rose-300 border border-rose-900/15">
+                    {isTamil ? `ஜென்ம லக்னம்: ${horoscope.gocharam.birthLagnaRasiTa}` : `Birth Lagna: ${horoscope.gocharam.birthLagnaRasiEn}`}
+                  </span>
+                </div>
+              </div>
+
+              {/* 3 Summary Diagnostic Cards: Sade Sati, Guru Bala, Rahu-Ketu */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {/* Sade Sati Card */}
+                <div className={`p-3 rounded-xl border ${
+                  horoscope.gocharam.sadeSati?.isActive
+                    ? 'bg-amber-500/10 border-amber-500/30 dark:bg-amber-950/30'
+                    : 'bg-emerald-500/10 border-emerald-500/30 dark:bg-emerald-950/30'
+                }`}>
+                  <div className="flex items-center gap-1.5 font-bold text-xs mb-1">
+                    <span>{horoscope.gocharam.sadeSati?.isActive ? '⚠️' : '✅'}</span>
+                    <span className={horoscope.gocharam.sadeSati?.isActive ? 'text-amber-900 dark:text-amber-300' : 'text-emerald-900 dark:text-emerald-300'}>
+                      {isTamil ? horoscope.gocharam.sadeSati?.titleTa : horoscope.gocharam.sadeSati?.titleEn}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-stone-600 dark:text-stone-400">
+                    {isTamil ? horoscope.gocharam.sadeSati?.descTa : horoscope.gocharam.sadeSati?.descEn}
+                  </p>
+                </div>
+
+                {/* Guru Bala Card */}
+                <div className={`p-3 rounded-xl border ${
+                  horoscope.gocharam.guruBala?.hasGuruBala
+                    ? 'bg-emerald-500/10 border-emerald-500/30 dark:bg-emerald-950/30'
+                    : 'bg-blue-500/10 border-blue-500/30 dark:bg-blue-950/30'
+                }`}>
+                  <div className="flex items-center gap-1.5 font-bold text-xs mb-1">
+                    <span>{horoscope.gocharam.guruBala?.hasGuruBala ? '🌟' : 'ℹ️'}</span>
+                    <span className={horoscope.gocharam.guruBala?.hasGuruBala ? 'text-emerald-900 dark:text-emerald-300' : 'text-blue-900 dark:text-blue-300'}>
+                      {isTamil ? horoscope.gocharam.guruBala?.titleTa : horoscope.gocharam.guruBala?.titleEn}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-stone-600 dark:text-stone-400">
+                    {isTamil ? horoscope.gocharam.guruBala?.descTa : horoscope.gocharam.guruBala?.descEn}
+                  </p>
+                </div>
+
+                {/* Rahu Ketu Transit Axis Card */}
+                <div className="p-3 rounded-xl border bg-purple-500/10 border-purple-500/30 dark:bg-purple-950/30">
+                  <div className="flex items-center gap-1.5 font-bold text-xs mb-1">
+                    <span>🔮</span>
+                    <span className="text-purple-900 dark:text-purple-300">
+                      {isTamil ? horoscope.gocharam.rahuKetu?.titleTa : horoscope.gocharam.rahuKetu?.titleEn}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-stone-600 dark:text-stone-400">
+                    {isTamil ? horoscope.gocharam.rahuKetu?.descTa : (horoscope.gocharam.rahuKetu?.descEn || horoscope.gocharam.rahuKetu?.descTa)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Transit Planets Table */}
+              {Array.isArray(horoscope.gocharam.planets) && horoscope.gocharam.planets.length > 0 && (
+                <div className="p-3 rounded-xl bg-white dark:bg-stone-900 border border-amber-900/15 overflow-x-auto">
+                  <div className="text-xs font-bold text-[#7A1A22] dark:text-amber-300 mb-2 flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <span>📊</span>
+                      <span>{isTamil ? '9 கோச்சார கிரக சஞ்சார பலன்கள் (Gochara Phalan)' : '9 Transit Planetary Influences (Gochara Phalan)'}</span>
+                    </div>
+                    <span className="text-[10px] text-stone-500 dark:text-stone-400 font-normal">
+                      {isTamil ? '* சந்திரன் & லக்னத்திலிருந்து பாவ நிலைகள்' : '* Houses calculated from Birth Moon & Lagna'}
+                    </span>
+                  </div>
+                  <table className="w-full border-collapse text-[11px] text-left">
+                    <thead>
+                      <tr className="border-b border-amber-900/15 bg-amber-50/60 dark:bg-stone-800/50 font-bold text-stone-800 dark:text-stone-200">
+                        <th className="py-1.5 px-2">{isTamil ? 'கிரகம்' : 'Planet'}</th>
+                        <th className="py-1.5 px-2">{isTamil ? 'கோச்சார ராசி' : 'Transit Sign'}</th>
+                        <th className="py-1.5 px-2 text-center">{isTamil ? 'சந்திரனில் இருந்து' : 'From Moon'}</th>
+                        <th className="py-1.5 px-2 text-center">{isTamil ? 'லக்னத்தில் இருந்து' : 'From Lagna'}</th>
+                        <th className="py-1.5 px-2 text-center">{isTamil ? 'நிலை' : 'Status'}</th>
+                        <th className="py-1.5 px-2">{isTamil ? 'கோச்சார பலன்' : 'Gochara Phalan'}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-amber-900/10 dark:divide-stone-800">
+                      {horoscope.gocharam.planets.map(p => (
+                        <tr key={p.id} className="hover:bg-amber-50/40 dark:hover:bg-stone-800/30">
+                          <td className="py-1.5 px-2 font-bold text-[#7A1A22] dark:text-amber-300 whitespace-nowrap">
+                            <span className="font-mono mr-1">{p.symbol}</span>
+                            <span>{isTamil ? p.nameWithVakraTa : p.nameWithVakraEn}</span>
+                          </td>
+                          <td className="py-1.5 px-2 font-semibold text-stone-800 dark:text-stone-200 whitespace-nowrap">
+                            {isTamil ? p.transitRasiTa : p.transitRasiEn} <span className="font-mono text-[10px] text-stone-500 font-normal">({p.degInSign})</span>
+                          </td>
+                          <td className="py-1.5 px-2 text-center font-mono font-bold text-amber-900 dark:text-amber-300 whitespace-nowrap">
+                            {isTamil ? `${p.houseFromMoon}-ம் இடம்` : `House ${p.houseFromMoon}`}
+                          </td>
+                          <td className="py-1.5 px-2 text-center font-mono text-stone-600 dark:text-stone-400 whitespace-nowrap">
+                            {isTamil ? `${p.houseFromLagna}-ம் இடம்` : `House ${p.houseFromLagna}`}
+                          </td>
+                          <td className="py-1.5 px-2 text-center whitespace-nowrap">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                              p.statusType === 'subha'
+                                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-500/20'
+                                : p.statusType === 'vedha'
+                                  ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-500/20'
+                                  : 'bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-300 border border-stone-500/20'
+                            }`}>
+                              {isTamil ? p.statusBadgeTa : p.statusBadgeEn}
+                            </span>
+                          </td>
+                          <td className="py-1.5 px-2 text-stone-700 dark:text-stone-300 text-[11px]">
+                            {isTamil ? p.phalanTa : p.phalanEn}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
