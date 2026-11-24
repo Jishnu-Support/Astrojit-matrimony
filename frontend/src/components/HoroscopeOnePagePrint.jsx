@@ -621,7 +621,7 @@ export default function HoroscopeOnePagePrint({
                             <span className="w-1.5 h-1.5 border-b border-r border-black block" />
                           </div>
 
-                          <div className="font-black text-[15px] sm:text-[16px] text-[#7A1A22] leading-none tracking-widest uppercase">
+                          <div className="font-black text-[16px] sm:text-[17px] text-[#7A1A22] leading-none tracking-widest uppercase">
                             {chartTitle}
                           </div>
                         </td>
@@ -640,7 +640,7 @@ export default function HoroscopeOnePagePrint({
                   return (
                     <td
                       key={col}
-                      className="border border-black p-1 align-top relative"
+                      className="border border-black p-0.5 align-top relative"
                       style={{
                         background: '#FFFFFF',
                         width: '25%'
@@ -659,11 +659,11 @@ export default function HoroscopeOnePagePrint({
                         />
                       )}
 
-                      <div className="flex justify-between items-center text-[9.5px] font-bold text-stone-700 leading-none">
+                      <div className="flex justify-between items-center text-[10.5px] font-bold text-stone-700 leading-none">
                         <span className="truncate">{isTa ? signInfo.ta : signInfo.en}</span>
-                        <span className="opacity-50 text-[9px] font-mono">{signInfo.num}</span>
+                        <span className="opacity-50 text-[10px] font-mono">{signInfo.num}</span>
                       </div>
-                      <div className="text-[10.5px] font-black text-black flex flex-wrap gap-0.5 leading-snug items-start content-start mt-0.5">
+                      <div className="text-[11.5px] font-black text-black flex flex-wrap gap-0.5 leading-snug items-start content-start mt-0.5">
                         {content.split(',').map((item, pIdx) => {
                           const trim = item.trim();
                           if (!trim) return null;
@@ -835,21 +835,21 @@ export default function HoroscopeOnePagePrint({
               {/* ======================================================== */}
               <div
                 onClick={() => setBrandingModalOpen(true)}
-                className="py-1.5 px-2.5 text-center bg-[#FAF6EE] border-[1.5px] border-black rounded-none relative group cursor-pointer hover:ring-2 hover:ring-amber-600/40 transition-all"
+                className="py-1 px-2.5 text-center bg-[#FAF6EE] border-[1.5px] border-black rounded-none relative group cursor-pointer hover:ring-2 hover:ring-amber-600/40 transition-all"
                 title={isTa ? 'லெட்டர்ஹெட் அமைப்புகளைத் திருத்த கிளிக் செய்க' : 'Click to edit letterhead branding details'}
               >
                 {/* On-hover edit pill */}
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); setBrandingModalOpen(true); }}
-                  className="no-print absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity bg-[#7A1A22] text-white text-[10.5px] font-bold px-2 py-0.5 rounded shadow cursor-pointer flex items-center gap-1 z-10"
+                  className="no-print absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity bg-[#7A1A22] text-white text-[11px] font-bold px-2 py-0.5 rounded shadow cursor-pointer flex items-center gap-1 z-10"
                 >
                   <Edit className="w-2.5 h-2.5" />
                   <span>{isTa ? 'திருத்து' : 'Edit Header'}</span>
                 </button>
 
                 {/* Auspicious Invocation */}
-                <div className="text-[13px] sm:text-[14px] font-black text-[#7A1A22] tracking-widest mb-0.5">
+                <div className="text-[14px] sm:text-[15px] font-black text-[#7A1A22] tracking-widest mb-0.5">
                   {invocationText}
                 </div>
 
@@ -863,8 +863,8 @@ export default function HoroscopeOnePagePrint({
                       onError={e => { e.target.style.display = 'none'; }}
                     />
                     <div>
-                      <div className="text-[14px] font-black tracking-tight text-[#7A1A22] leading-none">ASTROJIT</div>
-                      <div className="text-[9px] font-bold text-stone-600 uppercase tracking-wider mt-0.5">
+                      <div className="text-[15px] font-black tracking-tight text-[#7A1A22] leading-none">ASTROJIT</div>
+                      <div className="text-[10px] font-bold text-stone-600 uppercase tracking-wider mt-0.5">
                         {isTa ? 'வேத ஜோதிடம்' : 'Vedic Astrology'}
                       </div>
                     </div>
@@ -872,21 +872,21 @@ export default function HoroscopeOnePagePrint({
 
                   {/* Center: Astrologer / Organization Letterhead Details */}
                   <div className="text-center flex-1 px-1">
-                    <h1 className="text-[15.5px] sm:text-[17px] font-black tracking-tight text-black leading-snug">
+                    <h1 className="text-[16.5px] sm:text-[18px] font-black tracking-tight text-black leading-snug">
                       {astrologerTitle}
                     </h1>
                     {astrologerSubTitle && (
-                      <div className="text-[10.5px] sm:text-[11px] font-bold text-stone-800 leading-tight mt-0.5">
+                      <div className="text-[11.5px] sm:text-[12px] font-bold text-stone-800 leading-tight mt-0.5">
                         {astrologerSubTitle}
                       </div>
                     )}
                     {astrologerAddress && (
-                      <div className="text-[9.5px] sm:text-[10px] text-stone-600 leading-tight mt-0.5">
+                      <div className="text-[10.5px] sm:text-[11px] text-stone-600 leading-tight mt-0.5">
                         {astrologerAddress}
                       </div>
                     )}
                     {astrologerContact && (
-                      <div className="text-[9px] sm:text-[9.5px] font-mono font-semibold text-stone-700 leading-tight mt-0.5">
+                      <div className="text-[10px] sm:text-[10.5px] font-mono font-semibold text-stone-700 leading-tight mt-0.5">
                         {astrologerContact}
                       </div>
                     )}
@@ -894,10 +894,10 @@ export default function HoroscopeOnePagePrint({
 
                   {/* Right: Lahiri Ayanamsa Badge & Degree */}
                   <div className="w-28 sm:w-32 shrink-0 flex flex-col items-end justify-center text-right">
-                    <span className="inline-block px-2 py-0.5 rounded-none text-[9.5px] sm:text-[10px] font-bold bg-amber-100 text-[#7A1A22] border border-black shadow-2xs">
+                    <span className="inline-block px-2 py-0.5 rounded-none text-[10.5px] sm:text-[11px] font-bold bg-amber-100 text-[#7A1A22] border border-black shadow-2xs">
                       {isTa ? 'திருக்கணித லஹரி' : 'Lahiri Ayanamsa'}
                     </span>
-                    <div className="text-[9px] sm:text-[9.5px] font-mono font-bold text-stone-700 mt-0.5">
+                    <div className="text-[10px] sm:text-[10.5px] font-mono font-bold text-stone-700 mt-0.5">
                       {ayanamsaDms}
                     </div>
                   </div>
@@ -905,13 +905,13 @@ export default function HoroscopeOnePagePrint({
               </div>
 
               {/* Parallel Horizontal Double Rule separating Header and Matrix */}
-              <div className="border-b-[1.5px] border-double border-black my-0.5 sm:my-1" />
+              <div className="border-b-[1.5px] border-double border-black my-0.5" />
 
               {/* ======================================================== */}
               {/* BLOCK 2: NATIVE & PANCHANGAM 2-COLUMN MATRIX WITH COLONS */}
               {/* (Matches user sketch with vertical dotted colon alignment)*/}
               {/* ======================================================== */}
-              <div className="grid grid-cols-2 gap-x-6 px-1.5 text-[10.5px] sm:text-[11px] leading-tight">
+              <div className="grid grid-cols-2 gap-x-6 px-1.5 text-[11.5px] sm:text-[12px] leading-tight">
                 {/* Left Column (12 Lines) */}
                 <div className="space-y-0.5">
                   {leftColumnFields.map((item, idx) => (
@@ -955,13 +955,13 @@ export default function HoroscopeOnePagePrint({
               {/* (Sits across full width between Details and Charts)       */}
               {/* ======================================================== */}
               <div>
-                <div className="text-center font-black text-[11px] sm:text-[11.5px] text-[#7A1A22] tracking-wider mb-0.5 uppercase">
+                <div className="text-center font-black text-[12px] sm:text-[12.5px] text-[#7A1A22] tracking-wider mb-0.5 uppercase">
                   {isTa
                     ? 'துல்லியமான நிராயண கிரக நிலைகள்'
                     : 'Nirayana Planetary Positions Table'}
                 </div>
                 <div className="border-[1.5px] border-black rounded-none overflow-hidden">
-                  <table className="w-full border-collapse text-[10px] sm:text-[10.5px]">
+                  <table className="w-full border-collapse text-[11px] sm:text-[11.5px]">
                     <thead>
                       <tr className="bg-[#FAF6EE] border-b-[1.5px] border-black font-bold text-black" style={{ height: '19px' }}>
                         <th className="py-0.2 px-2 text-left">{isTa ? 'கிரகம்' : 'Planet'}</th>
@@ -1001,13 +1001,13 @@ export default function HoroscopeOnePagePrint({
               {/* ======================================================== */}
               <div className="grid grid-cols-2 gap-3 pt-0.5">
                 <div>
-                  <div className="text-center font-black text-[11px] sm:text-[11.5px] text-[#7A1A22] mb-0.5 uppercase tracking-wide">
+                  <div className="text-center font-black text-[12px] sm:text-[12.5px] text-[#7A1A22] mb-0.5 uppercase tracking-wide">
                     {isTa ? 'ராசி கட்டம் (D1)' : 'Rasi Chart (D1)'}
                   </div>
                   {renderSouthIndianGrid(rasiGridContent, isTa ? 'ராசி (D1)' : 'Rasi (D1)')}
                 </div>
                 <div>
-                  <div className="text-center font-black text-[11px] sm:text-[11.5px] text-[#7A1A22] mb-0.5 uppercase tracking-wide">
+                  <div className="text-center font-black text-[12px] sm:text-[12.5px] text-[#7A1A22] mb-0.5 uppercase tracking-wide">
                     {isTa ? 'நவாம்ச கட்டம் (D9)' : 'Navamsha Chart (D9)'}
                   </div>
                   {renderSouthIndianGrid(navamsaGridContent, isTa ? 'நவாம்சம் (D9)' : 'Navamsha (D9)')}
@@ -1020,7 +1020,7 @@ export default function HoroscopeOnePagePrint({
               {/* ======================================================== */}
               {/* BLOCK 5: ASTROLOGICAL SUMMARY & 4 ROLES (Footer Row)     */}
               {/* ======================================================== */}
-              <div className="border-[1.5px] border-stone-400 p-1.5 bg-[#FFFDF9] text-[10px] sm:text-[10.5px] leading-tight space-y-1">
+              <div className="border-[1.5px] border-stone-400 p-1.5 bg-[#FFFDF9] text-[11px] sm:text-[11.5px] leading-tight space-y-1">
                 {/* Dosha & Raja Yogas Row */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 border-b border-stone-300 pb-1">
                   <div>
@@ -1046,7 +1046,7 @@ export default function HoroscopeOnePagePrint({
                 </div>
 
                 {/* Four Classical Roles of Current Dasha Lord (நடப்பு தசா நாதனின் நால்வகை நிலைகள்) */}
-                <div className="flex flex-wrap items-center justify-between text-[10px] sm:text-[10.5px]">
+                <div className="flex flex-wrap items-center justify-between text-[11px] sm:text-[11.5px]">
                   <span className="font-bold text-[#7A1A22]">
                     {isTa
                       ? `நடப்பு தசா நாதன் (${currentDashaInfo.lordName}) நால்வகை நிலைகள்:`
@@ -1072,7 +1072,7 @@ export default function HoroscopeOnePagePrint({
               </div>
 
               {/* Bottom Copyright & Timestamp */}
-              <div className="text-center text-[9px] font-semibold text-stone-600 pt-0.5 pb-0">
+              <div className="text-center text-[10px] font-semibold text-stone-600 pt-0.5 pb-0">
                 Astrojit . All rights reserved. • www.astrojit.co.in • {printedDateTime}
               </div>
             </div>
