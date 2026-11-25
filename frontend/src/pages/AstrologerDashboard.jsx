@@ -36,7 +36,6 @@ import { useAuth } from '../context/AuthContext';
 import { useLang } from '../i18n';
 import { API } from '../api';
 import ClientRegistrationReceiptModal from '../components/ClientRegistrationReceiptModal';
-import KundliMatchmaking from '../components/KundliMatchmaking';
 import TamilPoruthamCard from '../components/TamilPoruthamCard';
 import HoroscopeHub from '../components/HoroscopeHub';
 import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
@@ -259,7 +258,6 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   });
   const [submittingReview, setSubmittingReview] = useState(false);
   const [reviewSuccessMsg, setReviewSuccessMsg] = useState('');
-  const [showManualCalculator, setShowManualCalculator] = useState(false);
 
   // Appointments & Consultations State for Astrologer
   const [appointments, setAppointments] = useState([]);
@@ -2081,20 +2079,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
             </div>
           )}
 
-          {/* Optional Toggle to Manual Match Calculator */}
-          <div className="pt-4 border-t border-slate-200 text-center">
-            <button
-              onClick={() => setShowManualCalculator(!showManualCalculator)}
-              className="text-xs text-indigo-700 hover:text-indigo-900 font-bold cursor-pointer inline-flex items-center gap-1.5 bg-indigo-50 hover:bg-indigo-100 px-3.5 py-1.5 rounded-xl transition-all"
-            >
-              <span>{showManualCalculator ? t('hideManualCalcToggle') : t('needManualCalcToggle')}</span>
-            </button>
-            {showManualCalculator && (
-              <div className="mt-4 text-left">
-                <KundliMatchmaking />
-              </div>
-            )}
-          </div>
+
         </div>
       )}
 
