@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { useLang } from '../i18n';
 import { useAuth } from '../context/AuthContext';
-import { useClientBirth } from '../context/ClientBirthContext';
+import { useClientBirth, to24HourTime } from '../context/ClientBirthContext';
 import { API } from '../api';
 import ClientRegistrationReceiptModal from './ClientRegistrationReceiptModal';
 import { COUNTRIES, GEO_DATA, parseCoordinateToDec } from '../data/geoCoordinates';
