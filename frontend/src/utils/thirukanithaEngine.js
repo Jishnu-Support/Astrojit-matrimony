@@ -3307,7 +3307,7 @@ export function calculateThirukanithaHoroscope({
       dobTime: dobTime12 || dobTime,
       placeName: city || placeName || '',
       age: (() => {
-        if (!dob) return { years: 0, months: 0, days: 0 };
+        if (!dob) return { years: 0, months: 0, days: 0, textTa: '0 வயது', textEn: '0 Years', shortTa: '0 வயது', shortEn: '0 Years' };
         const parts = String(dob).split(/[-/.]/);
         let y, m, d;
         if (parts.length === 3) {
@@ -3321,7 +3321,7 @@ export function calculateThirukanithaHoroscope({
             y = parseInt(parts[2], 10);
           }
         }
-        if (!y || isNaN(y)) return { years: 0, months: 0, days: 0 };
+        if (!y || isNaN(y)) return { years: 0, months: 0, days: 0, textTa: '0 வயது', textEn: '0 Years', shortTa: '0 வயது', shortEn: '0 Years' };
         const now = new Date();
         let years = now.getFullYear() - y;
         let months = (now.getMonth() + 1) - (m || 1);
@@ -3334,7 +3334,20 @@ export function calculateThirukanithaHoroscope({
           years--;
           months += 12;
         }
-        return { years: Math.max(0, years), months: Math.max(0, months), days: Math.max(0, days) };
+        const safeY = Math.max(0, years);
+        const safeM = Math.max(0, months);
+        const safeD = Math.max(0, days);
+        const detailTa = (safeM > 0 || safeD > 0) ? ` (${safeY}ஆ ${safeM}மா ${safeD}நா)` : '';
+        const detailEn = (safeM > 0 || safeD > 0) ? ` (${safeY}y ${safeM}m ${safeD}d)` : '';
+        return {
+          years: safeY,
+          months: safeM,
+          days: safeD,
+          textTa: `${safeY} வயது${detailTa}`,
+          textEn: `${safeY} Years${detailEn}`,
+          shortTa: `${safeY} வயது`,
+          shortEn: `${safeY} Years`
+        };
       })(),
       tamilDate: computeTamilDate(lamSun_nirayana, dob),
       ayanam: (() => {

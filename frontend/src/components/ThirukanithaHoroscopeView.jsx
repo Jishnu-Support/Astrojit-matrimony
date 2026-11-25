@@ -618,6 +618,22 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                   </div>
 
                   <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'வயது' : 'Age'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block break-words">
+                      {(() => {
+                        const ageObj = horoscope.summary?.age;
+                        if (ageObj && (ageObj.textTa || ageObj.textEn)) {
+                          return isTamil ? (ageObj.textTa || `${ageObj.years} வயது`) : (ageObj.textEn || `${ageObj.years} Years`);
+                        }
+                        if (ageObj && typeof ageObj.years === 'number') {
+                          return `${ageObj.years} ${isTamil ? 'வயது' : 'Years'}`;
+                        }
+                        return '---';
+                      })()}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15">
                     <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'பிறந்த நேரம்' : 'Time of Birth'}</span>
                     <strong className="text-xs sm:text-sm font-mono font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block break-words">
                       {horoscope.summary?.dobTime || horoscope.meta?.dobTime12 || horoscope.meta?.dobTime || '---'}
@@ -652,7 +668,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     </strong>
                   </div>
 
-                  <div className="p-2.5 bg-emerald-50/70 dark:bg-emerald-950/30 rounded-xl border border-emerald-400/40 col-span-2 sm:col-span-1 md:col-span-1">
+                  <div className="p-2.5 bg-emerald-50/70 dark:bg-emerald-950/30 rounded-xl border border-emerald-400/40 col-span-2 sm:col-span-4">
                     <span className="block text-[10px] text-emerald-800 dark:text-emerald-400 uppercase font-bold">{isTamil ? 'நடப்பு தசா - புக்தி' : 'Current Dasha - Bhukti'}</span>
                     <strong className="text-xs sm:text-sm font-bold text-emerald-950 dark:text-emerald-300 mt-0.5 block break-words whitespace-normal leading-snug">
                       {isTamil ? (horoscope.summary?.currentDashaToday?.textTa || horoscope.summary?.dashaBalance?.textTa) : (horoscope.summary?.currentDashaToday?.textEn || horoscope.summary?.dashaBalance?.textEn)}
