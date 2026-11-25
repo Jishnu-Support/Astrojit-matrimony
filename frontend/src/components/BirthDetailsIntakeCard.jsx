@@ -136,7 +136,7 @@ export default function BirthDetailsIntakeCard({
     return GEO_DATA[currentCountry]?.[currentState] || [];
   }, [currentCountry, currentState]);
 
-  // Instant Letter-by-Letter city matching across state & all India
+  // Instant Letter-by-Letter city matching strictly for the selected state
   const citySuggestions = useMemo(() => {
     const q = (cityInput || '').trim().toLowerCase();
     const stateCities = GEO_DATA[currentCountry]?.[currentState] || [];
@@ -151,25 +151,8 @@ export default function BirthDetailsIntakeCard({
     // 2. Cities in current state containing query letter(s)
     const containsInState = stateCities.filter(c => !(c.name || '').toLowerCase().startsWith(q) && (c.name || '').toLowerCase().includes(q));
 
-    let combined = [...startsInState, ...containsInState];
-
-    // 3. Search across all other states if fewer than 10 matches
-    if (combined.length < 10 && GEO_DATA[currentCountry]) {
-      const allStates = Object.keys(GEO_DATA[currentCountry]);
-      for (const st of allStates) {
-        if (st === currentState) continue;
-        const otherList = GEO_DATA[currentCountry][st] || [];
-        for (const c of otherList) {
-          if ((c.name || '').toLowerCase().includes(q)) {
-            combined.push({ ...c, otherState: st });
-            if (combined.length >= 25) break;
-          }
-        }
-        if (combined.length >= 25) break;
-      }
-    }
-
-    return combined.slice(0, 30);
+    // Strictly return only cities from the selected state
+    return [...startsInState, ...containsInState].slice(0, 50);
   }, [cityInput, currentCountry, currentState]);
 
   // Search debounce timer ref
@@ -328,7 +311,6 @@ export default function BirthDetailsIntakeCard({
 
   const handleSelectCitySuggestion = (c) => {
     const cityName = c.name;
-    const finalState = c.otherState || currentState;
 
     const latVal = c.latDec !== undefined ? c.latDec : c.lat;
     const lonVal = c.lonDec !== undefined ? c.lonDec : c.lon;
@@ -338,7 +320,7 @@ export default function BirthDetailsIntakeCard({
     setShowCityDropdown(false);
 
     updateFields({
-      state: finalState,
+      state: currentState,
       city: cityName,
       lat: latVal,
       lon: lonVal,
@@ -1063,11 +1045,6 @@ Shubham Bhavatu! 🙏`;
                       <div className="flex items-center gap-1.5">
                         <MapPin className="w-3.5 h-3.5 text-[#7A1A22] dark:text-amber-400 shrink-0" />
                         <span className="font-semibold">{item.name}</span>
-                        {item.otherState && (
-                          <span className="text-[10px] text-stone-400 font-normal">
-                            ({item.otherState})
-                          </span>
-                        )}
                       </div>
                       <span className="text-[10px] font-mono text-stone-500 dark:text-stone-400">
                         ({typeof item.latDec === 'number' ? item.latDec.toFixed(2) : item.lat}°, {typeof item.lonDec === 'number' ? item.lonDec.toFixed(2) : item.lon}°)

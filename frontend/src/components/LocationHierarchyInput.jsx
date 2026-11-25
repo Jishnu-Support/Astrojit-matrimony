@@ -67,35 +67,14 @@ export default function LocationHierarchyInput({
     // Priority 2: Cities in current state that contain query
     const containsInState = stateCities.filter(c => !c.name.toLowerCase().startsWith(query) && c.name.toLowerCase().includes(query));
 
-    let combined = [...startsInState, ...containsInState];
-
-    // Priority 3: If matches in current state are fewer than 6, search across other states of the country
-    if (combined.length < 6) {
-      const allStates = Object.keys(GEO_DATA[country] || {});
-      for (const st of allStates) {
-        if (st === state) continue;
-        const otherCities = GEO_DATA[country]?.[st] || [];
-        for (const c of otherCities) {
-          if (c.name.toLowerCase().includes(query)) {
-            combined.push({ ...c, otherState: st });
-            if (combined.length >= 15) break;
-          }
-        }
-        if (combined.length >= 15) break;
-      }
-    }
-
-    return combined.slice(0, 15);
+    // Strictly return only cities from the selected state
+    return [...startsInState, ...containsInState].slice(0, 30);
   }, [country, state, cityInput]);
 
   // Handle selecting a city from suggestions
   const handleSelectSuggestion = (item) => {
     const selectedCity = item.name;
-    const finalState = item.otherState || state;
 
-    if (item.otherState && item.otherState !== state) {
-      setState(item.otherState);
-    }
     setCity(selectedCity);
     setCityInput(selectedCity);
     setShowSuggestions(false);
@@ -103,7 +82,7 @@ export default function LocationHierarchyInput({
     if (onLocationChange) {
       onLocationChange({
         country,
-        state: finalState,
+        state,
         city: selectedCity,
         lat: item.latDec || item.lat,
         lon: item.lonDec || item.lon
