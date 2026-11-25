@@ -299,11 +299,41 @@ function calculateTamilPoruthams(boyInput, girlInput) {
 
   const totalPoints = poruthams.reduce((sum, p) => sum + p.points, 0);
 
+  const boyDetails = {
+    name: boyInput.name || 'Groom',
+    nakshatra: boyNak.name,
+    nakshatraTamil: boyNak.tamil,
+    rashi: RASHIS[boySignIdx]?.name || boyNak.rashi,
+    rashiTamil: RASHIS[boySignIdx]?.tamil,
+    gana: boyNak.gana,
+    yoni: boyNak.yoni,
+    rajju: boyNak.rajju,
+    rajjuDirection: boyNak.index <= 13 ? 'Aroha' : 'Avaroha',
+    nadi: boyNak.nadi || (boyNak.index % 3 === 0 ? 'Adi' : boyNak.index % 3 === 1 ? 'Madhya' : 'Antya'),
+    vriksha: boyNak.vriksha || 'Pala',
+  };
+
+  const girlDetails = {
+    name: girlInput.name || 'Bride',
+    nakshatra: girlNak.name,
+    nakshatraTamil: girlNak.tamil,
+    rashi: RASHIS[girlSignIdx]?.name || girlNak.rashi,
+    rashiTamil: RASHIS[girlSignIdx]?.tamil,
+    gana: girlNak.gana,
+    yoni: girlNak.yoni,
+    rajju: girlNak.rajju,
+    rajjuDirection: girlNak.index <= 13 ? 'Aroha' : 'Avaroha',
+    nadi: girlNak.nadi || (girlNak.index % 3 === 0 ? 'Adi' : girlNak.index % 3 === 1 ? 'Madhya' : 'Antya'),
+    vriksha: girlNak.vriksha || 'Vanni',
+  };
+
   return {
     poruthams,
     totalPoints,
     totalScore: totalPoints,
     maxPoints: 10,
+    boyDetails,
+    girlDetails,
     isRajjuMatching: rajjuPass,
     isDinaMatching: dinaPass,
     verdict: totalPoints >= 7 ? 'Uttamam' : totalPoints >= 5 ? 'Madhyamam' : 'Adhamam',

@@ -29,6 +29,8 @@ import {
   RefreshCw,
   Key,
   Edit3,
+  RotateCcw,
+  PlusCircle,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../i18n';
@@ -74,7 +76,38 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   const [isSearching, setIsSearching] = useState(false);
   const [showSearchKundli, setShowSearchKundli] = useState(false);
 
-  // Live Matchmaking with Partner State
+  // Live Matchmaking with Partner State (Support both existing client lookup & adding new couple manually)
+  const [person1Mode, setPerson1Mode] = useState('client'); // 'client' | 'manual'
+  const [manualPerson1Details, setManualPerson1Details] = useState({
+    name: '',
+    gender: 'male',
+    dob: '',
+    dobTime: '',
+    dobPlace: '',
+    lat: 11.6643,
+    lon: 78.1460
+  });
+
+  // Calculate live Thirukanitha Horoscope for Person 1 when in manual mode
+  const manualPerson1Horoscope = React.useMemo(() => {
+    if (!manualPerson1Details.dob) return null;
+    try {
+      const parts = String(manualPerson1Details.dob).split(/[-/.]/);
+      if (parts.length !== 3) return null;
+      return calculateThirukanithaHoroscope({
+        name: manualPerson1Details.name || 'Person 1',
+        dob: manualPerson1Details.dob,
+        dobTime: manualPerson1Details.dobTime || '12:00',
+        city: manualPerson1Details.dobPlace || 'Salem',
+        placeName: manualPerson1Details.dobPlace || 'Salem',
+        lat: manualPerson1Details.lat || 11.6643,
+        lon: manualPerson1Details.lon || 78.1460
+      });
+    } catch {
+      return null;
+    }
+  }, [manualPerson1Details.dob, manualPerson1Details.dobTime, manualPerson1Details.dobPlace, manualPerson1Details.name]);
+
   const [partnerDetails, setPartnerDetails] = useState({
     name: '',
     gender: 'female',
@@ -107,6 +140,28 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   const [activeClientMatchReport, setActiveClientMatchReport] = useState(null);
   const [calculatingActiveMatch, setCalculatingActiveMatch] = useState(false);
   const [activeMatchTab, setActiveMatchTab] = useState('tamil');
+
+  const handleResetMatchmaking = () => {
+    setPartnerDetails({
+      name: '',
+      gender: 'female',
+      dob: '',
+      dobTime: '',
+      dobPlace: '',
+      lat: 13.0827,
+      lon: 80.2707
+    });
+    setManualPerson1Details({
+      name: '',
+      gender: 'male',
+      dob: '',
+      dobTime: '',
+      dobPlace: '',
+      lat: 11.6643,
+      lon: 78.1460
+    });
+    setActiveClientMatchReport(null);
+  };
 
   // Astrologer Profile & 1-Pager Header Form State
   const [profileForm, setProfileForm] = useState({
@@ -418,76 +473,110 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   };
 
   const handleCalculateActiveMatch = async () => {
+    const isP1Manual = person1Mode === 'manual';
+
+    if (isP1Manual) {
+      if (!manualPerson1Details.name?.trim() || !manualPerson1Details.dob?.trim()) {
+        alert(
+          lang === 'ta'
+            ? 'தயவுசெய்து நபர் 1 இன் பெயர் மற்றும் பிறந்த தேதியை உள்ளிடவும்.'
+            : 'Please enter Person 1 Name and Birth Date.'
+        );
+        return;
+      }
+    } else {
+      if (!activeBirthData?.name || !activeBirthData?.dob) {
+        alert(
+          lang === 'ta'
+            ? 'தயவுசெய்து மேலே உள்ள தேடலில் ஒரு வாடிக்கையாளரை தேர்ந்தெடுக்கவும் அல்லது "கைமுறையாக உள்ளிடு" தேர்வை சொடுக்கவும்.'
+            : 'Please select an active client from search above or switch to "Enter Manually".'
+        );
+        return;
+      }
+    }
+
     if (!partnerDetails.name?.trim() || !partnerDetails.dob?.trim()) {
-      alert(lang === 'ta' ? 'தயவுசெய்து வரனின் பெயர் மற்றும் பிறந்த தேதியை உள்ளிடவும்.' : 'Please enter Partner Name and Birth Date.');
+      alert(
+        lang === 'ta'
+          ? 'தயவுசெய்து வரனின் பெயர் மற்றும் பிறந்த தேதியை உள்ளிடவும்.'
+          : 'Please enter Partner Name and Birth Date.'
+      );
       return;
     }
+
     setCalculatingActiveMatch(true);
     try {
-      const isClientMale = (activeBirthData.gender || 'male').toLowerCase() !== 'female';
-      const clientNak = calculatedHoroscope?.summary?.nakshatraEn || (typeof calculatedHoroscope?.summary?.moonNak === 'number' && NAKSHATRAS[calculatedHoroscope.summary.moonNak]?.en);
-      const clientRasi = calculatedHoroscope?.summary?.moonSignEn || (typeof calculatedHoroscope?.summary?.moonRasi === 'number' && RASHIS[calculatedHoroscope.summary.moonRasi]?.en);
-      const partnerNak = partnerHoroscope?.summary?.nakshatraEn || (typeof partnerHoroscope?.summary?.moonNak === 'number' && NAKSHATRAS[partnerHoroscope.summary.moonNak]?.en);
-      const partnerRasi = partnerHoroscope?.summary?.moonSignEn || (typeof partnerHoroscope?.summary?.moonRasi === 'number' && RASHIS[partnerHoroscope.summary.moonRasi]?.en);
+      const activeP1Horoscope = isP1Manual ? manualPerson1Horoscope : calculatedHoroscope;
+      const p1Gender = isP1Manual ? (manualPerson1Details.gender || 'male') : (activeBirthData?.gender || 'male');
+      const isP1Male = (p1Gender || 'male').toLowerCase() !== 'female';
 
-      const boyData = isClientMale
+      const p1Nak = activeP1Horoscope?.summary?.nakshatraEn ||
+        activeP1Horoscope?.summary?.nakshatra ||
+        (typeof activeP1Horoscope?.summary?.moonNak === 'number' && NAKSHATRAS[activeP1Horoscope.summary.moonNak]?.en) ||
+        (!isP1Manual ? clientProfile?.nakshatra : '');
+      const p1Rasi = activeP1Horoscope?.summary?.moonSignEn ||
+        activeP1Horoscope?.summary?.moonSign ||
+        activeP1Horoscope?.summary?.rasiEn ||
+        (typeof activeP1Horoscope?.summary?.moonRasi === 'number' && RASHIS[activeP1Horoscope.summary.moonRasi]?.en) ||
+        (!isP1Manual ? clientProfile?.rasi : '');
+      const p1Pada = activeP1Horoscope?.summary?.moonPada || 1;
+
+      const partnerNak = partnerHoroscope?.summary?.nakshatraEn ||
+        partnerHoroscope?.summary?.nakshatra ||
+        (typeof partnerHoroscope?.summary?.moonNak === 'number' && NAKSHATRAS[partnerHoroscope.summary.moonNak]?.en);
+      const partnerRasi = partnerHoroscope?.summary?.moonSignEn ||
+        partnerHoroscope?.summary?.moonSign ||
+        partnerHoroscope?.summary?.rasiEn ||
+        (typeof partnerHoroscope?.summary?.moonRasi === 'number' && RASHIS[partnerHoroscope.summary.moonRasi]?.en);
+      const partnerPada = partnerHoroscope?.summary?.moonPada || 1;
+
+      const p1DataObj = isP1Manual
         ? {
-            name: activeBirthData.name || 'Groom',
+            name: manualPerson1Details.name.trim(),
+            dob: manualPerson1Details.dob,
+            dobTime: manualPerson1Details.dobTime || '12:00',
+            dobPlace: manualPerson1Details.dobPlace || 'Salem',
+            lat: manualPerson1Details.lat || 11.6643,
+            lon: manualPerson1Details.lon || 78.1460,
+            starNakshatra: p1Nak,
+            nakshatra: p1Nak,
+            moonSign: p1Rasi,
+            rasi: p1Rasi,
+            rasiMoonSign: p1Rasi,
+            pada: p1Pada
+          }
+        : {
+            name: activeBirthData.name || 'Client',
             dob: activeBirthData.dob,
             dobTime: activeBirthData.dobTime || '10:30',
             dobPlace: activeBirthData.city || activeBirthData.placeName || 'Salem',
             lat: activeBirthData.lat || 11.6643,
             lon: activeBirthData.lon || 78.1460,
-            starNakshatra: clientNak,
-            nakshatra: clientNak,
-            moonSign: clientRasi,
-            rasi: clientRasi,
-            rasiMoonSign: clientRasi,
-            pada: calculatedHoroscope?.summary?.moonPada || 1
-          }
-        : {
-            name: partnerDetails.name?.trim() || 'Groom',
-            dob: partnerDetails.dob,
-            dobTime: partnerDetails.dobTime || '12:00',
-            dobPlace: partnerDetails.dobPlace || 'Chennai',
-            lat: partnerDetails.lat || 13.0827,
-            lon: partnerDetails.lon || 80.2707,
-            starNakshatra: partnerNak,
-            nakshatra: partnerNak,
-            moonSign: partnerRasi,
-            rasi: partnerRasi,
-            rasiMoonSign: partnerRasi,
-            pada: partnerHoroscope?.summary?.moonPada || 1
+            starNakshatra: p1Nak,
+            nakshatra: p1Nak,
+            moonSign: p1Rasi,
+            rasi: p1Rasi,
+            rasiMoonSign: p1Rasi,
+            pada: p1Pada
           };
-      const girlData = isClientMale
-        ? {
-            name: partnerDetails.name?.trim() || 'Bride',
-            dob: partnerDetails.dob,
-            dobTime: partnerDetails.dobTime || '12:00',
-            dobPlace: partnerDetails.dobPlace || 'Chennai',
-            lat: partnerDetails.lat || 13.0827,
-            lon: partnerDetails.lon || 80.2707,
-            starNakshatra: partnerNak,
-            nakshatra: partnerNak,
-            moonSign: partnerRasi,
-            rasi: partnerRasi,
-            rasiMoonSign: partnerRasi,
-            pada: partnerHoroscope?.summary?.moonPada || 1
-          }
-        : {
-            name: activeBirthData.name || 'Bride',
-            dob: activeBirthData.dob,
-            dobTime: activeBirthData.dobTime || '10:30',
-            dobPlace: activeBirthData.city || activeBirthData.placeName || 'Salem',
-            lat: activeBirthData.lat || 11.6643,
-            lon: activeBirthData.lon || 78.1460,
-            starNakshatra: clientNak,
-            nakshatra: clientNak,
-            moonSign: clientRasi,
-            rasi: clientRasi,
-            rasiMoonSign: clientRasi,
-            pada: calculatedHoroscope?.summary?.moonPada || 1
-          };
+
+      const partnerDataObj = {
+        name: partnerDetails.name.trim(),
+        dob: partnerDetails.dob,
+        dobTime: partnerDetails.dobTime || '12:00',
+        dobPlace: partnerDetails.dobPlace || 'Chennai',
+        lat: partnerDetails.lat || 13.0827,
+        lon: partnerDetails.lon || 80.2707,
+        starNakshatra: partnerNak,
+        nakshatra: partnerNak,
+        moonSign: partnerRasi,
+        rasi: partnerRasi,
+        rasiMoonSign: partnerRasi,
+        pada: partnerPada
+      };
+
+      const boyData = isP1Male ? p1DataObj : partnerDataObj;
+      const girlData = isP1Male ? partnerDataObj : p1DataObj;
 
       const report = await API.calculateMatch(boyData, girlData);
       setActiveClientMatchReport(report);
@@ -1277,221 +1366,417 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
           />
 
           {/* Live Client Matchmaking (10 Poruthams & Compatibility) Analyzer */}
-          <div className="bg-white border border-rose-200/80 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-3 border-b border-rose-100">
-              <div>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-                  <Heart className="w-5 h-5 text-rose-600 fill-rose-600/20" />
-                  <span>{lang === 'ta' ? 'நேரலை திருமணப் பொருத்தம் (10 பொருத்தங்கள் & குணங்கள்)' : 'Live Client Matchmaking (10 Poruthams & Gunas)'}</span>
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  {lang === 'ta'
-                    ? 'மேலே உள்ள கிளையண்ட் விபரங்களுடன் வரவிருக்கும் வரனின் ஜாதகத்தை ஒப்பிட்டு உடனடியாக 10 பொருத்தங்களை கணக்கிடுங்கள்.'
-                    : 'Compare the active client above with prospective partner and evaluate full 10 Poruthams & Ashtakoota.'}
-                </p>
-              </div>
+          {(() => {
+            const isP1Manual = person1Mode === 'manual';
+            const p1Gender = isP1Manual ? (manualPerson1Details.gender || 'male') : (activeBirthData?.gender || 'male');
+            const isP1Male = (p1Gender || 'male').toLowerCase() !== 'female';
 
-              <button
-                type="button"
-                onClick={handleCalculateActiveMatch}
-                disabled={calculatingActiveMatch}
-                className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-xs transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-              >
-                {calculatingActiveMatch ? <Sparkles className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                <span>{lang === 'ta' ? 'பொருத்தம் கணக்கிடுக' : 'Calculate 10 Poruthams'}</span>
-              </button>
-            </div>
-
-            {/* Comparison Input Grid: Active Client vs Partner */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-              {/* Active Client (Person 1) */}
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2.5">
-                <div className="flex justify-between items-center pb-2 border-b border-slate-200">
-                  <span className="font-bold text-indigo-900 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-indigo-600" />
-                    {(activeBirthData?.gender || 'male').toLowerCase() === 'female'
-                      ? (lang === 'ta' ? 'மணமகள் (Active Client)' : 'Bride (Active Client)')
-                      : (lang === 'ta' ? 'மணமகன் (Active Client)' : 'Groom (Active Client)')}
-                  </span>
-                  <span className="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-full">
-                    {activeBirthData?.gender || 'male'}
-                  </span>
-                </div>
-                <div className="space-y-1">
-                  <p className="font-bold text-slate-900 text-sm">{activeBirthData?.name || '—'}</p>
-                  <p className="text-slate-600">
-                    <strong>DOB:</strong> {activeBirthData?.dob ? `${activeBirthData.dob} (${activeBirthData.dobTime12 || activeBirthData.dobTime})` : '—'}
-                  </p>
-                  <p className="text-slate-600">
-                    <strong>Place:</strong> {activeBirthData?.placeName || activeBirthData?.city || '—'}{activeBirthData?.state ? `, ${typeof activeBirthData.state === 'object' && activeBirthData.state !== null ? activeBirthData.state.name || '' : activeBirthData.state}` : ''}
-                  </p>
-                  <p className="text-slate-700 font-medium pt-1 border-t border-slate-200">
-                    <strong>{lang === 'ta' ? 'நட்சத்திரம் / ராசி:' : 'Nakshatra / Moon Sign:'}</strong>{' '}
-                    {(() => {
-                      const nak = lang === 'ta'
-                        ? (calculatedHoroscope?.summary?.nakshatraTa || (typeof calculatedHoroscope?.summary?.moonNak === 'number' && NAKSHATRAS[calculatedHoroscope.summary.moonNak]?.ta) || clientProfile?.nakshatra)
-                        : (calculatedHoroscope?.summary?.nakshatraEn || calculatedHoroscope?.summary?.nakshatra || (typeof calculatedHoroscope?.summary?.moonNak === 'number' && NAKSHATRAS[calculatedHoroscope.summary.moonNak]?.en) || clientProfile?.nakshatra);
-
-                      const pada = calculatedHoroscope?.summary?.moonPada ? (lang === 'ta' ? ` (${calculatedHoroscope.summary.moonPada} பாதம்)` : ` (Pada ${calculatedHoroscope.summary.moonPada})`) : '';
-
-                      const rasi = lang === 'ta'
-                        ? (calculatedHoroscope?.summary?.moonSignTa || calculatedHoroscope?.summary?.rasiTa || (typeof calculatedHoroscope?.summary?.moonRasi === 'number' && RASHIS[calculatedHoroscope.summary.moonRasi]?.ta) || clientProfile?.rasi)
-                        : (calculatedHoroscope?.summary?.moonSignEn || calculatedHoroscope?.summary?.moonSign || calculatedHoroscope?.summary?.rasiEn || (typeof calculatedHoroscope?.summary?.moonRasi === 'number' && RASHIS[calculatedHoroscope.summary.moonRasi]?.en) || clientProfile?.rasi);
-
-                      return `${nak ? `${nak}${pada}` : '—'} / ${rasi || '—'}`;
-                    })()}
-                  </p>
-                </div>
-              </div>
-
-              {/* Partner Details (Person 2) */}
-              <div className="bg-rose-50/40 p-4 rounded-xl border border-rose-200 space-y-2.5">
-                <div className="flex justify-between items-center pb-2 border-b border-rose-200">
-                  <span className="font-bold text-rose-900 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                    <Heart className="w-3.5 h-3.5 text-rose-600" />
-                    {(activeBirthData?.gender || 'male').toLowerCase() === 'female'
-                      ? (lang === 'ta' ? 'மணமகன் (Prospective Partner)' : 'Groom (Prospective Partner)')
-                      : (lang === 'ta' ? 'மணமகள் (Prospective Partner)' : 'Bride (Prospective Partner)')}
-                  </span>
-                  <span className="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full">
-                    {(activeBirthData?.gender || 'male').toLowerCase() === 'female' ? 'male' : 'female'}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            return (
+              <div className="bg-white border border-rose-200/80 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 pb-3 border-b border-rose-100">
                   <div>
-                    <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">Partner Name</label>
-                    <input
-                      type="text"
-                      value={partnerDetails.name}
-                      onChange={(e) => setPartnerDetails({ ...partnerDetails, name: e.target.value })}
-                      placeholder={lang === 'ta' ? 'வரன் பெயர்' : 'Enter Partner Name'}
-                      className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400 placeholder:text-slate-400"
-                    />
+                    <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                      <Heart className="w-5 h-5 text-rose-600 fill-rose-600/20" />
+                      <span>{lang === 'ta' ? 'நேரலை திருமணப் பொருத்தம் (10 பொருத்தங்கள் & குணங்கள்)' : 'Live Client Matchmaking (10 Poruthams & Gunas)'}</span>
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      {lang === 'ta'
+                        ? 'கிளையண்ட் தேடல் மூலமாகவோ அல்லது இருவரது விபரங்களையும் புதிதாக உள்ளிட்டோ உடனடிப் பொருத்தம் பார்க்கலாம்.'
+                        : 'Compare searched client with partner, or enter both couple details newly to calculate 10 Poruthams.'}
+                    </p>
                   </div>
-                  <div>
-                    <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">Birth Date</label>
-                    <input
-                      type="date"
-                      value={partnerDetails.dob}
-                      onChange={(e) => setPartnerDetails({ ...partnerDetails, dob: e.target.value })}
-                      className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">Birth Time (24h)</label>
-                    <input
-                      type="text"
-                      value={partnerDetails.dobTime}
-                      onChange={(e) => setPartnerDetails({ ...partnerDetails, dobTime: e.target.value })}
-                      placeholder="HH:MM (e.g. 09:15)"
-                      className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400 placeholder:text-slate-400"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">Birth City / Place</label>
-                    <input
-                      type="text"
-                      value={partnerDetails.dobPlace}
-                      onChange={(e) => setPartnerDetails({ ...partnerDetails, dobPlace: e.target.value })}
-                      placeholder={lang === 'ta' ? 'பிறந்த ஊர்' : 'Enter Birth City / Place'}
-                      className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400 placeholder:text-slate-400"
-                    />
-                  </div>
-                </div>
 
-                {partnerHoroscope?.summary && (
-                  <p className="text-rose-900 font-medium pt-1 border-t border-rose-200 text-xs">
-                    <strong>{lang === 'ta' ? 'நட்சத்திரம் / ராசி:' : 'Nakshatra / Moon Sign:'}</strong>{' '}
-                    {(() => {
-                      const nak = lang === 'ta'
-                        ? (partnerHoroscope.summary.nakshatraTa || (typeof partnerHoroscope.summary.moonNak === 'number' && NAKSHATRAS[partnerHoroscope.summary.moonNak]?.ta))
-                        : (partnerHoroscope.summary.nakshatraEn || partnerHoroscope.summary.nakshatra || (typeof partnerHoroscope.summary.moonNak === 'number' && NAKSHATRAS[partnerHoroscope.summary.moonNak]?.en));
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {/* Mode selection pills */}
+                    <div className="inline-flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
+                      <button
+                        type="button"
+                        onClick={() => setPerson1Mode('client')}
+                        className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                          !isP1Manual
+                            ? 'bg-indigo-600 text-white shadow-xs'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <Search className="w-3.5 h-3.5" />
+                        <span>{lang === 'ta' ? 'வாடிக்கையாளர் + வரன்' : 'Searched Client + Partner'}</span>
+                      </button>
 
-                      const pada = partnerHoroscope.summary.moonPada ? (lang === 'ta' ? ` (${partnerHoroscope.summary.moonPada} பாதம்)` : ` (Pada ${partnerHoroscope.summary.moonPada})`) : '';
-
-                      const rasi = lang === 'ta'
-                        ? (partnerHoroscope.summary.moonSignTa || partnerHoroscope.summary.rasiTa || (typeof partnerHoroscope.summary.moonRasi === 'number' && RASHIS[partnerHoroscope.summary.moonRasi]?.ta))
-                        : (partnerHoroscope.summary.moonSignEn || partnerHoroscope.summary.moonSign || partnerHoroscope.summary.rasiEn || (typeof partnerHoroscope.summary.moonRasi === 'number' && RASHIS[partnerHoroscope.summary.moonRasi]?.en));
-
-                      return `${nak ? `${nak}${pada}` : '—'} / ${rasi || '—'}`;
-                    })()}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Calculated Match Results View */}
-            {activeClientMatchReport && (
-              <div className="pt-3 border-t border-rose-200 space-y-3">
-                <div className="flex border-b border-slate-200 text-xs font-bold gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setActiveMatchTab('tamil')}
-                    className={`pb-2 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
-                      activeMatchTab === 'tamil'
-                        ? 'border-amber-600 text-amber-900 font-bold'
-                        : 'border-transparent text-slate-500 hover:text-slate-700'
-                    }`}
-                  >
-                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                    <span>{MATCH_I18N.tabTamilPorutham[lang] || MATCH_I18N.tabTamilPorutham.en}</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActiveMatchTab('ashtakoota')}
-                    className={`pb-2 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
-                      activeMatchTab === 'ashtakoota'
-                        ? 'border-indigo-600 text-indigo-900 font-bold'
-                        : 'border-transparent text-slate-500 hover:text-slate-700'
-                    }`}
-                  >
-                    <Heart className="w-3.5 h-3.5 text-indigo-600" />
-                    <span>{MATCH_I18N.tabAshtakoota[lang] || MATCH_I18N.tabAshtakoota.en}</span>
-                  </button>
-                </div>
-
-                {activeMatchTab === 'tamil' ? (
-                  <TamilPoruthamCard matchReport={activeClientMatchReport} />
-                ) : (
-                  <div className="space-y-3 bg-amber-50/50 p-4 rounded-xl border border-amber-200 text-xs">
-                    <div className="flex justify-between items-center pb-2 border-b border-amber-200">
-                      <div>
-                        <span className="text-[10px] font-bold text-amber-900 uppercase tracking-wider block">
-                          Engine Computed Compatibility
-                        </span>
-                        <span className="font-bold text-slate-800">
-                          {activeClientMatchReport.compatibility} ({activeClientMatchReport.percentage}%)
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-2xl font-black text-amber-700">
-                          {activeClientMatchReport.totalScore} / 36
-                        </span>
-                        <span className="text-[10px] text-slate-500 block">Total Gunas</span>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPerson1Mode('manual');
+                          setActiveClientMatchReport(null);
+                        }}
+                        className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                          isP1Manual
+                            ? 'bg-rose-600 text-white shadow-xs'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <PlusCircle className="w-3.5 h-3.5" />
+                        <span>{lang === 'ta' ? 'புதிய வரன்கள் (இருவரும்)' : 'Add New Match (Both Newly Added)'}</span>
+                      </button>
                     </div>
 
-                    {/* Compact 8 Kootas */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
-                      {activeClientMatchReport.kootas?.map((k, i) => (
-                        <div key={i} className="bg-white p-1.5 rounded-lg border border-amber-100 flex justify-between">
-                          <span className="font-semibold text-slate-700">{k.koota}</span>
-                          <span className="font-bold text-amber-800">{k.obtained}/{k.max}</span>
+                    {/* Reset Button */}
+                    <button
+                      type="button"
+                      onClick={handleResetMatchmaking}
+                      title={lang === 'ta' ? 'மீட்டமைக்கவும்' : 'Reset Form'}
+                      className="p-2 border border-slate-200 hover:border-slate-300 text-slate-500 hover:text-slate-700 bg-white rounded-xl transition-all cursor-pointer"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                    </button>
+
+                    {/* Calculate Button */}
+                    <button
+                      type="button"
+                      onClick={handleCalculateActiveMatch}
+                      disabled={calculatingActiveMatch}
+                      className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-xs transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    >
+                      {calculatingActiveMatch ? <Sparkles className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                      <span>{lang === 'ta' ? 'பொருத்தம் கணக்கிடுக' : 'Calculate 10 Poruthams'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Comparison Input Grid: Person 1 vs Person 2 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                  {/* Person 1 Card */}
+                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2.5">
+                    <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-indigo-900 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                          <User className="w-3.5 h-3.5 text-indigo-600" />
+                          {isP1Male
+                            ? (lang === 'ta' ? (!isP1Manual ? 'மணமகன் (வாடிக்கையாளர்)' : 'மணமகன் (நபர் 1)') : (!isP1Manual ? 'Groom (Active Client)' : 'Groom (Person 1)'))
+                            : (lang === 'ta' ? (!isP1Manual ? 'மணமகள் (வாடிக்கையாளர்)' : 'மணமகள் (நபர் 1)') : (!isP1Manual ? 'Bride (Active Client)' : 'Bride (Person 1)'))}
+                        </span>
+                        {isP1Manual ? (
+                          <div className="inline-flex bg-slate-200/80 p-0.5 rounded-md text-[10px] font-bold">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setManualPerson1Details({ ...manualPerson1Details, gender: 'male' });
+                                setPartnerDetails(prev => ({ ...prev, gender: 'female' }));
+                              }}
+                              className={`px-1.5 py-0.5 rounded transition-all cursor-pointer ${
+                                manualPerson1Details.gender !== 'female' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600'
+                              }`}
+                            >
+                              {lang === 'ta' ? 'ஆண்' : 'Male'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setManualPerson1Details({ ...manualPerson1Details, gender: 'female' });
+                                setPartnerDetails(prev => ({ ...prev, gender: 'male' }));
+                              }}
+                              className={`px-1.5 py-0.5 rounded transition-all cursor-pointer ${
+                                manualPerson1Details.gender === 'female' ? 'bg-pink-600 text-white shadow-xs' : 'text-slate-600'
+                              }`}
+                            >
+                              {lang === 'ta' ? 'பெண்' : 'Female'}
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-full">
+                            {activeBirthData?.gender || 'male'}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Card-level toggle between Client and Manual */}
+                      <button
+                        type="button"
+                        onClick={() => setPerson1Mode(isP1Manual ? 'client' : 'manual')}
+                        className="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold underline cursor-pointer"
+                      >
+                        {!isP1Manual
+                          ? (lang === 'ta' ? '✏️ கைமுறையாக உள்ளிடு' : '✏️ Enter Manually')
+                          : (lang === 'ta' ? '🔍 வாடிக்கையாளரைப் பயன்படுத்து' : '🔍 Use Active Client')}
+                      </button>
+                    </div>
+
+                    {!isP1Manual ? (
+                      // Existing client display
+                      <div className="space-y-1">
+                        {activeBirthData?.name ? (
+                          <>
+                            <p className="font-bold text-slate-900 text-sm">{activeBirthData.name}</p>
+                            <p className="text-slate-600">
+                              <strong>DOB:</strong> {activeBirthData?.dob ? `${activeBirthData.dob} (${activeBirthData.dobTime12 || activeBirthData.dobTime})` : '—'}
+                            </p>
+                            <p className="text-slate-600">
+                              <strong>Place:</strong> {activeBirthData?.placeName || activeBirthData?.city || '—'}{activeBirthData?.state ? `, ${typeof activeBirthData.state === 'object' && activeBirthData.state !== null ? activeBirthData.state.name || '' : activeBirthData.state}` : ''}
+                            </p>
+                            <p className="text-slate-700 font-medium pt-1 border-t border-slate-200">
+                              <strong>{lang === 'ta' ? 'நட்சத்திரம் / ராசி:' : 'Nakshatra / Moon Sign:'}</strong>{' '}
+                              {(() => {
+                                const nak = lang === 'ta'
+                                  ? (calculatedHoroscope?.summary?.nakshatraTa || (typeof calculatedHoroscope?.summary?.moonNak === 'number' && NAKSHATRAS[calculatedHoroscope.summary.moonNak]?.ta) || clientProfile?.nakshatra)
+                                  : (calculatedHoroscope?.summary?.nakshatraEn || calculatedHoroscope?.summary?.nakshatra || (typeof calculatedHoroscope?.summary?.moonNak === 'number' && NAKSHATRAS[calculatedHoroscope.summary.moonNak]?.en) || clientProfile?.nakshatra);
+
+                                const pada = calculatedHoroscope?.summary?.moonPada ? (lang === 'ta' ? ` (${calculatedHoroscope.summary.moonPada} பாதம்)` : ` (Pada ${calculatedHoroscope.summary.moonPada})`) : '';
+
+                                const rasi = lang === 'ta'
+                                  ? (calculatedHoroscope?.summary?.moonSignTa || calculatedHoroscope?.summary?.rasiTa || (typeof calculatedHoroscope?.summary?.moonRasi === 'number' && RASHIS[calculatedHoroscope.summary.moonRasi]?.ta) || clientProfile?.rasi)
+                                  : (calculatedHoroscope?.summary?.moonSignEn || calculatedHoroscope?.summary?.moonSign || calculatedHoroscope?.summary?.rasiEn || (typeof calculatedHoroscope?.summary?.moonRasi === 'number' && RASHIS[calculatedHoroscope.summary.moonRasi]?.en) || clientProfile?.rasi);
+
+                                return `${nak ? `${nak}${pada}` : '—'} / ${rasi || '—'}`;
+                              })()}
+                            </p>
+                          </>
+                        ) : (
+                          <div className="py-3 text-center space-y-2">
+                            <p className="text-slate-400 italic text-xs">
+                              {lang === 'ta' ? 'வாடிக்கையாளர் தேர்ந்தெடுக்கப்படவில்லை. மேலே தேடவும் அல்லது கைமுறையாக உள்ளிடவும்.' : 'No active client selected. Search client above, or enter manually.'}
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => setPerson1Mode('manual')}
+                              className="text-xs bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold px-3 py-1 rounded-lg hover:bg-indigo-100 cursor-pointer"
+                            >
+                              {lang === 'ta' ? '✏️ நபர் 1 விபரங்களை உள்ளிடுக' : '✏️ Enter Person 1 Details Manually'}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      // Manual Input for Person 1
+                      <div className="space-y-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <div>
+                            <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
+                              {isP1Male ? (lang === 'ta' ? 'மணமகன் பெயர்' : 'Groom Name') : (lang === 'ta' ? 'மணமகள் பெயர்' : 'Bride Name')}
+                            </label>
+                            <input
+                              type="text"
+                              value={manualPerson1Details.name}
+                              onChange={(e) => setManualPerson1Details({ ...manualPerson1Details, name: e.target.value })}
+                              placeholder={lang === 'ta' ? 'பெயர் உள்ளிடவும்' : 'Enter Name'}
+                              className="w-full bg-white border border-indigo-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-indigo-400 placeholder:text-slate-400"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
+                              {lang === 'ta' ? 'பிறந்த தேதி' : 'Birth Date'}
+                            </label>
+                            <input
+                              type="date"
+                              value={manualPerson1Details.dob}
+                              onChange={(e) => setManualPerson1Details({ ...manualPerson1Details, dob: e.target.value })}
+                              className="w-full bg-white border border-indigo-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-indigo-400"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
+                              {lang === 'ta' ? 'பிறந்த நேரம் (24h)' : 'Birth Time (24h)'}
+                            </label>
+                            <input
+                              type="text"
+                              value={manualPerson1Details.dobTime}
+                              onChange={(e) => setManualPerson1Details({ ...manualPerson1Details, dobTime: e.target.value })}
+                              placeholder="HH:MM (e.g. 10:30)"
+                              className="w-full bg-white border border-indigo-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-indigo-400 placeholder:text-slate-400"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
+                              {lang === 'ta' ? 'பிறந்த ஊர்' : 'Birth City / Place'}
+                            </label>
+                            <input
+                              type="text"
+                              value={manualPerson1Details.dobPlace}
+                              onChange={(e) => setManualPerson1Details({ ...manualPerson1Details, dobPlace: e.target.value })}
+                              placeholder={lang === 'ta' ? 'பிறந்த ஊர்' : 'Enter Birth City / Place'}
+                              className="w-full bg-white border border-indigo-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-indigo-400 placeholder:text-slate-400"
+                            />
+                          </div>
                         </div>
-                      ))}
+
+                        {manualPerson1Horoscope?.summary && (
+                          <p className="text-indigo-900 font-medium pt-1 border-t border-indigo-200 text-xs">
+                            <strong>{lang === 'ta' ? 'நட்சத்திரம் / ராசி:' : 'Nakshatra / Moon Sign:'}</strong>{' '}
+                            {(() => {
+                              const nak = lang === 'ta'
+                                ? (manualPerson1Horoscope.summary.nakshatraTa || (typeof manualPerson1Horoscope.summary.moonNak === 'number' && NAKSHATRAS[manualPerson1Horoscope.summary.moonNak]?.ta))
+                                : (manualPerson1Horoscope.summary.nakshatraEn || manualPerson1Horoscope.summary.nakshatra || (typeof manualPerson1Horoscope.summary.moonNak === 'number' && NAKSHATRAS[manualPerson1Horoscope.summary.moonNak]?.en));
+
+                              const pada = manualPerson1Horoscope.summary.moonPada ? (lang === 'ta' ? ` (${manualPerson1Horoscope.summary.moonPada} பாதம்)` : ` (Pada ${manualPerson1Horoscope.summary.moonPada})`) : '';
+
+                              const rasi = lang === 'ta'
+                                ? (manualPerson1Horoscope.summary.moonSignTa || manualPerson1Horoscope.summary.rasiTa || (typeof manualPerson1Horoscope.summary.moonRasi === 'number' && RASHIS[manualPerson1Horoscope.summary.moonRasi]?.ta))
+                                : (manualPerson1Horoscope.summary.moonSignEn || manualPerson1Horoscope.summary.moonSign || manualPerson1Horoscope.summary.rasiEn || (typeof manualPerson1Horoscope.summary.moonRasi === 'number' && RASHIS[manualPerson1Horoscope.summary.moonRasi]?.en));
+
+                              return `${nak ? `${nak}${pada}` : '—'} / ${rasi || '—'}`;
+                            })()}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Partner Details (Person 2) */}
+                  <div className="bg-rose-50/40 p-4 rounded-xl border border-rose-200 space-y-2.5">
+                    <div className="flex justify-between items-center pb-2 border-b border-rose-200">
+                      <span className="font-bold text-rose-900 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                        <Heart className="w-3.5 h-3.5 text-rose-600" />
+                        {isP1Male
+                          ? (lang === 'ta' ? 'மணமகள் (வரன் / நபர் 2)' : 'Bride (Partner / Person 2)')
+                          : (lang === 'ta' ? 'மணமகன் (வரன் / நபர் 2)' : 'Groom (Partner / Person 2)')}
+                      </span>
+                      <span className="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full">
+                        {isP1Male ? 'female' : 'male'}
+                      </span>
                     </div>
 
-                    {/* Manglik status */}
-                    <div className="text-[11px] text-slate-700 pt-1 border-t border-amber-200 flex flex-col sm:flex-row justify-between gap-1">
-                      <span><strong>{t('groomBoyLabel')}</strong> {activeClientMatchReport.manglik?.boy?.details}</span>
-                      <span><strong>{t('brideGirlLabel')}</strong> {activeClientMatchReport.manglik?.girl?.details}</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
+                          {isP1Male ? (lang === 'ta' ? 'மணமகள் பெயர்' : 'Bride Name') : (lang === 'ta' ? 'மணமகன் பெயர்' : 'Groom Name')}
+                        </label>
+                        <input
+                          type="text"
+                          value={partnerDetails.name}
+                          onChange={(e) => setPartnerDetails({ ...partnerDetails, name: e.target.value })}
+                          placeholder={lang === 'ta' ? 'வரன் பெயர்' : 'Enter Partner Name'}
+                          className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400 placeholder:text-slate-400"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
+                          {lang === 'ta' ? 'பிறந்த தேதி' : 'Birth Date'}
+                        </label>
+                        <input
+                          type="date"
+                          value={partnerDetails.dob}
+                          onChange={(e) => setPartnerDetails({ ...partnerDetails, dob: e.target.value })}
+                          className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
+                          {lang === 'ta' ? 'பிறந்த நேரம் (24h)' : 'Birth Time (24h)'}
+                        </label>
+                        <input
+                          type="text"
+                          value={partnerDetails.dobTime}
+                          onChange={(e) => setPartnerDetails({ ...partnerDetails, dobTime: e.target.value })}
+                          placeholder="HH:MM (e.g. 09:15)"
+                          className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400 placeholder:text-slate-400"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
+                          {lang === 'ta' ? 'பிறந்த ஊர்' : 'Birth City / Place'}
+                        </label>
+                        <input
+                          type="text"
+                          value={partnerDetails.dobPlace}
+                          onChange={(e) => setPartnerDetails({ ...partnerDetails, dobPlace: e.target.value })}
+                          placeholder={lang === 'ta' ? 'பிறந்த ஊர்' : 'Enter Birth City / Place'}
+                          className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400 placeholder:text-slate-400"
+                        />
+                      </div>
                     </div>
+
+                    {partnerHoroscope?.summary && (
+                      <p className="text-rose-900 font-medium pt-1 border-t border-rose-200 text-xs">
+                        <strong>{lang === 'ta' ? 'நட்சத்திரம் / ராசி:' : 'Nakshatra / Moon Sign:'}</strong>{' '}
+                        {(() => {
+                          const nak = lang === 'ta'
+                            ? (partnerHoroscope.summary.nakshatraTa || (typeof partnerHoroscope.summary.moonNak === 'number' && NAKSHATRAS[partnerHoroscope.summary.moonNak]?.ta))
+                            : (partnerHoroscope.summary.nakshatraEn || partnerHoroscope.summary.nakshatra || (typeof partnerHoroscope.summary.moonNak === 'number' && NAKSHATRAS[partnerHoroscope.summary.moonNak]?.en));
+
+                          const pada = partnerHoroscope.summary.moonPada ? (lang === 'ta' ? ` (${partnerHoroscope.summary.moonPada} பாதம்)` : ` (Pada ${partnerHoroscope.summary.moonPada})`) : '';
+
+                          const rasi = lang === 'ta'
+                            ? (partnerHoroscope.summary.moonSignTa || partnerHoroscope.summary.rasiTa || (typeof partnerHoroscope.summary.moonRasi === 'number' && RASHIS[partnerHoroscope.summary.moonRasi]?.ta))
+                            : (partnerHoroscope.summary.moonSignEn || partnerHoroscope.summary.moonSign || partnerHoroscope.summary.rasiEn || (typeof partnerHoroscope.summary.moonRasi === 'number' && RASHIS[partnerHoroscope.summary.moonRasi]?.en));
+
+                          return `${nak ? `${nak}${pada}` : '—'} / ${rasi || '—'}`;
+                        })()}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Calculated Match Results View */}
+                {activeClientMatchReport && (
+                  <div className="pt-3 border-t border-rose-200 space-y-3">
+                    <div className="flex border-b border-slate-200 text-xs font-bold gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setActiveMatchTab('tamil')}
+                        className={`pb-2 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                          activeMatchTab === 'tamil'
+                            ? 'border-amber-600 text-amber-900 font-bold'
+                            : 'border-transparent text-slate-500 hover:text-slate-700'
+                        }`}
+                      >
+                        <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                        <span>{MATCH_I18N.tabTamilPorutham[lang] || MATCH_I18N.tabTamilPorutham.en}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveMatchTab('ashtakoota')}
+                        className={`pb-2 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                          activeMatchTab === 'ashtakoota'
+                            ? 'border-indigo-600 text-indigo-900 font-bold'
+                            : 'border-transparent text-slate-500 hover:text-slate-700'
+                        }`}
+                      >
+                        <Heart className="w-3.5 h-3.5 text-indigo-600" />
+                        <span>{MATCH_I18N.tabAshtakoota[lang] || MATCH_I18N.tabAshtakoota.en}</span>
+                      </button>
+                    </div>
+
+                    {activeMatchTab === 'tamil' ? (
+                      <TamilPoruthamCard matchReport={activeClientMatchReport} />
+                    ) : (
+                      <div className="space-y-3 bg-amber-50/50 p-4 rounded-xl border border-amber-200 text-xs">
+                        <div className="flex justify-between items-center pb-2 border-b border-amber-200">
+                          <div>
+                            <span className="text-[10px] font-bold text-amber-900 uppercase tracking-wider block">
+                              Engine Computed Compatibility
+                            </span>
+                            <span className="font-bold text-slate-800">
+                              {activeClientMatchReport.compatibility} ({activeClientMatchReport.percentage}%)
+                            </span>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-2xl font-black text-amber-700">
+                              {activeClientMatchReport.totalScore} / 36
+                            </span>
+                            <span className="text-[10px] text-slate-500 block">Total Gunas</span>
+                          </div>
+                        </div>
+
+                        {/* Compact 8 Kootas */}
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                          {activeClientMatchReport.kootas?.map((k, i) => (
+                            <div key={i} className="bg-white p-1.5 rounded-lg border border-amber-100 flex justify-between">
+                              <span className="font-semibold text-slate-700">{k.koota}</span>
+                              <span className="font-bold text-amber-800">{k.obtained}/{k.max}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Manglik status */}
+                        <div className="text-[11px] text-slate-700 pt-1 border-t border-amber-200 flex flex-col sm:flex-row justify-between gap-1">
+                          <span><strong>{t('groomBoyLabel') || 'Groom'}:</strong> {activeClientMatchReport.manglik?.boy?.details}</span>
+                          <span><strong>{t('brideGirlLabel') || 'Bride'}:</strong> {activeClientMatchReport.manglik?.girl?.details}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
-            )}
-          </div>
+            );
+          })()}
 
           {/* Header Strip */}
           <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
