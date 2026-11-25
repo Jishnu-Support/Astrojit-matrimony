@@ -3,6 +3,24 @@
  * Accurate planetary calculations according to exact specifications.
  */
 
+// =============================================================================
+// MAHADASHA BHOGAN-VEDHAGAN-PASAGAN-KARAGAN FIXED CLASSICAL REFERENCE TABLE
+// =============================================================================
+// This is a FIXED traditional Tamil Vedic Astrology reference dataset.
+// NEVER auto-generate or alter these planetary relationships.
+// Rahu (ராகு) and Ketu (கேது) are EXCLUDED from this classical system.
+// Source: Traditional Tamil Vedic Astrology (Parabharathiya Jothidam)
+// =============================================================================
+export const MAHADASHA_BHOGAN_VEDHAGAN_TABLE = [
+  { idTa: 'சூரியன்',   idEn: 'Sun',     bhoganTa: 'செவ்வாய்',  bhoganEn: 'Mars',    vedhaganTa: 'சுக்கிரன்', vedhaganEn: 'Venus',   pasaganTa: 'சனி',       pasaganEn: 'Saturn',  karaganTa: 'குரு',       karaganEn: 'Jupiter' },
+  { idTa: 'சந்திரன்',  idEn: 'Moon',    bhoganTa: 'செவ்வாய்',  bhoganEn: 'Mars',    vedhaganTa: 'சூரியன்',   vedhaganEn: 'Sun',     pasaganTa: 'சுக்கிரன்', pasaganEn: 'Venus',   karaganTa: 'சனி',        karaganEn: 'Saturn'  },
+  { idTa: 'செவ்வாய்',  idEn: 'Mars',    bhoganTa: 'சந்திரன்',  bhoganEn: 'Moon',    vedhaganTa: 'புதன்',      vedhaganEn: 'Mercury', pasaganTa: 'சூரியன்',   pasaganEn: 'Sun',     karaganTa: 'சனி',        karaganEn: 'Saturn'  },
+  { idTa: 'புதன்',     idEn: 'Mercury', bhoganTa: 'குரு',       bhoganEn: 'Jupiter', vedhaganTa: 'செவ்வாய்',  vedhaganEn: 'Mars',    pasaganTa: 'சந்திரன்',  pasaganEn: 'Moon',    karaganTa: 'சுக்கிரன்', karaganEn: 'Venus'   },
+  { idTa: 'குரு',      idEn: 'Jupiter', bhoganTa: 'செவ்வாய்',  bhoganEn: 'Mars',    vedhaganTa: 'சூரியன்',   vedhaganEn: 'Sun',     pasaganTa: 'சனி',       pasaganEn: 'Saturn',  karaganTa: 'சந்திரன்',  karaganEn: 'Moon'    },
+  { idTa: 'சுக்கிரன்', idEn: 'Venus',   bhoganTa: 'குரு',       bhoganEn: 'Jupiter', vedhaganTa: 'சனி',        vedhaganEn: 'Saturn',  pasaganTa: 'புதன்',     pasaganEn: 'Mercury', karaganTa: 'சூரியன்',   karaganEn: 'Sun'     },
+  { idTa: 'சனி',       idEn: 'Saturn',  bhoganTa: 'சந்திரன்',  bhoganEn: 'Moon',    vedhaganTa: 'செவ்வாய்',  vedhaganEn: 'Mars',    pasaganTa: 'சுக்கிரன்', pasaganEn: 'Venus',   karaganTa: 'குரு',       karaganEn: 'Jupiter' },
+];
+
 export const D2R = Math.PI / 180;
 export const R2D = 180 / Math.PI;
 
