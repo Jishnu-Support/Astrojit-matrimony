@@ -72,6 +72,7 @@ export default function BirthDetailsIntakeCard({
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [clientPasswordInput, setClientPasswordInput] = useState('Client@123');
   const [showPasswordText, setShowPasswordText] = useState(false);
+  const [sendWhatsAppOnCreate, setSendWhatsAppOnCreate] = useState(true);
 
   // Client multi-profile state
   const [clientProfiles, setClientProfiles] = useState([]);
@@ -353,42 +354,92 @@ export default function BirthDetailsIntakeCard({
 
     try {
       const time12Str = `${clientData.timeState?.hour || '12'}:${clientData.timeState?.minute || '00'}:${clientData.timeState?.second || '00'} ${clientData.timeState?.period || 'AM'}`;
+      const time24Str = to24HourTime(clientData.timeState?.hour, clientData.timeState?.minute, clientData.timeState?.second, clientData.timeState?.period);
+      const placeStr = (typeof clientData.city === 'object' ? clientData.city?.name : (clientData.city || clientData.nativePlace || clientData.place || clientData.placeName || 'Salem')).trim();
+      const dobStr = (clientData.dob || '1995-01-01').trim();
+
       const payload = {
         name: clientData.name.trim(),
         mobile: cleanMobile,
+        username: cleanMobile,
         password: clientPasswordInput.trim(),
-        dob: clientData.dob,
+        initialPassword: clientPasswordInput.trim(),
+        dob: dobStr,
+        dobTime: time24Str || time12Str,
         dobTime12: time12Str,
-        dobPlace: clientData.city,
+        dobPlace: placeStr,
+        city: placeStr,
         gender: clientData.gender || 'male',
         fatherName: clientData.father?.trim() || '',
         motherName: clientData.mother?.trim() || '',
-        nativePlace: clientData.nativePlace?.trim() || '',
-        country: clientData.country,
-        state: clientData.state,
-        lat: clientData.lat,
-        lon: clientData.lon,
-        utcOffset: clientData.utcOffset
+        nativePlace: clientData.nativePlace?.trim() || placeStr,
+        country: currentCountry || 'India',
+        state: currentState || 'Tamil Nadu',
+        lat: clientData.lat || '11.6643',
+        lon: clientData.lon || '78.1460',
+        utcOffset: clientData.utcOffset || '05:30 UTC'
       };
 
       const registerFn = API.registerClientFromAstrologer || API.registerClientByAstrologer;
       const res = await registerFn(payload);
 
-      setReceiptModalData({
-        client: res.client,
-        plainPassword: clientPasswordInput.trim(),
-        astrologer: res.astrologer,
+      const receiptPayload = res.receipt || {
+        client: res.client || payload,
+        credentials: {
+          username: cleanMobile,
+          initialPassword: clientPasswordInput.trim(),
+          portalUrl: `${window.location.origin}/login`
+        },
+        astrologer: user || {},
         loginUrl: `${window.location.origin}/login`
-      });
+      };
+
+      setReceiptModalData(receiptPayload);
+
+      // WhatsApp Message Formulation
+      const cleanPhone = cleanMobile.replace(/[^0-9]/g, '');
+      const phoneParam = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+      const loginUrl = `${window.location.origin}/login`;
+      const waText = `🕉️ *ASTROJIT VEDIC ASTROLOGY - CLIENT REGISTRATION & LOGIN CREDENTIALS*
+
+வணக்கம் / Greetings *${payload.name}*,
+உங்கள் வேத ஜாதகக் கணக்கு வெற்றிகரமாக உருவாக்கப்பட்டுள்ளது!
+Your Astrojit Client Portal account has been created successfully.
+
+----------------------------------------
+🔐 *YOUR LOGIN DETAILS*
+*Portal URL:* ${loginUrl}
+*Username (Mobile):* ${cleanMobile}
+*Password:* ${clientPasswordInput.trim()}
+
+----------------------------------------
+👤 *NATIVE DETAILS*
+*DOB:* ${dobStr} | ${time12Str}
+*Place:* ${placeStr}
+*Client Code:* ${receiptPayload.clientCode || 'CLI-' + cleanMobile.slice(-4)}
+
+*Astrologer:* ${receiptPayload.astrologer?.name || user?.name || 'Astrojit Astrologer'}
+*Contact:* ${receiptPayload.astrologer?.mobile || user?.mobile || ''}
+
+_You can log in anytime to view your complete Vedic Horoscope, Predictions, Daily Panchangam, and Matchmaking services._
+Shubham Bhavatu! 🙏`;
+
+      const waUrl = `https://api.whatsapp.com/send?phone=${phoneParam}&text=${encodeURIComponent(waText)}`;
+
+      // WhatsApp auto-open if enabled
+      if (sendWhatsAppOnCreate) {
+        window.open(waUrl, '_blank');
+      }
 
       refreshCalculations();
       setActionFeedback({
         type: 'success',
         message: isTa
-          ? 'வாடிக்கையாளர் கணக்கு வெற்றிகரமாக உருவாக்கப்பட்டது!'
-          : 'Client account created successfully!'
+          ? `வாடிக்கையாளர் கணக்கு வெற்றிகரமாக உருவாக்கப்பட்டது! (${cleanMobile})`
+          : `Client account created successfully for ${payload.name} (${cleanMobile})!`,
+        whatsappUrl: waUrl
       });
-      setTimeout(() => setActionFeedback(null), 5000);
+      setTimeout(() => setActionFeedback(null), 8000);
     } catch (err) {
       alert(isTa ? `கணக்கு உருவாக்க முடியவில்லை: ${err.message}` : `Failed to create account: ${err.message}`);
     } finally {
@@ -469,9 +520,22 @@ export default function BirthDetailsIntakeCard({
             <span>{actionFeedback.type === 'error' ? '⚠️' : actionFeedback.type === 'success' ? '✓' : 'ℹ️'}</span>
             <span>{actionFeedback.message}</span>
           </div>
-          <button onClick={() => setActionFeedback(null)} className="text-stone-400 hover:text-stone-700 ml-2 font-bold">
-            ✕
-          </button>
+          <div className="flex items-center gap-2">
+            {actionFeedback.whatsappUrl && (
+              <a
+                href={actionFeedback.whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] flex items-center gap-1 shadow-2xs"
+              >
+                <span>📲</span>
+                <span>{isTa ? 'வாட்ஸ்அப் அனுப்புக' : 'WhatsApp Client'}</span>
+              </a>
+            )}
+            <button onClick={() => setActionFeedback(null)} className="text-stone-400 hover:text-stone-700 ml-1 font-bold cursor-pointer">
+              ✕
+            </button>
+          </div>
         </div>
       )}
 
@@ -1030,6 +1094,25 @@ export default function BirthDetailsIntakeCard({
                   : 'The client will use their 10-digit mobile number as username and this password to log in to the Client Portal.'}
               </p>
             </div>
+
+            {/* WhatsApp Notification Option */}
+            <label className="flex items-start gap-2.5 p-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 rounded-xl cursor-pointer">
+              <input
+                type="checkbox"
+                checked={sendWhatsAppOnCreate}
+                onChange={(e) => setSendWhatsAppOnCreate(e.target.checked)}
+                className="mt-0.5 w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 cursor-pointer"
+              />
+              <div className="text-xs">
+                <span className="font-bold text-emerald-900 dark:text-emerald-200 flex items-center gap-1.5">
+                  <span className="text-sm">📲</span>
+                  <span>{isTa ? 'வாட்ஸ்அப்பில் உள்நுழைவு விவரங்களை உடனடியாக அனுப்பவும்' : 'Send login credentials to client via WhatsApp immediately'}</span>
+                </span>
+                <p className="text-[10.5px] text-emerald-700 dark:text-emerald-400 mt-0.5">
+                  {isTa ? 'உருவாக்கியவுடன் லாகின் இணைப்பு, பயனர்பெயர் மற்றும் கடவுச்சொல்லுடன் வாட்ஸ்அப் திறக்கப்படும்' : 'Opens WhatsApp with portal URL, username, and password ready to send'}
+                </p>
+              </div>
+            </label>
 
             {/* Dialog Action Buttons */}
             <div className="flex items-center justify-end gap-2 pt-2 border-t border-amber-900/10 dark:border-amber-500/15">

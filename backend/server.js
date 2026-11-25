@@ -1276,9 +1276,10 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
       email = '',
       gotra = 'Vishwamitra',
       initialPassword = '',
+      password = '',
       country = 'India',
-      state = 'Karnataka',
-      city = 'Bangalore',
+      state = 'Tamil Nadu',
+      city = '',
       latitude = '',
       longitude = '',
       coordinates = '',
@@ -1286,14 +1287,18 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
       starBasis = 'moon',
     } = req.body;
 
-    const cleanMobile = clean10DigitMobile(mobile);
-    if (!name || !cleanMobile || !dob || !dobTime || !dobPlace) {
+    const cleanMobile = clean10DigitMobile(mobile || req.body.username);
+    if (!name || !cleanMobile) {
       return res.status(400).json({
-        error: 'Client Name, 10-Digit Mobile Number, Date of Birth, Birth Time, and Birth Place are required.',
+        error: 'Client Name and 10-Digit Mobile Number are required.',
       });
     }
 
-    const cleanPassword = (initialPassword || 'Astro@123').trim();
+    const resolvedDob = (dob || req.body.birthDate || req.body.date || '1995-01-01').trim();
+    const resolvedTime = (dobTime || dobTime12 || req.body.time || '12:00:00').trim();
+    const resolvedTime12 = (dobTime12 || dobTime || '12:00:00 PM').trim();
+    const resolvedPlace = (typeof dobPlace === 'string' ? dobPlace : (dobPlace?.name || city || req.body.place || nativePlace || 'Salem')).trim();
+    const cleanPassword = (initialPassword || password || req.body.password || 'Astro@123').trim();
     const salt = bcrypt.genSaltSync(8);
     const passwordHash = bcrypt.hashSync(cleanPassword, salt);
 
@@ -1313,19 +1318,19 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
       client.fatherName = fatherName.trim();
       client.motherName = motherName.trim();
       client.gender = gender;
-      client.dob = dob.trim();
-      client.dobTime = dobTime.trim();
-      client.dobPlace = dobPlace.trim();
-      client.nativePlace = (nativePlace || dobPlace).trim();
+      client.dob = resolvedDob;
+      client.dobTime = resolvedTime;
+      client.dobPlace = resolvedPlace;
+      client.nativePlace = (nativePlace || resolvedPlace).trim();
       client.email = email.trim();
       client.gotra = gotra.trim();
       client.country = country;
       client.state = state;
-      client.city = city;
+      client.city = resolvedPlace;
       client.latitude = latitude;
       client.longitude = longitude;
       client.coordinates = coordinates || (latitude && longitude ? `${latitude} , ${longitude}` : '');
-      client.dobTime12 = dobTime12;
+      client.dobTime12 = resolvedTime12;
       client.starBasis = starBasis;
       client.astrologerReferralCode = astro.referralCode || req.user.referralCode || '';
       client.registeredByAstrologerId = astro.id;
@@ -1349,17 +1354,17 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
         fatherName: fatherName.trim(),
         motherName: motherName.trim(),
         gender,
-        dob: dob.trim(),
-        dobTime: dobTime.trim(),
-        dobPlace: dobPlace.trim(),
-        nativePlace: (nativePlace || dobPlace).trim(),
+        dob: resolvedDob,
+        dobTime: resolvedTime,
+        dobPlace: resolvedPlace,
+        nativePlace: (nativePlace || resolvedPlace).trim(),
         country,
         state,
-        city,
+        city: resolvedPlace,
         latitude,
         longitude,
         coordinates: coordinates || (latitude && longitude ? `${latitude} , ${longitude}` : ''),
-        dobTime12,
+        dobTime12: resolvedTime12,
         starBasis,
         mobile: cleanMobile,
         username: cleanMobile,
@@ -1447,7 +1452,7 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
       },
       astrologicalSnapshot,
       credentials: {
-        portalUrl: 'http://localhost:3000/#/client-login',
+        portalUrl: `${req.headers.origin || (req.headers.host ? `${req.protocol || 'http'}://${req.headers.host}` : 'http://localhost:3005')}/login`,
         username: client.mobile,
         initialPassword: cleanPassword,
         loginType: 'Mobile Number + Password',

@@ -70,6 +70,10 @@ export default function ClientRegistrationReceiptModal({
     printElementById('printable-client-receipt-slip', `Registration_Slip_${clientCode || 'Client'}`);
   };
 
+  const portalUrl = (credentials.portalUrl && !credentials.portalUrl.includes(':3000'))
+    ? credentials.portalUrl
+    : `${window.location.origin}/login`;
+
   const generateWhatsAppMessage = () => {
     const text = `🕉️ *ASTROJIT VEDIC ASTROLOGY - CLIENT REGISTRATION ACKNOWLEDGEMENT*
 
@@ -85,8 +89,8 @@ export default function ClientRegistrationReceiptModal({
 ----------------------------------------
 👤 *CLIENT DETAILS*
 *Name:* ${client.name}
-*DOB:* ${client.dob} | ${client.dobTime12 || client.dobTime}
-*Place:* ${client.dobPlace || client.nativePlace}${client.coordinates ? `\n*Coordinates:* ${client.coordinates}` : ''}
+*DOB:* ${client.dob} | ${client.dobTime12 || client.dobTime || ''}
+*Place:* ${client.dobPlace || client.nativePlace || ''}${client.coordinates ? `\n*Coordinates:* ${client.coordinates}` : ''}
 *Rasi Star Basis:* ${client.starBasis === 'sun' || astrologicalSnapshot.starBasis === 'sun' ? '☀️ Sun Star (Surya Nakshatra)' : '🌙 Moon Star (Chandra Nakshatra)'}
 *Star (Nakshatra):* ${astrologicalSnapshot.nakshatra || 'N/A'} (Pada ${astrologicalSnapshot.pada || 1})
 *Rashi (${client.starBasis === 'sun' || astrologicalSnapshot.starBasis === 'sun' ? 'Surya Rashi' : 'Chandra Rashi'}):* ${astrologicalSnapshot.moonSign || 'N/A'}
@@ -97,9 +101,9 @@ export default function ClientRegistrationReceiptModal({
 🔐 *YOUR ASTROJIT LOGIN CREDENTIALS*
 You can log in to view your complete Certified Vedic Horoscope Dossier, Daily Panchangam, and Matrimony services:
 
-*Portal URL:* ${credentials.portalUrl || 'http://localhost:3000/#/client-login'}
+*Portal URL:* ${portalUrl}
 *Username (Mobile):* ${credentials.username || client.mobile}
-*Temporary Password:* ${credentials.initialPassword || 'Astro@123'}
+*Temporary Password:* ${credentials.initialPassword || rawReceipt.plainPassword || 'Astro@123'}
 
 _Please keep your credentials safe. You can change your password upon your first login._
 Sarve Bhavantu Sukhinah • Shubham Bhavatu! 🙏`;
@@ -107,7 +111,7 @@ Sarve Bhavantu Sukhinah • Shubham Bhavatu! 🙏`;
   };
 
   const handleShareWhatsApp = () => {
-    const cleanPhone = (client.mobile || '').replace(/[^0-9]/g, '');
+    const cleanPhone = (client.mobile || credentials.username || '').replace(/[^0-9]/g, '');
     const phoneParam = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
     const url = `https://api.whatsapp.com/send?phone=${phoneParam}&text=${generateWhatsAppMessage()}`;
     window.open(url, '_blank');
@@ -115,9 +119,9 @@ Sarve Bhavantu Sukhinah • Shubham Bhavatu! 🙏`;
 
   const handleCopyCredentials = () => {
     const text = `Astrojit Login Credentials:
-Portal: ${credentials.portalUrl || 'http://localhost:3000/#/client-login'}
+Portal: ${portalUrl}
 Username (Mobile): ${credentials.username || client.mobile}
-Password: ${credentials.initialPassword || 'Astro@123'}
+Password: ${credentials.initialPassword || rawReceipt.plainPassword || 'Astro@123'}
 Client Code: ${clientCode}`;
     navigator.clipboard.writeText(text);
     setCopiedPass(true);
@@ -386,12 +390,12 @@ Client Code: ${clientCode}`;
                 <div className="bg-white p-3 print:p-2 rounded-xl border border-amber-200 shadow-2xs">
                   <span className="text-[10px] text-slate-500 font-bold uppercase block">Web Portal URL</span>
                   <a
-                    href={credentials.portalUrl || 'http://localhost:3000/#/client-login'}
+                    href={portalUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="font-mono font-bold text-indigo-700 hover:underline text-xs flex items-center gap-1 mt-0.5 truncate"
                   >
-                    <span>{credentials.portalUrl || 'http://localhost:3000/#/client-login'}</span>
+                    <span>{portalUrl}</span>
                     <ExternalLink className="w-3 h-3 shrink-0 print:hidden" />
                   </a>
                 </div>
@@ -406,9 +410,32 @@ Client Code: ${clientCode}`;
                 <div className="bg-white p-3 print:p-2 rounded-xl border border-amber-200 shadow-2xs">
                   <span className="text-[10px] text-slate-500 font-bold uppercase block">Initial Temporary Password</span>
                   <span className="font-mono font-black text-emerald-800 text-sm print:text-xs mt-0.5 block tracking-wider">
-                    {credentials.initialPassword || 'Astro@123'}
+                    {credentials.initialPassword || rawReceipt.plainPassword || 'Astro@123'}
                   </span>
                 </div>
+              </div>
+
+              {/* Direct WhatsApp Share Banner inside Receipt */}
+              <div className="print:hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-2xl">📲</span>
+                  <div>
+                    <div className="font-bold text-xs text-emerald-950">
+                      Send Login Credentials Directly to Client via WhatsApp
+                    </div>
+                    <div className="text-[11px] text-emerald-700">
+                      Recipient Mobile: <strong>{client.mobile || credentials.username}</strong>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleShareWhatsApp}
+                  className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl text-xs font-black shadow-sm transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0"
+                >
+                  <Share2 className="w-4 h-4" />
+                  <span>Send WhatsApp Now</span>
+                </button>
               </div>
 
               <p className="text-[11px] print:text-[10px] text-slate-600 italic font-serif">
