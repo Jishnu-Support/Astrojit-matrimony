@@ -12,7 +12,8 @@ import {
   parseUtcOffset,
   formatUtcOffset,
   SHODASHAVARGA_DEFS,
-  DIVISIONAL_CHART_DEFS
+  DIVISIONAL_CHART_DEFS,
+  MAHADASHA_BHOGAN_VEDHAGAN_TABLE
 } from '../utils/thirukanithaEngine';
 import { COUNTRIES, GEO_DATA, lookupCoordinates } from '../data/geoCoordinates';
 import ShadbalaBarChart from './ShadbalaBarChart';
@@ -270,7 +271,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
   const [section13Planet, setSection13Planet] = useState('all');
   const [section14Tab, setSection14Tab] = useState('all'); // 'all' | 'graha' | 'bhava'
   const [section15Tab, setSection15Tab] = useState('all'); // 'all' | 'profile' | 'schedule' | 'live'
-  const [section16Tab, setSection16Tab] = useState('all'); // 'all' | 'pasakar' | 'tara'
+  const [section16Tab, setSection16Tab] = useState('all'); // 'all' | 'mahadasha' | 'tara'
   const [section17Tab, setSection17Tab] = useState('all'); // 'all' | 'dignities' | 'aspects'
   const [section19Tab, setSection19Tab] = useState('present');
   const [section20Tab, setSection20Tab] = useState('phalam'); // 'phalam' | 'timeline'
@@ -5751,17 +5752,17 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
               <div>
                 <h2 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
                   <span>⚖️</span>
-                  <span>{isTamil ? '16. கிரகங்களின் பாசகர்- போதகர்- காரகர்- வேதகர் & தாரா பலமுள்ள நட்சத்திரங்கள்.' : '16. Graha Pasakar - Bodhakar - Karagar - Vedhagar & Tara Bala Nakshatras'}</span>
+                  <span>{isTamil ? '16. மகாதசை போதகங்கள் ஆகியவை & தாரா பலமுள்ள நட்சத்திரங்கள்.' : '16. Mahadasha Bhogan, Vedhagan, Pasagan & Karagan & Tara Bala Nakshatras'}</span>
                 </h2>
                 <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5 line-clamp-1">
-                  {isTamil ? 'கிரகங்களின் பலன் வழங்கும் காரகர்கள் (சீக்கிர பலன், நிறைய தருபவர், நிதான பலன், தடுத்து விடுபவர்) & ஜன்ம நவதாரை பலன்கள்' : 'Planetary Role Deliverers (Pasakar, Bodhakar, Karagar, Vedhagar) & 9-Tara Auspiciousness Matrix'}
+                  {isTamil ? 'மகாதசை போகன், வேதகன், பாசகன், காரகன் பாரம்பரிய அட்டவணை & ஜன்ம நவதாரை பலன்கள்' : 'Classical Mahadasha Bhogan, Vedhagan, Pasagan & Karagan Reference Table & 9-Tara Auspiciousness Matrix'}
                 </p>
               </div>
             </div>
 
             {renderSectionBadge(16, (
               <span className="px-2.5 py-1 rounded-lg bg-amber-100/70 dark:bg-amber-950/40 text-[11px] font-bold text-[#7A1A22] dark:text-amber-300">
-                {isTamil ? '3 முக்கிய பகுதிகள்' : '3 Major Sections'}
+                {isTamil ? '2 முக்கிய பகுதிகள்' : '2 Major Sections'}
               </span>
             ))}
           </button>
@@ -5784,14 +5785,14 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                 </button>
                 <button
                   type="button"
-                  onClick={() => setSection16Tab('pasakar')}
+                  onClick={() => setSection16Tab('mahadasha')}
                   className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                    section16Tab === 'pasakar'
+                    section16Tab === 'mahadasha'
                       ? 'bg-[#7A1A22] text-white shadow-2xs dark:bg-amber-500 dark:text-stone-900'
                       : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
                   }`}
                 >
-                  {isTamil ? 'கிரகங்களின் பாசகர்- போதகர்- காரகர்- வேதகர்' : '1. Pasakar - Bodhakar - Karagar - Vedhagar'}
+                  {isTamil ? '1. மகாதசை போகன்-வேதகன்-பாசகன்-காரகன்' : '1. Mahadasha Bhogan-Vedhagan-Pasagan-Karagan'}
                 </button>
                 <button
                   type="button"
@@ -5802,125 +5803,114 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                       : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
                   }`}
                 >
-                  {isTamil ? 'தாரா பலமுள்ள நட்சத்திரங்கள்' : '2. Tara Bala Nakshatras (9 Taras)'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSection16Tab('mahadasha')}
-                  className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                    section16Tab === 'mahadasha'
-                      ? 'bg-[#7A1A22] text-white shadow-2xs dark:bg-amber-500 dark:text-stone-900'
-                      : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
-                  }`}
-                >
-                  {isTamil ? 'மகாதசை போகன்-வேதகன்-பாசகன்-காரகன்' : '3. Mahadasha Bhogan-Vedhagan-Pasagan-Karagan'}
+                  {isTamil ? '2. தாரா பலமுள்ள நட்சத்திரங்கள்' : '2. Tara Bala Nakshatras (9 Taras)'}
                 </button>
               </div>
 
               {/* ------------------------------------------------------------- */}
-              {/* PART 1: கிரகங்களின் பாசகர்- போதகர்- காரகர்- வேதகர் */}
+              {/* PART 1: மகாதசை போதகங்கள் ஆகியவை (Mahadasha Bhogan, Vedhagan, Pasagan & Karagan) */}
               {/* ------------------------------------------------------------- */}
-              {(section16Tab === 'all' || section16Tab === 'pasakar') && (
+              {(section16Tab === 'all' || section16Tab === 'mahadasha') && (
                 <div className="space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1 border-b border-amber-900/15 dark:border-amber-500/15">
                     <div>
                       <h3 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
-                        <span>🌟</span>
-                        <span>{isTamil ? 'பாசகாதி நால்வர் கோட்பாடு' : '4 Functional Planetary Roles'}</span>
+                        <span>🪐</span>
+                        <span>{isTamil ? 'மகாதசை போதகங்கள் ஆகியவை (Mahadasha Bhogan, Vedhagan, Pasagan & Karagan)' : 'மகாதசை போதகங்கள் ஆகியவை (Mahadasha Bhogan, Vedhagan, Pasagan & Karagan)'}</span>
                       </h3>
-                      <p className="text-[11px] text-stone-600 dark:text-stone-400">
-                        {isTamil ? 'கிரகங்களின் பலன் வழங்கும் ஆற்றலைத் தூண்டும் மற்றும் தடுக்கும் காரக கிரகங்கள் (ஜாதக அலங்கார விதி)' : 'Astrological role agents that stimulate, deliver, delay or obstruct planetary results'}
+                      <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5">
+                        {isTamil
+                          ? 'இது நிலையான சாஸ்திர குறிப்பு அட்டவணை. ஒவ்வொரு மகாதசைக்கும் போகன், வேதகன், பாசகன், காரகன் கிரகங்கள் பாரம்பரிய முறையில் நிர்ணயிக்கப்பட்டுள்ளன.'
+                          : 'A fixed traditional reference table. For each Mahadasha, the Bhogan, Vedhagan, Pasagan & Karagan planets are classically defined and never auto-computed.'}
                       </p>
                     </div>
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 font-medium self-start sm:self-auto">
-                      {isTamil ? 'பாசகாதி நால்வர்' : '4 Functional Role Agents'}
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 font-medium self-start sm:self-auto whitespace-nowrap">
+                      {isTamil ? '7 மகாதசைகள் (ராகு-கேது நீங்கலாக)' : '7 Mahadashas (Rahu-Ketu Excluded)'}
                     </span>
                   </div>
 
                   {/* 4 Role Definition Summary Cards */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                    <div className="p-2.5 rounded-xl bg-cyan-50/70 dark:bg-cyan-950/30 border border-cyan-500/20 text-cyan-950 dark:text-cyan-200 space-y-0.5">
-                      <div className="font-bold flex items-center gap-1 text-[11px] text-cyan-800 dark:text-cyan-300">
-                        <span>⚡</span>
-                        <span>{isTamil ? 'பாசகர் (Pasagar)' : 'Pasagar (Activator)'}</span>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                    <div className="p-2.5 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/20 border border-emerald-500/25 space-y-0.5">
+                      <div className="font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1">
+                        <span>🟢</span>
+                        <span>{isTamil ? 'போகன் (Bhogan)' : 'Bhogan (போகன்)'}</span>
                       </div>
-                      <div className="text-[10px] text-cyan-900 dark:text-cyan-300/90 font-medium">
-                        {isTamil ? 'சீக்கிர பலனைத் தருபவர்' : 'Quickly ripens & delivers results'}
-                      </div>
+                      <p className="text-[10px] text-emerald-950 dark:text-emerald-200 font-sans leading-relaxed">
+                        {isTamil ? 'தசை பலனை அனுபவிக்கச் செய்பவர்' : 'Delivers experience of dasha results'}
+                      </p>
                     </div>
-
-                    <div className="p-2.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-500/20 text-emerald-950 dark:text-emerald-200 space-y-0.5">
-                      <div className="font-bold flex items-center gap-1 text-[11px] text-emerald-800 dark:text-emerald-300">
-                        <span>🎁</span>
-                        <span>{isTamil ? 'போதகர் (Bodhakar)' : 'Bodhakar (Bestower)'}</span>
+                    <div className="p-2.5 rounded-xl bg-rose-50/80 dark:bg-rose-950/20 border border-rose-500/25 space-y-0.5">
+                      <div className="font-bold text-rose-800 dark:text-rose-300 flex items-center gap-1">
+                        <span>🔴</span>
+                        <span>{isTamil ? 'வேதகன் (Vedhagan)' : 'Vedhagan (வேதகன்)'}</span>
                       </div>
-                      <div className="text-[10px] text-emerald-900 dark:text-emerald-300/90 font-medium">
-                        {isTamil ? 'நிறையத் தருபவர்' : 'Showers abundant blessings & wisdom'}
-                      </div>
+                      <p className="text-[10px] text-rose-950 dark:text-rose-200 font-sans leading-relaxed">
+                        {isTamil ? 'தடுத்து நிறுத்துபவர் / பலனை வேதிக்கும் கிரகம்' : 'Obstructs / pierces the dasha results'}
+                      </p>
                     </div>
-
-                    <div className="p-2.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-500/20 text-amber-950 dark:text-amber-200 space-y-0.5">
-                      <div className="font-bold flex items-center gap-1 text-[11px] text-amber-800 dark:text-amber-300">
-                        <span>⏳</span>
-                        <span>{isTamil ? 'காரகர் (Karagar)' : 'Karagar (Steady Doer)'}</span>
+                    <div className="p-2.5 rounded-xl bg-cyan-50/80 dark:bg-cyan-950/20 border border-cyan-500/25 space-y-0.5">
+                      <div className="font-bold text-cyan-800 dark:text-cyan-300 flex items-center gap-1">
+                        <span>🔵</span>
+                        <span>{isTamil ? 'பாசகன் (Pasagan)' : 'Pasagan (பாசகன்)'}</span>
                       </div>
-                      <div className="text-[10px] text-amber-900 dark:text-amber-300/90 font-medium">
-                        {isTamil ? 'நிதானமாக, குறைந்த பலனைத் தருபவர்' : 'Gives measured, steady, lasting fruits'}
-                      </div>
+                      <p className="text-[10px] text-cyan-950 dark:text-cyan-200 font-sans leading-relaxed">
+                        {isTamil ? 'பந்தப்படுத்துபவர் / தசையை இயக்குபவர்' : 'Binds and activates the dasha'}
+                      </p>
                     </div>
-
-                    <div className="p-2.5 rounded-xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-500/20 text-rose-950 dark:text-rose-200 space-y-0.5">
-                      <div className="font-bold flex items-center gap-1 text-[11px] text-rose-800 dark:text-rose-300">
-                        <span>🛑</span>
-                        <span>{isTamil ? 'வேதகர் (Vedhakar)' : 'Vedhakar (Obstructionist)'}</span>
+                    <div className="p-2.5 rounded-xl bg-amber-50/80 dark:bg-amber-950/20 border border-amber-500/25 space-y-0.5">
+                      <div className="font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1">
+                        <span>🟡</span>
+                        <span>{isTamil ? 'காரகன் (Karagan)' : 'Karagan (காரகன்)'}</span>
                       </div>
-                      <div className="text-[10px] text-rose-900 dark:text-rose-300/90 font-medium">
-                        {isTamil ? 'தடுத்து விடுவார்' : 'Blocks, pierces or delays the fruits'}
-                      </div>
+                      <p className="text-[10px] text-amber-950 dark:text-amber-200 font-sans leading-relaxed">
+                        {isTamil ? 'பலன் தரும் முதன்மை காரகம்' : 'Principal signifier / doer of the dasha'}
+                      </p>
                     </div>
                   </div>
 
-                  {/* Master Table (Matching Page 31 verbatim) */}
+                  {/* Fixed Reference Table */}
                   <div className="overflow-x-auto rounded-xl border border-amber-900/15 dark:border-amber-500/20 bg-[#FFFDF9] dark:bg-[#1C1613]">
                     <table className="w-full text-xs text-left border-collapse">
                       <thead>
                         <tr className="bg-amber-900/10 dark:bg-amber-950/40 text-[#7A1A22] dark:text-amber-300 border-b border-amber-900/15 dark:border-amber-500/20 text-[11px]">
-                          <th className="p-2 sm:p-2.5 font-bold">{isTamil ? 'கிரகங்கள்' : 'Planets'}</th>
-                          <th className="p-2 sm:p-2.5 font-bold text-cyan-800 dark:text-cyan-300">{isTamil ? 'பாசகர்' : 'Pasakar'}</th>
-                          <th className="p-2 sm:p-2.5 font-bold text-emerald-800 dark:text-emerald-300">{isTamil ? 'போதகர்' : 'Bodhakar'}</th>
-                          <th className="p-2 sm:p-2.5 font-bold text-amber-800 dark:text-amber-300">{isTamil ? 'காரகர்' : 'Karagar'}</th>
-                          <th className="p-2 sm:p-2.5 font-bold text-rose-800 dark:text-rose-300">{isTamil ? 'வேதகர்' : 'Vedhakar'}</th>
-                          <th className="p-2 sm:p-2.5 font-bold text-stone-600 dark:text-stone-400">{isTamil ? 'ஜாதகத்தில் ராசி' : 'Occupied Sign'}</th>
+                          <th className="p-2 sm:p-2.5 font-bold">{isTamil ? 'மகாதசை (Mahadasha)' : 'Mahadasha (மகாதசை)'}</th>
+                          <th className="p-2 sm:p-2.5 font-bold text-emerald-700 dark:text-emerald-300">{isTamil ? 'போகன் (Bhogan)' : 'Bhogan (போகன்)'}</th>
+                          <th className="p-2 sm:p-2.5 font-bold text-rose-700 dark:text-rose-300">{isTamil ? 'வேதகன் (Vedhagan)' : 'Vedhagan (வேதகன்)'}</th>
+                          <th className="p-2 sm:p-2.5 font-bold text-cyan-700 dark:text-cyan-300">{isTamil ? 'பாசகன் (Pasagan)' : 'Pasagan (பாசகன்)'}</th>
+                          <th className="p-2 sm:p-2.5 font-bold text-amber-700 dark:text-amber-300">{isTamil ? 'காரகன் (Karagan)' : 'Karagan (காரகன்)'}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-amber-900/10 dark:divide-amber-500/10 font-sans text-[11px]">
-                        {horoscope?.pasakarBodhakarTaraData?.pasakarRows?.map(row => (
-                          <tr key={row.id} className="hover:bg-amber-50/50 dark:hover:bg-stone-800/40 transition-colors">
-                            <td className="p-2 sm:p-2.5 font-bold text-[#7A1A22] dark:text-[#E8838B] whitespace-nowrap">
-                              {isTamil ? (row.grahaTa || row.graha) : (row.grahaEn || row.graha)}
+                        {MAHADASHA_BHOGAN_VEDHAGAN_TABLE.map((row) => (
+                          <tr key={row.idEn} className="hover:bg-amber-50/50 dark:hover:bg-stone-800/40 transition-colors">
+                            <td className="p-2 sm:p-2.5 font-bold text-[#7A1A22] dark:text-amber-300 whitespace-nowrap">
+                              <div>{isTamil ? row.idTa : row.idEn}</div>
+                              <div className="text-[10px] text-stone-500 dark:text-stone-400 font-normal">{isTamil ? row.idEn : row.idTa}</div>
                             </td>
-                            <td className="p-2 sm:p-2.5">
-                              <span className="px-2 py-0.5 rounded bg-cyan-100/80 dark:bg-cyan-950/60 text-cyan-900 dark:text-cyan-300 font-medium">
-                                {isTamil ? (row.pasakarTa || row.pasakar) : (row.pasakarEn || row.pasakar)}
+                            <td className="p-2 sm:p-2.5 whitespace-nowrap">
+                              <span className="inline-flex flex-col px-2 py-0.5 rounded bg-emerald-100/70 dark:bg-emerald-950/50">
+                                <span className="font-bold text-emerald-800 dark:text-emerald-300">{isTamil ? row.bhoganTa : row.bhoganEn}</span>
+                                <span className="text-[10px] text-emerald-700/80 dark:text-emerald-400/80">{isTamil ? row.bhoganEn : row.bhoganTa}</span>
                               </span>
                             </td>
-                            <td className="p-2 sm:p-2.5">
-                              <span className="px-2 py-0.5 rounded bg-emerald-100/80 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-300 font-bold">
-                                {isTamil ? (row.pothakarTa || row.pothakar) : (row.pothakarEn || row.pothakar)}
+                            <td className="p-2 sm:p-2.5 whitespace-nowrap">
+                              <span className="inline-flex flex-col px-2 py-0.5 rounded bg-rose-100/70 dark:bg-rose-950/50">
+                                <span className="font-bold text-rose-800 dark:text-rose-300">{isTamil ? row.vedhaganTa : row.vedhaganEn}</span>
+                                <span className="text-[10px] text-rose-700/80 dark:text-rose-400/80">{isTamil ? row.vedhaganEn : row.vedhaganTa}</span>
                               </span>
                             </td>
-                            <td className="p-2 sm:p-2.5">
-                              <span className="px-2 py-0.5 rounded bg-amber-100/80 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 font-medium">
-                                {isTamil ? (row.karakarTa || row.karakar) : (row.karakarEn || row.karakar)}
+                            <td className="p-2 sm:p-2.5 whitespace-nowrap">
+                              <span className="inline-flex flex-col px-2 py-0.5 rounded bg-cyan-100/70 dark:bg-cyan-950/50">
+                                <span className="font-bold text-cyan-800 dark:text-cyan-300">{isTamil ? row.pasaganTa : row.pasaganEn}</span>
+                                <span className="text-[10px] text-cyan-700/80 dark:text-cyan-400/80">{isTamil ? row.pasaganEn : row.pasaganTa}</span>
                               </span>
                             </td>
-                            <td className="p-2 sm:p-2.5">
-                              <span className="px-2 py-0.5 rounded bg-rose-100/80 dark:bg-rose-950/60 text-rose-900 dark:text-rose-300 font-medium">
-                                {isTamil ? (row.vedhakarTa || row.vedhakar) : (row.vedhakarEn || row.vedhakar)}
+                            <td className="p-2 sm:p-2.5 whitespace-nowrap">
+                              <span className="inline-flex flex-col px-2 py-0.5 rounded bg-amber-100/70 dark:bg-amber-950/50">
+                                <span className="font-bold text-amber-800 dark:text-amber-300">{isTamil ? row.karaganTa : row.karaganEn}</span>
+                                <span className="text-[10px] text-amber-700/80 dark:text-amber-400/80">{isTamil ? row.karaganEn : row.karaganTa}</span>
                               </span>
-                            </td>
-                            <td className="p-2 sm:p-2.5 font-semibold text-stone-700 dark:text-stone-300 font-mono">
-                              {isTamil ? (row.rasiTa || row.rasi) : (row.rasiEn || row.rasi)}
                             </td>
                           </tr>
                         ))}
@@ -5928,16 +5918,16 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     </table>
                   </div>
 
-                  {/* Classical Rule Footnote Box */}
+                  {/* Classical Footnote */}
                   <div className="p-3 rounded-xl bg-amber-50/70 dark:bg-[#1A1412] border border-amber-900/10 dark:border-amber-500/10 text-[11px] text-stone-700 dark:text-stone-300 leading-relaxed font-sans space-y-1">
                     <div className="font-bold text-[#7A1A22] dark:text-amber-300 flex items-center gap-1.5">
-                      <span>📖</span>
-                      <span>{isTamil ? 'சாஸ்திர குறிப்புரை (Page 31 Benchmark):' : 'Classical Principles:'}</span>
+                      <span>📌</span>
+                      <span>{isTamil ? 'குறிப்பு:' : 'Note:'}</span>
                     </div>
                     <p>
                       {isTamil
-                        ? 'காரகர் நிதானமாக, குறைந்த பலனைத் தருபவர். வேதகர் தடுத்து விடுவார். போதகர் நிறையத் தருபவர். பாசகர் சீக்கிர பலனைத் தருபவர்.'
-                        : 'Karagar delivers measured, delayed results. Vedhakar obstructs and creates hurdles. Bodhakar bestows abundance. Pasagar accelerates and ripens the fruits quickly.'}
+                        ? 'இது நிலையான சாஸ்திர குறிப்பு அட்டவணை. ராகு-கேது தசைகள் இந்த முறையில் கணக்கிடப்படுவதில்லை. இந்த கிரக உறவுகளை தானாக உருவாக்கவோ மாற்றவோ கூடாது.'
+                        : 'This is a fixed traditional classical reference table. Rahu & Ketu dashas are excluded from this system. These planetary relationships must never be auto-generated or altered.'}
                     </p>
                   </div>
                 </div>
@@ -6049,136 +6039,6 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
             </div>
           )}
         </div>
-
-              {/* ------------------------------------------------------------- */}
-              {/* PART 3: மகாதசை போகன் - வேதகன் - பாசகன் - காரகன் (Fixed Classical Reference Table) */}
-              {/* ------------------------------------------------------------- */}
-              {(section16Tab === 'all' || section16Tab === 'mahadasha') && (() => {
-                // FIXED CLASSICAL REFERENCE TABLE — Never auto-compute or alter these planetary relationships.
-                // Source: Traditional Tamil Vedic Astrology. Rahu & Ketu are excluded from this classical system.
-                const MAHADASHA_BHOGAN_TABLE = [
-                  { idTa: 'சூரியன்',   idEn: 'Sun',     bhoganTa: 'செவ்வாய்',  bhoganEn: 'Mars',    vedhaganTa: 'சுக்கிரன்', vedhaganEn: 'Venus',   pasaganTa: 'சனி',       pasaganEn: 'Saturn',  karaganTa: 'குரு',       karaganEn: 'Jupiter' },
-                  { idTa: 'சந்திரன்',  idEn: 'Moon',    bhoganTa: 'செவ்வாய்',  bhoganEn: 'Mars',    vedhaganTa: 'சூரியன்',   vedhaganEn: 'Sun',     pasaganTa: 'சுக்கிரன்', pasaganEn: 'Venus',   karaganTa: 'சனி',        karaganEn: 'Saturn'  },
-                  { idTa: 'செவ்வாய்',  idEn: 'Mars',    bhoganTa: 'சந்திரன்',  bhoganEn: 'Moon',    vedhaganTa: 'புதன்',      vedhaganEn: 'Mercury', pasaganTa: 'சூரியன்',   pasaganEn: 'Sun',     karaganTa: 'சனி',        karaganEn: 'Saturn'  },
-                  { idTa: 'புதன்',     idEn: 'Mercury', bhoganTa: 'குரு',       bhoganEn: 'Jupiter', vedhaganTa: 'செவ்வாய்',  vedhaganEn: 'Mars',    pasaganTa: 'சந்திரன்',  pasaganEn: 'Moon',    karaganTa: 'சுக்கிரன்', karaganEn: 'Venus'   },
-                  { idTa: 'குரு',      idEn: 'Jupiter', bhoganTa: 'செவ்வாய்',  bhoganEn: 'Mars',    vedhaganTa: 'சூரியன்',   vedhaganEn: 'Sun',     pasaganTa: 'சனி',       pasaganEn: 'Saturn',  karaganTa: 'சந்திரன்',  karaganEn: 'Moon'    },
-                  { idTa: 'சுக்கிரன்', idEn: 'Venus',   bhoganTa: 'குரு',       bhoganEn: 'Jupiter', vedhaganTa: 'சனி',        vedhaganEn: 'Saturn',  pasaganTa: 'புதன்',     pasaganEn: 'Mercury', karaganTa: 'சூரியன்',   karaganEn: 'Sun'     },
-                  { idTa: 'சனி',       idEn: 'Saturn',  bhoganTa: 'சந்திரன்',  bhoganEn: 'Moon',    vedhaganTa: 'செவ்வாய்',  vedhaganEn: 'Mars',    pasaganTa: 'சுக்கிரன்', pasaganEn: 'Venus',   karaganTa: 'குரு',       karaganEn: 'Jupiter' },
-                ];
-                return (
-                  <div className="space-y-4 pt-2">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1 border-b border-amber-900/15 dark:border-amber-500/15">
-                      <div>
-                        <h3 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
-                          <span>🪐</span>
-                          <span>{isTamil ? 'மகாதசை போகன்-வேதகன்-பாசகன்-காரகன் அட்டவணை' : 'Mahadasha Bhogan – Vedhagan – Pasagan – Karagan Reference Table'}</span>
-                        </h3>
-                        <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5">
-                          {isTamil
-                            ? 'இது நிலையான சாஸ்திர குறிப்பு அட்டவணை. ஒவ்வொரு மகாதசைக்கும் போகன், வேதகன், பாசகன், காரகன் கிரகங்கள் பாரம்பரிய முறையில் நிர்ணயிக்கப்பட்டுள்ளன.'
-                            : 'A fixed traditional reference table. For each Mahadasha, the Bhogan, Vedhagan, Pasagan & Karagan planets are classically defined and never auto-computed.'}
-                        </p>
-                      </div>
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 font-medium self-start sm:self-auto whitespace-nowrap">
-                        {isTamil ? '7 மகாதசைகள் (ராகு-கேது நீங்கலாக)' : '7 Mahadashas (Rahu-Ketu Excluded)'}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
-                      <div className="p-2.5 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/20 border border-emerald-500/25 space-y-0.5">
-                        <div className="font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1">
-                          <span>🟢</span>
-                          <span>{isTamil ? 'போகன் (Bhogan)' : 'Bhogan (போகன்)'}</span>
-                        </div>
-                        <p className="text-[10px] text-emerald-950 dark:text-emerald-200 font-sans leading-relaxed">
-                          {isTamil ? 'தசை பலனை அனுபவிக்கச் செய்பவர்' : 'Delivers experience of dasha results'}
-                        </p>
-                      </div>
-                      <div className="p-2.5 rounded-xl bg-rose-50/80 dark:bg-rose-950/20 border border-rose-500/25 space-y-0.5">
-                        <div className="font-bold text-rose-800 dark:text-rose-300 flex items-center gap-1">
-                          <span>🔴</span>
-                          <span>{isTamil ? 'வேதகன் (Vedhagan)' : 'Vedhagan (வேதகன்)'}</span>
-                        </div>
-                        <p className="text-[10px] text-rose-950 dark:text-rose-200 font-sans leading-relaxed">
-                          {isTamil ? 'தடுத்து நிறுத்துபவர் / பலனை வேதிக்கும் கிரகம்' : 'Obstructs / pierces the dasha results'}
-                        </p>
-                      </div>
-                      <div className="p-2.5 rounded-xl bg-cyan-50/80 dark:bg-cyan-950/20 border border-cyan-500/25 space-y-0.5">
-                        <div className="font-bold text-cyan-800 dark:text-cyan-300 flex items-center gap-1">
-                          <span>🔵</span>
-                          <span>{isTamil ? 'பாசகன் (Pasagan)' : 'Pasagan (பாசகன்)'}</span>
-                        </div>
-                        <p className="text-[10px] text-cyan-950 dark:text-cyan-200 font-sans leading-relaxed">
-                          {isTamil ? 'பந்தப்படுத்துபவர் / தசையை இயக்குபவர்' : 'Binds and activates the dasha'}
-                        </p>
-                      </div>
-                      <div className="p-2.5 rounded-xl bg-amber-50/80 dark:bg-amber-950/20 border border-amber-500/25 space-y-0.5">
-                        <div className="font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1">
-                          <span>🟡</span>
-                          <span>{isTamil ? 'காரகன் (Karagan)' : 'Karagan (காரகன்)'}</span>
-                        </div>
-                        <p className="text-[10px] text-amber-950 dark:text-amber-200 font-sans leading-relaxed">
-                          {isTamil ? 'பலன் தரும் முதன்மை காரகம்' : 'Principal signifier / doer of the dasha'}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="overflow-x-auto rounded-xl border border-amber-900/15 dark:border-amber-500/20 bg-[#FFFDF9] dark:bg-[#1C1613]">
-                      <table className="w-full text-xs text-left border-collapse">
-                        <thead>
-                          <tr className="bg-amber-900/10 dark:bg-amber-950/40 text-[#7A1A22] dark:text-amber-300 border-b border-amber-900/15 dark:border-amber-500/20 text-[11px]">
-                            <th className="p-2 sm:p-2.5 font-bold">{isTamil ? 'மகாதசை' : 'Mahadasha'}</th>
-                            <th className="p-2 sm:p-2.5 font-bold text-emerald-700 dark:text-emerald-300">{isTamil ? 'போகன்' : 'Bhogan'}</th>
-                            <th className="p-2 sm:p-2.5 font-bold text-rose-700 dark:text-rose-300">{isTamil ? 'வேதகன்' : 'Vedhagan'}</th>
-                            <th className="p-2 sm:p-2.5 font-bold text-cyan-700 dark:text-cyan-300">{isTamil ? 'பாசகன்' : 'Pasagan'}</th>
-                            <th className="p-2 sm:p-2.5 font-bold text-amber-700 dark:text-amber-300">{isTamil ? 'காரகன்' : 'Karagan'}</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-amber-900/10 dark:divide-amber-500/10 font-sans text-[11px]">
-                          {MAHADASHA_BHOGAN_TABLE.map((row) => (
-                            <tr key={row.idEn} className="hover:bg-amber-50/50 dark:hover:bg-stone-800/40 transition-colors">
-                              <td className="p-2 sm:p-2.5 font-bold text-[#7A1A22] dark:text-amber-300">
-                                <div className="font-bold">{isTamil ? row.idTa : row.idEn}</div>
-                                {isTamil && <div className="text-[10px] text-stone-500 dark:text-stone-400 font-normal">{row.idEn}</div>}
-                              </td>
-                              <td className="p-2 sm:p-2.5">
-                                <span className="inline-flex flex-col">
-                                  <span className="font-bold text-emerald-700 dark:text-emerald-300">{isTamil ? row.bhoganTa : row.bhoganEn}</span>
-                                  {isTamil && <span className="text-[10px] text-stone-400">{row.bhoganEn}</span>}
-                                </span>
-                              </td>
-                              <td className="p-2 sm:p-2.5">
-                                <span className="inline-flex flex-col">
-                                  <span className="font-bold text-rose-700 dark:text-rose-300">{isTamil ? row.vedhaganTa : row.vedhaganEn}</span>
-                                  {isTamil && <span className="text-[10px] text-stone-400">{row.vedhaganEn}</span>}
-                                </span>
-                              </td>
-                              <td className="p-2 sm:p-2.5">
-                                <span className="inline-flex flex-col">
-                                  <span className="font-bold text-cyan-700 dark:text-cyan-300">{isTamil ? row.pasaganTa : row.pasaganEn}</span>
-                                  {isTamil && <span className="text-[10px] text-stone-400">{row.pasaganEn}</span>}
-                                </span>
-                              </td>
-                              <td className="p-2 sm:p-2.5">
-                                <span className="inline-flex flex-col">
-                                  <span className="font-bold text-amber-700 dark:text-amber-300">{isTamil ? row.karaganTa : row.karaganEn}</span>
-                                  {isTamil && <span className="text-[10px] text-stone-400">{row.karaganEn}</span>}
-                                </span>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                    <div className="p-3 rounded-xl bg-gradient-to-r from-amber-50 to-stone-50 dark:from-amber-950/20 dark:to-stone-950/20 border border-amber-900/15 dark:border-amber-500/15 text-[11px] text-stone-700 dark:text-stone-300 font-sans">
-                      <span className="font-bold text-[#7A1A22] dark:text-amber-300">
-                        {isTamil ? '📌 குறிப்பு: ' : '📌 Note: '}
-                      </span>
-                      {isTamil
-                        ? 'இது நிலையான சாஸ்திர குறிப்பு அட்டவணை. ராகு-கேது தசைகள் இந்த முறையில் கணக்கிடப்படுவதில்லை. இந்த கிரக உறவுகளை தானாக உருவாக்கவோ மாற்றவோ கூடாது.'
-                        : 'This is a fixed traditional classical reference table. Rahu & Ketu dashas are excluded from this system. These planetary relationships must never be auto-generated or altered.'}
-                    </div>
-                  </div>
-                );
-              })()}
         {/* ======================================================== */}
         {/* ITEM 17: 17. ஜாதகத்தில் கிரகங்களின் நிலை & கிரகங்களின் பார்வை, சேர்க்கை நிலை */}
         {/* ======================================================== */}
