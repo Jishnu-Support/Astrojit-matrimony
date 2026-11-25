@@ -735,23 +735,25 @@ export default function TamilPoruthamCard({ matchReport }) {
             </div>
           )}
 
-          {/* Compact summary row if collapsed */}
+          {/* Compact summary row if collapsed (Bride Left, Groom Right) */}
           {!showRahuKetuChart && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div className="p-3 bg-teal-50/50 rounded-xl border border-teal-100 flex justify-between items-center">
-                <span className="font-bold text-teal-950">
-                  {lang === 'ta' ? 'மணமகன் சர்ப்ப நிலை:' : "Groom's Axis:"} {lang === 'ta' ? matchReport.rahuKetuAnalysis.boy?.axisNameTamil : matchReport.rahuKetuAnalysis.boy?.axisName}
+              <div className="p-3 bg-rose-50/50 rounded-xl border border-rose-100 flex justify-between items-center">
+                <span className="font-bold text-rose-950">
+                  {({ ta: 'மணமகள் சர்ப்ப நிலை:', kn: 'ವಧು ಸರ್ಪ ಸ್ಥಿತಿ:', hi: 'वधू सर्प स्थिति:', te: 'వధువు సర్ప స్థితి:', bn: 'কনে সর্প অবস্থান:' }[lang] || "Bride's Axis:")}{' '}
+                  {lang === 'ta' ? matchReport.rahuKetuAnalysis.girl?.axisNameTamil : matchReport.rahuKetuAnalysis.girl?.axisName}
                 </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-100 text-teal-900">
-                  {lang === 'ta' ? matchReport.rahuKetuAnalysis.boy?.doshaLevelTamil : matchReport.rahuKetuAnalysis.boy?.doshaLevel}
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-900">
+                  {lang === 'ta' ? matchReport.rahuKetuAnalysis.girl?.doshaLevelTamil : matchReport.rahuKetuAnalysis.girl?.doshaLevel}
                 </span>
               </div>
-              <div className="p-3 bg-purple-50/50 rounded-xl border border-purple-100 flex justify-between items-center">
-                <span className="font-bold text-purple-950">
-                  {lang === 'ta' ? 'மணமகள் சர்ப்ப நிலை:' : "Bride's Axis:"} {lang === 'ta' ? matchReport.rahuKetuAnalysis.girl?.axisNameTamil : matchReport.rahuKetuAnalysis.girl?.axisName}
+              <div className="p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 flex justify-between items-center">
+                <span className="font-bold text-indigo-950">
+                  {({ ta: 'மணமகன் சர்ப்ப நிலை:', kn: 'ವರ ಸರ್ಪ ಸ್ಥಿತಿ:', hi: 'वर सर्प स्थिति:', te: 'వరుడు సర్ప స్థితి:', bn: 'বর সর্প অবস্থান:' }[lang] || "Groom's Axis:")}{' '}
+                  {lang === 'ta' ? matchReport.rahuKetuAnalysis.boy?.axisNameTamil : matchReport.rahuKetuAnalysis.boy?.axisName}
                 </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-900">
-                  {lang === 'ta' ? matchReport.rahuKetuAnalysis.girl?.doshaLevelTamil : matchReport.rahuKetuAnalysis.girl?.doshaLevel}
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-900">
+                  {lang === 'ta' ? matchReport.rahuKetuAnalysis.boy?.doshaLevelTamil : matchReport.rahuKetuAnalysis.boy?.doshaLevel}
                 </span>
               </div>
             </div>
@@ -760,7 +762,9 @@ export default function TamilPoruthamCard({ matchReport }) {
           {matchReport.rahuKetuAnalysis.doshaSamyam && (
             <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-700">
               <strong>{MATCH_I18N.compatibilityVerdictHeading[lang] || MATCH_I18N.compatibilityVerdictHeading.en}</strong>{' '}
-              {lang === 'ta' ? matchReport.rahuKetuAnalysis.doshaSamyam.summary : matchReport.rahuKetuAnalysis.doshaSamyam.summary}
+              {lang === 'ta'
+                ? (matchReport.rahuKetuAnalysis.doshaSamyam.summaryTamil || matchReport.rahuKetuAnalysis.doshaSamyam.summary)
+                : matchReport.rahuKetuAnalysis.doshaSamyam.summary}
             </div>
           )}
         </div>
