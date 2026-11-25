@@ -18,11 +18,13 @@ import {
   ChevronDown,
   MessageCircle,
   HelpCircle,
+  Flame,
 } from 'lucide-react';
 import { API } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../i18n';
 import TamilPoruthamCard from './TamilPoruthamCard';
+import GujaDashaChart from './GujaDashaChart';
 import { MATCH_I18N, ASHTAKOOTA_I18N, getMatchText } from '../matchmakingI18n';
 
 /**
@@ -682,6 +684,18 @@ export default function KundliMatchmaking() {
               <Heart className="w-4 h-4 text-indigo-600" />
               <span>{MATCH_I18N.tabAshtakoota[lang] || MATCH_I18N.tabAshtakoota.en}</span>
             </button>
+            <button
+              type="button"
+              onClick={() => setSelfResultTab('guja_dasha')}
+              className={`pb-2.5 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                selfResultTab === 'guja_dasha'
+                  ? 'border-rose-600 text-rose-900 font-bold'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              <Flame className="w-4 h-4 text-rose-600" />
+              <span>{MATCH_I18N.tabGujaDasha[lang] || MATCH_I18N.tabGujaDasha.en}</span>
+            </button>
           </div>
 
           {/* Tab 1: 10 Poruthams View */}
@@ -689,7 +703,12 @@ export default function KundliMatchmaking() {
             <TamilPoruthamCard matchReport={selfResult} />
           )}
 
-          {/* Tab 2: Ashtakoota 36 Gunas View */}
+          {/* Tab 2: Guja Dasha & Chevvai Chart View */}
+          {selfResultTab === 'guja_dasha' && (
+            <GujaDashaChart matchReport={selfResult} />
+          )}
+
+          {/* Tab 3: Ashtakoota 36 Gunas View */}
           {selfResultTab === 'ashtakoota' && (
             <div className="space-y-4">
               {/* Ashtakoota 8 Kootas Table */}
@@ -990,10 +1009,24 @@ export default function KundliMatchmaking() {
                               <Heart className="w-4 h-4 text-indigo-600" />
                               <span>{MATCH_I18N.tabAshtakoota[lang] || MATCH_I18N.tabAshtakoota.en}</span>
                             </button>
+                            <button
+                              type="button"
+                              onClick={() => setReqTabs({ ...reqTabs, [req.id]: 'guja_dasha' })}
+                              className={`pb-2.5 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                                currentTab === 'guja_dasha'
+                                  ? 'border-rose-600 text-rose-900 font-bold'
+                                  : 'border-transparent text-slate-500 hover:text-slate-700'
+                              }`}
+                            >
+                              <Flame className="w-4 h-4 text-rose-600" />
+                              <span>{MATCH_I18N.tabGujaDasha[lang] || MATCH_I18N.tabGujaDasha.en}</span>
+                            </button>
                           </div>
 
                           {currentTab === 'tamil' ? (
                             <TamilPoruthamCard matchReport={req.matchReport} />
+                          ) : currentTab === 'guja_dasha' ? (
+                            <GujaDashaChart matchReport={req.matchReport} />
                           ) : (
                             <div className="space-y-4">
                               {/* Score Bar */}

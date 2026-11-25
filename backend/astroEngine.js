@@ -561,6 +561,624 @@ function calculateTamilPoruthams(boyInput, girlInput) {
 }
 
 /**
+ * Classical Nirayana Ephemeris & Astronomical Helper for Guja (Chevvai) & Dasha Analysis
+ */
+function normalizeDeg(deg) {
+  let v = deg % 360;
+  if (v < 0) v += 360;
+  return v;
+}
+
+function sinD(deg) {
+  return Math.sin(deg * Math.PI / 180);
+}
+
+function cosD(deg) {
+  return Math.cos(deg * Math.PI / 180);
+}
+
+function atan2D(y, x) {
+  return normalizeDeg(Math.atan2(y, x) * 180 / Math.PI);
+}
+
+function parseDobParts(dobStr) {
+  if (!dobStr) return { year: 2000, month: 1, day: 1 };
+  const parts = String(dobStr).split(/[-/.]/).map(s => parseInt(s, 10));
+  if (parts[0] > 1000) {
+    return { year: parts[0] || 2000, month: parts[1] || 1, day: parts[2] || 1 };
+  }
+  return { year: parts[2] || 2000, month: parts[1] || 1, day: parts[0] || 1 };
+}
+
+function parseTimeParts(timeStr) {
+  if (!timeStr) return { hour: 6, minute: 0 };
+  const parts = String(timeStr).split(':').map(s => parseInt(s, 10));
+  return { hour: isNaN(parts[0]) ? 6 : parts[0], minute: isNaN(parts[1]) ? 0 : parts[1] };
+}
+
+function computeJulianDay(Y, M, D, hour = 0, minute = 0) {
+  let y = Y;
+  let m = M;
+  if (m <= 2) {
+    y -= 1;
+    m += 12;
+  }
+  const A = Math.floor(y / 100);
+  const B = 2 - A + Math.floor(A / 4);
+  const dayFrac = D + (hour + minute / 60) / 24.0;
+  return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + dayFrac + B - 1524.5;
+}
+
+/**
+ * Computes Sidereal planetary positions for Lagna, Sun, Moon, Mars, Jupiter, Venus, Saturn, Rahu, Ketu
+ */
+function computePersonGrahas(input = {}) {
+  const { year, month, day } = parseDobParts(input.dob || input.birthDate || input.dateOfBirth);
+  const { hour, minute } = parseTimeParts(input.dobTime || input.birthTime || input.timeOfBirth || '06:00');
+  const lat = parseFloat(input.lat || input.latitude || 11.6643);
+  const lon = parseFloat(input.lon || input.longitude || 78.1460);
+  const utcOffset = 5.5;
+
+  const jd = computeJulianDay(year, month, day, hour - utcOffset, minute);
+  const d = jd - 2451545.0;
+  const T = d / 36525.0;
+
+  // Lahiri Ayanamsha
+  const ayanamsha = normalizeDeg(23.85 + (d / 365.25) * 0.01397);
+
+  // Sun
+  const M_sun = normalizeDeg(357.529 + 0.98560028 * d);
+  const L_sun = normalizeDeg(280.466 + 0.98564736 * d);
+  const sunTrop = normalizeDeg(L_sun + 1.915 * sinD(M_sun) + 0.02 * sinD(2 * M_sun));
+  const sunSid = normalizeDeg(sunTrop - ayanamsha);
+
+  // Mars (Chevvai / Guja)
+  const M_mars = normalizeDeg(19.373 + 0.5240207 * d);
+  const L_mars = normalizeDeg(355.433 + 0.5240330 * d);
+  const marsTrop = normalizeDeg(L_mars + 10.691 * sinD(M_mars) + 0.623 * sinD(2 * M_mars));
+  const marsSid = normalizeDeg(marsTrop - ayanamsha);
+
+  // Jupiter (Guru)
+  const M_jup = normalizeDeg(20.020 + 0.0830853 * d);
+  const L_jup = normalizeDeg(34.351 + 0.0830912 * d);
+  const jupTrop = normalizeDeg(L_jup + 5.555 * sinD(M_jup) + 0.166 * sinD(2 * M_jup));
+  const jupSid = normalizeDeg(jupTrop - ayanamsha);
+
+  // Venus (Sukra)
+  const M_ven = normalizeDeg(50.115 + 1.6021302 * d);
+  const L_ven = normalizeDeg(181.979 + 1.6021305 * d);
+  const venTrop = normalizeDeg(L_ven - 0.776 * sinD(M_ven));
+  const venSid = normalizeDeg(venTrop - ayanamsha);
+
+  // Saturn (Sani)
+  const M_sat = normalizeDeg(317.020 + 0.0334442 * d);
+  const L_sat = normalizeDeg(50.077 + 0.0334597 * d);
+  const satTrop = normalizeDeg(L_sat + 6.300 * sinD(M_sat));
+  const satSid = normalizeDeg(satTrop - ayanamsha);
+
+  // Mercury (Budha)
+  const M_mer = normalizeDeg(174.794 + 4.0923344 * d);
+  const L_mer = normalizeDeg(252.251 + 4.0923388 * d);
+  const merTrop = normalizeDeg(L_mer + 23.440 * sinD(M_mer));
+  const merSid = normalizeDeg(merTrop - ayanamsha);
+
+  // Mean Rahu & Ketu
+  const rahuTrop = normalizeDeg(259.183 - 0.05295 * d);
+  const rahuSid = normalizeDeg(rahuTrop - ayanamsha);
+  const ketuSid = normalizeDeg(rahuSid + 180);
+
+  // Local Sidereal Time (LST) and Ascendant (Lagna)
+  const GMST = normalizeDeg(280.46061837 + 360.98564736629 * d);
+  const LST = normalizeDeg(GMST + lon);
+  const eps = 23.4392911 - 0.0130042 * T;
+  const sinLST = sinD(LST);
+  const cosLST = cosD(LST);
+  const sinEps = sinD(eps);
+  const cosEps = cosD(eps);
+  const tanLat = Math.tan(lat * Math.PI / 180);
+  const ascRad = Math.atan2(-cosLST, sinLST * cosEps + tanLat * sinEps);
+  const ascTrop = normalizeDeg(ascRad * 180 / Math.PI);
+  const ascSid = normalizeDeg(ascTrop - ayanamsha);
+
+  // Moon Position & Star
+  let moonSid = 0;
+  const starObj = findStarObj(input);
+  const rashiIdx = findRashiIdx(input);
+  const pada = parseInt(input.pada || input.padam || 1, 10);
+
+  if (starObj && starObj.index !== undefined) {
+    // Star index (0..26) * 13°20' + (pada - 1) * 3°20' + 1°40' (mid-pada)
+    moonSid = normalizeDeg(starObj.index * (40 / 3) + (pada - 1) * (10 / 3) + (5 / 3));
+  } else {
+    moonSid = normalizeDeg(rashiIdx * 30 + 15);
+  }
+
+  const lagnaRasi = Math.floor(ascSid / 30) % 12;
+  const moonRasi = Math.floor(moonSid / 30) % 12;
+  const marsRasi = Math.floor(marsSid / 30) % 12;
+  const venusRasi = Math.floor(venSid / 30) % 12;
+  const jupRasi = Math.floor(jupSid / 30) % 12;
+  const sunRasi = Math.floor(sunSid / 30) % 12;
+  const merRasi = Math.floor(merSid / 30) % 12;
+  const satRasi = Math.floor(satSid / 30) % 12;
+  const rahuRasi = Math.floor(rahuSid / 30) % 12;
+  const ketuRasi = Math.floor(ketuSid / 30) % 12;
+
+  return {
+    birthYear: year,
+    birthMonth: month,
+    birthDay: day,
+    starObj,
+    pada,
+    longitudes: {
+      ascendant: ascSid,
+      sun: sunSid,
+      moon: moonSid,
+      mars: marsSid,
+      jupiter: jupSid,
+      venus: venSid,
+      saturn: satSid,
+      mercury: merSid,
+      rahu: rahuSid,
+      ketu: ketuSid,
+    },
+    rashis: {
+      lagna: lagnaRasi,
+      moon: moonRasi,
+      mars: marsRasi,
+      venus: venusRasi,
+      jupiter: jupRasi,
+      sun: sunRasi,
+      mercury: merRasi,
+      saturn: satRasi,
+      rahu: rahuRasi,
+      ketu: ketuRasi,
+    }
+  };
+}
+
+/**
+ * Detailed Guja (Chevvai) Dosha Evaluation with Classical Nivrutti Rules
+ */
+function evaluateDetailedChevvai(grahas, personInput = {}) {
+  const { rashis, starObj, pada } = grahas;
+  const lagnaRasi = rashis.lagna;
+  const moonRasi = rashis.moon;
+  const venusRasi = rashis.venus;
+  const marsRasi = rashis.mars;
+  const jupRasi = rashis.jupiter;
+
+  // Exact houses of Mars
+  const houseLagna = ((marsRasi - lagnaRasi + 12) % 12) + 1;
+  const houseMoon = ((marsRasi - moonRasi + 12) % 12) + 1;
+  const houseVenus = ((marsRasi - venusRasi + 12) % 12) + 1;
+
+  const doshaHouses = [1, 2, 4, 7, 8, 12];
+  const isLagnaDosha = doshaHouses.includes(houseLagna);
+  const isMoonDosha = doshaHouses.includes(houseMoon);
+  const isVenusDosha = doshaHouses.includes(houseVenus);
+
+  const rawHasDosha = isLagnaDosha || isMoonDosha || isVenusDosha;
+
+  // Sastric Nivrutti (Cancellations)
+  const cancellations = [];
+
+  // 1. Swakshetra (Own House: Aries / Scorpio)
+  if (marsRasi === 0 || marsRasi === 7) {
+    cancellations.push('Swakshetra Exemption: Mars in own house (Aries/Scorpio) neutralizes dosha');
+  }
+  // 2. Exaltation (Capricorn)
+  if (marsRasi === 9) {
+    cancellations.push('Uccha Exemption: Mars exalted in Capricorn cancels inauspiciousness');
+  }
+  // 3. Debilitation (Cancer)
+  if (marsRasi === 3) {
+    cancellations.push('Neecha Nivrutti: Mars in Cancer loses malefic stinging capacity');
+  }
+  // 4. Leo (Friendly Sign of Sun)
+  if (marsRasi === 4) {
+    cancellations.push('Mitra Kshetra Exemption: Mars in friendly royal sign Leo');
+  }
+  // 5. Jupiter Signs (Sagittarius / Pisces)
+  if (marsRasi === 8 || marsRasi === 11) {
+    cancellations.push('Guru Kshetra Exemption: Mars in auspicious signs of Jupiter');
+  }
+  // 6. Guru Aspect / Association (Guru Mangala Yoga)
+  const distFromGuru = ((marsRasi - jupRasi + 12) % 12) + 1;
+  if (distFromGuru === 1 || distFromGuru === 5 || distFromGuru === 7 || distFromGuru === 9) {
+    cancellations.push('Guru Mangala Yoga: Benefic Jupiter conjuncts or directly aspects Mars');
+  }
+  // 7. Chandra Mangala Yoga (Moon with Mars)
+  if (marsRasi === moonRasi) {
+    cancellations.push('Chandra Mangala Yoga: Auspicious association of Moon and Mars');
+  }
+  // 8. Specific House-Sign Pairs
+  if (houseLagna === 2 && (marsRasi === 2 || marsRasi === 5)) {
+    cancellations.push('Mercury Sign 2nd House Exemption: Mars in Gemini/Virgo in 2nd');
+  }
+  if (houseLagna === 4 && (marsRasi === 0 || marsRasi === 7)) {
+    cancellations.push('Aries/Scorpio 4th House Exemption: Mars in 4th house in own sign');
+  }
+  if (houseLagna === 7 && (marsRasi === 3 || marsRasi === 9)) {
+    cancellations.push('Cancer/Capricorn 7th House Exemption: Mars in 7th house exalted or debilitated');
+  }
+  if (houseLagna === 8 && (marsRasi === 8 || marsRasi === 11)) {
+    cancellations.push('Sagittarius/Pisces 8th House Exemption: Mars in 8th house in Jupiter signs');
+  }
+  if (houseLagna === 12 && (marsRasi === 1 || marsRasi === 6)) {
+    cancellations.push('Venus Sign 12th House Exemption: Mars in Taurus/Libra in 12th');
+  }
+
+  const isCancelled = rawHasDosha && cancellations.length > 0;
+  const netHasDosha = rawHasDosha && !isCancelled;
+
+  // Dosha level
+  let doshaLevel = 'None';
+  let doshaLevelTamil = 'தோஷம் இல்லை';
+  if (netHasDosha) {
+    if (houseLagna === 7 || houseLagna === 8) {
+      doshaLevel = 'High (Severe)';
+      doshaLevelTamil = 'அதி தீவிர செவ்வாய் தோஷம்';
+    } else {
+      doshaLevel = 'Moderate / Mild';
+      doshaLevelTamil = 'மிதமான செவ்வாய் தோஷம்';
+    }
+  } else if (isCancelled) {
+    doshaLevel = 'Exempted / Cancelled (Nivrutti)';
+    doshaLevelTamil = 'தோஷ நிவர்த்தி (சாஸ்திர விதிப்படி நீக்கம்)';
+  }
+
+  return {
+    hasDosha: rawHasDosha,
+    isCancelled,
+    netHasDosha,
+    doshaLevel,
+    doshaLevelTamil,
+    houses: {
+      lagna: houseLagna,
+      moon: houseMoon,
+      venus: houseVenus,
+    },
+    cancellations: cancellations.length > 0 ? cancellations : ['Natural benefic alignment / neutral placement'],
+    verdict: netHasDosha ? 'Chevvai Dosha Present' : isCancelled ? 'Chevvai Dosha Cancelled (Nivrutti)' : 'Free from Chevvai Dosha',
+    verdictTamil: netHasDosha ? 'செவ்வாய் தோஷம் உண்டு' : isCancelled ? 'செவ்வாய் தோஷ நிவர்த்தி' : 'செவ்வாய் தோஷம் இல்லை'
+  };
+}
+
+/**
+ * South Indian 12-Cell Rasi Chart Builder
+ */
+function buildSouthIndianChart(grahas, chevvaiInfo) {
+  const { rashis } = grahas;
+  const cells = [];
+
+  for (let sIdx = 0; sIdx < 12; sIdx++) {
+    const occupants = [];
+    if (rashis.lagna === sIdx) occupants.push({ name: 'Lagna', code: 'ASC / ல', isLagna: true });
+    if (rashis.mars === sIdx) occupants.push({
+      name: 'Mars',
+      code: 'செவ் / Mars',
+      isMars: true,
+      houseFromLagna: chevvaiInfo.houses.lagna,
+      isDoshaHouse: [1, 2, 4, 7, 8, 12].includes(chevvaiInfo.houses.lagna)
+    });
+    if (rashis.moon === sIdx) occupants.push({ name: 'Moon', code: 'சந் / Moon', isMoon: true });
+    if (rashis.venus === sIdx) occupants.push({ name: 'Venus', code: 'சுக் / Ven', isVenus: true });
+    if (rashis.jupiter === sIdx) occupants.push({ name: 'Jupiter', code: 'குரு / Jup', isJupiter: true });
+    if (rashis.sun === sIdx) occupants.push({ name: 'Sun', code: 'சூரி / Sun' });
+    if (rashis.mercury === sIdx) occupants.push({ name: 'Mercury', code: 'புதன் / Mer' });
+    if (rashis.saturn === sIdx) occupants.push({ name: 'Saturn', code: 'சனி / Sat' });
+    if (rashis.rahu === sIdx) occupants.push({ name: 'Rahu', code: 'ராகு / Rahu' });
+    if (rashis.ketu === sIdx) occupants.push({ name: 'Ketu', code: 'கேது / Ketu' });
+
+    cells.push({
+      signIdx: sIdx,
+      signName: RASHIS[sIdx]?.name,
+      signTamil: RASHIS[sIdx]?.tamil,
+      occupants
+    });
+  }
+
+  return cells;
+}
+
+/**
+ * Vimshottari 120-Year Dasha Timeline & Guja Dasha (Mars 7-Year Mahadasha) Calculation
+ */
+function computePersonDashaTimeline(grahas) {
+  const DASHA_LORDS = [
+    { id: 'ketu', nameEn: 'Ketu', nameTa: 'கேது', years: 7 },
+    { id: 'venus', nameEn: 'Venus', nameTa: 'சுக்கிரன்', years: 20 },
+    { id: 'sun', nameEn: 'Sun', nameTa: 'சூரியன்', years: 6 },
+    { id: 'moon', nameEn: 'Moon', nameTa: 'சந்திரன்', years: 10 },
+    { id: 'mars', nameEn: 'Mars', nameTa: 'செவ்வாய்', years: 7 },
+    { id: 'rahu', nameEn: 'Rahu', nameTa: 'ராகு', years: 18 },
+    { id: 'jupiter', nameEn: 'Jupiter', nameTa: 'குரு', years: 16 },
+    { id: 'saturn', nameEn: 'Saturn', nameTa: 'சனி', years: 19 },
+    { id: 'mercury', nameEn: 'Mercury', nameTa: 'புதன்', years: 17 }
+  ];
+
+  const starIdx = grahas.starObj ? grahas.starObj.index : 0;
+  const startLordIdx = starIdx % 9;
+  const pada = grahas.pada || 1;
+
+  // Fraction remaining of birth Dasha
+  const remainingFraction = Math.max(0.05, Math.min(0.95, (4 - pada + 0.5) / 4.0));
+  const birthBalYears = remainingFraction * DASHA_LORDS[startLordIdx].years;
+
+  const bYear = grahas.birthYear;
+  const bMonth = grahas.birthMonth;
+  const bDay = grahas.birthDay;
+
+  // Build 9 successive Mahadashas
+  const dashas = [];
+  let currentStartYear = bYear + (bMonth - 1) / 12.0 + bDay / 365.25;
+  let currentAge = 0;
+
+  for (let i = 0; i < 9; i++) {
+    const lordObj = DASHA_LORDS[(startLordIdx + i) % 9];
+    const duration = i === 0 ? birthBalYears : lordObj.years;
+    const startAge = currentAge;
+    const endAge = currentAge + duration;
+    const startDateYear = currentStartYear;
+    const endDateYear = currentStartYear + duration;
+
+    const sY = Math.floor(startDateYear);
+    const sM = Math.max(1, Math.min(12, Math.floor((startDateYear - sY) * 12) + 1));
+    const sD = Math.max(1, Math.min(28, Math.floor(((startDateYear - sY) * 12 + 1 - sM) * 30) + 1));
+
+    const eY = Math.floor(endDateYear);
+    const eM = Math.max(1, Math.min(12, Math.floor((endDateYear - eY) * 12) + 1));
+    const eD = Math.max(1, Math.min(28, Math.floor(((endDateYear - eY) * 12 + 1 - eM) * 30) + 1));
+
+    const startDateStr = `${sY}-${String(sM).padStart(2, '0')}-${String(sD).padStart(2, '0')}`;
+    const endDateStr = `${eY}-${String(eM).padStart(2, '0')}-${String(eD).padStart(2, '0')}`;
+
+    dashas.push({
+      lord: lordObj.nameEn,
+      lordTamil: lordObj.nameTa,
+      lordId: lordObj.id,
+      durationYears: Math.round(duration * 10) / 10,
+      startAge: Math.round(startAge * 10) / 10,
+      endAge: Math.round(endAge * 10) / 10,
+      startDate: startDateStr,
+      endDate: endDateStr,
+      startDateYear,
+      endDateYear
+    });
+
+    currentStartYear = endDateYear;
+    currentAge = endAge;
+  }
+
+  // Find Guja (Mars) Mahadasha specifically
+  const marsDasha = dashas.find(d => d.lordId === 'mars') || dashas[4];
+
+  // Current date (2026.9)
+  const nowYear = 2026.9;
+  const currentRunning = dashas.find(d => d.startDateYear <= nowYear && d.endDateYear > nowYear) || dashas[0];
+
+  // Status of Guja Dasha
+  let marsStatus = 'Upcoming';
+  let marsStatusTamil = 'எதிர்காலத்தில் வரவுள்ளது';
+  if (marsDasha.endDateYear < nowYear) {
+    marsStatus = 'Completed in Past';
+    marsStatusTamil = 'கடந்த காலத்தில் நிறைவடைந்தது';
+  } else if (marsDasha.startDateYear <= nowYear && marsDasha.endDateYear >= nowYear) {
+    marsStatus = 'Currently Active (Running)';
+    marsStatusTamil = 'தற்போது நடப்பில் உள்ளது';
+  }
+
+  const bBalY = Math.floor(birthBalYears);
+  const bBalM = Math.floor((birthBalYears - bBalY) * 12);
+  const bBalD = Math.round(((birthBalYears - bBalY) * 12 - bBalM) * 30);
+
+  return {
+    dashaBalanceText: `${DASHA_LORDS[startLordIdx].nameEn} Dasha ${bBalY}y ${bBalM}m ${bBalD}d`,
+    dashaBalanceTamil: `${DASHA_LORDS[startLordIdx].nameTa} திசை ${bBalY} வருடம் ${bBalM} மாதம் ${bBalD} நாள்`,
+    currentRunningDasha: {
+      lord: currentRunning.lord,
+      lordTamil: currentRunning.lordTamil,
+      startDate: currentRunning.startDate,
+      endDate: currentRunning.endDate,
+      endAge: currentRunning.endAge
+    },
+    gujaDasha: {
+      lord: 'Mars',
+      lordTamil: 'செவ்வாய்',
+      durationYears: 7,
+      startDate: marsDasha.startDate,
+      endDate: marsDasha.endDate,
+      startAge: marsDasha.startAge,
+      endAge: marsDasha.endAge,
+      status: marsStatus,
+      statusTamil: marsStatusTamil,
+      startDateYear: marsDasha.startDateYear,
+      endDateYear: marsDasha.endDateYear
+    },
+    allDashas: dashas
+  };
+}
+
+/**
+ * Full Classical Guja (Chevvai) Dasha & Dosha Matchmaking Analysis
+ */
+function calculateGujaDashaAnalysis(boyInput = {}, girlInput = {}) {
+  const boyGrahas = computePersonGrahas(boyInput);
+  const girlGrahas = computePersonGrahas(girlInput);
+
+  const boyChevvai = evaluateDetailedChevvai(boyGrahas, boyInput);
+  const girlChevvai = evaluateDetailedChevvai(girlGrahas, girlInput);
+
+  const boyChartCells = buildSouthIndianChart(boyGrahas, boyChevvai);
+  const girlChartCells = buildSouthIndianChart(girlGrahas, girlChevvai);
+
+  const boyDasha = computePersonDashaTimeline(boyGrahas);
+  const girlDasha = computePersonDashaTimeline(girlGrahas);
+
+  // 1. Dosha Samyam (Mutual Balance / Neutralization)
+  let samyamVerdict = 'Auspicious (Dosha Samyam Achieved)';
+  let samyamVerdictTamil = 'சுபமானது (செவ்வாய் தோஷ சமநிலை பெற்றது)';
+  let samyamSummary = 'Both horoscopes possess classical dosha nivrutti or comparable Mars placement, ensuring perfect harmony.';
+
+  if (boyChevvai.netHasDosha && girlChevvai.netHasDosha) {
+    samyamVerdict = 'Auspicious (Like Neutralizes Like)';
+    samyamVerdictTamil = 'உத்தமம் (இருவருக்கும் செவ்வாய் தோஷம் சமநிலையில் உள்ளது)';
+    samyamSummary = 'Both Groom and Bride carry Chevvai Dosha in equal measure. Sastra affirms that matching doshas fully neutralize malefic influences.';
+  } else if (!boyChevvai.netHasDosha && !girlChevvai.netHasDosha) {
+    samyamVerdict = 'Auspicious (Both Free from Affliction)';
+    samyamVerdictTamil = 'உத்தமம் (இருவருக்கும் செவ்வாய் தோஷம் இல்லை / நிவர்த்தி)';
+    samyamSummary = 'Both charts are completely free from active Chevvai Dosha through natural placement or Sastric Nivrutti.';
+  } else {
+    samyamVerdict = 'Remedies Required (Dosha Asymmetry)';
+    samyamVerdictTamil = 'பரிகாரம் தேவை (ஒருவருக்கு மட்டும் தோஷம் உள்ளது)';
+    samyamSummary = 'One chart carries uncancelled Chevvai Dosha while the other does not. Classical marriage pre-consultation and remedial Shanti are advised.';
+  }
+
+  // 2. Dasa Sandhi (Transition Junction Conflict Check)
+  const boyCurrentEnd = boyDasha.currentRunningDasha.endAge;
+  const girlCurrentEnd = girlDasha.currentRunningDasha.endAge;
+  const nowYear = 2026.9;
+
+  const boyYearsToEnd = boyDasha.gujaDasha.startDateYear > nowYear
+    ? Math.abs(boyDasha.allDashas.find(d => d.startDateYear <= nowYear && d.endDateYear > nowYear)?.endDateYear - nowYear)
+    : 2.0;
+  const girlYearsToEnd = girlDasha.gujaDasha.startDateYear > nowYear
+    ? Math.abs(girlDasha.allDashas.find(d => d.startDateYear <= nowYear && d.endDateYear > nowYear)?.endDateYear - nowYear)
+    : 2.0;
+
+  const boyInSandhi = boyYearsToEnd <= 1.0;
+  const girlInSandhi = girlYearsToEnd <= 1.0;
+  const hasSimultaneousSandhi = boyInSandhi && girlInSandhi;
+
+  let dasaSandhiVerdict = 'No Simultaneous Dasa Sandhi';
+  let dasaSandhiVerdictTamil = 'ஒரே நேரத்தில் தசா சந்தி இல்லை - சுபமானது';
+  if (hasSimultaneousSandhi) {
+    dasaSandhiVerdict = 'Simultaneous Dasa Sandhi Present';
+    dasaSandhiVerdictTamil = 'இருவருக்கும் ஒரே நேரத்தில் தசா சந்தி உள்ளது (கவனம் தேவை)';
+  }
+
+  // 3. Guja Dasha Concurrence (Sama Dasa Check)
+  const bMarsStart = boyDasha.gujaDasha.startDateYear;
+  const bMarsEnd = boyDasha.gujaDasha.endDateYear;
+  const gMarsStart = girlDasha.gujaDasha.startDateYear;
+  const gMarsEnd = girlDasha.gujaDasha.endDateYear;
+
+  const isOverlapMars = (bMarsStart < gMarsEnd && bMarsEnd > gMarsStart);
+  let samaDashaVerdict = 'No Concurrent Mars Mahadasha Conflict';
+  let samaDashaVerdictTamil = 'இருவருக்கும் ஒரே நேரத்தில் செவ்வாய் தசை இல்லை';
+  if (isOverlapMars) {
+    samaDashaVerdict = 'Concurrent Mars Mahadasha Overlap';
+    samaDashaVerdictTamil = 'இருவருக்கும் ஒரே காலத்தில் செவ்வாய் தசை நடக்கும் வாய்ப்பு உள்ளது';
+  }
+
+  return {
+    boy: {
+      name: boyInput.name || 'Groom',
+      star: boyGrahas.starObj ? boyGrahas.starObj.name : 'Mula',
+      starTamil: boyGrahas.starObj ? boyGrahas.starObj.tamil : 'மூலம்',
+      pada: boyGrahas.pada,
+      lagnaRasiIdx: boyGrahas.rashis.lagna,
+      lagnaRasi: RASHIS[boyGrahas.rashis.lagna]?.name,
+      lagnaRasiTamil: RASHIS[boyGrahas.rashis.lagna]?.tamil,
+      moonRasiIdx: boyGrahas.rashis.moon,
+      moonRasi: RASHIS[boyGrahas.rashis.moon]?.name,
+      moonRasiTamil: RASHIS[boyGrahas.rashis.moon]?.tamil,
+      marsRasiIdx: boyGrahas.rashis.mars,
+      marsRasi: RASHIS[boyGrahas.rashis.mars]?.name,
+      marsRasiTamil: RASHIS[boyGrahas.rashis.mars]?.tamil,
+      venusRasiIdx: boyGrahas.rashis.venus,
+      venusRasi: RASHIS[boyGrahas.rashis.venus]?.name,
+      venusRasiTamil: RASHIS[boyGrahas.rashis.venus]?.tamil,
+      jupiterRasiIdx: boyGrahas.rashis.jupiter,
+      jupiterRasi: RASHIS[boyGrahas.rashis.jupiter]?.name,
+      jupiterRasiTamil: RASHIS[boyGrahas.rashis.jupiter]?.tamil,
+      houses: boyChevvai.houses,
+      hasDosha: boyChevvai.hasDosha,
+      isCancelled: boyChevvai.isCancelled,
+      netHasDosha: boyChevvai.netHasDosha,
+      doshaLevel: boyChevvai.doshaLevel,
+      doshaLevelTamil: boyChevvai.doshaLevelTamil,
+      cancellations: boyChevvai.cancellations,
+      verdict: boyChevvai.verdict,
+      verdictTamil: boyChevvai.verdictTamil,
+      chartCells: boyChartCells,
+      dashaBalance: boyDasha.dashaBalanceText,
+      dashaBalanceTamil: boyDasha.dashaBalanceTamil,
+      currentDasha: boyDasha.currentRunningDasha,
+      gujaDasha: boyDasha.gujaDasha,
+      allDashas: boyDasha.allDashas
+    },
+    girl: {
+      name: girlInput.name || 'Bride',
+      star: girlGrahas.starObj ? girlGrahas.starObj.name : 'Purva Phalguni',
+      starTamil: girlGrahas.starObj ? girlGrahas.starObj.tamil : 'பூரம்',
+      pada: girlGrahas.pada,
+      lagnaRasiIdx: girlGrahas.rashis.lagna,
+      lagnaRasi: RASHIS[girlGrahas.rashis.lagna]?.name,
+      lagnaRasiTamil: RASHIS[girlGrahas.rashis.lagna]?.tamil,
+      moonRasiIdx: girlGrahas.rashis.moon,
+      moonRasi: RASHIS[girlGrahas.rashis.moon]?.name,
+      moonRasiTamil: RASHIS[girlGrahas.rashis.moon]?.tamil,
+      marsRasiIdx: girlGrahas.rashis.mars,
+      marsRasi: RASHIS[girlGrahas.rashis.mars]?.name,
+      marsRasiTamil: RASHIS[girlGrahas.rashis.mars]?.tamil,
+      venusRasiIdx: girlGrahas.rashis.venus,
+      venusRasi: RASHIS[girlGrahas.rashis.venus]?.name,
+      venusRasiTamil: RASHIS[girlGrahas.rashis.venus]?.tamil,
+      jupiterRasiIdx: girlGrahas.rashis.jupiter,
+      jupiterRasi: RASHIS[girlGrahas.rashis.jupiter]?.name,
+      jupiterRasiTamil: RASHIS[girlGrahas.rashis.jupiter]?.tamil,
+      houses: girlChevvai.houses,
+      hasDosha: girlChevvai.hasDosha,
+      isCancelled: girlChevvai.isCancelled,
+      netHasDosha: girlChevvai.netHasDosha,
+      doshaLevel: girlChevvai.doshaLevel,
+      doshaLevelTamil: girlChevvai.doshaLevelTamil,
+      cancellations: girlChevvai.cancellations,
+      verdict: girlChevvai.verdict,
+      verdictTamil: girlChevvai.verdictTamil,
+      chartCells: girlChartCells,
+      dashaBalance: girlDasha.dashaBalanceText,
+      dashaBalanceTamil: girlDasha.dashaBalanceTamil,
+      currentDasha: girlDasha.currentRunningDasha,
+      gujaDasha: girlDasha.gujaDasha,
+      allDashas: girlDasha.allDashas
+    },
+    doshaSamyam: {
+      isCompatible: !((boyChevvai.netHasDosha && !girlChevvai.netHasDosha) || (!boyChevvai.netHasDosha && girlChevvai.netHasDosha)),
+      verdict: samyamVerdict,
+      verdictTamil: samyamVerdictTamil,
+      summary: samyamSummary
+    },
+    dasaSandhi: {
+      hasSimultaneousSandhi,
+      boyInSandhi,
+      girlInSandhi,
+      verdict: dasaSandhiVerdict,
+      verdictTamil: dasaSandhiVerdictTamil
+    },
+    gujaDashaSamaCheck: {
+      isSimultaneous: isOverlapMars,
+      verdict: samaDashaVerdict,
+      verdictTamil: samaDashaVerdictTamil
+    },
+    remedies: [
+      'Worship of Lord Murugan / Subrahmanya on Tuesdays with red oleander flowers (செவ்வரளி).',
+      'Chanting of Angaraka Gayatri Mantra (அங்காரக காயத்ரி மந்திரம்) 108 times.',
+      'Pilgrimage to Vaitheeswaran Koil (Chevvai Sthalam) and offering ghee lamps.',
+      'Charity of red lentils (துவரம் பருப்பு) or copper items on Tuesdays.'
+    ],
+    remediesTamil: [
+      'செவ்வாய்க்கிழமைகளில் முருகப்பெருமான் வழிபாடு மற்றும் செவ்வரளி மலர் அர்ச்சனை.',
+      'அங்காரக காயத்ரி மந்திரம் ஜெபித்தல் (ஓம் வீரத்வஜாய வித்மஹே விக்னஹஸ்தாய தீமஹி...).',
+      'வைத்தீஸ்வரன் கோவில் தரிசனம் அல்லது செவ்வாய் பகவானுக்கு நெய் தீபம் ஏற்றுதல்.',
+      'செவ்வாய்க்கிழமைகளில் துவரம் பருப்பு அல்லது சிவப்பு நிற வஸ்திரம் தானம் செய்தல்.'
+    ]
+  };
+}
+
+/**
  * 36 Gunas Ashtakoota Matchmaking
  */
 function calculateKundliMatch(boyBirth, girlBirth) {
@@ -605,13 +1223,15 @@ function calculateKundliMatch(boyBirth, girlBirth) {
   const kootas = [
     { name: 'Varna', obtained: varnaPoints, total: 1, desc: 'Work & spiritual ego alignment' },
     { name: 'Vashya', obtained: vashyaPoints, total: 2, desc: 'Mutual magnetic power & bonding' },
-    { name: 'Tara', obtained: taraPoints, total: 3, desc: 'Health & destiny destiny rhythm' },
+    { name: 'Tara', obtained: taraPoints, total: 3, desc: 'Health & destiny rhythm' },
     { name: 'Yoni', obtained: yoniPoints, total: 4, desc: 'Biological & intimacy harmony' },
     { name: 'Graha Maitri', obtained: maitriPoints, total: 5, desc: 'Friendship & intellectual communication' },
-    { name: 'Gana', obtained: ganaPoints, total: 6, desc: 'Temperament & behavior temperament' },
+    { name: 'Gana', obtained: ganaPoints, total: 6, desc: 'Temperament & behavior alignment' },
     { name: 'Bhakoot', obtained: bhakootPoints, total: 7, desc: 'Family welfare & emotional bonding' },
     { name: 'Nadi', obtained: nadiPoints, total: 8, desc: 'Genetic, physiological & lineage health' },
   ];
+
+  const gujaDashaAnalysis = calculateGujaDashaAnalysis(boyBirth, girlBirth);
 
   return {
     boy: boyBirth,
@@ -624,10 +1244,12 @@ function calculateKundliMatch(boyBirth, girlBirth) {
     compatibility: totalScore >= 28 ? 'Excellent Match' : totalScore >= 18 ? 'Good Match' : 'Requires Remedies',
     tamilPorutham: calculateTamilPoruthams(boyBirth, girlBirth),
     chevvaiAnalysis: {
-      boy: evaluateChevvaiDosha(boyBirth, 'male'),
-      girl: evaluateChevvaiDosha(girlBirth, 'female'),
-      compatibilitySummary: 'Both horoscopes evaluated for Chevvai Dosha & cancellations.'
-    }
+      boy: gujaDashaAnalysis.boy,
+      girl: gujaDashaAnalysis.girl,
+      compatibilitySummary: gujaDashaAnalysis.doshaSamyam.summary,
+      doshaSamyam: gujaDashaAnalysis.doshaSamyam
+    },
+    gujaDashaAnalysis: gujaDashaAnalysis
   };
 }
 
@@ -727,5 +1349,6 @@ module.exports = {
   calculateTamilPoruthams,
   calculateKundliMatch,
   evaluateChevvaiDosha,
+  calculateGujaDashaAnalysis,
   getDailyPanchangam,
 };

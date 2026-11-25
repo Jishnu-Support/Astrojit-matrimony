@@ -31,12 +31,14 @@ import {
   Edit3,
   RotateCcw,
   PlusCircle,
+  Flame,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../i18n';
 import { API } from '../api';
 import ClientRegistrationReceiptModal from '../components/ClientRegistrationReceiptModal';
 import TamilPoruthamCard from '../components/TamilPoruthamCard';
+import GujaDashaChart from '../components/GujaDashaChart';
 import HoroscopeHub from '../components/HoroscopeHub';
 import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
 import HoroscopePagerView from '../components/HoroscopePagerView';
@@ -2172,10 +2174,24 @@ Shubham Bhavatu! 🙏`;
                         <Heart className="w-3.5 h-3.5 text-indigo-600" />
                         <span>{MATCH_I18N.tabAshtakoota[lang] || MATCH_I18N.tabAshtakoota.en}</span>
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveMatchTab('guja_dasha')}
+                        className={`pb-2 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                          activeMatchTab === 'guja_dasha'
+                            ? 'border-rose-600 text-rose-900 font-bold'
+                            : 'border-transparent text-slate-500 hover:text-slate-700'
+                        }`}
+                      >
+                        <Flame className="w-3.5 h-3.5 text-rose-600" />
+                        <span>{MATCH_I18N.tabGujaDasha[lang] || MATCH_I18N.tabGujaDasha.en}</span>
+                      </button>
                     </div>
 
                     {activeMatchTab === 'tamil' ? (
                       <TamilPoruthamCard matchReport={activeClientMatchReport} />
+                    ) : activeMatchTab === 'guja_dasha' ? (
+                      <GujaDashaChart matchReport={activeClientMatchReport} />
                     ) : (
                       <div className="space-y-3 bg-amber-50/50 p-4 rounded-xl border border-amber-200 text-xs">
                         <div className="flex justify-between items-center pb-2 border-b border-amber-200">
@@ -2408,10 +2424,24 @@ Shubham Bhavatu! 🙏`;
                         <Heart className="w-3.5 h-3.5 text-indigo-600" />
                         <span>{MATCH_I18N.tabAshtakoota[lang] || MATCH_I18N.tabAshtakoota.en}</span>
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => setModalMatchTab('guja_dasha')}
+                        className={`pb-2 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                          modalMatchTab === 'guja_dasha'
+                            ? 'border-rose-600 text-rose-900 font-bold'
+                            : 'border-transparent text-slate-500 hover:text-slate-700'
+                        }`}
+                      >
+                        <Flame className="w-3.5 h-3.5 text-rose-600" />
+                        <span>{MATCH_I18N.tabGujaDasha[lang] || MATCH_I18N.tabGujaDasha.en}</span>
+                      </button>
                     </div>
 
                     {modalMatchTab === 'tamil' ? (
                       <TamilPoruthamCard matchReport={selectedMatchReq.matchReport} />
+                    ) : modalMatchTab === 'guja_dasha' ? (
+                      <GujaDashaChart matchReport={selectedMatchReq.matchReport} />
                     ) : (
                       <div className="space-y-3 bg-amber-50/50 p-4 rounded-xl border border-amber-200 text-xs">
                         <div className="flex justify-between items-center pb-2 border-b border-amber-200">

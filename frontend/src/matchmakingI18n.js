@@ -192,7 +192,7 @@ export const MATCH_I18N = {
   // View Tab Switchers (NEVER MIX LANGUAGES)
   tabTamilPorutham: {
     kn: 'ದಶಕೂಟ ವಿವಾಹ ಹೊಂದಾಣಿಕೆ',
-    ta: 'சுத்த திருக்கணித தசப் பொருத்தங்கள்',
+    ta: '10 பாரம்பரியப் பொருத்தங்கள் & தோஷ ஆய்வு',
     en: '10 Classical Poruthams & Dosha Analysis',
     hi: 'दशकूट विवाह मिलान एवं रज्जु/दोष विचार',
     te: 'దశకూట వివాహ పొంతన విచారణ',
@@ -205,6 +205,14 @@ export const MATCH_I18N = {
     hi: 'अष्टकूट ३६ गुण मिलान',
     te: 'అష్టకూట 36 గుణాల పట్టిక',
     bn: 'অষ্টকূট ৩৬ গুণ বিচার',
+  },
+  tabGujaDasha: {
+    kn: 'ಕುಜ ದಶಾ & ಚಾರ್ಟ್ ವಿಶ್ಲೇಷಣೆ',
+    ta: 'செவ்வாய் தசா & கட்ட ஆய்வு',
+    en: 'Guja (Chevvai) Dasha & Chart',
+    hi: 'भौम / मंगल दशा एवं चक्र',
+    te: 'కుజ దశా & చక్ర విశ్లేషణ',
+    bn: 'মঙ্গল দশা ও চক্র বিশ্লেষণ',
   },
 
   // Results Section & Cards

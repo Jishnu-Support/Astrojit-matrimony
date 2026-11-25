@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useLang } from '../i18n';
 import { MATCH_I18N, getMatchText, translateEntity } from '../matchmakingI18n';
+import GujaDashaChart from './GujaDashaChart';
 
 /**
  * Astrojit Classical 10 & 12 Vivaha Porutham Card
@@ -29,6 +30,7 @@ export default function TamilPoruthamCard({ matchReport }) {
   const { lang } = useLang();
   const [expandedPorutham, setExpandedPorutham] = useState(null);
   const [showAllPoruthams, setShowAllPoruthams] = useState(false);
+  const [showGujaChart, setShowGujaChart] = useState(false);
 
   if (!matchReport) return null;
 
@@ -562,15 +564,37 @@ export default function TamilPoruthamCard({ matchReport }) {
       {/* 5. Chevvai / Kuja / Mars Dosha Section */}
       {chevvaiAnalysis && (
         <div className="bg-white border border-rose-200 rounded-2xl p-4 sm:p-5 space-y-3 shadow-xs">
-          <div className="flex items-center justify-between border-b border-rose-100 pb-2">
-            <h4 className="font-bold text-rose-950 text-xs sm:text-sm flex items-center gap-1.5">
-              <Flame className="w-4 h-4 text-rose-600" />
-              {MATCH_I18N.chevvaiDoshaHeading[lang] || MATCH_I18N.chevvaiDoshaHeading.en}
-            </h4>
-            <span className="text-[10px] text-slate-500 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">
-              {MATCH_I18N.referenceBookPage[lang] || MATCH_I18N.referenceBookPage.en}
-            </span>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-rose-100 pb-2 gap-2">
+            <div>
+              <h4 className="font-bold text-rose-950 text-xs sm:text-sm flex items-center gap-1.5">
+                <Flame className="w-4 h-4 text-rose-600" />
+                {MATCH_I18N.chevvaiDoshaHeading[lang] || MATCH_I18N.chevvaiDoshaHeading.en}
+              </h4>
+              <span className="text-[10px] text-slate-500">
+                {MATCH_I18N.referenceBookPage[lang] || MATCH_I18N.referenceBookPage.en}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowGujaChart(!showGujaChart)}
+              className="text-[11px] font-bold px-3 py-1 bg-gradient-to-r from-rose-600 to-amber-700 hover:from-rose-700 hover:to-amber-800 text-white rounded-lg shadow-2xs cursor-pointer flex items-center gap-1.5 transition-all self-end sm:self-auto"
+            >
+              <Flame className="w-3.5 h-3.5 text-amber-300" />
+              <span>
+                {showGujaChart
+                  ? (lang === 'ta' ? '▲ கட்டத்தை மறைக்கவும்' : '▲ Hide Chart')
+                  : (lang === 'ta' ? '▼ செவ்வாய் தசா & கட்ட ஆய்வு' : '▼ View Guja Dasha & Chart')}
+              </span>
+            </button>
           </div>
+
+          {/* Expandable Guja Dasha & South Indian Chart */}
+          {showGujaChart && (
+            <div className="pt-2 border-t border-rose-100">
+              <GujaDashaChart matchReport={matchReport} />
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             {/* Boy's Chevvai Status */}
