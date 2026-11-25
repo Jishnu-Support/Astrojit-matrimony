@@ -26,7 +26,7 @@ import { useAuth } from '../context/AuthContext';
 import { useClientBirth, to24HourTime } from '../context/ClientBirthContext';
 import { API } from '../api';
 import ClientRegistrationReceiptModal from './ClientRegistrationReceiptModal';
-import { COUNTRIES, GEO_DATA, parseCoordinateToDec } from '../data/geoCoordinates';
+import { COUNTRIES, GEO_DATA, parseCoordinateToDec, lookupCoordinates } from '../data/geoCoordinates';
 import { clean10DigitMobile } from '../utils/phoneUtils';
 
 const HOURS_12 = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
@@ -60,8 +60,17 @@ export default function BirthDetailsIntakeCard({
   const [showDropdown, setShowDropdown] = useState(false);
   const searchBoxRef = useRef(null);
 
-  // City search input filter
-  const [citySearch, setCitySearch] = useState('');
+  // City search autocomplete state
+  const [cityInput, setCityInput] = useState(clientData.city || 'Hosur');
+  const [showCityDropdown, setShowCityDropdown] = useState(false);
+  const cityBoxRef = useRef(null);
+
+  // Sync internal city input when clientData.city changes externally
+  useEffect(() => {
+    if (clientData.city !== undefined && clientData.city !== cityInput) {
+      setCityInput(clientData.city || '');
+    }
+  }, [clientData.city]);
 
   // UI feedback & modals
   const [actionFeedback, setActionFeedback] = useState(null);
@@ -79,11 +88,14 @@ export default function BirthDetailsIntakeCard({
   const [activeProfileId, setActiveProfileId] = useState('primary');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
 
-  // Close search dropdown on click outside
+  // Close search and city dropdowns on click outside
   useEffect(() => {
     function handleClickOutside(e) {
       if (searchBoxRef.current && !searchBoxRef.current.contains(e.target)) {
         setShowDropdown(false);
+      }
+      if (cityBoxRef.current && !cityBoxRef.current.contains(e.target)) {
+        setShowCityDropdown(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -124,11 +136,41 @@ export default function BirthDetailsIntakeCard({
     return GEO_DATA[currentCountry]?.[currentState] || [];
   }, [currentCountry, currentState]);
 
-  const filteredCities = useMemo(() => {
-    if (!citySearch.trim()) return availableCities;
-    const q = citySearch.toLowerCase();
-    return availableCities.filter(c => (c.name || '').toLowerCase().includes(q));
-  }, [availableCities, citySearch]);
+  // Instant Letter-by-Letter city matching across state & all India
+  const citySuggestions = useMemo(() => {
+    const q = (cityInput || '').trim().toLowerCase();
+    const stateCities = GEO_DATA[currentCountry]?.[currentState] || [];
+
+    // If query is empty, show top 15 cities for current state
+    if (!q) {
+      return stateCities.slice(0, 15);
+    }
+
+    // 1. Cities in current state starting with query letter(s)
+    const startsInState = stateCities.filter(c => (c.name || '').toLowerCase().startsWith(q));
+    // 2. Cities in current state containing query letter(s)
+    const containsInState = stateCities.filter(c => !(c.name || '').toLowerCase().startsWith(q) && (c.name || '').toLowerCase().includes(q));
+
+    let combined = [...startsInState, ...containsInState];
+
+    // 3. Search across all other states if fewer than 10 matches
+    if (combined.length < 10 && GEO_DATA[currentCountry]) {
+      const allStates = Object.keys(GEO_DATA[currentCountry]);
+      for (const st of allStates) {
+        if (st === currentState) continue;
+        const otherList = GEO_DATA[currentCountry][st] || [];
+        for (const c of otherList) {
+          if ((c.name || '').toLowerCase().includes(q)) {
+            combined.push({ ...c, otherState: st });
+            if (combined.length >= 25) break;
+          }
+        }
+        if (combined.length >= 25) break;
+      }
+    }
+
+    return combined.slice(0, 30);
+  }, [cityInput, currentCountry, currentState]);
 
   // Search debounce timer ref
   const searchTimeoutRef = useRef(null);
@@ -240,7 +282,7 @@ export default function BirthDetailsIntakeCard({
         lon: '',
         utcOffset: ''
       });
-      setCitySearch('');
+      setCityInput('');
       return;
     }
     const states = Object.keys(GEO_DATA[cName] || {});
@@ -248,6 +290,7 @@ export default function BirthDetailsIntakeCard({
     const cities = GEO_DATA[cName]?.[firstState] || [];
     const firstCity = cities[0];
 
+    setCityInput(firstCity ? firstCity.name : '');
     updateFields({
       country: cName,
       state: firstState,
@@ -256,7 +299,6 @@ export default function BirthDetailsIntakeCard({
       lon: firstCity ? firstCity.lonDec : '',
       utcOffset: firstCity && firstCity.tz ? `${firstCity.tz.startsWith('+') ? firstCity.tz.slice(1) : firstCity.tz} UTC` : '05:30 UTC'
     });
-    setCitySearch('');
   };
 
   const handleStateChange = (sName) => {
@@ -268,12 +310,13 @@ export default function BirthDetailsIntakeCard({
         lon: '',
         utcOffset: ''
       });
-      setCitySearch('');
+      setCityInput('');
       return;
     }
     const cities = GEO_DATA[clientData.country]?.[sName] || [];
     const firstCity = cities[0];
 
+    setCityInput(firstCity ? firstCity.name : '');
     updateFields({
       state: sName,
       city: firstCity ? firstCity.name : '',
@@ -281,24 +324,49 @@ export default function BirthDetailsIntakeCard({
       lon: firstCity ? firstCity.lonDec : clientData.lon,
       utcOffset: firstCity && firstCity.tz ? `${firstCity.tz.startsWith('+') ? firstCity.tz.slice(1) : firstCity.tz} UTC` : clientData.utcOffset
     });
-    setCitySearch('');
+  };
+
+  const handleSelectCitySuggestion = (c) => {
+    const cityName = c.name;
+    const finalState = c.otherState || currentState;
+
+    const latVal = c.latDec !== undefined ? c.latDec : c.lat;
+    const lonVal = c.lonDec !== undefined ? c.lonDec : c.lon;
+    const tzVal = c.tz ? `${c.tz.startsWith('+') ? c.tz.slice(1) : c.tz} UTC` : '05:30 UTC';
+
+    setCityInput(cityName);
+    setShowCityDropdown(false);
+
+    updateFields({
+      state: finalState,
+      city: cityName,
+      lat: latVal,
+      lon: lonVal,
+      utcOffset: tzVal
+    });
   };
 
   const handleCityChange = (cityName) => {
-    const cObj = availableCities.find(c => c.name.toLowerCase() === cityName.toLowerCase());
+    if (!cityName) {
+      updateFields({ city: '', lat: '', lon: '', utcOffset: '' });
+      setCityInput('');
+      return;
+    }
+    const cObj = availableCities.find(c => c.name.toLowerCase() === cityName.toLowerCase()) || lookupCoordinates(currentCountry, currentState, cityName);
     let newLat = clientData.lat;
     let newLon = clientData.lon;
     let newTz = clientData.utcOffset;
 
     if (cObj) {
-      newLat = cObj.latDec;
-      newLon = cObj.lonDec;
+      newLat = cObj.latDec !== undefined ? cObj.latDec : cObj.lat;
+      newLon = cObj.lonDec !== undefined ? cObj.lonDec : cObj.lon;
       if (cObj.tz) {
         const raw = cObj.tz.trim();
         newTz = `${raw.startsWith('+') ? raw.slice(1) : raw} UTC`;
       }
     }
 
+    setCityInput(cityName);
     updateFields({
       city: cityName,
       lat: newLat,
@@ -909,42 +977,106 @@ Shubham Bhavatu! 🙏`;
             </select>
           </div>
 
-          {/* City / Place */}
-          <div>
-            <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
-              <MapPin className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
-              {isTa ? 'பிறந்த இடம் (City / Place)' : 'City / Place'}
-            </label>
+          {/* City / Place - Manual search by letter with instant results dropdown */}
+          <div ref={cityBoxRef} className="relative">
+            <div className="flex justify-between items-center mb-1">
+              <label className="block font-bold opacity-90 text-stone-800 dark:text-stone-200">
+                <MapPin className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
+                {isTa ? 'பிறந்த இடம் (City / Place)' : 'City / Place'}
+              </label>
+              {showCityDropdown && citySuggestions.length > 0 && (
+                <span className="text-[10px] text-amber-700 dark:text-amber-400 font-bold">
+                  {citySuggestions.length} {isTa ? 'ஊர்கள்' : 'cities'}
+                </span>
+              )}
+            </div>
+
             <div className="relative">
               <input
                 type="text"
-                value={citySearch || clientData.city || ''}
+                value={cityInput}
                 onChange={e => {
-                  setCitySearch(e.target.value);
-                  updateField('city', e.target.value);
+                  const val = e.target.value;
+                  setCityInput(val);
+                  updateField('city', val);
+                  setShowCityDropdown(true);
+
+                  // If exact match found in current state, auto-update coordinates as they type
+                  const exact = (GEO_DATA[currentCountry]?.[currentState] || []).find(
+                    c => c.name.toLowerCase() === val.trim().toLowerCase()
+                  );
+                  if (exact) {
+                    updateFields({
+                      lat: exact.latDec !== undefined ? exact.latDec : exact.lat,
+                      lon: exact.lonDec !== undefined ? exact.lonDec : exact.lon
+                    });
+                  }
                 }}
-                placeholder={isTa ? 'ஊரைத் தேடுக...' : 'Search place...'}
-                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
+                onFocus={() => setShowCityDropdown(true)}
+                placeholder={isTa ? 'ஊர் பெயர் தட்டச்சு செய்க (எ.கா. S, M, C, H...)' : 'Type city name (e.g. S, M, C, H...)'}
+                className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 pr-8 text-xs font-semibold focus:outline-none focus:border-[#7A1A22] dark:focus:border-amber-500 shadow-2xs"
+                autoComplete="off"
               />
-              {citySearch && filteredCities.length > 0 && (
-                <div className="absolute left-0 right-0 top-full mt-1 z-30 bg-white dark:bg-[#1E1815] rounded-xl border border-stone-300 dark:border-stone-700 max-h-48 overflow-y-auto shadow-xl">
-                  {filteredCities.slice(0, 15).map(c => (
-                    <button
-                      key={c.name}
-                      type="button"
-                      onClick={() => {
-                        handleCityChange(c.name);
-                        setCitySearch('');
-                      }}
-                      className="w-full text-left p-2 hover:bg-amber-50 dark:hover:bg-stone-800 text-xs flex justify-between cursor-pointer"
-                    >
-                      <span className="font-bold text-stone-900 dark:text-stone-100">{c.name}</span>
-                      <span className="text-[10px] text-stone-500 font-mono">({c.latDec.toFixed(2)}°, {c.lonDec.toFixed(2)}°)</span>
-                    </button>
-                  ))}
-                </div>
+
+              {cityInput && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCityInput('');
+                    updateField('city', '');
+                    setShowCityDropdown(true);
+                  }}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 text-xs font-bold cursor-pointer"
+                  title="Clear"
+                >
+                  ✕
+                </button>
               )}
             </div>
+
+            {/* Instant Letter-by-Letter Auto-Suggestions Dropdown */}
+            {showCityDropdown && citySuggestions.length > 0 && (
+              <div className="absolute left-0 right-0 top-full mt-1 bg-white dark:bg-[#1E1815] border border-amber-900/20 dark:border-amber-500/30 rounded-xl shadow-2xl z-50 max-h-56 overflow-y-auto divide-y divide-stone-100 dark:divide-stone-800 animate-in fade-in zoom-in-95 duration-100">
+                <div className="p-1.5 bg-amber-50/70 dark:bg-stone-900/80 text-[10px] text-amber-900 dark:text-amber-300 font-bold uppercase tracking-wider flex items-center justify-between border-b border-amber-100 dark:border-stone-800">
+                  <span>
+                    {cityInput.trim()
+                      ? `${isTa ? 'பொருந்தும் ஊர்கள்' : 'Matching Cities'} (${citySuggestions.length})`
+                      : `${currentState} (${citySuggestions.length})`}
+                  </span>
+                  <span className="text-[9px] text-stone-400">
+                    {isTa ? 'கிளிக் செய்து தேர்ந்தெடுக்கவும்' : 'Click to select'}
+                  </span>
+                </div>
+                {citySuggestions.map((item, idx) => {
+                  const isSelected = (clientData.city || '').toLowerCase() === item.name.toLowerCase();
+                  return (
+                    <button
+                      key={`${item.name}-${idx}`}
+                      type="button"
+                      onClick={() => handleSelectCitySuggestion(item)}
+                      className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-amber-50/80 dark:hover:bg-stone-800 transition-colors cursor-pointer ${
+                        isSelected
+                          ? 'bg-amber-100/70 dark:bg-amber-900/30 font-bold text-stone-950 dark:text-stone-100'
+                          : 'text-stone-800 dark:text-stone-200'
+                      }`}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-[#7A1A22] dark:text-amber-400 shrink-0" />
+                        <span className="font-semibold">{item.name}</span>
+                        {item.otherState && (
+                          <span className="text-[10px] text-stone-400 font-normal">
+                            ({item.otherState})
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[10px] font-mono text-stone-500 dark:text-stone-400">
+                        ({typeof item.latDec === 'number' ? item.latDec.toFixed(2) : item.lat}°, {typeof item.lonDec === 'number' ? item.lonDec.toFixed(2) : item.lon}°)
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 

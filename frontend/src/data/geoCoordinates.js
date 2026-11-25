@@ -89,11 +89,171 @@ export const GEO_DATA = {
   "India": {
     "Tamil Nadu": [
       {
+        "name": "Agastheeswaram",
+        "lat": "08° 06' N",
+        "lon": "77° 30' E",
+        "latDec": 8.1,
+        "lonDec": 77.5,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Alangudi",
+        "lat": "10° 21' N",
+        "lon": "78° 58' E",
+        "latDec": 10.35,
+        "lonDec": 78.9667,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Alangulam",
+        "lat": "08° 52' N",
+        "lon": "77° 30' E",
+        "latDec": 8.8667,
+        "lonDec": 77.5,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Ambasamudram",
+        "lat": "08° 42' N",
+        "lon": "77° 27' E",
+        "latDec": 8.7,
+        "lonDec": 77.45,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Ambur",
+        "lat": "12° 47' N",
+        "lon": "78° 42' E",
+        "latDec": 12.7833,
+        "lonDec": 78.7,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Anchetty",
+        "lat": "12° 21' N",
+        "lon": "77° 45' E",
+        "latDec": 12.35,
+        "lonDec": 77.75,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Andipatti",
+        "lat": "09° 59' N",
+        "lon": "77° 37' E",
+        "latDec": 9.9833,
+        "lonDec": 77.6167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Annur",
+        "lat": "11° 14' N",
+        "lon": "77° 08' E",
+        "latDec": 11.2333,
+        "lonDec": 77.1333,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Anthiyur",
+        "lat": "11° 35' N",
+        "lon": "77° 36' E",
+        "latDec": 11.5833,
+        "lonDec": 77.6,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Arakkonam",
+        "lat": "13° 05' N",
+        "lon": "79° 40' E",
+        "latDec": 13.0833,
+        "lonDec": 79.6667,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Arani",
+        "lat": "12° 40' N",
+        "lon": "79° 17' E",
+        "latDec": 12.6667,
+        "lonDec": 79.2833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Aranthangi",
+        "lat": "10° 10' N",
+        "lon": "78° 59' E",
+        "latDec": 10.1667,
+        "lonDec": 78.9833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Arcot",
+        "lat": "12° 54' N",
+        "lon": "79° 20' E",
+        "latDec": 12.9,
+        "lonDec": 79.3333,
+        "tz": "+05:30"
+      },
+      {
         "name": "Ariyalur",
         "lat": "11° 08' N",
         "lon": "79° 05' E",
         "latDec": 11.1401,
         "lonDec": 79.0786,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Aruppukottai",
+        "lat": "09° 31' N",
+        "lon": "78° 06' E",
+        "latDec": 9.5167,
+        "lonDec": 78.1,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Attur (Salem)",
+        "lat": "11° 36' N",
+        "lon": "78° 36' E",
+        "latDec": 11.6,
+        "lonDec": 78.6,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Avadi",
+        "lat": "13° 07' N",
+        "lon": "80° 06' E",
+        "latDec": 13.1167,
+        "lonDec": 80.1,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Avinashi",
+        "lat": "11° 11' N",
+        "lon": "77° 16' E",
+        "latDec": 11.1833,
+        "lonDec": 77.2667,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Bargur",
+        "lat": "12° 33' N",
+        "lon": "78° 21' E",
+        "latDec": 12.55,
+        "lonDec": 78.35,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Bhavani",
+        "lat": "11° 27' N",
+        "lon": "77° 41' E",
+        "latDec": 11.45,
+        "lonDec": 77.6833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Bodinayakanur",
+        "lat": "10° 01' N",
+        "lon": "77° 21' E",
+        "latDec": 10.0167,
+        "lonDec": 77.35,
         "tz": "+05:30"
       },
       {
@@ -105,11 +265,27 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Chengam",
+        "lat": "12° 18' N",
+        "lon": "78° 48' E",
+        "latDec": 12.3,
+        "lonDec": 78.8,
+        "tz": "+05:30"
+      },
+      {
         "name": "Chennai",
         "lat": "13° 05' N",
         "lon": "80° 16' E",
         "latDec": 13.0827,
         "lonDec": 80.2707,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Cheyyar",
+        "lat": "12° 40' N",
+        "lon": "79° 33' E",
+        "latDec": 12.6667,
+        "lonDec": 79.55,
         "tz": "+05:30"
       },
       {
@@ -121,6 +297,14 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Chinnamanur",
+        "lat": "09° 50' N",
+        "lon": "77° 23' E",
+        "latDec": 9.8333,
+        "lonDec": 77.3833,
+        "tz": "+05:30"
+      },
+      {
         "name": "Coimbatore",
         "lat": "11° 01' N",
         "lon": "76° 57' E",
@@ -129,11 +313,67 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Colachel",
+        "lat": "08° 10' N",
+        "lon": "77° 15' E",
+        "latDec": 8.1667,
+        "lonDec": 77.25,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Coonoor",
+        "lat": "11° 21' N",
+        "lon": "76° 48' E",
+        "latDec": 11.35,
+        "lonDec": 76.8,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Courtallam",
+        "lat": "08° 56' N",
+        "lon": "77° 16' E",
+        "latDec": 8.9333,
+        "lonDec": 77.2667,
+        "tz": "+05:30"
+      },
+      {
         "name": "Cuddalore",
         "lat": "11° 45' N",
         "lon": "79° 46' E",
         "latDec": 11.748,
         "lonDec": 79.7714,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Cumbum",
+        "lat": "09° 44' N",
+        "lon": "77° 17' E",
+        "latDec": 9.7333,
+        "lonDec": 77.2833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Denkanikottai",
+        "lat": "12° 31' N",
+        "lon": "77° 47' E",
+        "latDec": 12.5167,
+        "lonDec": 77.7833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Devakottai",
+        "lat": "09° 57' N",
+        "lon": "78° 49' E",
+        "latDec": 9.95,
+        "lonDec": 78.8167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Dharapuram",
+        "lat": "10° 44' N",
+        "lon": "77° 31' E",
+        "latDec": 10.7333,
+        "lonDec": 77.5167,
         "tz": "+05:30"
       },
       {
@@ -153,6 +393,14 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Edappadi",
+        "lat": "11° 35' N",
+        "lon": "77° 51' E",
+        "latDec": 11.5833,
+        "lonDec": 77.85,
+        "tz": "+05:30"
+      },
+      {
         "name": "Erode",
         "lat": "11° 20' N",
         "lon": "77° 43' E",
@@ -161,11 +409,107 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Gandarvakkottai",
+        "lat": "10° 31' N",
+        "lon": "79° 01' E",
+        "latDec": 10.5167,
+        "lonDec": 79.0167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Gingee",
+        "lat": "12° 15' N",
+        "lon": "79° 25' E",
+        "latDec": 12.25,
+        "lonDec": 79.4167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Gobichettipalayam",
+        "lat": "11° 27' N",
+        "lon": "77° 26' E",
+        "latDec": 11.45,
+        "lonDec": 77.4333,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Gudalur",
+        "lat": "11° 30' N",
+        "lon": "76° 30' E",
+        "latDec": 11.5,
+        "lonDec": 76.5,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Gudiyatham",
+        "lat": "12° 56' N",
+        "lon": "78° 52' E",
+        "latDec": 12.9333,
+        "lonDec": 78.8667,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Gummidipoondi",
+        "lat": "13° 24' N",
+        "lon": "80° 07' E",
+        "latDec": 13.4,
+        "lonDec": 80.1167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Harur",
+        "lat": "12° 04' N",
+        "lon": "78° 30' E",
+        "latDec": 12.0667,
+        "lonDec": 78.5,
+        "tz": "+05:30"
+      },
+      {
         "name": "Hosur",
         "lat": "12° 43' 30\" N",
         "lon": "77° 49' 30\" E",
         "latDec": 12.725,
         "lonDec": 77.825,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Ilayangudi",
+        "lat": "09° 45' N",
+        "lon": "78° 38' E",
+        "latDec": 9.75,
+        "lonDec": 78.6333,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Jayankondam",
+        "lat": "11° 13' N",
+        "lon": "79° 18' E",
+        "latDec": 11.2167,
+        "lonDec": 79.3,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Jolarpet",
+        "lat": "12° 34' N",
+        "lon": "78° 35' E",
+        "latDec": 12.5667,
+        "lonDec": 78.5833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Kadayanallur",
+        "lat": "09° 04' N",
+        "lon": "77° 20' E",
+        "latDec": 9.0667,
+        "lonDec": 77.3333,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Kalavai",
+        "lat": "12° 46' N",
+        "lon": "79° 25' E",
+        "latDec": 12.7667,
+        "lonDec": 79.4167,
         "tz": "+05:30"
       },
       {
@@ -185,11 +529,99 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Kangeyam",
+        "lat": "11° 00' N",
+        "lon": "77° 34' E",
+        "latDec": 11,
+        "lonDec": 77.5667,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Karaikudi",
+        "lat": "10° 04' N",
+        "lon": "78° 47' E",
+        "latDec": 10.0667,
+        "lonDec": 78.7833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Karimangalam",
+        "lat": "12° 18' N",
+        "lon": "78° 12' E",
+        "latDec": 12.3,
+        "lonDec": 78.2,
+        "tz": "+05:30"
+      },
+      {
         "name": "Karur",
         "lat": "10° 58' N",
         "lon": "78° 05' E",
         "latDec": 10.9601,
         "lonDec": 78.0766,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Katpadi",
+        "lat": "12° 59' N",
+        "lon": "79° 08' E",
+        "latDec": 12.9833,
+        "lonDec": 79.1333,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Kelamangalam",
+        "lat": "12° 36' N",
+        "lon": "77° 51' E",
+        "latDec": 12.6,
+        "lonDec": 77.85,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Kilakarai",
+        "lat": "09° 14' N",
+        "lon": "78° 47' E",
+        "latDec": 9.2333,
+        "lonDec": 78.7833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Kinathukadavu",
+        "lat": "10° 49' N",
+        "lon": "77° 01' E",
+        "latDec": 10.8167,
+        "lonDec": 77.0167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Kodaikanal",
+        "lat": "10° 14' N",
+        "lon": "77° 29' E",
+        "latDec": 10.2333,
+        "lonDec": 77.4833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Kodavasal",
+        "lat": "10° 52' N",
+        "lon": "79° 29' E",
+        "latDec": 10.8667,
+        "lonDec": 79.4833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Kotagiri",
+        "lat": "11° 25' N",
+        "lon": "76° 52' E",
+        "latDec": 11.4167,
+        "lonDec": 76.8667,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Kovilpatti",
+        "lat": "09° 10' N",
+        "lon": "77° 52' E",
+        "latDec": 9.1667,
+        "lonDec": 77.8667,
         "tz": "+05:30"
       },
       {
@@ -201,11 +633,27 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Kulithalai",
+        "lat": "10° 56' N",
+        "lon": "78° 25' E",
+        "latDec": 10.9333,
+        "lonDec": 78.4167,
+        "tz": "+05:30"
+      },
+      {
         "name": "Kumbakonam",
         "lat": "10° 58' N",
         "lon": "79° 23' E",
         "latDec": 10.9602,
         "lonDec": 79.3845,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Lalgudi",
+        "lat": "10° 52' N",
+        "lon": "78° 49' E",
+        "latDec": 10.8667,
+        "lonDec": 78.8167,
         "tz": "+05:30"
       },
       {
@@ -217,11 +665,115 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Madurantakam",
+        "lat": "12° 30' N",
+        "lon": "79° 53' E",
+        "latDec": 12.5,
+        "lonDec": 79.8833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Mahabalipuram",
+        "lat": "12° 37' N",
+        "lon": "80° 11' E",
+        "latDec": 12.6167,
+        "lonDec": 80.1833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Manachanallur",
+        "lat": "10° 54' N",
+        "lon": "78° 42' E",
+        "latDec": 10.9,
+        "lonDec": 78.7,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Manamadurai",
+        "lat": "09° 42' N",
+        "lon": "78° 27' E",
+        "latDec": 9.7,
+        "lonDec": 78.45,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Manapparai",
+        "lat": "10° 36' N",
+        "lon": "78° 25' E",
+        "latDec": 10.6,
+        "lonDec": 78.4167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Mannargudi",
+        "lat": "10° 40' N",
+        "lon": "79° 26' E",
+        "latDec": 10.6667,
+        "lonDec": 79.4333,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Maraimalai Nagar",
+        "lat": "12° 48' N",
+        "lon": "80° 01' E",
+        "latDec": 12.8,
+        "lonDec": 80.0167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Marakkanam",
+        "lat": "12° 12' N",
+        "lon": "79° 57' E",
+        "latDec": 12.2,
+        "lonDec": 79.95,
+        "tz": "+05:30"
+      },
+      {
         "name": "Mayiladuthurai",
         "lat": "11° 06' N",
         "lon": "79° 39' E",
         "latDec": 11.1075,
         "lonDec": 79.6522,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Melur",
+        "lat": "10° 02' N",
+        "lon": "78° 20' E",
+        "latDec": 10.0333,
+        "lonDec": 78.3333,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Mettupalayam",
+        "lat": "11° 18' N",
+        "lon": "76° 57' E",
+        "latDec": 11.3,
+        "lonDec": 76.95,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Mettur",
+        "lat": "11° 48' N",
+        "lon": "77° 48' E",
+        "latDec": 11.8,
+        "lonDec": 77.8,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Mudukulathur",
+        "lat": "09° 20' N",
+        "lon": "78° 30' E",
+        "latDec": 9.3333,
+        "lonDec": 78.5,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Musiri",
+        "lat": "10° 56' N",
+        "lon": "78° 27' E",
+        "latDec": 10.9333,
+        "lonDec": 78.45,
         "tz": "+05:30"
       },
       {
@@ -249,11 +801,123 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Nanguneri",
+        "lat": "08° 29' N",
+        "lon": "77° 40' E",
+        "latDec": 8.4833,
+        "lonDec": 77.6667,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Natham",
+        "lat": "10° 14' N",
+        "lon": "78° 14' E",
+        "latDec": 10.2333,
+        "lonDec": 78.2333,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Neyveli",
+        "lat": "11° 36' N",
+        "lon": "79° 29' E",
+        "latDec": 11.6,
+        "lonDec": 79.4833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Nilakottai",
+        "lat": "10° 10' N",
+        "lon": "77° 52' E",
+        "latDec": 10.1667,
+        "lonDec": 77.8667,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Oddanchatram",
+        "lat": "10° 29' N",
+        "lon": "77° 45' E",
+        "latDec": 10.4833,
+        "lonDec": 77.75,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Omalur",
+        "lat": "11° 44' N",
+        "lon": "78° 03' E",
+        "latDec": 11.7333,
+        "lonDec": 78.05,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Palacode",
+        "lat": "12° 18' N",
+        "lon": "78° 05' E",
+        "latDec": 12.3,
+        "lonDec": 78.0833,
+        "tz": "+05:30"
+      },
+      {
         "name": "Palani",
         "lat": "10° 27' N",
         "lon": "77° 31' E",
         "latDec": 10.4503,
         "lonDec": 77.5197,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Palladam",
+        "lat": "10° 59' N",
+        "lon": "77° 17' E",
+        "latDec": 10.9833,
+        "lonDec": 77.2833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Pallavaram",
+        "lat": "12° 58' N",
+        "lon": "80° 09' E",
+        "latDec": 12.9667,
+        "lonDec": 80.15,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Panruti",
+        "lat": "11° 46' N",
+        "lon": "79° 33' E",
+        "latDec": 11.7667,
+        "lonDec": 79.55,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Paramakudi",
+        "lat": "09° 32' N",
+        "lon": "78° 35' E",
+        "latDec": 9.5333,
+        "lonDec": 78.5833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Paramathi Velur",
+        "lat": "11° 03' N",
+        "lon": "78° 00' E",
+        "latDec": 11.05,
+        "lonDec": 78,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Pattukkottai",
+        "lat": "10° 26' N",
+        "lon": "79° 19' E",
+        "latDec": 10.4333,
+        "lonDec": 79.3167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Pennagaram",
+        "lat": "12° 08' N",
+        "lon": "77° 54' E",
+        "latDec": 12.1333,
+        "lonDec": 77.9,
         "tz": "+05:30"
       },
       {
@@ -265,11 +929,83 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Periyakulam",
+        "lat": "10° 07' N",
+        "lon": "77° 33' E",
+        "latDec": 10.1167,
+        "lonDec": 77.55,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Perundurai",
+        "lat": "11° 16' N",
+        "lon": "77° 35' E",
+        "latDec": 11.2667,
+        "lonDec": 77.5833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Pochampalli",
+        "lat": "12° 20' N",
+        "lon": "78° 22' E",
+        "latDec": 12.3333,
+        "lonDec": 78.3667,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Pollachi",
+        "lat": "10° 40' N",
+        "lon": "77° 01' E",
+        "latDec": 10.6667,
+        "lonDec": 77.0167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Polur",
+        "lat": "12° 30' N",
+        "lon": "79° 08' E",
+        "latDec": 12.5,
+        "lonDec": 79.1333,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Ponnamaravathi",
+        "lat": "10° 19' N",
+        "lon": "78° 31' E",
+        "latDec": 10.3167,
+        "lonDec": 78.5167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Ponneri",
+        "lat": "13° 19' N",
+        "lon": "80° 12' E",
+        "latDec": 13.3167,
+        "lonDec": 80.2,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Poonamallee",
+        "lat": "13° 03' N",
+        "lon": "80° 07' E",
+        "latDec": 13.05,
+        "lonDec": 80.1167,
+        "tz": "+05:30"
+      },
+      {
         "name": "Pudukkottai",
         "lat": "10° 23' N",
         "lon": "78° 49' E",
         "latDec": 10.3797,
         "lonDec": 78.8208,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Rajapalayam",
+        "lat": "09° 27' N",
+        "lon": "77° 33' E",
+        "latDec": 9.45,
+        "lonDec": 77.55,
         "tz": "+05:30"
       },
       {
@@ -297,6 +1033,22 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Rasipuram",
+        "lat": "11° 28' N",
+        "lon": "78° 10' E",
+        "latDec": 11.4667,
+        "lonDec": 78.1667,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Rayakottai",
+        "lat": "12° 31' N",
+        "lon": "78° 02' E",
+        "latDec": 12.5167,
+        "lonDec": 78.0333,
+        "tz": "+05:30"
+      },
+      {
         "name": "Salem",
         "lat": "11° 39' N",
         "lon": "78° 08' E",
@@ -321,11 +1073,99 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Sankarankovil",
+        "lat": "09° 10' N",
+        "lon": "77° 32' E",
+        "latDec": 9.1667,
+        "lonDec": 77.5333,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Sathankulam",
+        "lat": "08° 26' N",
+        "lon": "77° 55' E",
+        "latDec": 8.4333,
+        "lonDec": 77.9167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Sathyamangalam",
+        "lat": "11° 30' N",
+        "lon": "77° 14' E",
+        "latDec": 11.5,
+        "lonDec": 77.2333,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Sattur",
+        "lat": "09° 22' N",
+        "lon": "77° 55' E",
+        "latDec": 9.3667,
+        "lonDec": 77.9167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Shenkottai",
+        "lat": "08° 59' N",
+        "lon": "77° 15' E",
+        "latDec": 8.9833,
+        "lonDec": 77.25,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Sholavandan",
+        "lat": "10° 01' N",
+        "lon": "77° 58' E",
+        "latDec": 10.0167,
+        "lonDec": 77.9667,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Sholinghur",
+        "lat": "13° 07' N",
+        "lon": "79° 25' E",
+        "latDec": 13.1167,
+        "lonDec": 79.4167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Shoolagiri",
+        "lat": "12° 40' N",
+        "lon": "78° 01' E",
+        "latDec": 12.6667,
+        "lonDec": 78.0167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Singampunari",
+        "lat": "10° 11' N",
+        "lon": "78° 27' E",
+        "latDec": 10.1833,
+        "lonDec": 78.45,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Sirkazhi",
+        "lat": "11° 14' N",
+        "lon": "79° 44' E",
+        "latDec": 11.2333,
+        "lonDec": 79.7333,
+        "tz": "+05:30"
+      },
+      {
         "name": "Sivaganga",
         "lat": "09° 51' N",
         "lon": "78° 29' E",
         "latDec": 9.8433,
         "lonDec": 78.4809,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Sivagiri",
+        "lat": "09° 20' N",
+        "lon": "77° 26' E",
+        "latDec": 9.3333,
+        "lonDec": 77.4333,
         "tz": "+05:30"
       },
       {
@@ -337,6 +1177,14 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Sriperumbudur",
+        "lat": "12° 58' N",
+        "lon": "79° 57' E",
+        "latDec": 12.9667,
+        "lonDec": 79.95,
+        "tz": "+05:30"
+      },
+      {
         "name": "Srirangam",
         "lat": "10° 52' N",
         "lon": "78° 42' E",
@@ -345,11 +1193,35 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Srivilliputhur",
+        "lat": "09° 31' N",
+        "lon": "77° 38' E",
+        "latDec": 9.5167,
+        "lonDec": 77.6333,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Sulur",
+        "lat": "11° 02' N",
+        "lon": "77° 08' E",
+        "latDec": 11.0333,
+        "lonDec": 77.1333,
+        "tz": "+05:30"
+      },
+      {
         "name": "Swamimalai",
         "lat": "10° 57' N",
         "lon": "79° 20' E",
         "latDec": 10.9575,
         "lonDec": 79.3276,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Tambaram",
+        "lat": "12° 55' N",
+        "lon": "80° 07' E",
+        "latDec": 12.9167,
+        "lonDec": 80.1167,
         "tz": "+05:30"
       },
       {
@@ -385,6 +1257,14 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Thirumangalam",
+        "lat": "09° 49' N",
+        "lon": "77° 59' E",
+        "latDec": 9.8167,
+        "lonDec": 77.9833,
+        "tz": "+05:30"
+      },
+      {
         "name": "Thirunallar",
         "lat": "10° 56' N",
         "lon": "79° 47' E",
@@ -401,6 +1281,22 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Thiruvaiyaru",
+        "lat": "10° 53' N",
+        "lon": "79° 06' E",
+        "latDec": 10.8833,
+        "lonDec": 79.1,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Thiruvidaimarudur",
+        "lat": "10° 59' N",
+        "lon": "79° 28' E",
+        "latDec": 10.9833,
+        "lonDec": 79.4667,
+        "tz": "+05:30"
+      },
+      {
         "name": "Thoothukudi (Tuticorin)",
         "lat": "08° 46' N",
         "lon": "78° 08' E",
@@ -409,11 +1305,51 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Thottiyam",
+        "lat": "11° 00' N",
+        "lon": "78° 19' E",
+        "latDec": 11,
+        "lonDec": 78.3167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Thuraiyur",
+        "lat": "11° 09' N",
+        "lon": "78° 36' E",
+        "latDec": 11.15,
+        "lonDec": 78.6,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Tindivanam",
+        "lat": "12° 14' N",
+        "lon": "79° 39' E",
+        "latDec": 12.2333,
+        "lonDec": 79.65,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Tiruchengode",
+        "lat": "11° 23' N",
+        "lon": "77° 54' E",
+        "latDec": 11.3833,
+        "lonDec": 77.9,
+        "tz": "+05:30"
+      },
+      {
         "name": "Tiruchirappalli (Trichy)",
         "lat": "10° 47' N",
         "lon": "78° 42' E",
         "latDec": 10.7905,
         "lonDec": 78.7047,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Tirukoilur",
+        "lat": "11° 58' N",
+        "lon": "79° 12' E",
+        "latDec": 11.9667,
+        "lonDec": 79.2,
         "tz": "+05:30"
       },
       {
@@ -473,6 +1409,14 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Tittakudi",
+        "lat": "11° 24' N",
+        "lon": "79° 07' E",
+        "latDec": 11.4,
+        "lonDec": 79.1167,
+        "tz": "+05:30"
+      },
+      {
         "name": "Udhagamandalam (Ooty)",
         "lat": "11° 25' N",
         "lon": "76° 42' E",
@@ -481,11 +1425,91 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Udumalaipettai",
+        "lat": "10° 35' N",
+        "lon": "77° 15' E",
+        "latDec": 10.5833,
+        "lonDec": 77.25,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Ulundurpet",
+        "lat": "11° 41' N",
+        "lon": "79° 17' E",
+        "latDec": 11.6833,
+        "lonDec": 79.2833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Usilampatti",
+        "lat": "09° 58' N",
+        "lon": "77° 48' E",
+        "latDec": 9.9667,
+        "lonDec": 77.8,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Uthangarai",
+        "lat": "12° 16' N",
+        "lon": "78° 32' E",
+        "latDec": 12.2667,
+        "lonDec": 78.5333,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Uthiramerur",
+        "lat": "12° 37' N",
+        "lon": "79° 45' E",
+        "latDec": 12.6167,
+        "lonDec": 79.75,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Vadipatti",
+        "lat": "10° 05' N",
+        "lon": "77° 58' E",
+        "latDec": 10.0833,
+        "lonDec": 77.9667,
+        "tz": "+05:30"
+      },
+      {
         "name": "Vaitheeswaran Koil",
         "lat": "11° 12' N",
         "lon": "79° 43' E",
         "latDec": 11.2025,
         "lonDec": 79.7128,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Valparai",
+        "lat": "10° 19' N",
+        "lon": "76° 57' E",
+        "latDec": 10.3167,
+        "lonDec": 76.95,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Vandavasi",
+        "lat": "12° 30' N",
+        "lon": "79° 37' E",
+        "latDec": 12.5,
+        "lonDec": 79.6167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Vaniyambadi",
+        "lat": "12° 41' N",
+        "lon": "78° 37' E",
+        "latDec": 12.6833,
+        "lonDec": 78.6167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Vedasandur",
+        "lat": "10° 32' N",
+        "lon": "77° 57' E",
+        "latDec": 10.5333,
+        "lonDec": 77.95,
         "tz": "+05:30"
       },
       {
@@ -505,6 +1529,14 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Vikravandi",
+        "lat": "12° 02' N",
+        "lon": "79° 33' E",
+        "latDec": 12.0333,
+        "lonDec": 79.55,
+        "tz": "+05:30"
+      },
+      {
         "name": "Viluppuram",
         "lat": "11° 56' N",
         "lon": "79° 29' E",
@@ -518,6 +1550,38 @@ export const GEO_DATA = {
         "lon": "77° 57' E",
         "latDec": 9.5872,
         "lonDec": 77.9579,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Vridhachalam",
+        "lat": "11° 31' N",
+        "lon": "79° 20' E",
+        "latDec": 11.5167,
+        "lonDec": 79.3333,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Walajabad",
+        "lat": "12° 48' N",
+        "lon": "79° 49' E",
+        "latDec": 12.8,
+        "lonDec": 79.8167,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Walajapet",
+        "lat": "12° 56' N",
+        "lon": "79° 23' E",
+        "latDec": 12.9333,
+        "lonDec": 79.3833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Watrap",
+        "lat": "09° 38' N",
+        "lon": "77° 38' E",
+        "latDec": 9.6333,
+        "lonDec": 77.6333,
         "tz": "+05:30"
       }
     ],
@@ -579,11 +1643,27 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Chamarajanagar",
+        "lat": "11° 55' N",
+        "lon": "76° 57' E",
+        "latDec": 11.9167,
+        "lonDec": 76.95,
+        "tz": "+05:30"
+      },
+      {
         "name": "Chamrajnagar",
         "lat": "11° 56' N",
         "lon": "76° 57' E",
         "latDec": 11.9261,
         "lonDec": 76.9437,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Chikkaballapur",
+        "lat": "13° 26' N",
+        "lon": "77° 44' E",
+        "latDec": 13.4333,
+        "lonDec": 77.7333,
         "tz": "+05:30"
       },
       {
@@ -616,6 +1696,14 @@ export const GEO_DATA = {
         "lon": "75° 23' E",
         "latDec": 12.9554,
         "lonDec": 75.3783,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Gadag",
+        "lat": "15° 26' N",
+        "lon": "75° 38' E",
+        "latDec": 15.4333,
+        "lonDec": 75.6333,
         "tz": "+05:30"
       },
       {
@@ -667,6 +1755,14 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Haveri",
+        "lat": "14° 48' N",
+        "lon": "75° 24' E",
+        "latDec": 14.8,
+        "lonDec": 75.4,
+        "tz": "+05:30"
+      },
+      {
         "name": "Hospet (Hosapete)",
         "lat": "15° 16' N",
         "lon": "76° 23' E",
@@ -704,6 +1800,14 @@ export const GEO_DATA = {
         "lon": "74° 49' E",
         "latDec": 13.8647,
         "lonDec": 74.8144,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Koppal",
+        "lat": "15° 21' N",
+        "lon": "76° 09' E",
+        "latDec": 15.35,
+        "lonDec": 76.15,
         "tz": "+05:30"
       },
       {
@@ -755,6 +1859,14 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Ramanagara",
+        "lat": "12° 43' N",
+        "lon": "77° 17' E",
+        "latDec": 12.7167,
+        "lonDec": 77.2833,
+        "tz": "+05:30"
+      },
+      {
         "name": "Ranebennur",
         "lat": "14° 37' N",
         "lon": "75° 37' E",
@@ -795,6 +1907,14 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Tumkur",
+        "lat": "13° 20' N",
+        "lon": "77° 06' E",
+        "latDec": 13.3333,
+        "lonDec": 77.1,
+        "tz": "+05:30"
+      },
+      {
         "name": "Tumkur (Tumakuru)",
         "lat": "13° 20' N",
         "lon": "77° 06' E",
@@ -808,6 +1928,14 @@ export const GEO_DATA = {
         "lon": "74° 45' E",
         "latDec": 13.3409,
         "lonDec": 74.7421,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Yadgir",
+        "lat": "16° 46' N",
+        "lon": "77° 08' E",
+        "latDec": 16.7667,
+        "lonDec": 77.1333,
         "tz": "+05:30"
       }
     ],
@@ -994,6 +2122,14 @@ export const GEO_DATA = {
         "lon": "83° 54' E",
         "latDec": 18.2949,
         "lonDec": 83.8938,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Srikalahasti",
+        "lat": "13° 45' N",
+        "lon": "79° 42' E",
+        "latDec": 13.75,
+        "lonDec": 79.7,
         "tz": "+05:30"
       },
       {
@@ -1225,11 +2361,43 @@ export const GEO_DATA = {
     ],
     "Kerala": [
       {
+        "name": "Adoor",
+        "lat": "09° 09' N",
+        "lon": "76° 44' E",
+        "latDec": 9.15,
+        "lonDec": 76.7333,
+        "tz": "+05:30"
+      },
+      {
         "name": "Alappuzha (Alleppey)",
         "lat": "09° 30' N",
         "lon": "76° 20' E",
         "latDec": 9.4981,
         "lonDec": 76.3388,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Aluva",
+        "lat": "10° 06' N",
+        "lon": "76° 21' E",
+        "latDec": 10.1,
+        "lonDec": 76.35,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Angamaly",
+        "lat": "10° 11' N",
+        "lon": "76° 23' E",
+        "latDec": 10.1833,
+        "lonDec": 76.3833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Attingal",
+        "lat": "08° 42' N",
+        "lon": "76° 49' E",
+        "latDec": 8.7,
+        "lonDec": 76.8167,
         "tz": "+05:30"
       },
       {
@@ -1241,11 +2409,35 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Chalakudy",
+        "lat": "10° 18' N",
+        "lon": "76° 20' E",
+        "latDec": 10.3,
+        "lonDec": 76.3333,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Changanassery",
+        "lat": "09° 27' N",
+        "lon": "76° 32' E",
+        "latDec": 9.45,
+        "lonDec": 76.5333,
+        "tz": "+05:30"
+      },
+      {
         "name": "Chengannur",
         "lat": "09° 19' N",
         "lon": "76° 37' E",
         "latDec": 9.3175,
         "lonDec": 76.6111,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Chittur",
+        "lat": "10° 42' N",
+        "lon": "76° 43' E",
+        "latDec": 10.7,
+        "lonDec": 76.7167,
         "tz": "+05:30"
       },
       {
@@ -1262,6 +2454,14 @@ export const GEO_DATA = {
         "lon": "76° 02' E",
         "latDec": 10.5946,
         "lonDec": 76.04,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Irinjalakuda",
+        "lat": "10° 21' N",
+        "lon": "76° 12' E",
+        "latDec": 10.35,
+        "lonDec": 76.2,
         "tz": "+05:30"
       },
       {
@@ -1289,11 +2489,27 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Kayamkulam",
+        "lat": "09° 10' N",
+        "lon": "76° 30' E",
+        "latDec": 9.1667,
+        "lonDec": 76.5,
+        "tz": "+05:30"
+      },
+      {
         "name": "Kochi (Cochin)",
         "lat": "09° 56' N",
         "lon": "76° 16' E",
         "latDec": 9.9312,
         "lonDec": 76.2673,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Kodungallur",
+        "lat": "10° 13' N",
+        "lon": "76° 12' E",
+        "latDec": 10.2167,
+        "lonDec": 76.2,
         "tz": "+05:30"
       },
       {
@@ -1337,6 +2553,30 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Muvattupuzha",
+        "lat": "09° 59' N",
+        "lon": "76° 35' E",
+        "latDec": 9.9833,
+        "lonDec": 76.5833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Neyyattinkara",
+        "lat": "08° 24' N",
+        "lon": "77° 05' E",
+        "latDec": 8.4,
+        "lonDec": 77.0833,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Ottapalam",
+        "lat": "10° 46' N",
+        "lon": "76° 23' E",
+        "latDec": 10.7667,
+        "lonDec": 76.3833,
+        "tz": "+05:30"
+      },
+      {
         "name": "Palakkad",
         "lat": "10° 47' N",
         "lon": "76° 39' E",
@@ -1353,11 +2593,27 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Perumbavoor",
+        "lat": "10° 08' N",
+        "lon": "76° 29' E",
+        "latDec": 10.1333,
+        "lonDec": 76.4833,
+        "tz": "+05:30"
+      },
+      {
         "name": "Ponnani",
         "lat": "10° 46' N",
         "lon": "75° 56' E",
         "latDec": 10.7672,
         "lonDec": 75.9259,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Punalur",
+        "lat": "09° 01' N",
+        "lon": "76° 56' E",
+        "latDec": 9.0167,
+        "lonDec": 76.9333,
         "tz": "+05:30"
       },
       {
@@ -1377,11 +2633,27 @@ export const GEO_DATA = {
         "tz": "+05:30"
       },
       {
+        "name": "Thiruvalla",
+        "lat": "09° 23' N",
+        "lon": "76° 35' E",
+        "latDec": 9.3833,
+        "lonDec": 76.5833,
+        "tz": "+05:30"
+      },
+      {
         "name": "Thiruvananthapuram (Trivandrum)",
         "lat": "08° 31' N",
         "lon": "76° 56' E",
         "latDec": 8.5241,
         "lonDec": 76.9366,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Thodupuzha",
+        "lat": "09° 54' N",
+        "lon": "76° 43' E",
+        "latDec": 9.9,
+        "lonDec": 76.7167,
         "tz": "+05:30"
       },
       {
@@ -1398,6 +2670,14 @@ export const GEO_DATA = {
         "lon": "76° 24' E",
         "latDec": 9.7497,
         "lonDec": 76.3961,
+        "tz": "+05:30"
+      },
+      {
+        "name": "Varkala",
+        "lat": "08° 44' N",
+        "lon": "76° 43' E",
+        "latDec": 8.7333,
+        "lonDec": 76.7167,
         "tz": "+05:30"
       },
       {
