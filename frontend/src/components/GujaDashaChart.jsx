@@ -256,7 +256,7 @@ export default function GujaDashaChart({ matchReport }) {
         <div className="flex items-center justify-between">
           <h4 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5">
             <Compass className="w-4 h-4 text-rose-600" />
-            {isTa ? 'இருவர் ஜாதகக் கட்டங்கள் (ராசி சக்கரம்)' : 'Groom & Bride Janma Rasi Kundli Charts'}
+            {isTa ? 'மணமகள் & மணமகன் ஜாதகக் கட்டங்கள் (ராசி சக்கரம்)' : 'Bride & Groom Janma Rasi Kundli Charts'}
           </h4>
           <span className="text-[11px] text-slate-500">
             {isTa ? 'தென்னிந்திய முறை' : 'Classical South Indian Nirayana Format'}
@@ -264,8 +264,10 @@ export default function GujaDashaChart({ matchReport }) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {renderSouthIndianGrid(boy, isTa ? 'மணமகன் ஜாதகம்' : "Groom's Chart", true)}
+          {/* Bride/Female Chart (Left Side Default) */}
           {renderSouthIndianGrid(girl, isTa ? 'மணமகள் ஜாதகம்' : "Bride's Chart", false)}
+          {/* Groom/Male Chart (Right Side Default) */}
+          {renderSouthIndianGrid(boy, isTa ? 'மணமகன் ஜாதகம்' : "Groom's Chart", true)}
         </div>
       </div>
 
@@ -277,56 +279,7 @@ export default function GujaDashaChart({ matchReport }) {
         </h4>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          {/* Groom's Box */}
-          <div className="p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 space-y-2">
-            <div className="flex justify-between items-center border-b border-indigo-100 pb-1.5">
-              <span className="font-bold text-indigo-950 text-xs">
-                {isTa ? 'மணமகன்' : 'Groom'}: {boy.name || 'Groom'}
-              </span>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                boy.netHasDosha
-                  ? 'bg-rose-100 text-rose-800'
-                  : boy.isCancelled
-                  ? 'bg-emerald-100 text-emerald-800'
-                  : 'bg-slate-200 text-slate-800'
-              }`}>
-                {isTa ? boy.doshaLevelTamil : boy.doshaLevel}
-              </span>
-            </div>
-
-            <div className="space-y-1 text-[11px] text-slate-700">
-              <div className="flex justify-between">
-                <span>{isTa ? 'லக்னத்திலிருந்து செவ்வாய்' : 'Mars from Lagna'}:</span>
-                <strong className="text-slate-900">{formatHouseOrdinal(boy.houses?.lagna || 7)}</strong>
-              </div>
-              <div className="flex justify-between">
-                <span>{isTa ? 'சந்திரனிலிருந்து செவ்வாய்' : 'Mars from Moon'}:</span>
-                <strong className="text-slate-900">{formatHouseOrdinal(boy.houses?.moon || 8)}</strong>
-              </div>
-              <div className="flex justify-between">
-                <span>{isTa ? 'சுக்கிரனிலிருந்து செவ்வாய்' : 'Mars from Venus'}:</span>
-                <strong className="text-slate-900">{formatHouseOrdinal(boy.houses?.venus || 2)}</strong>
-              </div>
-              <div className="flex justify-between">
-                <span>{isTa ? 'செவ்வாய் நின்ற ராசி' : 'Mars Sign'}:</span>
-                <strong className="text-indigo-900">{translateEntity('rashis', boy.marsRasi || 'Cancer', lang)}</strong>
-              </div>
-            </div>
-
-            {/* Nivrutti rules */}
-            <div className="pt-2 border-t border-indigo-100 text-[10.5px]">
-              <span className="font-bold text-indigo-950 block mb-1">
-                {isTa ? 'சாஸ்திர நிவர்த்தி விவரம்:' : 'Applied Nivrutti / Exemption:'}
-              </span>
-              <ul className="list-disc pl-4 space-y-0.5 text-slate-700">
-                {(boy.cancellations || []).map((c, i) => (
-                  <li key={i}>{c}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Bride's Box */}
+          {/* Bride's Box (Female - Left Side Default) */}
           <div className="p-3 bg-rose-50/50 rounded-xl border border-rose-100 space-y-2">
             <div className="flex justify-between items-center border-b border-rose-100 pb-1.5">
               <span className="font-bold text-rose-950 text-xs">
@@ -374,6 +327,55 @@ export default function GujaDashaChart({ matchReport }) {
               </ul>
             </div>
           </div>
+
+          {/* Groom's Box (Male - Right Side Default) */}
+          <div className="p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 space-y-2">
+            <div className="flex justify-between items-center border-b border-indigo-100 pb-1.5">
+              <span className="font-bold text-indigo-950 text-xs">
+                {isTa ? 'மணமகன்' : 'Groom'}: {boy.name || 'Groom'}
+              </span>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                boy.netHasDosha
+                  ? 'bg-rose-100 text-rose-800'
+                  : boy.isCancelled
+                  ? 'bg-emerald-100 text-emerald-800'
+                  : 'bg-slate-200 text-slate-800'
+              }`}>
+                {isTa ? boy.doshaLevelTamil : boy.doshaLevel}
+              </span>
+            </div>
+
+            <div className="space-y-1 text-[11px] text-slate-700">
+              <div className="flex justify-between">
+                <span>{isTa ? 'லக்னத்திலிருந்து செவ்வாய்' : 'Mars from Lagna'}:</span>
+                <strong className="text-slate-900">{formatHouseOrdinal(boy.houses?.lagna || 7)}</strong>
+              </div>
+              <div className="flex justify-between">
+                <span>{isTa ? 'சந்திரனிலிருந்து செவ்வாய்' : 'Mars from Moon'}:</span>
+                <strong className="text-slate-900">{formatHouseOrdinal(boy.houses?.moon || 8)}</strong>
+              </div>
+              <div className="flex justify-between">
+                <span>{isTa ? 'சுக்கிரனிலிருந்து செவ்வாய்' : 'Mars from Venus'}:</span>
+                <strong className="text-slate-900">{formatHouseOrdinal(boy.houses?.venus || 2)}</strong>
+              </div>
+              <div className="flex justify-between">
+                <span>{isTa ? 'செவ்வாய் நின்ற ராசி' : 'Mars Sign'}:</span>
+                <strong className="text-indigo-900">{translateEntity('rashis', boy.marsRasi || 'Cancer', lang)}</strong>
+              </div>
+            </div>
+
+            {/* Nivrutti rules */}
+            <div className="pt-2 border-t border-indigo-100 text-[10.5px]">
+              <span className="font-bold text-indigo-950 block mb-1">
+                {isTa ? 'சாஸ்திர நிவர்த்தி விவரம்:' : 'Applied Nivrutti / Exemption:'}
+              </span>
+              <ul className="list-disc pl-4 space-y-0.5 text-slate-700">
+                {(boy.cancellations || []).map((c, i) => (
+                  <li key={i}>{c}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -390,46 +392,7 @@ export default function GujaDashaChart({ matchReport }) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-          {/* Groom's Guja Dasha Timeline Card */}
-          <div className="p-3 bg-amber-50/50 rounded-xl border border-amber-200/80 space-y-2">
-            <div className="flex justify-between items-center">
-              <strong className="text-amber-950">
-                {isTa ? 'மணமகன் செவ்வாய் தசை' : "Groom's Guja Dasha (7 Yrs)"}
-              </strong>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">
-                {isTa ? boy.gujaDasha?.statusTamil : boy.gujaDasha?.status}
-              </span>
-            </div>
-
-            <div className="text-[11px] space-y-1 text-slate-700">
-              <div className="flex justify-between">
-                <span>{isTa ? 'தசா கால அளவு' : 'Operating Period'}:</span>
-                <span className="font-bold text-slate-900">
-                  {boy.gujaDasha?.startDate || '2043-02-17'} &rarr; {boy.gujaDasha?.endDate || '2050-02-17'}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>{isTa ? 'செவ்வாய் தசை நடக்கும் வயது' : 'Age during Mars Dasha'}:</span>
-                <span className="font-bold text-slate-900">
-                  {isTa ? `${boy.gujaDasha?.startAge || 38} முதல் ${boy.gujaDasha?.endAge || 45} வயது வரை` : `Age ${boy.gujaDasha?.startAge || 38} to ${boy.gujaDasha?.endAge || 45}`}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>{isTa ? 'பிறப்பில் திசா இருப்பு' : 'Birth Dasha Balance'}:</span>
-                <span className="font-bold text-indigo-950">
-                  {isTa ? boy.dashaBalanceTamil : boy.dashaBalance}
-                </span>
-              </div>
-              <div className="flex justify-between pt-1 border-t border-amber-200">
-                <span>{isTa ? 'தற்போது நடக்கும் தசை' : 'Current Active Dasha'}:</span>
-                <span className="font-bold text-emerald-800">
-                  {isTa ? boy.currentDasha?.lordTamil : boy.currentDasha?.lord} ({isTa ? 'முடிவு' : 'until'} {boy.currentDasha?.endDate})
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Bride's Guja Dasha Timeline Card */}
+          {/* Bride's Guja Dasha Timeline Card (Female - Left Side Default) */}
           <div className="p-3 bg-amber-50/50 rounded-xl border border-amber-200/80 space-y-2">
             <div className="flex justify-between items-center">
               <strong className="text-amber-950">
@@ -463,6 +426,45 @@ export default function GujaDashaChart({ matchReport }) {
                 <span>{isTa ? 'தற்போது நடக்கும் தசை' : 'Current Active Dasha'}:</span>
                 <span className="font-bold text-emerald-800">
                   {isTa ? girl.currentDasha?.lordTamil : girl.currentDasha?.lord} ({isTa ? 'முடிவு' : 'until'} {girl.currentDasha?.endDate})
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Groom's Guja Dasha Timeline Card (Male - Right Side Default) */}
+          <div className="p-3 bg-amber-50/50 rounded-xl border border-amber-200/80 space-y-2">
+            <div className="flex justify-between items-center">
+              <strong className="text-amber-950">
+                {isTa ? 'மணமகன் செவ்வாய் தசை' : "Groom's Guja Dasha (7 Yrs)"}
+              </strong>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">
+                {isTa ? boy.gujaDasha?.statusTamil : boy.gujaDasha?.status}
+              </span>
+            </div>
+
+            <div className="text-[11px] space-y-1 text-slate-700">
+              <div className="flex justify-between">
+                <span>{isTa ? 'தசா கால அளவு' : 'Operating Period'}:</span>
+                <span className="font-bold text-slate-900">
+                  {boy.gujaDasha?.startDate || '2043-02-17'} &rarr; {boy.gujaDasha?.endDate || '2050-02-17'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>{isTa ? 'செவ்வாய் தசை நடக்கும் வயது' : 'Age during Mars Dasha'}:</span>
+                <span className="font-bold text-slate-900">
+                  {isTa ? `${boy.gujaDasha?.startAge || 38} முதல் ${boy.gujaDasha?.endAge || 45} வயது வரை` : `Age ${boy.gujaDasha?.startAge || 38} to ${boy.gujaDasha?.endAge || 45}`}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>{isTa ? 'பிறப்பில் திசா இருப்பு' : 'Birth Dasha Balance'}:</span>
+                <span className="font-bold text-indigo-950">
+                  {isTa ? boy.dashaBalanceTamil : boy.dashaBalance}
+                </span>
+              </div>
+              <div className="flex justify-between pt-1 border-t border-amber-200">
+                <span>{isTa ? 'தற்போது நடக்கும் தசை' : 'Current Active Dasha'}:</span>
+                <span className="font-bold text-emerald-800">
+                  {isTa ? boy.currentDasha?.lordTamil : boy.currentDasha?.lord} ({isTa ? 'முடிவு' : 'until'} {boy.currentDasha?.endDate})
                 </span>
               </div>
             </div>

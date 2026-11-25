@@ -89,7 +89,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   const [person1Mode, setPerson1Mode] = useState('client'); // 'client' | 'manual'
   const [manualPerson1Details, setManualPerson1Details] = useState({
     name: '',
-    gender: 'male',
+    gender: 'female',
     dob: '',
     dobTime: '',
     dobPlace: '',
@@ -119,7 +119,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
 
   const [partnerDetails, setPartnerDetails] = useState({
     name: '',
-    gender: 'female',
+    gender: 'male',
     dob: '',
     dobTime: '',
     dobPlace: '',
@@ -246,7 +246,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   const handleResetMatchmaking = () => {
     setPartnerDetails({
       name: '',
-      gender: 'female',
+      gender: 'male',
       dob: '',
       dobTime: '',
       dobPlace: '',
@@ -255,7 +255,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
     });
     setManualPerson1Details({
       name: '',
-      gender: 'male',
+      gender: 'female',
       dob: '',
       dobTime: '',
       dobPlace: '',
@@ -664,8 +664,8 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
     setCalculatingActiveMatch(true);
     try {
       const activeP1Horoscope = isP1Manual ? manualPerson1Horoscope : calculatedHoroscope;
-      const p1Gender = isP1Manual ? (manualPerson1Details.gender || 'male') : (activeBirthData?.gender || 'male');
-      const isP1Male = (p1Gender || 'male').toLowerCase() !== 'female';
+      const p1Gender = isP1Manual ? (manualPerson1Details.gender || 'female') : (activeBirthData?.gender || 'female');
+      const isP1Male = (p1Gender || 'female').toLowerCase() === 'male';
 
       const p1Nak = activeP1Horoscope?.summary?.nakshatraEn ||
         activeP1Horoscope?.summary?.nakshatra ||
@@ -1649,8 +1649,8 @@ Shubham Bhavatu! 🙏`;
           {/* Live Client Matchmaking (10 Poruthams & Compatibility) Analyzer */}
           {(() => {
             const isP1Manual = person1Mode === 'manual';
-            const p1Gender = isP1Manual ? (manualPerson1Details.gender || 'male') : (activeBirthData?.gender || 'male');
-            const isP1Male = (p1Gender || 'male').toLowerCase() !== 'female';
+            const p1Gender = isP1Manual ? (manualPerson1Details.gender || 'female') : (activeBirthData?.gender || 'female');
+            const isP1Male = (p1Gender || 'female').toLowerCase() === 'male';
 
             return (
               <div className="bg-white border border-rose-200/80 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
@@ -1675,7 +1675,7 @@ Shubham Bhavatu! 🙏`;
                         onClick={() => setPerson1Mode('client')}
                         className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                           !isP1Manual
-                            ? 'bg-indigo-600 text-white shadow-xs'
+                            ? 'bg-rose-600 text-white shadow-xs'
                             : 'text-slate-600 hover:text-slate-900'
                         }`}
                       >
@@ -1723,32 +1723,28 @@ Shubham Bhavatu! 🙏`;
                   </div>
                 </div>
 
-                {/* Comparison Input Grid: Person 1 vs Person 2 */}
+                {/* Comparison Input Grid: Person 1 (Female / Left) vs Person 2 (Male / Right) */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                  {/* Person 1 Card */}
-                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2.5">
-                    <div className="flex justify-between items-center pb-2 border-b border-slate-200">
+                  {/* Person 1 Card (Default Female / Bride - Left Side) */}
+                  <div className={`p-4 rounded-xl border space-y-2.5 ${
+                    !isP1Male
+                      ? 'bg-rose-50/40 border-rose-200'
+                      : 'bg-indigo-50/40 border-indigo-200'
+                  }`}>
+                    <div className={`flex justify-between items-center pb-2 border-b ${
+                      !isP1Male ? 'border-rose-100' : 'border-indigo-100'
+                    }`}>
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-indigo-900 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                          <User className="w-3.5 h-3.5 text-indigo-600" />
-                          {isP1Male
-                            ? (lang === 'ta' ? (!isP1Manual ? 'மணமகன் (வாடிக்கையாளர்)' : 'மணமகன் (நபர் 1)') : (!isP1Manual ? 'Groom (Active Client)' : 'Groom (Person 1)'))
-                            : (lang === 'ta' ? (!isP1Manual ? 'மணமகள் (வாடிக்கையாளர்)' : 'மணமகள் (நபர் 1)') : (!isP1Manual ? 'Bride (Active Client)' : 'Bride (Person 1)'))}
+                        <span className={`font-bold uppercase tracking-wider text-[11px] flex items-center gap-1.5 ${
+                          !isP1Male ? 'text-rose-900' : 'text-indigo-900'
+                        }`}>
+                          <User className={`w-3.5 h-3.5 ${!isP1Male ? 'text-rose-600' : 'text-indigo-600'}`} />
+                          {!isP1Male
+                            ? (lang === 'ta' ? (!isP1Manual ? 'மணமகள் (வாடிக்கையாளர்)' : 'மணமகள் (நபர் 1)') : (!isP1Manual ? 'Bride (Active Client)' : 'Bride (Person 1)'))
+                            : (lang === 'ta' ? (!isP1Manual ? 'மணமகன் (வாடிக்கையாளர்)' : 'மணமகன் (நபர் 1)') : (!isP1Manual ? 'Groom (Active Client)' : 'Groom (Person 1)'))}
                         </span>
                         {isP1Manual ? (
                           <div className="inline-flex bg-slate-200/80 p-0.5 rounded-md text-[10px] font-bold">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setManualPerson1Details({ ...manualPerson1Details, gender: 'male' });
-                                setPartnerDetails(prev => ({ ...prev, gender: 'female' }));
-                              }}
-                              className={`px-1.5 py-0.5 rounded transition-all cursor-pointer ${
-                                manualPerson1Details.gender !== 'female' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600'
-                              }`}
-                            >
-                              {lang === 'ta' ? 'ஆண்' : 'Male'}
-                            </button>
                             <button
                               type="button"
                               onClick={() => {
@@ -1761,10 +1757,24 @@ Shubham Bhavatu! 🙏`;
                             >
                               {lang === 'ta' ? 'பெண்' : 'Female'}
                             </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setManualPerson1Details({ ...manualPerson1Details, gender: 'male' });
+                                setPartnerDetails(prev => ({ ...prev, gender: 'female' }));
+                              }}
+                              className={`px-1.5 py-0.5 rounded transition-all cursor-pointer ${
+                                manualPerson1Details.gender !== 'female' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600'
+                              }`}
+                            >
+                              {lang === 'ta' ? 'ஆண்' : 'Male'}
+                            </button>
                           </div>
                         ) : (
-                          <span className="text-[10px] bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-full">
-                            {activeBirthData?.gender || 'male'}
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                            !isP1Male ? 'bg-rose-100 text-rose-800' : 'bg-indigo-100 text-indigo-800'
+                          }`}>
+                            {activeBirthData?.gender || 'female'}
                           </span>
                         )}
                       </div>
@@ -1773,7 +1783,7 @@ Shubham Bhavatu! 🙏`;
                       <button
                         type="button"
                         onClick={() => setPerson1Mode(isP1Manual ? 'client' : 'manual')}
-                        className="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold underline cursor-pointer"
+                        className="text-[10px] text-rose-600 hover:text-rose-800 font-bold underline cursor-pointer"
                       >
                         {!isP1Manual
                           ? (lang === 'ta' ? '✏️ கைமுறையாக உள்ளிடு' : '✏️ Enter Manually')
@@ -1818,9 +1828,9 @@ Shubham Bhavatu! 🙏`;
                             <button
                               type="button"
                               onClick={() => setPerson1Mode('manual')}
-                              className="text-xs bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold px-3 py-1 rounded-lg hover:bg-indigo-100 cursor-pointer"
+                              className="text-xs bg-rose-50 border border-rose-200 text-rose-700 font-bold px-3 py-1 rounded-lg hover:bg-rose-100 cursor-pointer"
                             >
-                              {lang === 'ta' ? '✏️ நபர் 1 விபரங்களை உள்ளிடுக' : '✏️ Enter Person 1 Details Manually'}
+                              {lang === 'ta' ? '✏️ மணமகள் (நபர் 1) விபரங்களை உள்ளிடுக' : '✏️ Enter Bride (Person 1) Details Manually'}
                             </button>
                           </div>
                         )}
@@ -1831,14 +1841,16 @@ Shubham Bhavatu! 🙏`;
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           <div>
                             <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
-                              {isP1Male ? (lang === 'ta' ? 'மணமகன் பெயர்' : 'Groom Name') : (lang === 'ta' ? 'மணமகள் பெயர்' : 'Bride Name')}
+                              {!isP1Male ? (lang === 'ta' ? 'மணமகள் பெயர்' : 'Bride Name') : (lang === 'ta' ? 'மணமகன் பெயர்' : 'Groom Name')}
                             </label>
                             <input
                               type="text"
                               value={manualPerson1Details.name}
                               onChange={(e) => setManualPerson1Details({ ...manualPerson1Details, name: e.target.value })}
-                              placeholder={lang === 'ta' ? 'பெயர் உள்ளிடவும்' : 'Enter Name'}
-                              className="w-full bg-white border border-indigo-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-indigo-400 placeholder:text-slate-400"
+                              placeholder={!isP1Male ? (lang === 'ta' ? 'மணமகள் பெயர் உள்ளிடவும்' : "Enter Bride's Name") : (lang === 'ta' ? 'மணமகன் பெயர் உள்ளிடவும்' : "Enter Groom's Name")}
+                              className={`w-full bg-white border rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none placeholder:text-slate-400 ${
+                                !isP1Male ? 'border-rose-200 focus:border-rose-400' : 'border-indigo-200 focus:border-indigo-400'
+                              }`}
                             />
                           </div>
                           <div>
@@ -1849,20 +1861,24 @@ Shubham Bhavatu! 🙏`;
                               type="date"
                               value={manualPerson1Details.dob}
                               onChange={(e) => setManualPerson1Details({ ...manualPerson1Details, dob: e.target.value })}
-                              className="w-full bg-white border border-indigo-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-indigo-400"
+                              className={`w-full bg-white border rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none ${
+                                !isP1Male ? 'border-rose-200 focus:border-rose-400' : 'border-indigo-200 focus:border-indigo-400'
+                              }`}
                             />
                           </div>
                           {/* Birth Time (12-Hour AM/PM format, same as in Horoscope) */}
                           <div>
                             <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
-                              <Clock className="w-3 h-3 inline mr-1 text-indigo-600" />
+                              <Clock className={`w-3 h-3 inline mr-1 ${!isP1Male ? 'text-rose-600' : 'text-indigo-600'}`} />
                               {lang === 'ta' ? 'பிறந்த நேரம் (12-மணி AM/PM)' : 'Birth Time (12-Hour AM/PM)'}
                             </label>
                             <div className="flex items-center gap-1">
                               <select
                                 value={p1TimeState.hour}
                                 onChange={e => updateP1TimePart('hour', e.target.value)}
-                                className="bg-white border border-indigo-200 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-indigo-400"
+                                className={`bg-white border rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none ${
+                                  !isP1Male ? 'border-rose-200 focus:border-rose-400' : 'border-indigo-200 focus:border-indigo-400'
+                                }`}
                               >
                                 {HOURS_12.map(h => (
                                   <option key={h} value={h}>{h}</option>
@@ -1872,7 +1888,9 @@ Shubham Bhavatu! 🙏`;
                               <select
                                 value={p1TimeState.minute}
                                 onChange={e => updateP1TimePart('minute', e.target.value)}
-                                className="bg-white border border-indigo-200 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-indigo-400"
+                                className={`bg-white border rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none ${
+                                  !isP1Male ? 'border-rose-200 focus:border-rose-400' : 'border-indigo-200 focus:border-indigo-400'
+                                }`}
                               >
                                 {MINUTES_60.map(m => (
                                   <option key={m} value={m}>{m}</option>
@@ -1882,7 +1900,9 @@ Shubham Bhavatu! 🙏`;
                               <select
                                 value={p1TimeState.second}
                                 onChange={e => updateP1TimePart('second', e.target.value)}
-                                className="bg-white border border-indigo-200 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-indigo-400"
+                                className={`bg-white border rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none ${
+                                  !isP1Male ? 'border-rose-200 focus:border-rose-400' : 'border-indigo-200 focus:border-indigo-400'
+                                }`}
                               >
                                 {SECONDS_60.map(s => (
                                   <option key={s} value={s}>{s}</option>
@@ -1893,7 +1913,7 @@ Shubham Bhavatu! 🙏`;
                                 onClick={toggleP1Period}
                                 className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition-all cursor-pointer shadow-2xs ${
                                   p1TimeState.period === 'PM'
-                                    ? 'bg-indigo-700 text-white border border-indigo-700'
+                                    ? (!isP1Male ? 'bg-rose-700 text-white border border-rose-700' : 'bg-indigo-700 text-white border border-indigo-700')
                                     : 'bg-amber-600 text-white border border-amber-600'
                                 }`}
                               >
@@ -1905,7 +1925,7 @@ Shubham Bhavatu! 🙏`;
                           {/* Birth City / Place - Search by letter autocomplete (same as in Horoscope) */}
                           <div ref={p1CityBoxRef} className="relative">
                             <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
-                              <MapPin className="w-3 h-3 inline mr-1 text-indigo-600" />
+                              <MapPin className={`w-3 h-3 inline mr-1 ${!isP1Male ? 'text-rose-600' : 'text-indigo-600'}`} />
                               {lang === 'ta' ? 'பிறந்த இடம் (City / Place)' : 'Birth City / Place'}
                             </label>
                             <div className="relative">
@@ -1930,7 +1950,9 @@ Shubham Bhavatu! 🙏`;
                                 }}
                                 onFocus={() => setShowP1CityDropdown(true)}
                                 placeholder={lang === 'ta' ? 'ஊர் பெயர் தட்டச்சு செய்க...' : 'Type city name...'}
-                                className="w-full bg-white border border-indigo-200 rounded-lg px-2.5 py-1.5 pr-7 text-xs text-slate-900 font-medium focus:outline-none focus:border-indigo-400 placeholder:text-slate-400"
+                                className={`w-full bg-white border rounded-lg px-2.5 py-1.5 pr-7 text-xs text-slate-900 font-medium focus:outline-none placeholder:text-slate-400 ${
+                                  !isP1Male ? 'border-rose-200 focus:border-rose-400' : 'border-indigo-200 focus:border-indigo-400'
+                                }`}
                                 autoComplete="off"
                               />
                               {p1CityInput && (
@@ -1950,7 +1972,9 @@ Shubham Bhavatu! 🙏`;
                             </div>
 
                             {showP1CityDropdown && p1CitySuggestions.length > 0 && (
-                              <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-indigo-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto divide-y divide-slate-100">
+                              <div className={`absolute left-0 right-0 top-full mt-1 bg-white border rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto divide-y divide-slate-100 ${
+                                !isP1Male ? 'border-rose-200' : 'border-indigo-200'
+                              }`}>
                                 {p1CitySuggestions.map((item, idx) => (
                                   <button
                                     key={`${item.name}-${idx}`}
@@ -1965,7 +1989,9 @@ Shubham Bhavatu! 🙏`;
                                       }));
                                       setShowP1CityDropdown(false);
                                     }}
-                                    className="w-full text-left px-2.5 py-1.5 text-xs flex items-center justify-between hover:bg-indigo-50 cursor-pointer"
+                                    className={`w-full text-left px-2.5 py-1.5 text-xs flex items-center justify-between cursor-pointer ${
+                                      !isP1Male ? 'hover:bg-rose-50' : 'hover:bg-indigo-50'
+                                    }`}
                                   >
                                     <span className="font-semibold text-slate-900">{item.name}</span>
                                     <span className="text-[10px] font-mono text-slate-400">
@@ -1979,7 +2005,7 @@ Shubham Bhavatu! 🙏`;
                         </div>
 
                         {manualPerson1Horoscope?.summary && (
-                          <p className="text-indigo-900 font-medium pt-1 border-t border-indigo-200 text-xs">
+                          <p className={`font-medium pt-1 border-t text-xs ${!isP1Male ? 'text-rose-900 border-rose-200' : 'text-indigo-900 border-indigo-200'}`}>
                             <strong>{lang === 'ta' ? 'நட்சத்திரம் / ராசி:' : 'Nakshatra / Moon Sign:'}</strong>{' '}
                             {(() => {
                               const nak = lang === 'ta'
@@ -2000,16 +2026,26 @@ Shubham Bhavatu! 🙏`;
                     )}
                   </div>
 
-                  {/* Partner Details (Person 2) */}
-                  <div className="bg-rose-50/40 p-4 rounded-xl border border-rose-200 space-y-2.5">
-                    <div className="flex justify-between items-center pb-2 border-b border-rose-200">
-                      <span className="font-bold text-rose-900 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                        <Heart className="w-3.5 h-3.5 text-rose-600" />
+                  {/* Partner Details (Person 2 - Default Male / Groom - Right Side) */}
+                  <div className={`p-4 rounded-xl border space-y-2.5 ${
+                    isP1Male
+                      ? 'bg-rose-50/40 border-rose-200'
+                      : 'bg-indigo-50/40 border-indigo-200'
+                  }`}>
+                    <div className={`flex justify-between items-center pb-2 border-b ${
+                      isP1Male ? 'border-rose-200' : 'border-indigo-200'
+                    }`}>
+                      <span className={`font-bold uppercase tracking-wider text-[11px] flex items-center gap-1.5 ${
+                        isP1Male ? 'text-rose-900' : 'text-indigo-900'
+                      }`}>
+                        <User className={`w-3.5 h-3.5 ${isP1Male ? 'text-rose-600' : 'text-indigo-600'}`} />
                         {isP1Male
                           ? (lang === 'ta' ? 'மணமகள் (வரன் / நபர் 2)' : 'Bride (Partner / Person 2)')
                           : (lang === 'ta' ? 'மணமகன் (வரன் / நபர் 2)' : 'Groom (Partner / Person 2)')}
                       </span>
-                      <span className="text-[10px] bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        isP1Male ? 'bg-rose-100 text-rose-800' : 'bg-indigo-100 text-indigo-800'
+                      }`}>
                         {isP1Male ? 'female' : 'male'}
                       </span>
                     </div>
@@ -2023,8 +2059,10 @@ Shubham Bhavatu! 🙏`;
                           type="text"
                           value={partnerDetails.name}
                           onChange={(e) => setPartnerDetails({ ...partnerDetails, name: e.target.value })}
-                          placeholder={lang === 'ta' ? 'வரன் பெயர்' : 'Enter Partner Name'}
-                          className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400 placeholder:text-slate-400"
+                          placeholder={isP1Male ? (lang === 'ta' ? 'மணமகள் பெயர் உள்ளிடவும்' : "Enter Bride's Name") : (lang === 'ta' ? 'மணமகன் பெயர் உள்ளிடவும்' : "Enter Groom's Name")}
+                          className={`w-full bg-white border rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none placeholder:text-slate-400 ${
+                            isP1Male ? 'border-rose-200 focus:border-rose-400' : 'border-indigo-200 focus:border-indigo-400'
+                          }`}
                         />
                       </div>
                       <div>
@@ -2035,20 +2073,24 @@ Shubham Bhavatu! 🙏`;
                           type="date"
                           value={partnerDetails.dob}
                           onChange={(e) => setPartnerDetails({ ...partnerDetails, dob: e.target.value })}
-                          className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400"
+                          className={`w-full bg-white border rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none ${
+                            isP1Male ? 'border-rose-200 focus:border-rose-400' : 'border-indigo-200 focus:border-indigo-400'
+                          }`}
                         />
                       </div>
                       {/* Birth Time (12-Hour AM/PM format, same as in Horoscope) */}
                       <div>
                         <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
-                          <Clock className="w-3 h-3 inline mr-1 text-rose-600" />
+                          <Clock className={`w-3 h-3 inline mr-1 ${isP1Male ? 'text-rose-600' : 'text-indigo-600'}`} />
                           {lang === 'ta' ? 'பிறந்த நேரம் (12-மணி AM/PM)' : 'Birth Time (12-Hour AM/PM)'}
                         </label>
                         <div className="flex items-center gap-1">
                           <select
                             value={p2TimeState.hour}
                             onChange={e => updateP2TimePart('hour', e.target.value)}
-                            className="bg-white border border-rose-200 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-rose-400"
+                            className={`bg-white border rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none ${
+                              isP1Male ? 'border-rose-200 focus:border-rose-400' : 'border-indigo-200 focus:border-indigo-400'
+                            }`}
                           >
                             {HOURS_12.map(h => (
                               <option key={h} value={h}>{h}</option>
@@ -2058,7 +2100,9 @@ Shubham Bhavatu! 🙏`;
                           <select
                             value={p2TimeState.minute}
                             onChange={e => updateP2TimePart('minute', e.target.value)}
-                            className="bg-white border border-rose-200 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-rose-400"
+                            className={`bg-white border rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none ${
+                              isP1Male ? 'border-rose-200 focus:border-rose-400' : 'border-indigo-200 focus:border-indigo-400'
+                            }`}
                           >
                             {MINUTES_60.map(m => (
                               <option key={m} value={m}>{m}</option>
@@ -2068,7 +2112,9 @@ Shubham Bhavatu! 🙏`;
                           <select
                             value={p2TimeState.second}
                             onChange={e => updateP2TimePart('second', e.target.value)}
-                            className="bg-white border border-rose-200 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-rose-400"
+                            className={`bg-white border rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none ${
+                              isP1Male ? 'border-rose-200 focus:border-rose-400' : 'border-indigo-200 focus:border-indigo-400'
+                            }`}
                           >
                             {SECONDS_60.map(s => (
                               <option key={s} value={s}>{s}</option>
@@ -2079,7 +2125,7 @@ Shubham Bhavatu! 🙏`;
                             onClick={toggleP2Period}
                             className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition-all cursor-pointer shadow-2xs ${
                               p2TimeState.period === 'PM'
-                                ? 'bg-rose-700 text-white border border-rose-700'
+                                ? (isP1Male ? 'bg-rose-700 text-white border border-rose-700' : 'bg-indigo-700 text-white border border-indigo-700')
                                 : 'bg-amber-600 text-white border border-amber-600'
                             }`}
                           >
@@ -2091,7 +2137,7 @@ Shubham Bhavatu! 🙏`;
                       {/* Birth City / Place - Search by letter autocomplete (same as in Horoscope) */}
                       <div ref={p2CityBoxRef} className="relative">
                         <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
-                          <MapPin className="w-3 h-3 inline mr-1 text-rose-600" />
+                          <MapPin className={`w-3 h-3 inline mr-1 ${isP1Male ? 'text-rose-600' : 'text-indigo-600'}`} />
                           {lang === 'ta' ? 'பிறந்த இடம் (City / Place)' : 'Birth City / Place'}
                         </label>
                         <div className="relative">
@@ -2116,7 +2162,9 @@ Shubham Bhavatu! 🙏`;
                             }}
                             onFocus={() => setShowP2CityDropdown(true)}
                             placeholder={lang === 'ta' ? 'ஊர் பெயர் தட்டச்சு செய்க...' : 'Type city name...'}
-                            className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 pr-7 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400 placeholder:text-slate-400"
+                            className={`w-full bg-white border rounded-lg px-2.5 py-1.5 pr-7 text-xs text-slate-900 font-medium focus:outline-none placeholder:text-slate-400 ${
+                              isP1Male ? 'border-rose-200 focus:border-rose-400' : 'border-indigo-200 focus:border-indigo-400'
+                            }`}
                             autoComplete="off"
                           />
                           {p2CityInput && (
@@ -2136,7 +2184,9 @@ Shubham Bhavatu! 🙏`;
                         </div>
 
                         {showP2CityDropdown && p2CitySuggestions.length > 0 && (
-                          <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-rose-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto divide-y divide-slate-100">
+                          <div className={`absolute left-0 right-0 top-full mt-1 bg-white border rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto divide-y divide-slate-100 ${
+                            isP1Male ? 'border-rose-200' : 'border-indigo-200'
+                          }`}>
                             {p2CitySuggestions.map((item, idx) => (
                               <button
                                 key={`${item.name}-${idx}`}
@@ -2151,7 +2201,9 @@ Shubham Bhavatu! 🙏`;
                                   }));
                                   setShowP2CityDropdown(false);
                                 }}
-                                className="w-full text-left px-2.5 py-1.5 text-xs flex items-center justify-between hover:bg-rose-50 cursor-pointer"
+                                className={`w-full text-left px-2.5 py-1.5 text-xs flex items-center justify-between cursor-pointer ${
+                                  isP1Male ? 'hover:bg-rose-50' : 'hover:bg-indigo-50'
+                                }`}
                               >
                                 <span className="font-semibold text-slate-900">{item.name}</span>
                                 <span className="text-[10px] font-mono text-slate-400">
@@ -2351,7 +2403,7 @@ Shubham Bhavatu! 🙏`;
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-slate-900 text-sm">
-                          {req.boy?.name} & {req.girl?.name}
+                          {req.girl?.name || 'Bride'} & {req.boy?.name || 'Groom'}
                         </span>
                         {req.status === 'completed' ? (
                           <span className="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full text-[10px] border border-emerald-300 flex items-center gap-1">
@@ -2386,18 +2438,18 @@ Shubham Bhavatu! 🙏`;
                     </button>
                   </div>
 
-                  {/* Coordinates Grid */}
+                  {/* Coordinates Grid (Female/Bride Left, Male/Groom Right) */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-slate-50 p-3 rounded-xl">
-                    <div>
-                      <span className="font-bold text-indigo-900 block mb-0.5">{t('groomBoyLabel')}</span>
-                      <p className="text-slate-700">
-                        <strong>{req.boy?.name}</strong> • {t('born')}: {req.boy?.dob} ({req.boy?.dobTime}) • {req.boy?.dobPlace}
-                      </p>
-                    </div>
                     <div>
                       <span className="font-bold text-rose-900 block mb-0.5">{t('brideGirlLabel')}</span>
                       <p className="text-slate-700">
                         <strong>{req.girl?.name}</strong> • {t('born')}: {req.girl?.dob} ({req.girl?.dobTime}) • {req.girl?.dobPlace}
+                      </p>
+                    </div>
+                    <div>
+                      <span className="font-bold text-indigo-900 block mb-0.5">{t('groomBoyLabel')}</span>
+                      <p className="text-slate-700">
+                        <strong>{req.boy?.name}</strong> • {t('born')}: {req.boy?.dob} ({req.boy?.dobTime}) • {req.boy?.dobPlace}
                       </p>
                     </div>
                   </div>
@@ -2435,7 +2487,7 @@ Shubham Bhavatu! 🙏`;
                       {t('reviewPanelTitle')}
                     </span>
                     <h3 className="text-base sm:text-lg font-black text-slate-900 mt-0.5">
-                      {selectedMatchReq.boy?.name} & {selectedMatchReq.girl?.name}
+                      {selectedMatchReq.girl?.name || 'Bride'} & {selectedMatchReq.boy?.name || 'Groom'}
                     </h3>
                     <p className="text-xs text-slate-500">
                       Client: {selectedMatchReq.clientName} ({selectedMatchReq.clientMobile})
@@ -2538,10 +2590,10 @@ Shubham Bhavatu! 🙏`;
                           ))}
                         </div>
 
-                        {/* Manglik status */}
+                        {/* Manglik status (Female/Bride Left, Male/Groom Right) */}
                         <div className="text-[11px] text-slate-700 pt-1 border-t border-amber-200 flex flex-col sm:flex-row justify-between gap-1">
-                          <span><strong>{t('groomBoyLabel')}</strong> {selectedMatchReq.matchReport.manglik?.boy?.details}</span>
-                          <span><strong>{t('brideGirlLabel')}</strong> {selectedMatchReq.matchReport.manglik?.girl?.details}</span>
+                          <span><strong>{t('brideGirlLabel') || 'Bride'}:</strong> {selectedMatchReq.matchReport.manglik?.girl?.details}</span>
+                          <span><strong>{t('groomBoyLabel') || 'Groom'}:</strong> {selectedMatchReq.matchReport.manglik?.boy?.details}</span>
                         </div>
                       </div>
                     )}

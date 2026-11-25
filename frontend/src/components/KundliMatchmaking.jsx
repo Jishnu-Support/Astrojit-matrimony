@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Heart,
   Sparkles,
@@ -20,6 +20,7 @@ import {
   HelpCircle,
   Flame,
   Zap,
+  MapPin,
 } from 'lucide-react';
 import { API } from '../api';
 import { useAuth } from '../context/AuthContext';
@@ -28,6 +29,20 @@ import TamilPoruthamCard from './TamilPoruthamCard';
 import GujaDashaChart from './GujaDashaChart';
 import RahuKetuChart from './RahuKetuChart';
 import { MATCH_I18N, ASHTAKOOTA_I18N, getMatchText } from '../matchmakingI18n';
+import { GEO_DATA, lookupCoordinates } from '../data/geoCoordinates';
+
+const HOURS_12 = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
+const MINUTES_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
+const SECONDS_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
+
+function convertTo24Hour(hour, minute, second, period) {
+  let h = parseInt(hour, 10) || 0;
+  const m = String(minute || '00').padStart(2, '0');
+  const s = String(second || '00').padStart(2, '0');
+  if (period === 'PM' && h < 12) h += 12;
+  if (period === 'AM' && h === 12) h = 0;
+  return `${String(h).padStart(2, '0')}:${m}:${s}`;
+}
 
 /**
  * Astrojit Vedic Kundli Matchmaking (10 Poruthams & Ashtakoota 36 Gunas)
@@ -149,20 +164,118 @@ export default function KundliMatchmaking() {
     return remedies;
   };
 
-  // Boy & Girl Form
-  const [boy, setBoy] = useState({
-    name: user?.name || '',
-    dob: user?.dob || '',
-    dobTime: user?.dobTime || '',
-    dobPlace: user?.dobPlace || '',
+  // Bride (Female - Left Side) & Groom (Male - Right Side) Form State
+  const isUserFemale = user?.gender === 'female';
+  const [girl, setGirl] = useState({
+    name: isUserFemale ? (user?.name || '') : '',
+    gender: 'female',
+    dob: isUserFemale ? (user?.dob || '') : '',
+    dobTime: isUserFemale ? (user?.dobTime || '10:30') : '10:30',
+    dobPlace: isUserFemale ? (user?.dobPlace || '') : '',
+    lat: 11.6643,
+    lon: 78.1460,
   });
 
-  const [girl, setGirl] = useState({
-    name: '',
-    dob: '',
-    dobTime: '',
-    dobPlace: '',
+  const [boy, setBoy] = useState({
+    name: !isUserFemale ? (user?.name || '') : '',
+    gender: 'male',
+    dob: !isUserFemale ? (user?.dob || '') : '',
+    dobTime: !isUserFemale ? (user?.dobTime || '09:15') : '09:15',
+    dobPlace: !isUserFemale ? (user?.dobPlace || '') : '',
+    lat: 13.0827,
+    lon: 80.2707,
   });
+
+  // 12-Hour Time States for Matchmaking (same as in Horoscope)
+  const [girlTimeState, setGirlTimeState] = useState({ hour: '10', minute: '30', second: '00', period: 'AM' });
+  const [boyTimeState, setBoyTimeState] = useState({ hour: '09', minute: '15', second: '00', period: 'AM' });
+
+  // Place Autocomplete States for Matchmaking (same as in Horoscope)
+  const [girlCityInput, setGirlCityInput] = useState(isUserFemale ? (user?.dobPlace || '') : '');
+  const [showGirlCityDropdown, setShowGirlCityDropdown] = useState(false);
+  const girlCityBoxRef = useRef(null);
+
+  const [boyCityInput, setBoyCityInput] = useState(!isUserFemale ? (user?.dobPlace || '') : '');
+  const [showBoyCityDropdown, setShowBoyCityDropdown] = useState(false);
+  const boyCityBoxRef = useRef(null);
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (girlCityBoxRef.current && !girlCityBoxRef.current.contains(e.target)) {
+        setShowGirlCityDropdown(false);
+      }
+      if (boyCityBoxRef.current && !boyCityBoxRef.current.contains(e.target)) {
+        setShowBoyCityDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const girlCitySuggestions = React.useMemo(() => {
+    const q = (girlCityInput || '').trim().toLowerCase();
+    const tnCities = GEO_DATA['India']?.['Tamil Nadu'] || [];
+    if (!q) return tnCities.slice(0, 15);
+    const starts = tnCities.filter(c => (c.name || '').toLowerCase().startsWith(q));
+    const contains = tnCities.filter(c => !(c.name || '').toLowerCase().startsWith(q) && (c.name || '').toLowerCase().includes(q));
+    return [...starts, ...contains].slice(0, 30);
+  }, [girlCityInput]);
+
+  const boyCitySuggestions = React.useMemo(() => {
+    const q = (boyCityInput || '').trim().toLowerCase();
+    const tnCities = GEO_DATA['India']?.['Tamil Nadu'] || [];
+    if (!q) return tnCities.slice(0, 15);
+    const starts = tnCities.filter(c => (c.name || '').toLowerCase().startsWith(q));
+    const contains = tnCities.filter(c => !(c.name || '').toLowerCase().startsWith(q) && (c.name || '').toLowerCase().includes(q));
+    return [...starts, ...contains].slice(0, 30);
+  }, [boyCityInput]);
+
+  const updateGirlTimePart = (field, val) => {
+    const next = { ...girlTimeState, [field]: val };
+    setGirlTimeState(next);
+    const t24 = convertTo24Hour(next.hour, next.minute, next.second, next.period);
+    setGirl(prev => ({
+      ...prev,
+      dobTime: t24,
+      dobTime12: `${next.hour}:${next.minute}:${next.second} ${next.period}`
+    }));
+  };
+
+  const toggleGirlPeriod = () => {
+    const nextPeriod = girlTimeState.period === 'AM' ? 'PM' : 'AM';
+    const next = { ...girlTimeState, period: nextPeriod };
+    setGirlTimeState(next);
+    const t24 = convertTo24Hour(next.hour, next.minute, next.second, next.period);
+    setGirl(prev => ({
+      ...prev,
+      dobTime: t24,
+      dobTime12: `${next.hour}:${next.minute}:${next.second} ${next.period}`
+    }));
+  };
+
+  const updateBoyTimePart = (field, val) => {
+    const next = { ...boyTimeState, [field]: val };
+    setBoyTimeState(next);
+    const t24 = convertTo24Hour(next.hour, next.minute, next.second, next.period);
+    setBoy(prev => ({
+      ...prev,
+      dobTime: t24,
+      dobTime12: `${next.hour}:${next.minute}:${next.second} ${next.period}`
+    }));
+  };
+
+  const toggleBoyPeriod = () => {
+    const nextPeriod = boyTimeState.period === 'AM' ? 'PM' : 'AM';
+    const next = { ...boyTimeState, period: nextPeriod };
+    setBoyTimeState(next);
+    const t24 = convertTo24Hour(next.hour, next.minute, next.second, next.period);
+    setBoy(prev => ({
+      ...prev,
+      dobTime: t24,
+      dobTime12: `${next.hour}:${next.minute}:${next.second} ${next.period}`
+    }));
+  };
 
   // Astrologer Selection & Client Query
   const [availableAstrologers, setAvailableAstrologers] = useState([]);
@@ -403,72 +516,9 @@ export default function KundliMatchmaking() {
         </button>
       </div>
 
-      {/* 4. Birth Coordinate Input Forms (Groom & Bride) */}
+      {/* 4. Birth Coordinate Input Forms (Bride/Female Left & Groom/Male Right) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Groom Form */}
-        <div className="bg-white border border-indigo-200/80 p-4 sm:p-5 rounded-2xl shadow-xs space-y-3 text-xs">
-          <h3 className="font-bold text-indigo-900 text-sm flex items-center gap-1.5 pb-2 border-b border-indigo-50">
-            <User className="w-4 h-4 text-indigo-600" /> {MATCH_I18N.groomHeading[lang] || MATCH_I18N.groomHeading.en}
-          </h3>
-
-          <div>
-            <label className="text-slate-600 font-semibold block mb-1">
-              {MATCH_I18N.fullName[lang] || 'Full Name'} *
-            </label>
-            <input
-              type="text"
-              required
-              placeholder={MATCH_I18N.fullName[lang] || "Enter Groom's Full Name"}
-              value={boy.name}
-              onChange={(e) => setBoy({ ...boy, name: e.target.value })}
-              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <div>
-              <label className="text-slate-600 font-semibold block mb-1">
-                {MATCH_I18N.dob[lang] || 'Date of Birth'} *
-              </label>
-              <input
-                type="date"
-                required
-                value={boy.dob}
-                onChange={(e) => setBoy({ ...boy, dob: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
-              />
-            </div>
-
-            <div>
-              <label className="text-slate-600 font-semibold block mb-1">
-                {MATCH_I18N.tob[lang] || 'Time of Birth'} *
-              </label>
-              <input
-                type="time"
-                required
-                value={boy.dobTime}
-                onChange={(e) => setBoy({ ...boy, dobTime: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="text-slate-600 font-semibold block mb-1">
-              {MATCH_I18N.pob[lang] || 'Birth Place / City'} *
-            </label>
-            <input
-              type="text"
-              required
-              placeholder={MATCH_I18N.pob[lang] || 'City / Place of Birth'}
-              value={boy.dobPlace}
-              onChange={(e) => setBoy({ ...boy, dobPlace: e.target.value })}
-              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
-            />
-          </div>
-        </div>
-
-        {/* Bride Form */}
+        {/* Bride Form (Female - Left Side Default) */}
         <div className="bg-white border border-rose-200/80 p-4 sm:p-5 rounded-2xl shadow-xs space-y-3 text-xs">
           <h3 className="font-bold text-rose-900 text-sm flex items-center gap-1.5 pb-2 border-b border-rose-50">
             <User className="w-4 h-4 text-rose-600" /> {MATCH_I18N.brideHeading[lang] || MATCH_I18N.brideHeading.en}
@@ -502,32 +552,293 @@ export default function KundliMatchmaking() {
               />
             </div>
 
+            {/* Birth Time (12-Hour AM/PM format, same as in Horoscope) */}
             <div>
               <label className="text-slate-600 font-semibold block mb-1">
-                {MATCH_I18N.tob[lang] || 'Time of Birth'} *
+                <Clock className="w-3 h-3 inline mr-1 text-rose-600" />
+                {lang === 'ta' ? 'பிறந்த நேரம் (12-மணி AM/PM)' : 'Birth Time (12-Hour AM/PM)'} *
               </label>
-              <input
-                type="time"
-                required
-                value={girl.dobTime}
-                onChange={(e) => setGirl({ ...girl, dobTime: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-rose-500"
-              />
+              <div className="flex items-center gap-1">
+                <select
+                  value={girlTimeState.hour}
+                  onChange={e => updateGirlTimePart('hour', e.target.value)}
+                  className="bg-slate-50 border border-slate-300 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-rose-500"
+                >
+                  {HOURS_12.map(h => (
+                    <option key={h} value={h}>{h}</option>
+                  ))}
+                </select>
+                <span className="font-bold text-slate-400">:</span>
+                <select
+                  value={girlTimeState.minute}
+                  onChange={e => updateGirlTimePart('minute', e.target.value)}
+                  className="bg-slate-50 border border-slate-300 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-rose-500"
+                >
+                  {MINUTES_60.map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+                <span className="font-bold text-slate-400">:</span>
+                <select
+                  value={girlTimeState.second}
+                  onChange={e => updateGirlTimePart('second', e.target.value)}
+                  className="bg-slate-50 border border-slate-300 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-rose-500"
+                >
+                  {SECONDS_60.map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={toggleGirlPeriod}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition-all cursor-pointer shadow-2xs ${
+                    girlTimeState.period === 'PM'
+                      ? 'bg-rose-700 text-white border border-rose-700'
+                      : 'bg-amber-600 text-white border border-amber-600'
+                  }`}
+                >
+                  {girlTimeState.period}
+                </button>
+              </div>
             </div>
           </div>
 
+          {/* Birth City / Place - Search by letter autocomplete (same as in Horoscope) */}
+          <div ref={girlCityBoxRef} className="relative">
+            <label className="text-slate-600 font-semibold block mb-1">
+              <MapPin className="w-3 h-3 inline mr-1 text-rose-600" />
+              {MATCH_I18N.pob[lang] || 'Birth Place / City'} *
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                required
+                placeholder={lang === 'ta' ? 'ஊர் பெயர் தட்டச்சு செய்க...' : 'Type city name...'}
+                value={girlCityInput}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setGirlCityInput(val);
+                  setGirl(prev => ({ ...prev, dobPlace: val }));
+                  setShowGirlCityDropdown(true);
+
+                  const exact = (GEO_DATA['India']?.['Tamil Nadu'] || []).find(c => c.name.toLowerCase() === val.trim().toLowerCase());
+                  if (exact) {
+                    setGirl(prev => ({
+                      ...prev,
+                      dobPlace: exact.name,
+                      lat: exact.latDec !== undefined ? exact.latDec : exact.lat,
+                      lon: exact.lonDec !== undefined ? exact.lonDec : exact.lon
+                    }));
+                  }
+                }}
+                onFocus={() => setShowGirlCityDropdown(true)}
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 pr-7 text-slate-900 focus:outline-none focus:border-rose-500"
+                autoComplete="off"
+              />
+              {girlCityInput && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGirlCityInput('');
+                    setGirl(prev => ({ ...prev, dobPlace: '' }));
+                    setShowGirlCityDropdown(true);
+                  }}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs font-bold cursor-pointer"
+                  title="Clear"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {showGirlCityDropdown && girlCitySuggestions.length > 0 && (
+              <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-rose-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto divide-y divide-slate-100">
+                {girlCitySuggestions.map((item, idx) => (
+                  <button
+                    key={`${item.name}-${idx}`}
+                    type="button"
+                    onClick={() => {
+                      setGirlCityInput(item.name);
+                      setGirl(prev => ({
+                        ...prev,
+                        dobPlace: item.name,
+                        lat: item.latDec !== undefined ? item.latDec : item.lat,
+                        lon: item.lonDec !== undefined ? item.lonDec : item.lon
+                      }));
+                      setShowGirlCityDropdown(false);
+                    }}
+                    className="w-full text-left px-2.5 py-1.5 text-xs flex items-center justify-between hover:bg-rose-50 cursor-pointer"
+                  >
+                    <span className="font-semibold text-slate-900">{item.name}</span>
+                    <span className="text-[10px] font-mono text-slate-400">
+                      ({typeof item.latDec === 'number' ? item.latDec.toFixed(2) : item.lat}°, {typeof item.lonDec === 'number' ? item.lonDec.toFixed(2) : item.lon}°)
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Groom Form (Male - Right Side Default) */}
+        <div className="bg-white border border-indigo-200/80 p-4 sm:p-5 rounded-2xl shadow-xs space-y-3 text-xs">
+          <h3 className="font-bold text-indigo-900 text-sm flex items-center gap-1.5 pb-2 border-b border-indigo-50">
+            <User className="w-4 h-4 text-indigo-600" /> {MATCH_I18N.groomHeading[lang] || MATCH_I18N.groomHeading.en}
+          </h3>
+
           <div>
             <label className="text-slate-600 font-semibold block mb-1">
-              {MATCH_I18N.pob[lang] || 'Birth Place / City'} *
+              {MATCH_I18N.fullName[lang] || 'Full Name'} *
             </label>
             <input
               type="text"
               required
-              placeholder={MATCH_I18N.pob[lang] || 'City / Place of Birth'}
-              value={girl.dobPlace}
-              onChange={(e) => setGirl({ ...girl, dobPlace: e.target.value })}
-              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-rose-500"
+              placeholder={MATCH_I18N.fullName[lang] || "Enter Groom's Full Name"}
+              value={boy.name}
+              onChange={(e) => setBoy({ ...boy, name: e.target.value })}
+              className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
             />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+              <label className="text-slate-600 font-semibold block mb-1">
+                {MATCH_I18N.dob[lang] || 'Date of Birth'} *
+              </label>
+              <input
+                type="date"
+                required
+                value={boy.dob}
+                onChange={(e) => setBoy({ ...boy, dob: e.target.value })}
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
+              />
+            </div>
+
+            {/* Birth Time (12-Hour AM/PM format, same as in Horoscope) */}
+            <div>
+              <label className="text-slate-600 font-semibold block mb-1">
+                <Clock className="w-3 h-3 inline mr-1 text-indigo-600" />
+                {lang === 'ta' ? 'பிறந்த நேரம் (12-மணி AM/PM)' : 'Birth Time (12-Hour AM/PM)'} *
+              </label>
+              <div className="flex items-center gap-1">
+                <select
+                  value={boyTimeState.hour}
+                  onChange={e => updateBoyTimePart('hour', e.target.value)}
+                  className="bg-slate-50 border border-slate-300 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-indigo-500"
+                >
+                  {HOURS_12.map(h => (
+                    <option key={h} value={h}>{h}</option>
+                  ))}
+                </select>
+                <span className="font-bold text-slate-400">:</span>
+                <select
+                  value={boyTimeState.minute}
+                  onChange={e => updateBoyTimePart('minute', e.target.value)}
+                  className="bg-slate-50 border border-slate-300 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-indigo-500"
+                >
+                  {MINUTES_60.map(m => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+                <span className="font-bold text-slate-400">:</span>
+                <select
+                  value={boyTimeState.second}
+                  onChange={e => updateBoyTimePart('second', e.target.value)}
+                  className="bg-slate-50 border border-slate-300 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-indigo-500"
+                >
+                  {SECONDS_60.map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={toggleBoyPeriod}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition-all cursor-pointer shadow-2xs ${
+                    boyTimeState.period === 'PM'
+                      ? 'bg-indigo-700 text-white border border-indigo-700'
+                      : 'bg-amber-600 text-white border border-amber-600'
+                  }`}
+                >
+                  {boyTimeState.period}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Birth City / Place - Search by letter autocomplete (same as in Horoscope) */}
+          <div ref={boyCityBoxRef} className="relative">
+            <label className="text-slate-600 font-semibold block mb-1">
+              <MapPin className="w-3 h-3 inline mr-1 text-indigo-600" />
+              {MATCH_I18N.pob[lang] || 'Birth Place / City'} *
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                required
+                placeholder={lang === 'ta' ? 'ஊர் பெயர் தட்டச்சு செய்க...' : 'Type city name...'}
+                value={boyCityInput}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setBoyCityInput(val);
+                  setBoy(prev => ({ ...prev, dobPlace: val }));
+                  setShowBoyCityDropdown(true);
+
+                  const exact = (GEO_DATA['India']?.['Tamil Nadu'] || []).find(c => c.name.toLowerCase() === val.trim().toLowerCase());
+                  if (exact) {
+                    setBoy(prev => ({
+                      ...prev,
+                      dobPlace: exact.name,
+                      lat: exact.latDec !== undefined ? exact.latDec : exact.lat,
+                      lon: exact.lonDec !== undefined ? exact.lonDec : exact.lon
+                    }));
+                  }
+                }}
+                onFocus={() => setShowBoyCityDropdown(true)}
+                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 pr-7 text-slate-900 focus:outline-none focus:border-indigo-500"
+                autoComplete="off"
+              />
+              {boyCityInput && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBoyCityInput('');
+                    setBoy(prev => ({ ...prev, dobPlace: '' }));
+                    setShowBoyCityDropdown(true);
+                  }}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs font-bold cursor-pointer"
+                  title="Clear"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {showBoyCityDropdown && boyCitySuggestions.length > 0 && (
+              <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-indigo-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto divide-y divide-slate-100">
+                {boyCitySuggestions.map((item, idx) => (
+                  <button
+                    key={`${item.name}-${idx}`}
+                    type="button"
+                    onClick={() => {
+                      setBoyCityInput(item.name);
+                      setBoy(prev => ({
+                        ...prev,
+                        dobPlace: item.name,
+                        lat: item.latDec !== undefined ? item.latDec : item.lat,
+                        lon: item.lonDec !== undefined ? item.lonDec : item.lon
+                      }));
+                      setShowBoyCityDropdown(false);
+                    }}
+                    className="w-full text-left px-2.5 py-1.5 text-xs flex items-center justify-between hover:bg-indigo-50 cursor-pointer"
+                  >
+                    <span className="font-semibold text-slate-900">{item.name}</span>
+                    <span className="text-[10px] font-mono text-slate-400">
+                      ({typeof item.latDec === 'number' ? item.latDec.toFixed(2) : item.lat}°, {typeof item.lonDec === 'number' ? item.lonDec.toFixed(2) : item.lon}°)
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -635,7 +946,7 @@ export default function KundliMatchmaking() {
                 </span>
               </div>
               <h3 className="text-base sm:text-lg font-black text-slate-900 mt-1">
-                {boy.name} & {girl.name} • {MATCH_I18N.tabTamilPorutham[lang] || MATCH_I18N.tabTamilPorutham.en}
+                {girl.name} & {boy.name} • {MATCH_I18N.tabTamilPorutham[lang] || MATCH_I18N.tabTamilPorutham.en}
               </h3>
             </div>
             
@@ -757,19 +1068,19 @@ export default function KundliMatchmaking() {
                 </table>
               </div>
 
-              {/* Manglik Dosha Summary */}
+              {/* Manglik Dosha Summary (Bride Left & Groom Right) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-rose-50/50 rounded-xl border border-rose-200 text-xs">
-                <div>
-                  <span className="font-bold text-rose-900 block mb-0.5">
-                    {MATCH_I18N.groomHoroscope[lang] || 'Groom'}:
-                  </span>
-                  <span className="text-slate-700">{getManglikLocalized(selfResult.manglik?.boy)}</span>
-                </div>
                 <div>
                   <span className="font-bold text-rose-900 block mb-0.5">
                     {MATCH_I18N.brideHoroscope[lang] || 'Bride'}:
                   </span>
                   <span className="text-slate-700">{getManglikLocalized(selfResult.manglik?.girl)}</span>
+                </div>
+                <div>
+                  <span className="font-bold text-rose-900 block mb-0.5">
+                    {MATCH_I18N.groomHoroscope[lang] || 'Groom'}:
+                  </span>
+                  <span className="text-slate-700">{getManglikLocalized(selfResult.manglik?.boy)}</span>
                 </div>
               </div>
             </div>

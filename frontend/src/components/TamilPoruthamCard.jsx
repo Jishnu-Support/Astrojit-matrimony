@@ -401,40 +401,7 @@ export default function TamilPoruthamCard({ matchReport }) {
         </h4>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px]">
-          {/* Groom attributes */}
-          <div className="bg-white p-3 rounded-xl border border-indigo-100 shadow-2xs space-y-1.5">
-            <div className="font-bold text-indigo-900 flex flex-wrap justify-between items-center gap-1 border-b border-indigo-50 pb-1">
-              <span>{MATCH_I18N.groomHeading[lang] || MATCH_I18N.groomHeading.en}: {boy?.name || boyDetails?.name || 'Groom'}</span>
-              <span className="text-[10px] bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded font-bold shrink-0">
-                {translateEntity('nakshatras', boyDetails.star || boyDetails.nakshatra || boy?.starNakshatra || boy?.nakshatra, lang)} ({boyDetails.padam || boyDetails.pada || boy?.pada || '1'} {MATCH_I18N.attrLabels.pada[lang]})
-              </span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 text-slate-600">
-              <div>
-                {MATCH_I18N.attrLabels.rashi[lang]}: <strong className="text-slate-800">{translateEntity('rashis', boyDetails.rasi || boyDetails.rashi || boy?.moonSign || boy?.rasi, lang)}</strong>
-              </div>
-              <div>
-                {MATCH_I18N.attrLabels.gana[lang]}: <strong className="text-slate-800">{translateEntity('ganas', boyDetails.gana, lang)}</strong>
-              </div>
-              <div>
-                {MATCH_I18N.attrLabels.yoni[lang]}: <strong className="text-slate-800">{translateEntity('animals', boyDetails.animal || boyDetails.yoni, lang)} ({boyDetails.yoniSex === 'Male' ? MATCH_I18N.attrLabels.male[lang] : MATCH_I18N.attrLabels.female[lang]})</strong>
-              </div>
-              <div>
-                {MATCH_I18N.attrLabels.bird[lang]}: <strong className="text-slate-800">{translateEntity('birds', boyDetails.bird, lang)}</strong>
-              </div>
-              <div>
-                {MATCH_I18N.attrLabels.tree[lang]}: <strong className="text-slate-800">{translateEntity('trees', boyDetails.tree || boyDetails.vriksha, lang)} {boyDetails.milkyTree ? MATCH_I18N.attrLabels.milkyTree[lang] : ''}</strong>
-              </div>
-              <div>
-                {MATCH_I18N.attrLabels.nadi[lang]}: <strong className="text-slate-800">{translateEntity('nadis', boyDetails.nadi, lang)}</strong>
-              </div>
-              <div className="sm:col-span-2 pt-0.5 border-t border-slate-100 text-indigo-950">
-                {MATCH_I18N.attrLabels.rajju[lang]}: <strong>{translateEntity('rajjuLimbs', boyDetails.rajju, lang)}</strong> • {MATCH_I18N.attrLabels.direction[lang]}: <strong>{translateEntity('rajjuDirections', boyDetails.rajjuDirection, lang)}</strong>
-              </div>
-            </div>
-          </div>
-
-          {/* Bride attributes */}
+          {/* Bride attributes (Female - Left Side Default) */}
           <div className="bg-white p-3 rounded-xl border border-rose-100 shadow-2xs space-y-1.5">
             <div className="font-bold text-rose-900 flex flex-wrap justify-between items-center gap-1 border-b border-rose-50 pb-1">
               <span>{MATCH_I18N.brideHeading[lang] || MATCH_I18N.brideHeading.en}: {girl?.name || girlDetails?.name || 'Bride'}</span>
@@ -463,6 +430,39 @@ export default function TamilPoruthamCard({ matchReport }) {
               </div>
               <div className="sm:col-span-2 pt-0.5 border-t border-slate-100 text-rose-950">
                 {MATCH_I18N.attrLabels.rajju[lang]}: <strong>{translateEntity('rajjuLimbs', girlDetails.rajju, lang)}</strong> • {MATCH_I18N.attrLabels.direction[lang]}: <strong>{translateEntity('rajjuDirections', girlDetails.rajjuDirection, lang)}</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* Groom attributes (Male - Right Side Default) */}
+          <div className="bg-white p-3 rounded-xl border border-indigo-100 shadow-2xs space-y-1.5">
+            <div className="font-bold text-indigo-900 flex flex-wrap justify-between items-center gap-1 border-b border-indigo-50 pb-1">
+              <span>{MATCH_I18N.groomHeading[lang] || MATCH_I18N.groomHeading.en}: {boy?.name || boyDetails?.name || 'Groom'}</span>
+              <span className="text-[10px] bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded font-bold shrink-0">
+                {translateEntity('nakshatras', boyDetails.star || boyDetails.nakshatra || boy?.starNakshatra || boy?.nakshatra, lang)} ({boyDetails.padam || boyDetails.pada || boy?.pada || '1'} {MATCH_I18N.attrLabels.pada[lang]})
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 text-slate-600">
+              <div>
+                {MATCH_I18N.attrLabels.rashi[lang]}: <strong className="text-slate-800">{translateEntity('rashis', boyDetails.rasi || boyDetails.rashi || boy?.moonSign || boy?.rasi, lang)}</strong>
+              </div>
+              <div>
+                {MATCH_I18N.attrLabels.gana[lang]}: <strong className="text-slate-800">{translateEntity('ganas', boyDetails.gana, lang)}</strong>
+              </div>
+              <div>
+                {MATCH_I18N.attrLabels.yoni[lang]}: <strong className="text-slate-800">{translateEntity('animals', boyDetails.animal || boyDetails.yoni, lang)} ({boyDetails.yoniSex === 'Male' ? MATCH_I18N.attrLabels.male[lang] : MATCH_I18N.attrLabels.female[lang]})</strong>
+              </div>
+              <div>
+                {MATCH_I18N.attrLabels.bird[lang]}: <strong className="text-slate-800">{translateEntity('birds', boyDetails.bird, lang)}</strong>
+              </div>
+              <div>
+                {MATCH_I18N.attrLabels.tree[lang]}: <strong className="text-slate-800">{translateEntity('trees', boyDetails.tree || boyDetails.vriksha, lang)} {boyDetails.milkyTree ? MATCH_I18N.attrLabels.milkyTree[lang] : ''}</strong>
+              </div>
+              <div>
+                {MATCH_I18N.attrLabels.nadi[lang]}: <strong className="text-slate-800">{translateEntity('nadis', boyDetails.nadi, lang)}</strong>
+              </div>
+              <div className="sm:col-span-2 pt-0.5 border-t border-slate-100 text-indigo-950">
+                {MATCH_I18N.attrLabels.rajju[lang]}: <strong>{translateEntity('rajjuLimbs', boyDetails.rajju, lang)}</strong> • {MATCH_I18N.attrLabels.direction[lang]}: <strong>{translateEntity('rajjuDirections', boyDetails.rajjuDirection, lang)}</strong>
               </div>
             </div>
           </div>
@@ -600,48 +600,7 @@ export default function TamilPoruthamCard({ matchReport }) {
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-            {/* Boy's Chevvai Status */}
-            <div
-              className={`p-3 rounded-xl border ${
-                chevvaiAnalysis.boy?.hasDosha
-                  ? 'bg-rose-50/60 border-rose-200'
-                  : chevvaiAnalysis.boy?.isCancelled
-                  ? 'bg-emerald-50/60 border-emerald-200'
-                  : 'bg-slate-50 border-slate-200'
-              }`}
-            >
-              <div className="flex justify-between items-center mb-1">
-                <span className="font-bold text-slate-900">{MATCH_I18N.groomHoroscope[lang] || MATCH_I18N.groomHoroscope.en}</span>
-                <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    chevvaiAnalysis.boy?.hasDosha
-                      ? 'bg-rose-200 text-rose-900'
-                      : chevvaiAnalysis.boy?.isCancelled
-                      ? 'bg-emerald-200 text-emerald-900'
-                      : 'bg-slate-200 text-slate-800'
-                  }`}
-                >
-                  {getChevvaiStatusText(chevvaiAnalysis.boy)}
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-600 mb-1">
-                {getChevvaiHousesString(chevvaiAnalysis.boy?.houses)}
-              </p>
-              {chevvaiAnalysis.boy?.cancellations?.length > 0 && (
-                <div className="mt-1.5 p-2 bg-white/80 rounded border border-emerald-200 text-[11px] text-emerald-900">
-                  <span className="font-bold block mb-0.5">
-                    {MATCH_I18N.nivrittiRuleHeading[lang] || MATCH_I18N.nivrittiRuleHeading.en}
-                  </span>
-                  <ul className="list-disc pl-3.5 space-y-0.5">
-                    {chevvaiAnalysis.boy.cancellations.map((c, i) => (
-                      <li key={i}>{getChevvaiCancellationText(c)}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            {/* Girl's Chevvai Status */}
+            {/* Girl's / Bride's Chevvai Status (Female - Left Side Default) */}
             <div
               className={`p-3 rounded-xl border ${
                 chevvaiAnalysis.girl?.hasDosha
@@ -675,6 +634,47 @@ export default function TamilPoruthamCard({ matchReport }) {
                   </span>
                   <ul className="list-disc pl-3.5 space-y-0.5">
                     {chevvaiAnalysis.girl.cancellations.map((c, i) => (
+                      <li key={i}>{getChevvaiCancellationText(c)}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Boy's / Groom's Chevvai Status (Male - Right Side Default) */}
+            <div
+              className={`p-3 rounded-xl border ${
+                chevvaiAnalysis.boy?.hasDosha
+                  ? 'bg-rose-50/60 border-rose-200'
+                  : chevvaiAnalysis.boy?.isCancelled
+                  ? 'bg-emerald-50/60 border-emerald-200'
+                  : 'bg-slate-50 border-slate-200'
+              }`}
+            >
+              <div className="flex justify-between items-center mb-1">
+                <span className="font-bold text-slate-900">{MATCH_I18N.groomHoroscope[lang] || MATCH_I18N.groomHoroscope.en}</span>
+                <span
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    chevvaiAnalysis.boy?.hasDosha
+                      ? 'bg-rose-200 text-rose-900'
+                      : chevvaiAnalysis.boy?.isCancelled
+                      ? 'bg-emerald-200 text-emerald-900'
+                      : 'bg-slate-200 text-slate-800'
+                  }`}
+                >
+                  {getChevvaiStatusText(chevvaiAnalysis.boy)}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-600 mb-1">
+                {getChevvaiHousesString(chevvaiAnalysis.boy?.houses)}
+              </p>
+              {chevvaiAnalysis.boy?.cancellations?.length > 0 && (
+                <div className="mt-1.5 p-2 bg-white/80 rounded border border-emerald-200 text-[11px] text-emerald-900">
+                  <span className="font-bold block mb-0.5">
+                    {MATCH_I18N.nivrittiRuleHeading[lang] || MATCH_I18N.nivrittiRuleHeading.en}
+                  </span>
+                  <ul className="list-disc pl-3.5 space-y-0.5">
+                    {chevvaiAnalysis.boy.cancellations.map((c, i) => (
                       <li key={i}>{getChevvaiCancellationText(c)}</li>
                     ))}
                   </ul>
