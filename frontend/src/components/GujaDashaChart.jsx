@@ -482,7 +482,7 @@ export default function GujaDashaChart({ matchReport }) {
             )}
             <div>
               <strong className="text-slate-900 block font-bold">
-                {isTa ? 'தசா சந்தி ஆய்வு (Dasa Sandhi):' : 'Dasa Sandhi Analysis:'}
+                {isTa ? 'தசா சந்தி ஆய்வு:' : 'Dasa Sandhi Analysis:'}
               </strong>
               <span className="text-slate-700">
                 {isTa ? dasaSandhi.verdictTamil : dasaSandhi.verdict}
@@ -499,7 +499,7 @@ export default function GujaDashaChart({ matchReport }) {
             )}
             <div>
               <strong className="text-slate-900 block font-bold">
-                {isTa ? 'சம தசை ஆய்வு (Sama Dasa):' : 'Concurrent Mars Dasha (Sama Dasa):'}
+                {isTa ? 'சம தசை ஆய்வு:' : 'Concurrent Mars Dasha (Sama Dasa):'}
               </strong>
               <span className="text-slate-700">
                 {isTa ? samaCheck.verdictTamil : samaCheck.verdict}

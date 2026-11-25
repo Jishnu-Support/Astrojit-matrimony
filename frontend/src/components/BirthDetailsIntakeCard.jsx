@@ -788,7 +788,7 @@ Shubham Bhavatu! 🙏`;
           <div>
             <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
               <User className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
-              {isTa ? 'பெயர் (Full Name)' : 'Full Name'}
+              {isTa ? 'பெயர்' : 'Full Name'}
             </label>
             <input
               type="text"
@@ -804,7 +804,7 @@ Shubham Bhavatu! 🙏`;
           <div>
             <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
               <Calendar className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
-              {isTa ? 'பிறந்த தேதி (Date of Birth)' : 'Date of Birth'}
+              {isTa ? 'பிறந்த தேதி' : 'Date of Birth'}
             </label>
             <input
               type="date"
@@ -819,7 +819,7 @@ Shubham Bhavatu! 🙏`;
           <div>
             <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
               <Clock className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
-              {isTa ? 'பிறந்த நேரம் (12-Hour AM/PM)' : 'Birth Time (12-Hour AM/PM)'}
+              {isTa ? 'பிறந்த நேரம் (12 மணி AM/PM)' : 'Birth Time (12-Hour AM/PM)'}
             </label>
             <div className="flex items-center gap-1">
               <select
@@ -870,7 +870,7 @@ Shubham Bhavatu! 🙏`;
           <div>
             <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
               <User className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
-              {isTa ? 'பாலினம் (Gender)' : 'Gender'}
+              {isTa ? 'பாலினம்' : 'Gender'}
             </label>
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -883,7 +883,7 @@ Shubham Bhavatu! 🙏`;
                 }`}
               >
                 <span>👨</span>
-                <span>{isTa ? 'ஆண் (Male)' : 'Male'}</span>
+                <span>{isTa ? 'ஆண்' : 'Male'}</span>
               </button>
               <button
                 type="button"
@@ -895,7 +895,7 @@ Shubham Bhavatu! 🙏`;
                 }`}
               >
                 <span>👩</span>
-                <span>{isTa ? 'பெண் (Female)' : 'Female'}</span>
+                <span>{isTa ? 'பெண்' : 'Female'}</span>
               </button>
             </div>
           </div>
@@ -904,7 +904,7 @@ Shubham Bhavatu! 🙏`;
           <div>
             <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
               <Compass className="w-3.5 h-3.5 inline mr-1 text-amber-700 dark:text-amber-400" />
-              {isTa ? 'ஜாதக சக்கர வடிவம் (Chart Format)' : 'Chart Format / System'}
+              {isTa ? 'ஜாதக சக்கர வடிவம்' : 'Chart Format / System'}
             </label>
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -943,7 +943,7 @@ Shubham Bhavatu! 🙏`;
           <div>
             <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
               <Globe className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
-              {isTa ? 'நாடு (Country)' : 'Country'}
+              {isTa ? 'நாடு' : 'Country'}
             </label>
             <select
               value={currentCountry}
@@ -967,7 +967,7 @@ Shubham Bhavatu! 🙏`;
           <div>
             <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
               <Building className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
-              {isTa ? 'மாநிலம் (State)' : 'State'}
+              {isTa ? 'மாநிலம்' : 'State'}
             </label>
             <select
               value={currentState}
@@ -991,7 +991,7 @@ Shubham Bhavatu! 🙏`;
             <div className="flex justify-between items-center mb-1">
               <label className="block font-bold opacity-90 text-stone-800 dark:text-stone-200">
                 <MapPin className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
-                {isTa ? 'பிறந்த இடம் (City / Place)' : 'City / Place'}
+                {isTa ? 'பிறந்த இடம்' : 'City / Place'}
               </label>
               {showCityDropdown && citySuggestions.length > 0 && (
                 <span className="text-[10px] text-amber-700 dark:text-amber-400 font-bold">
@@ -1088,7 +1088,7 @@ Shubham Bhavatu! 🙏`;
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
-              {isTa ? 'அட்சரேகை (Latitude °N)' : 'Latitude (°N)'}
+              {isTa ? 'அட்சரேகை (°N)' : 'Latitude (°N)'}
             </label>
             <input
               type="text"
@@ -1101,7 +1101,7 @@ Shubham Bhavatu! 🙏`;
 
           <div>
             <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
-              {isTa ? 'தீர்க்கரேகை (Longitude °E)' : 'Longitude (°E)'}
+              {isTa ? 'தீர்க்கரேகை (°E)' : 'Longitude (°E)'}
             </label>
             <input
               type="text"
@@ -1114,7 +1114,7 @@ Shubham Bhavatu! 🙏`;
 
           <div>
             <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
-              {isTa ? 'நேர மண்டலம் (UTC Offset)' : 'UTC Offset (Timezone)'}
+              {isTa ? 'நேர மண்டலம் (UTC)' : 'UTC Offset (Timezone)'}
             </label>
             <input
               type="text"

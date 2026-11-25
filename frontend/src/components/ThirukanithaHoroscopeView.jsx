@@ -441,7 +441,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
           <div className="flex items-center gap-2 flex-1">
             <span className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 whitespace-nowrap flex items-center gap-1.5">
               <span>📑</span>
-              <span>{isTamil ? 'பிரிவுக்குச் செல்ல (Drop List):' : 'Jump to Section:'}</span>
+              <span>{isTamil ? 'பிரிவுக்குச் செல்ல:' : 'Jump to Section:'}</span>
             </span>
             <select
               disabled={isBirthDetailsEmpty}
@@ -459,7 +459,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                   : (isTamil ? '-- 20 பிரிவுகள் பட்டியல் (தேர்வு செய்க) --' : '-- Select Section to Jump (1 to 20) --')}
               </option>
               <option value="1">{isTamil ? '1. ஜனன விவரக் குறிப்பு' : '1. Birth Summary Details'}</option>
-              <option value="2">{isTamil ? '2. வர்க்கச் சக்கரங்கள் (Divisional Charts)' : '2. Divisional Charts'}</option>
+              <option value="2">{isTamil ? '2. வர்க்கச் சக்கரங்கள்' : '2. Divisional Charts'}</option>
               <option value="3">{isTamil ? '3. கிரக நிலைகள் அட்டவணை (நிராயண)' : '3. Nirayana Planetary Positions Table'}</option>
               <option value="4">{isTamil ? '4. விம்சோத்தரி திசா புக்தி விபரம் (120 ஆண்டுகள்)' : '4. Vimshottari Dasha & Bhukti Table (120 Years)'}</option>
               <option value="5">{isTamil ? '5. ஸ்ரீபதி பாவ ஆரம்பம், மத்திமம், முடிவு' : '5. Sripati Bhava Sphutam Table'}</option>
@@ -5063,7 +5063,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                       : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
                   }`}
                 >
-                  {isTamil ? 'அனைத்தும் (All)' : 'All Views'}
+                  {isTamil ? 'அனைத்தும்' : 'All Views'}
                 </button>
                 <button
                   type="button"
@@ -5797,7 +5797,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                       : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
                   }`}
                 >
-                  {isTamil ? 'அனைத்தும் (All)' : 'All Views'}
+                  {isTamil ? 'அனைத்தும்' : 'All Views'}
                 </button>
                 <button
                   type="button"
@@ -5832,7 +5832,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     <div>
                       <h3 className="text-sm sm:text-base font-bold text-[#7A1A22] dark:text-[#E8838B] flex items-center gap-2">
                         <span>🪐</span>
-                        <span>{isTamil ? 'மகாதசை போதகங்கள் ஆகியவை (Mahadasha Bhogan, Vedhagan, Pasagan & Karagan)' : 'மகாதசை போதகங்கள் ஆகியவை (Mahadasha Bhogan, Vedhagan, Pasagan & Karagan)'}</span>
+                        <span>{isTamil ? 'மகாதசை போதகங்கள் ஆகியவை' : 'Mahadasha Bhogan, Vedhagan, Pasagan & Karagan'}</span>
                       </h3>
                       <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5">
                         {isTamil
@@ -5850,7 +5850,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     <div className="p-2.5 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/20 border border-emerald-500/25 space-y-0.5">
                       <div className="font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1">
                         <span>🟢</span>
-                        <span>{isTamil ? 'போகன் (Bhogan)' : 'Bhogan (போகன்)'}</span>
+                        <span>{isTamil ? 'போகன்' : 'Bhogan'}</span>
                       </div>
                       <p className="text-[10px] text-emerald-950 dark:text-emerald-200 font-sans leading-relaxed">
                         {isTamil ? 'தசை பலனை அனுபவிக்கச் செய்பவர்' : 'Delivers experience of dasha results'}
@@ -5859,7 +5859,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     <div className="p-2.5 rounded-xl bg-rose-50/80 dark:bg-rose-950/20 border border-rose-500/25 space-y-0.5">
                       <div className="font-bold text-rose-800 dark:text-rose-300 flex items-center gap-1">
                         <span>🔴</span>
-                        <span>{isTamil ? 'வேதகன் (Vedhagan)' : 'Vedhagan (வேதகன்)'}</span>
+                        <span>{isTamil ? 'வேதகன்' : 'Vedhagan'}</span>
                       </div>
                       <p className="text-[10px] text-rose-950 dark:text-rose-200 font-sans leading-relaxed">
                         {isTamil ? 'தடுத்து நிறுத்துபவர் / பலனை வேதிக்கும் கிரகம்' : 'Obstructs / pierces the dasha results'}
@@ -5868,7 +5868,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     <div className="p-2.5 rounded-xl bg-cyan-50/80 dark:bg-cyan-950/20 border border-cyan-500/25 space-y-0.5">
                       <div className="font-bold text-cyan-800 dark:text-cyan-300 flex items-center gap-1">
                         <span>🔵</span>
-                        <span>{isTamil ? 'பாசகன் (Pasagan)' : 'Pasagan (பாசகன்)'}</span>
+                        <span>{isTamil ? 'பாசகன்' : 'Pasagan'}</span>
                       </div>
                       <p className="text-[10px] text-cyan-950 dark:text-cyan-200 font-sans leading-relaxed">
                         {isTamil ? 'பந்தப்படுத்துபவர் / தசையை இயக்குபவர்' : 'Binds and activates the dasha'}
@@ -5877,7 +5877,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     <div className="p-2.5 rounded-xl bg-amber-50/80 dark:bg-amber-950/20 border border-amber-500/25 space-y-0.5">
                       <div className="font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1">
                         <span>🟡</span>
-                        <span>{isTamil ? 'காரகன் (Karagan)' : 'Karagan (காரகன்)'}</span>
+                        <span>{isTamil ? 'காரகன்' : 'Karagan'}</span>
                       </div>
                       <p className="text-[10px] text-amber-950 dark:text-amber-200 font-sans leading-relaxed">
                         {isTamil ? 'பலன் தரும் முதன்மை காரகம்' : 'Principal signifier / doer of the dasha'}
@@ -5890,42 +5890,37 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     <table className="w-full text-xs text-left border-collapse">
                       <thead>
                         <tr className="bg-amber-900/10 dark:bg-amber-950/40 text-[#7A1A22] dark:text-amber-300 border-b border-amber-900/15 dark:border-amber-500/20 text-[11px]">
-                          <th className="p-2 sm:p-2.5 font-bold">{isTamil ? 'மகாதசை (Mahadasha)' : 'Mahadasha (மகாதசை)'}</th>
-                          <th className="p-2 sm:p-2.5 font-bold text-emerald-700 dark:text-emerald-300">{isTamil ? 'போகன் (Bhogan)' : 'Bhogan (போகன்)'}</th>
-                          <th className="p-2 sm:p-2.5 font-bold text-rose-700 dark:text-rose-300">{isTamil ? 'வேதகன் (Vedhagan)' : 'Vedhagan (வேதகன்)'}</th>
-                          <th className="p-2 sm:p-2.5 font-bold text-cyan-700 dark:text-cyan-300">{isTamil ? 'பாசகன் (Pasagan)' : 'Pasagan (பாசகன்)'}</th>
-                          <th className="p-2 sm:p-2.5 font-bold text-amber-700 dark:text-amber-300">{isTamil ? 'காரகன் (Karagan)' : 'Karagan (காரகன்)'}</th>
+                          <th className="p-2 sm:p-2.5 font-bold">{isTamil ? 'மகாதசை' : 'Mahadasha'}</th>
+                          <th className="p-2 sm:p-2.5 font-bold text-emerald-700 dark:text-emerald-300">{isTamil ? 'போகன்' : 'Bhogan'}</th>
+                          <th className="p-2 sm:p-2.5 font-bold text-rose-700 dark:text-rose-300">{isTamil ? 'வேதகன்' : 'Vedhagan'}</th>
+                          <th className="p-2 sm:p-2.5 font-bold text-cyan-700 dark:text-cyan-300">{isTamil ? 'பாசகன்' : 'Pasagan'}</th>
+                          <th className="p-2 sm:p-2.5 font-bold text-amber-700 dark:text-amber-300">{isTamil ? 'காரகன்' : 'Karagan'}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-amber-900/10 dark:divide-amber-500/10 font-sans text-[11px]">
                         {MAHADASHA_BHOGAN_VEDHAGAN_TABLE.map((row) => (
                           <tr key={row.idEn} className="hover:bg-amber-50/50 dark:hover:bg-stone-800/40 transition-colors">
                             <td className="p-2 sm:p-2.5 font-bold text-[#7A1A22] dark:text-amber-300 whitespace-nowrap">
-                              <div>{isTamil ? row.idTa : row.idEn}</div>
-                              <div className="text-[10px] text-stone-500 dark:text-stone-400 font-normal">{isTamil ? row.idEn : row.idTa}</div>
+                              {isTamil ? row.idTa : row.idEn}
                             </td>
                             <td className="p-2 sm:p-2.5 whitespace-nowrap">
-                              <span className="inline-flex flex-col px-2 py-0.5 rounded bg-emerald-100/70 dark:bg-emerald-950/50">
-                                <span className="font-bold text-emerald-800 dark:text-emerald-300">{isTamil ? row.bhoganTa : row.bhoganEn}</span>
-                                <span className="text-[10px] text-emerald-700/80 dark:text-emerald-400/80">{isTamil ? row.bhoganEn : row.bhoganTa}</span>
+                              <span className="inline-block px-2 py-0.5 rounded bg-emerald-100/70 dark:bg-emerald-950/50 font-bold text-emerald-800 dark:text-emerald-300">
+                                {isTamil ? row.bhoganTa : row.bhoganEn}
                               </span>
                             </td>
                             <td className="p-2 sm:p-2.5 whitespace-nowrap">
-                              <span className="inline-flex flex-col px-2 py-0.5 rounded bg-rose-100/70 dark:bg-rose-950/50">
-                                <span className="font-bold text-rose-800 dark:text-rose-300">{isTamil ? row.vedhaganTa : row.vedhaganEn}</span>
-                                <span className="text-[10px] text-rose-700/80 dark:text-rose-400/80">{isTamil ? row.vedhaganEn : row.vedhaganTa}</span>
+                              <span className="inline-block px-2 py-0.5 rounded bg-rose-100/70 dark:bg-rose-950/50 font-bold text-rose-800 dark:text-rose-300">
+                                {isTamil ? row.vedhaganTa : row.vedhaganEn}
                               </span>
                             </td>
                             <td className="p-2 sm:p-2.5 whitespace-nowrap">
-                              <span className="inline-flex flex-col px-2 py-0.5 rounded bg-cyan-100/70 dark:bg-cyan-950/50">
-                                <span className="font-bold text-cyan-800 dark:text-cyan-300">{isTamil ? row.pasaganTa : row.pasaganEn}</span>
-                                <span className="text-[10px] text-cyan-700/80 dark:text-cyan-400/80">{isTamil ? row.pasaganEn : row.pasaganTa}</span>
+                              <span className="inline-block px-2 py-0.5 rounded bg-cyan-100/70 dark:bg-cyan-950/50 font-bold text-cyan-800 dark:text-cyan-300">
+                                {isTamil ? row.pasaganTa : row.pasaganEn}
                               </span>
                             </td>
                             <td className="p-2 sm:p-2.5 whitespace-nowrap">
-                              <span className="inline-flex flex-col px-2 py-0.5 rounded bg-amber-100/70 dark:bg-amber-950/50">
-                                <span className="font-bold text-amber-800 dark:text-amber-300">{isTamil ? row.karaganTa : row.karaganEn}</span>
-                                <span className="text-[10px] text-amber-700/80 dark:text-amber-400/80">{isTamil ? row.karaganEn : row.karaganTa}</span>
+                              <span className="inline-block px-2 py-0.5 rounded bg-amber-100/70 dark:bg-amber-950/50 font-bold text-amber-800 dark:text-amber-300">
+                                {isTamil ? row.karaganTa : row.karaganEn}
                               </span>
                             </td>
                           </tr>
