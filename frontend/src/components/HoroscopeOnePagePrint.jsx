@@ -1,8 +1,10 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Printer, Monitor, ShieldCheck, Edit, FileText } from 'lucide-react';
+import { Printer, Monitor, ShieldCheck, Edit, FileText, Sparkles, BookOpen } from 'lucide-react';
 import { useLang } from '../i18n';
 import { useAuth } from '../context/AuthContext';
 import LetterheadBrandingModal, { getInitialLetterhead } from './LetterheadBrandingModal';
+import GeneralPredictionsModal from './GeneralPredictionsModal';
+import { getGeneralPredictions } from '../utils/generalPredictionsEngine';
 import {
   calculateThirukanithaHoroscope,
   RASHIS,
@@ -176,6 +178,19 @@ export default function HoroscopeOnePagePrint({
   const horoscope = useMemo(() => {
     return calculateThirukanithaHoroscope(birthData || {});
   }, [birthData]);
+
+  // General Predictions Engine for 10 factors:
+  // tithi, yogam, karana, yogi, ayogi, subha, asubha, bhagyathipathi, badhakathipathi, lagnathipathi
+  const generalPredictions = useMemo(() => {
+    return getGeneralPredictions({ horoscope, birthData, lang: isTa ? 'ta' : 'en' });
+  }, [horoscope, birthData, isTa]);
+
+  // Page Print / View Mode:
+  // 'both' (Complete 2-A4 Dossier: Natal Sheet + General Predictions)
+  // 'chart' (1-Page Natal Chart Sheet only)
+  // 'predictions' (1-Page General Predictions Sheet only)
+  const [printPageMode, setPrintPageMode] = useState('both');
+  const [predictionsModalOpen, setPredictionsModalOpen] = useState(false);
 
   // Extract Astrologer Profile Details (Title & Brand from letterhead state or profile)
   const astrologerTitle =
@@ -586,7 +601,14 @@ export default function HoroscopeOnePagePrint({
   }, [horoscope, lagnaRasi, lagnaLong, isTa]);
 
   const handlePrint = () => {
-    printElementById('astrojit-horoscope-1page', `${birthData?.name || 'Native'}_Horoscope_Astrojit`);
+    const docTitle = `${birthData?.name || 'Native'}_Horoscope_Astrojit`;
+    if (printPageMode === 'chart') {
+      printElementById('astrojit-horoscope-1page', docTitle);
+    } else if (printPageMode === 'predictions') {
+      printElementById('astrojit-horoscope-predictions-sheet', `${docTitle}_Predictions`);
+    } else {
+      printElementById('astrojit-horoscope-print-wrapper', `${docTitle}_Complete_Dossier`);
+    }
   };
 
   // Helper to render South Indian Chart matching the user's sketch:
@@ -756,6 +778,60 @@ export default function HoroscopeOnePagePrint({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          {/* Page View / Print Mode Selector */}
+          <div className="flex items-center gap-1 bg-stone-100 dark:bg-stone-900 p-1 rounded-xl border border-stone-200 dark:border-stone-800">
+            <button
+              type="button"
+              onClick={() => setPrintPageMode('chart')}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                printPageMode === 'chart'
+                  ? 'bg-[#7A1A22] text-amber-100 shadow-xs font-black'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+              }`}
+              title={isTa ? '1-பக்க ஜாதக ஏடு மட்டும்' : 'Page 1: Natal Chart Sheet only'}
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span>{isTa ? 'ஜாதக ஏடு (1-A4)' : 'Natal Chart (1-A4)'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setPrintPageMode('predictions')}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                printPageMode === 'predictions'
+                  ? 'bg-[#7A1A22] text-amber-100 shadow-xs font-black'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+              }`}
+              title={isTa ? '1-பக்க 10 பொதுப் பலன்கள் மட்டும்' : 'Page 2: 10 General Predictions Sheet only'}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>{isTa ? 'பொதுப் பலன்கள் (1-A4)' : 'Predictions (1-A4)'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setPrintPageMode('both')}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                printPageMode === 'both'
+                  ? 'bg-[#7A1A22] text-amber-100 shadow-xs font-black'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+              }`}
+              title={isTa ? 'ஜாதக ஏடு + பொதுப் பலன்கள் (முழு 2-A4 தொகுப்பு)' : 'Complete Dossier: Natal Chart + Predictions (2-A4)'}
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>{isTa ? 'முழு தொகுப்பு (2-A4)' : 'Complete (2-A4)'}</span>
+            </button>
+          </div>
+
+          {/* Read 10 Predictions Interactive Modal Button */}
+          <button
+            type="button"
+            onClick={() => setPredictionsModalOpen(true)}
+            className="px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-900 dark:text-amber-200 border border-amber-500/40 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
+            title={isTa ? '10 முக்கிய பொதுப் பலன்களை திரையில் வாசிக்க' : 'Read 10 General Predictions on Screen'}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
+            <span>{isTa ? '10 பலன்கள் வாசிக்க' : 'Read 10 Predictions'}</span>
+          </button>
+
           {/* Chart Style Switcher (South Indian / North Indian) */}
           <div className="flex items-center gap-1 bg-stone-100 dark:bg-stone-900 p-1 rounded-xl border border-stone-200 dark:border-stone-800">
             <button
@@ -797,12 +873,6 @@ export default function HoroscopeOnePagePrint({
             <span>{isTa ? 'லெட்டர்ஹெட் திருத்து' : 'Edit Letterhead'}</span>
           </button>
 
-          {/* Astrologer Profile Sync Notice */}
-          <div className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[11px] font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700/60">
-            <ShieldCheck className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
-            <span>{isTa ? 'தலைப்பு ஜோதிடர் சுயவிவரத்திலிருந்து பெறப்பட்டது' : 'Title loaded from Astrologer Profile'}</span>
-          </div>
-
           {/* Switch to Multi-Page Booklet Button */}
           {onSwitchToMultiPage && (
             <button
@@ -834,38 +904,49 @@ export default function HoroscopeOnePagePrint({
             className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#7A1A22] to-[#99222C] hover:from-[#5C1017] hover:to-[#7A1A22] text-amber-100 text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shadow-sm"
           >
             <Printer className="w-4 h-4" />
-            <span>{isTa ? 'அச்சு / PDF பதிவிறக்குக (1-A4)' : 'Print / Save as PDF (1-A4)'}</span>
+            <span>
+              {printPageMode === 'both'
+                ? (isTa ? 'அச்சு / PDF பதிவிறக்குக (2-A4)' : 'Print / Save as PDF (2-A4)')
+                : (isTa ? 'அச்சு / PDF பதிவிறக்குக (1-A4)' : 'Print / Save as PDF (1-A4)')}
+            </span>
           </button>
         </div>
       </div>
 
       {/* ======================================================== */}
-      {/* 2. STRICT 1-PAGE A4 JANANA JATHAGAM SHEET CONTAINER */}
+      {/* 2. STRICT 1-PAGE OR 2-PAGE COMPLETE A4 DOSSIER CONTAINER   */}
       {/* ======================================================== */}
       <div className="w-full overflow-x-auto touch-pan-x pb-4">
-        <div
-          id="astrojit-horoscope-1page"
-          className="bg-white text-black mx-auto shadow-2xl p-3 sm:p-4 print:p-0 print:shadow-none transition-all"
-          style={{
-            width: '100%',
-            maxWidth: '198mm',
-            minHeight: '272mm',
-            height: '272mm',
-            boxSizing: 'border-box',
-            fontFamily: isTa
-              ? "'Noto Serif Tamil', 'Source Serif 4', Georgia, serif"
-              : "'Source Serif 4', Georgia, serif"
-          }}
-        >
-          {/* Traditional Double Line Outer Border (matches user sketch) */}
-          <div
-            className="border-[3px] border-double border-black p-2 sm:p-2.5 pb-1.5 sm:pb-2 flex flex-col justify-between"
-            style={{
-              minHeight: '270mm',
-              height: '100%',
-              boxSizing: 'border-box'
-            }}
-          >
+        <div id="astrojit-horoscope-print-wrapper" className="space-y-6 print:space-y-0">
+          {/* ==================================================== */}
+          {/* SHEET 1: NATAL HOROSCOPE CHART (ஜாதக ஏடு)           */}
+          {/* ==================================================== */}
+          {(printPageMode === 'chart' || printPageMode === 'both') && (
+            <div
+              id="astrojit-horoscope-1page"
+              className={`print-sheet-page bg-white text-black mx-auto shadow-2xl p-3 sm:p-4 print:p-0 print:shadow-none transition-all ${
+                printPageMode === 'both' ? 'print-page-break' : ''
+              }`}
+              style={{
+                width: '100%',
+                maxWidth: '198mm',
+                minHeight: '272mm',
+                height: '272mm',
+                boxSizing: 'border-box',
+                fontFamily: isTa
+                  ? "'Noto Serif Tamil', 'Source Serif 4', Georgia, serif"
+                  : "'Source Serif 4', Georgia, serif"
+              }}
+            >
+              {/* Traditional Double Line Outer Border (matches user sketch) */}
+              <div
+                className="border-[3px] border-double border-black p-2 sm:p-2.5 pb-1.5 sm:pb-2 flex flex-col justify-between"
+                style={{
+                  minHeight: '270mm',
+                  height: '100%',
+                  boxSizing: 'border-box'
+                }}
+              >
             {/* Top Container holding all sections with balanced vertical spacing */}
             <div className="flex flex-col justify-between h-full space-y-1 sm:space-y-1.5">
               {/* ======================================================== */}
@@ -1157,7 +1238,184 @@ export default function HoroscopeOnePagePrint({
             </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* ==================================================== */}
+      {/* SHEET 2: GENERAL PREDICTIONS (10 CLASSICAL PILLARS)  */}
+      {/* tithi, yogam, karana, yogi, ayogi, subha, asubha,    */}
+      {/* bhagyathipathi, badhakathipathi, lagnathipathi       */}
+      {/* ==================================================== */}
+      {(printPageMode === 'predictions' || printPageMode === 'both') && (
+        <div
+          id="astrojit-horoscope-predictions-sheet"
+          className="print-sheet-page bg-white text-black mx-auto shadow-2xl p-3 sm:p-4 print:p-0 print:shadow-none transition-all"
+          style={{
+            width: '100%',
+            maxWidth: '198mm',
+            minHeight: '272mm',
+            height: '272mm',
+            boxSizing: 'border-box',
+            fontFamily: isTa
+              ? "'Noto Serif Tamil', 'Source Serif 4', Georgia, serif"
+              : "'Source Serif 4', Georgia, serif"
+          }}
+        >
+          {/* Traditional Double Line Outer Border */}
+          <div
+            className="border-[3px] border-double border-black p-2 sm:p-2.5 pb-1.5 sm:pb-2 flex flex-col justify-between"
+            style={{
+              minHeight: '270mm',
+              height: '100%',
+              boxSizing: 'border-box'
+            }}
+          >
+            <div className="flex flex-col justify-between h-full space-y-1">
+              {/* ======================================================== */}
+              {/* BLOCK 1: OFFICIAL VEDIC HEADER (Identical to Sheet 1)    */}
+              {/* ======================================================== */}
+              <div className="py-1 px-2.5 text-center bg-[#FAF6EE] border-[1.5px] border-black rounded-none">
+                {/* Auspicious Invocation */}
+                <div className="text-[13px] sm:text-[14px] font-black text-[#7A1A22] tracking-widest mb-0.5">
+                  {invocationText}
+                </div>
+
+                <div className="flex items-center justify-between gap-2 px-1">
+                  {/* Left: Astrojit Logo & Vedic Brand */}
+                  <div className="w-28 sm:w-32 shrink-0 flex items-center gap-2 text-left">
+                    <img
+                      src="/astrojit-logo.webp"
+                      alt="Astrojit"
+                      className="w-8 h-8 object-contain shrink-0"
+                      onError={e => { e.target.style.display = 'none'; }}
+                    />
+                    <div>
+                      <div className="text-[14px] font-black tracking-tight text-[#7A1A22] leading-none">ASTROJIT</div>
+                      <div className="text-[9.5px] font-bold text-stone-600 uppercase tracking-wider mt-0.5">
+                        {isTa ? 'வேத ஜோதிடம்' : 'Vedic Astrology'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Center: Astrologer / Organization Letterhead Details */}
+                  <div className="text-center flex-1 px-1">
+                    <h1 className="text-[15.5px] sm:text-[17px] font-black tracking-tight text-black leading-snug">
+                      {astrologerTitle}
+                    </h1>
+                    <div className="text-[11px] sm:text-[11.5px] font-bold text-stone-800 leading-tight mt-0.5">
+                      {isTa ? 'வேத ஜோதிட பொதுப் பலன்கள் • பராசர முறை' : 'Classical Vedic Natal Predictions • Parashara System'}
+                    </div>
+                    {astrologerContact && (
+                      <div className="text-[9.5px] sm:text-[10px] font-mono font-semibold text-stone-700 leading-tight mt-0.5">
+                        {astrologerContact}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right: Astrologer Custom Logo & Lahiri Ayanamsa */}
+                  <div className="w-28 sm:w-36 shrink-0 flex items-center justify-end gap-2 text-right">
+                    {letterhead?.astrologerLogo ? (
+                      <>
+                        <div className="text-right">
+                          <div className="text-[9.5px] sm:text-[10px] font-black text-[#7A1A22] uppercase leading-tight truncate max-w-[85px]">
+                            {user?.name || (isTa ? 'ஜோதிடர்' : 'Astrologer')}
+                          </div>
+                          <div className="text-[8px] font-bold text-stone-600 mt-0.5">
+                            {isTa ? 'லஹரி' : 'Lahiri'}: {ayanamsaDms}
+                          </div>
+                        </div>
+                        <img
+                          src={letterhead.astrologerLogo}
+                          alt="Astrologer Logo"
+                          className="w-9 h-9 object-contain rounded border border-amber-900/30 bg-white p-0.5 shadow-2xs shrink-0"
+                          onError={e => { e.target.style.display = 'none'; }}
+                        />
+                      </>
+                    ) : (
+                      <div className="flex flex-col items-end justify-center">
+                        <span className="inline-block px-1.5 py-0.2 rounded-none text-[10px] sm:text-[10.5px] font-bold bg-amber-100 text-[#7A1A22] border border-black shadow-2xs">
+                          {isTa ? 'திருக்கணித லஹரி' : 'Lahiri Ayanamsa'}
+                        </span>
+                        <div className="text-[9.5px] sm:text-[10px] font-mono font-bold text-stone-700 mt-0.5">
+                          {ayanamsaDms}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Section Title Banner with Native Credentials */}
+              <div className="bg-[#FAF6EE] border-[1.5px] border-black px-2 py-0.5 flex justify-between items-center text-[10px] sm:text-[10.5px]">
+                <span className="font-black text-[#7A1A22] uppercase tracking-wide flex items-center gap-1.5">
+                  <span>📜</span>
+                  <span>{isTa ? 'ஜாதகப் பொதுப் பலன்கள் (10 முக்கிய காரணிகள்)' : 'VEDIC GENERAL PREDICTIONS (10 KEY PILLARS)'}</span>
+                </span>
+                <span className="font-bold font-mono text-stone-800">
+                  {birthData?.name || (isTa ? 'ஜாதகர்' : 'Native')} • {dobFormatted} • {isTa ? `லக்னம்: ${RASHIS[lagnaRasi]?.ta}` : `Lagna: ${RASHIS[lagnaRasi]?.en}`}
+                </span>
+              </div>
+
+              {/* ======================================================== */}
+              {/* BLOCK 2: 10 GENERAL PREDICTION CARDS (2 Columns x 5 Rows)*/}
+              {/* 1. Lagnathipathi, 2. Tithi, 3. Yogam, 4. Karana,         */}
+              {/* 5. Yogi, 6. Ayogi, 7. Subhar, 8. Asubhar,                */}
+              {/* 9. Bhagya Lord, 10. Badhaka Lord                         */}
+              {/* ======================================================== */}
+              <div className="grid grid-cols-2 gap-1.5 flex-1">
+                {generalPredictions.map((pred) => (
+                  <div
+                    key={pred.id}
+                    className="border border-black bg-[#FFFDF9] p-1.5 flex flex-col justify-between text-left rounded-none"
+                    style={{ minHeight: '39mm' }}
+                  >
+                    <div>
+                      {/* Card Top Row: Factor Name + Value Badge */}
+                      <div className="flex items-center justify-between border-b border-stone-300 pb-0.5 mb-1">
+                        <span className="font-bold text-[10.5px] sm:text-[11px] text-[#7A1A22] flex items-center gap-1">
+                          <span className="text-xs">{pred.icon}</span>
+                          <span>{isTa ? pred.titleTa : pred.titleEn}</span>
+                        </span>
+                        <span className="px-1.5 py-0.2 rounded-none bg-amber-100 font-bold font-mono text-[9px] sm:text-[9.5px] text-black border border-stone-400">
+                          {isTa ? pred.factorTa : pred.factorEn}
+                        </span>
+                      </div>
+
+                      {/* Concise Summary Line */}
+                      <div className="font-bold text-[9.5px] sm:text-[10px] text-stone-900 leading-tight mb-0.5">
+                        {isTa ? pred.summaryTa : pred.summaryEn}
+                      </div>
+
+                      {/* Classical Detailed Text */}
+                      <div className="text-[9px] sm:text-[9.5px] text-stone-700 leading-snug font-serif text-justify">
+                        {isTa ? pred.detailedTa : pred.detailedEn}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Astrological Note & Pariharam Advisory */}
+              <div className="border border-stone-400 bg-[#FAF6EE] px-2 py-0.5 text-[9px] sm:text-[9.5px] text-stone-700 flex justify-between items-center">
+                <span>
+                  {isTa
+                    ? '★ குறிப்பு: இப்பலன்கள் ஜனன லக்னம், திதி, யோக, கரண ஆதிபத்தியங்களின் அடிப்படை இயல்பு. கோசார தசா-புக்தி வலுவிற்கேற்ப பலன்கள் முழுமையடையும்.'
+                    : '★ Note: These predictions outline the natal constitutional factors. Transit and ongoing Dasha-Bhukti periods calibrate their active delivery.'}
+                </span>
+                <span className="font-bold font-mono text-[#7A1A22] shrink-0 ml-2">
+                  {isTa ? 'பக்கம் 2 / 2' : 'Page 2 of 2'}
+                </span>
+              </div>
+
+              {/* Bottom Copyright & Timestamp */}
+              <div className="text-center text-[9.5px] font-semibold text-stone-600 pt-0.5 pb-0">
+                Astrojit . All rights reserved. • www.astrojit.co.in • {printedDateTime}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
 
       {/* Embedded Print CSS Rules */}
       <style>{`
@@ -1181,7 +1439,12 @@ export default function HoroscopeOnePagePrint({
           .no-print {
             display: none !important;
           }
-          #astrojit-horoscope-1page {
+          #astrojit-horoscope-print-wrapper {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          .print-sheet-page {
             box-shadow: none !important;
             padding: 0 !important;
             margin: 0 auto !important;
@@ -1196,11 +1459,9 @@ export default function HoroscopeOnePagePrint({
             justify-content: space-between !important;
             break-inside: avoid !important;
             page-break-inside: avoid !important;
-            break-after: avoid !important;
-            page-break-after: avoid !important;
             overflow: hidden !important;
           }
-          #astrojit-horoscope-1page > div {
+          .print-sheet-page > div {
             height: 100% !important;
             min-height: 270mm !important;
             max-height: 270mm !important;
@@ -1208,6 +1469,10 @@ export default function HoroscopeOnePagePrint({
             display: flex !important;
             flex-direction: column !important;
             justify-content: space-between !important;
+          }
+          .print-page-break {
+            break-after: page !important;
+            page-break-after: always !important;
           }
         }
       `}</style>
@@ -1219,6 +1484,21 @@ export default function HoroscopeOnePagePrint({
         letterhead={letterhead}
         onSave={(updated) => setLetterhead(updated)}
         isTa={isTa}
+      />
+
+      {/* General Predictions Interactive Modal */}
+      <GeneralPredictionsModal
+        isOpen={predictionsModalOpen}
+        onClose={() => setPredictionsModalOpen(false)}
+        predictions={generalPredictions}
+        nativeName={birthData?.name || (isTa ? 'ஜாதகர்' : 'Native')}
+        isTa={isTa}
+        onPrint={() => {
+          setPrintPageMode('predictions');
+          setTimeout(() => {
+            printElementById('astrojit-horoscope-predictions-sheet', `${birthData?.name || 'Native'}_Predictions_Astrojit`);
+          }, 150);
+        }}
       />
     </div>
   );
