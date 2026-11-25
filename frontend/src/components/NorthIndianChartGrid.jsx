@@ -77,19 +77,36 @@ export default function NorthIndianChartGrid({
     }
   }
 
-  // Case C: chartCells passed (array of strings from 1-pager or multi-page)
+  // Case C: chartCells passed (array of strings, numbers, or objects from 1-pager or multi-page)
   if (Array.isArray(chartCells)) {
     for (let i = 0; i < chartCells.length; i++) {
       const rasi = SIGN_INDEX_ORDER[i] !== undefined ? SIGN_INDEX_ORDER[i] : i;
-      const cellStr = chartCells[i] || '';
-      if (cellStr) {
-        const parts = cellStr.split(',').map(s => s.trim()).filter(Boolean);
-        for (const p of parts) {
-          const isLag = p.includes('1-லக்') || p.includes('1-Lag') || p.includes('லக்') || p.includes('Lag');
-          if (isLag && detectedLagnaRasi === null) {
-            detectedLagnaRasi = rasi;
+      const cellVal = chartCells[i];
+
+      if (cellVal !== undefined && cellVal !== null && cellVal !== '') {
+        if (Array.isArray(cellVal)) {
+          for (const item of cellVal) {
+            const p = typeof item === 'object' && item !== null
+              ? (isTamil ? (item.labelTa || item.labelEn || item.label) : (item.labelEn || item.labelTa || item.label))
+              : String(item).trim();
+            if (p) {
+              const isLag = p.includes('1-லக்') || p.includes('1-Lag') || p.includes('லக்') || p.includes('Lag');
+              if (isLag && detectedLagnaRasi === null) {
+                detectedLagnaRasi = rasi;
+              }
+              signsMap[rasi].push({ label: p, isLagna: isLag });
+            }
           }
-          signsMap[rasi].push({ label: p, isLagna: isLag });
+        } else {
+          const cellStr = typeof cellVal === 'string' ? cellVal : String(cellVal);
+          const parts = cellStr.split(',').map(s => s.trim()).filter(Boolean);
+          for (const p of parts) {
+            const isLag = p.includes('1-லக்') || p.includes('1-Lag') || p.includes('லக்') || p.includes('Lag');
+            if (isLag && detectedLagnaRasi === null) {
+              detectedLagnaRasi = rasi;
+            }
+            signsMap[rasi].push({ label: p, isLagna: isLag });
+          }
         }
       }
     }
