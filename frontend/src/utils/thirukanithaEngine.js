@@ -2311,34 +2311,50 @@ export function computeSpecialLagnasSphutasData({
   };
 }
 
+export const NIRAYANA_DIGNITY_TABLE = [
+  // 0: மேஷம் (Mesham – Aries)
+  { sun: 'utcha', moon: 'samam', mars: 'aatchi', mercury: 'samam', jupiter: 'natpu', venus: 'samam', saturn: 'neecha', rahu: 'pagai', ketu: 'pagai' },
+  // 1: ரிஷபம் (Rishabam – Taurus)
+  { sun: 'pagai', moon: 'utcha', mars: 'samam', mercury: 'natpu', jupiter: 'pagai', venus: 'aatchi', saturn: 'natpu', rahu: 'neecha', ketu: 'neecha' },
+  // 2: மிதுனம் (Mithunam – Gemini)
+  { sun: 'samam', moon: 'natpu', mars: 'pagai', mercury: 'aatchi', jupiter: 'pagai', venus: 'natpu', saturn: 'natpu', rahu: 'natpu', ketu: 'natpu' },
+  // 3: கடகம் (Kadagam – Cancer)
+  { sun: 'samam', moon: 'aatchi', mars: 'neecha', mercury: 'pagai', jupiter: 'utcha', venus: 'pagai', saturn: 'pagai', rahu: 'pagai', ketu: 'pagai' },
+  // 4: சிம்மம் (Simmam – Leo)
+  { sun: 'aatchi', moon: 'natpu', mars: 'natpu', mercury: 'natpu', jupiter: 'natpu', venus: 'pagai', saturn: 'pagai', rahu: 'pagai', ketu: 'pagai' },
+  // 5: கன்னி (Kanni – Virgo)
+  { sun: 'samam', moon: 'natpu', mars: 'pagai', mercury: 'utcha_aatchi', jupiter: 'natpu', venus: 'neecha', saturn: 'natpu', rahu: 'natpu', ketu: 'natpu' },
+  // 6: துலாம் (Thulam – Libra)
+  { sun: 'neecha', moon: 'samam', mars: 'samam', mercury: 'natpu', jupiter: 'pagai', venus: 'aatchi', saturn: 'utcha', rahu: 'natpu', ketu: 'natpu' },
+  // 7: விருச்சிகம் (Viruchigam – Scorpio)
+  { sun: 'natpu', moon: 'neecha', mars: 'aatchi', mercury: 'samam', jupiter: 'natpu', venus: 'samam', saturn: 'pagai', rahu: 'utcha', ketu: 'utcha' },
+  // 8: தனுசு (Dhanusu – Sagittarius)
+  { sun: 'natpu', moon: 'samam', mars: 'natpu', mercury: 'samam', jupiter: 'aatchi', venus: 'natpu', saturn: 'samam', rahu: 'natpu', ketu: 'natpu' },
+  // 9: மகரம் (Magaram – Capricorn)
+  { sun: 'pagai', moon: 'samam', mars: 'utcha', mercury: 'samam', jupiter: 'neecha', venus: 'natpu', saturn: 'aatchi', rahu: 'natpu', ketu: 'natpu' },
+  // 10: கும்பம் (Kumbam – Aquarius)
+  { sun: 'pagai', moon: 'samam', mars: 'samam', mercury: 'samam', jupiter: 'samam', venus: 'natpu', saturn: 'aatchi', rahu: 'pagai', ketu: 'pagai' },
+  // 11: மீனம் (Meenam – Pisces)
+  { sun: 'natpu', moon: 'samam', mars: 'natpu', mercury: 'neecha', jupiter: 'aatchi', venus: 'utcha', saturn: 'samam', rahu: 'natpu', ketu: 'natpu' },
+];
+
+const DIGNITY_LABELS = {
+  utcha:        { ta: 'உச்சம்',          en: 'Exalted',            key: 'utcha' },
+  aatchi:       { ta: 'ஆட்சி',           en: 'Own Sign',           key: 'aatchi' },
+  utcha_aatchi: { ta: 'உச்சம் / ஆட்சி', en: 'Exalted / Own Sign', key: 'utcha' },
+  natpu:        { ta: 'நட்பு',           en: 'Friend',             key: 'natpu' },
+  samam:        { ta: 'சமம்',            en: 'Neutral',            key: 'samam' },
+  pagai:        { ta: 'பகை',            en: 'Enemy',              key: 'pagai' },
+  neecha:       { ta: 'நீசம்',           en: 'Debilitated',        key: 'neecha' },
+};
+
 export function getPlanetDignityBilingual(planetId, rasiIdx) {
   if (!planetId || planetId === 'lagna' || planetId === 'mandi') {
     return { ta: '---', en: '---', key: 'none' };
   }
-  const utchaSigns = { sun: 0, moon: 1, mars: 9, mercury: 5, jupiter: 3, venus: 11, saturn: 6, rahu: 1, ketu: 7 };
-  const neechaSigns = { sun: 6, moon: 7, mars: 3, mercury: 11, jupiter: 9, venus: 5, saturn: 0, rahu: 7, ketu: 1 };
-  const ownSigns = {
-    sun: [4], moon: [3], mars: [0, 7], mercury: [2, 5],
-    jupiter: [8, 11], venus: [1, 6], saturn: [9, 10], rahu: [], ketu: []
-  };
-  const friendSigns = {
-    sun: [3, 0, 7, 8, 11], moon: [4, 2, 5], mars: [4, 3, 8, 11],
-    mercury: [4, 1, 6], jupiter: [4, 3, 0, 7], venus: [2, 5, 9, 10],
-    saturn: [2, 5, 1, 6], rahu: [1, 2, 6, 9, 10], ketu: [0, 4, 7, 8, 11]
-  };
-  const enemySigns = {
-    sun: [1, 6, 9, 10], moon: [7],
-    mars: [2, 5], mercury: [3], jupiter: [2, 5, 1, 6],
-    venus: [4, 3], saturn: [4, 3, 0, 7], rahu: [4, 3, 0, 7], ketu: [1, 6, 2, 5]
-  };
-
   const s = ((rasiIdx % 12) + 12) % 12;
-  if (s === utchaSigns[planetId]) return { ta: 'உச்சம்', en: 'Exalted', key: 'utcha' };
-  if (s === neechaSigns[planetId]) return { ta: 'நீசம்', en: 'Debilitated', key: 'neecha' };
-  if ((ownSigns[planetId] || []).includes(s)) return { ta: 'ஆட்சி', en: 'Own Sign', key: 'aatchi' };
-  if ((friendSigns[planetId] || []).includes(s)) return { ta: 'நட்பு', en: 'Friend', key: 'natpu' };
-  if ((enemySigns[planetId] || []).includes(s)) return { ta: 'பகை', en: 'Enemy', key: 'pagai' };
-  return { ta: 'சமம்', en: 'Neutral', key: 'samam' };
+  const code = NIRAYANA_DIGNITY_TABLE[s]?.[planetId];
+  return DIGNITY_LABELS[code] || { ta: 'சமம்', en: 'Neutral', key: 'samam' };
 }
 
 export function calculateThirukanithaHoroscope({
