@@ -94,6 +94,7 @@ export const API = {
   searchClients: (q) => apiRequest(`/astrologer/search-client?q=${encodeURIComponent(q)}`, 'GET'),
   saveConsultationNote: (data) => apiRequest('/astrologer/consultation-note', 'POST', data),
   getReferredClients: () => apiRequest('/astrologer/referred-clients', 'GET'),
+  updateClientByAstrologer: (clientId, data) => apiRequest(`/astrologer/client/${clientId}`, 'PUT', data),
 
   // Vendor
   getVendorProducts: () => apiRequest('/vendor/products', 'GET'),

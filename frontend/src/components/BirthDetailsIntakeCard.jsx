@@ -447,6 +447,67 @@ Shubham Bhavatu! 🙏`;
     }
   };
 
+  const handleSaveClientProfile = async () => {
+    if (!clientData.name?.trim()) {
+      alert(isTa ? 'தயவுசெய்து முழு பெயரை உள்ளிடவும்.' : 'Please enter Full Name.');
+      return;
+    }
+    setIsRegistering(true);
+
+    try {
+      const time12Str = `${clientData.timeState?.hour || '12'}:${clientData.timeState?.minute || '00'}:${clientData.timeState?.second || '00'} ${clientData.timeState?.period || 'AM'}`;
+      const time24Str = to24HourTime(clientData.timeState?.hour, clientData.timeState?.minute, clientData.timeState?.second, clientData.timeState?.period);
+      const placeStr = (typeof clientData.city === 'object' ? clientData.city?.name : (clientData.city || clientData.nativePlace || clientData.place || clientData.placeName || 'Salem')).trim();
+      const dobStr = (clientData.dob || '1995-01-01').trim();
+
+      const payload = {
+        name: clientData.name.trim(),
+        mobile: '',
+        username: '',
+        dob: dobStr,
+        dobTime: time24Str || time12Str,
+        dobTime12: time12Str,
+        dobPlace: placeStr,
+        city: placeStr,
+        gender: clientData.gender || 'male',
+        fatherName: clientData.father?.trim() || '',
+        motherName: clientData.mother?.trim() || '',
+        nativePlace: clientData.nativePlace?.trim() || placeStr,
+        country: currentCountry || 'India',
+        state: currentState || 'Tamil Nadu',
+        lat: clientData.lat || '11.6643',
+        lon: clientData.lon || '78.1460',
+        utcOffset: clientData.utcOffset || '05:30 UTC'
+      };
+
+      const registerFn = API.registerClientFromAstrologer || API.registerClientByAstrologer;
+      const res = await registerFn(payload);
+
+      const savedClient = res.client || payload;
+      const clientCode = savedClient.clientCode || res.receipt?.clientCode || '';
+
+      updateField('clientCode', clientCode);
+      if (res.client) {
+        selectClient(res.client);
+      }
+
+      refreshCalculations();
+      setActionFeedback({
+        type: 'success',
+        message: isTa
+          ? `வாடிக்கையாளர் சுயவிவரம் வெற்றிகரமாக சேமிக்கப்பட்டது! (Client ID: ${clientCode})`
+          : `Client profile saved successfully with Client ID: ${clientCode}! (Mobile number can be added later in Referrals)`,
+      });
+      setTimeout(() => setActionFeedback(null), 6000);
+    } catch (err) {
+      alert(isTa ? `சுயவிவரம் சேமிக்க முடியவில்லை: ${err.message}` : `Failed to save profile: ${err.message}`);
+    } finally {
+      setIsRegistering(false);
+    }
+  };
+
+  const hasValidMobile = Boolean(clean10DigitMobile(clientData.mobile)?.length === 10);
+
   return (
     <div id="birth-intake-card" className="bg-white/95 dark:bg-[#251E1A] p-4 sm:p-6 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs space-y-4 text-xs">
       {/* Header & Client Lookup Strip */}
@@ -543,7 +604,7 @@ Shubham Bhavatu! 🙏`;
       {!shouldHideLookup && (
         <div ref={searchBoxRef} className="relative z-30">
           <label className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
-            🔍 {isTa ? 'முந்தைய வாடிக்கையாளர் தேடல் (மொபைல் எண் அல்லது பெயர் + பிறந்த தேதி + இடம்):' : 'Previous Client Lookup (Search by Mobile No. or Name + D.O.B + Place):'}
+            🔍 {isTa ? 'முந்தைய வாடிக்கையாளர் தேடல் (Client ID CLI-..., மொபைல், பெயர், பிறந்த தேதி, இடம்):' : 'Previous Client Lookup (Search by Client ID CLI-..., Mobile No., Name, D.O.B or Place):'}
           </label>
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
@@ -553,7 +614,7 @@ Shubham Bhavatu! 🙏`;
                 onChange={handleSearchInputChange}
                 onFocus={() => { if (searchQuery.trim().length > 0) performClientSearch(searchQuery); }}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleClientSearch(e); }}
-                placeholder={isTa ? 'மொபைல் எண் அல்லது பெயர் + தேதி உள்ளிடவும்...' : 'Enter Mobile No. OR Name + D.O.B + Place...'}
+                placeholder={isTa ? 'Client ID (CLI-...), மொபைல் அல்லது பெயர் + தேதி உள்ளிடவும்...' : 'Enter Client ID (CLI-...), Mobile No., Name + D.O.B + Place...'}
                 className="w-full pl-9 pr-8 py-2 rounded-xl border border-stone-300 dark:border-stone-700 bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 text-xs focus:ring-2 focus:ring-[#7A1A22] outline-none"
               />
               <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -605,12 +666,17 @@ Shubham Bhavatu! 🙏`;
                     className="w-full text-left p-2.5 sm:p-3 hover:bg-amber-50/70 dark:hover:bg-stone-800 transition-colors flex items-center justify-between gap-3 text-xs cursor-pointer group"
                   >
                     <div>
-                      <div className="font-bold text-[#7A1A22] dark:text-amber-300 group-hover:underline flex items-center gap-1.5">
+                      <div className="font-bold text-[#7A1A22] dark:text-amber-300 group-hover:underline flex items-center gap-1.5 flex-wrap">
                         <User className="w-3.5 h-3.5" />
                         <span>{c.name}</span>
+                        {c.clientCode && (
+                          <span className="text-[10px] font-mono font-bold bg-amber-100 text-amber-900 px-1.5 py-0.2 rounded border border-amber-300">
+                            {c.clientCode}
+                          </span>
+                        )}
                       </div>
                       <div className="text-[11px] text-stone-500 dark:text-stone-400 flex flex-wrap items-center gap-2 mt-0.5">
-                        <span>📱 {c.mobile}</span>
+                        {c.mobile ? <span>📱 {c.mobile}</span> : <span className="text-amber-700 dark:text-amber-400 italic">No mobile</span>}
                         {c.dob && (
                           <>
                             <span>•</span>
@@ -924,18 +990,18 @@ Shubham Bhavatu! 🙏`;
           </div>
         </div>
 
-        {/* ROW 4: Father, Mother, Native Place, Mobile No. */}
+        {/* ROW 4: Father, Mother, Native Place, Mobile No. (All Optional) */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
           <div>
             <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
               <User className="w-3.5 h-3.5 inline mr-1 text-purple-700 dark:text-purple-400" />
-              {isTa ? 'தந்தை பெயர் (Father)' : "Father's Name"}
+              {isTa ? 'தந்தை பெயர் (விருப்பத்தேர்வு)' : "Father's Name (Optional)"}
             </label>
             <input
               type="text"
               value={clientData.father}
               onChange={e => updateField('father', e.target.value)}
-              placeholder={isTa ? 'தந்தை பெயர்' : "Enter Father's Name"}
+              placeholder={isTa ? 'தந்தை பெயர் (விருப்பத்தேர்வு)' : "Father's Name (Optional)"}
               className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
             />
           </div>
@@ -943,13 +1009,13 @@ Shubham Bhavatu! 🙏`;
           <div>
             <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
               <User className="w-3.5 h-3.5 inline mr-1 text-rose-600 dark:text-rose-400" />
-              {isTa ? 'தாய் பெயர் (Mother)' : "Mother's Name"}
+              {isTa ? 'தாய் பெயர் (விருப்பத்தேர்வு)' : "Mother's Name (Optional)"}
             </label>
             <input
               type="text"
               value={clientData.mother}
               onChange={e => updateField('mother', e.target.value)}
-              placeholder={isTa ? 'தாய் பெயர்' : "Enter Mother's Name"}
+              placeholder={isTa ? 'தாய் பெயர் (விருப்பத்தேர்வு)' : "Mother's Name (Optional)"}
               className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
             />
           </div>
@@ -957,13 +1023,13 @@ Shubham Bhavatu! 🙏`;
           <div>
             <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
               <MapPin className="w-3.5 h-3.5 inline mr-1 text-emerald-700 dark:text-emerald-400" />
-              {isTa ? 'சொந்த ஊர் (Native Place)' : 'Native Place / Town'}
+              {isTa ? 'சொந்த ஊர் (விருப்பத்தேர்வு)' : 'Native Place / Town (Optional)'}
             </label>
             <input
               type="text"
               value={clientData.nativePlace}
               onChange={e => updateField('nativePlace', e.target.value)}
-              placeholder={isTa ? 'சொந்த ஊர்' : 'Native Place / Town'}
+              placeholder={isTa ? 'சொந்த ஊர் (விருப்பத்தேர்வு)' : 'Native Place / Town (Optional)'}
               className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none"
             />
           </div>
@@ -971,7 +1037,7 @@ Shubham Bhavatu! 🙏`;
           <div>
             <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
               <Phone className="w-3.5 h-3.5 inline mr-1 text-blue-700 dark:text-blue-400" />
-              {isTa ? 'வாடிக்கையாளர் மொபைல்' : 'Client Mobile No.'}
+              {isTa ? 'வாடிக்கையாளர் மொபைல் (விருப்பத்தேர்வு)' : 'Client Mobile No. (Optional)'}
             </label>
             <div className="flex items-center">
               <span className="bg-stone-200 dark:bg-stone-800 px-2.5 py-2 rounded-l-xl text-xs font-bold text-stone-600 dark:text-stone-400 border border-r-0 border-stone-300 dark:border-stone-700">
@@ -982,7 +1048,7 @@ Shubham Bhavatu! 🙏`;
                 maxLength={10}
                 value={clean10DigitMobile(clientData.mobile)}
                 onChange={e => updateField('mobile', clean10DigitMobile(e.target.value))}
-                placeholder="----------"
+                placeholder="Optional (10 digits)"
                 className="w-full bg-[#FAF6EF] dark:bg-[#1A1513] text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 rounded-r-xl px-3 py-2 text-xs font-mono font-bold focus:outline-none"
               />
             </div>
@@ -1006,17 +1072,26 @@ Shubham Bhavatu! 🙏`;
               <span>{isTa ? 'ஜாதகம் கணிக்க & பார்க்க' : 'Calculate & View Horoscope'}</span>
             </button>
 
-            {/* Button 2 FOR ASTROLOGER: Create Client Account & Share */}
+            {/* Button 2 FOR ASTROLOGER: Create Client Account & Share OR Save Client Profile */}
             {!shouldHideLookup && (
               <button
                 type="button"
-                onClick={handleCreateClientAccount}
+                onClick={hasValidMobile ? handleCreateClientAccount : handleSaveClientProfile}
                 disabled={isRegistering}
-                className="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-md shadow-emerald-950/20 transition-all cursor-pointer flex items-center gap-1.5"
-                title="Save client birth details, set password, and create client login account"
+                className="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-md shadow-emerald-950/20 transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                title={hasValidMobile ? 'Create client login account with mobile and share credentials' : 'Save client profile to database and referrals without mobile number'}
               >
-                <PlusCircle className="w-3.5 h-3.5" />
-                <span>{isRegistering ? (isTa ? 'சேமிக்கப்படுகிறது...' : 'Saving...') : (isTa ? 'கிளையண்ட் கணக்கு & பகிர்வு' : 'Create Client Account & Share')}</span>
+                {hasValidMobile ? (
+                  <>
+                    <PlusCircle className="w-3.5 h-3.5" />
+                    <span>{isRegistering ? (isTa ? 'சேமிக்கப்படுகிறது...' : 'Saving...') : (isTa ? 'கிளையண்ட் கணக்கு & பகிர்வு' : 'Create Client Account & Share')}</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="w-3.5 h-3.5" />
+                    <span>{isRegistering ? (isTa ? 'சேமிக்கப்படுகிறது...' : 'Saving...') : (isTa ? 'சுயவிவரத்தை சேமிக்க' : 'Save Client Profile')}</span>
+                  </>
+                )}
               </button>
             )}
           </div>

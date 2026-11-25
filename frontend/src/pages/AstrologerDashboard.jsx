@@ -44,6 +44,7 @@ import { MATCH_I18N } from '../matchmakingI18n';
 import { useClientBirth } from '../context/ClientBirthContext';
 import BirthDetailsIntakeCard from '../components/BirthDetailsIntakeCard';
 import { calculateThirukanithaHoroscope, NAKSHATRAS, RASHIS } from '../utils/thirukanithaEngine';
+import { clean10DigitMobile } from '../utils/phoneUtils';
 
 export default function AstrologerDashboard({ activeTab: propTab, onTabChange }) {
   const { user, setUser } = useAuth();
@@ -239,6 +240,23 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   const [loadingClient, setLoadingClient] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [referredData, setReferredData] = useState({ totalReferred: 0, clients: [] });
+
+  // Edit Client Modal State for Referred Page
+  const [editingClient, setEditingClient] = useState(null);
+  const [editClientForm, setEditClientForm] = useState({
+    name: '',
+    mobile: '',
+    password: '',
+    fatherName: '',
+    motherName: '',
+    nativePlace: '',
+    gender: 'male',
+    dob: '',
+    dobTime: '',
+    dobPlace: '',
+  });
+  const [savingEditClient, setSavingEditClient] = useState(false);
+  const [editClientSuccessMsg, setEditClientSuccessMsg] = useState('');
 
   const [isOnline, setIsOnline] = useState(true);
   const [ratePerMinute, setRatePerMinute] = useState(25);
@@ -625,6 +643,128 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
     } catch (err) {
       alert('Failed to load client receipt: ' + err.message);
     }
+  };
+
+  const handleOpenEditClientModal = (cl) => {
+    setEditingClient(cl);
+    setEditClientForm({
+      name: cl.name || '',
+      mobile: cl.mobile || '',
+      password: cl.plainInitialPassword || 'Client@123',
+      fatherName: cl.fatherName || cl.father || '',
+      motherName: cl.motherName || cl.mother || '',
+      nativePlace: cl.nativePlace || '',
+      gender: cl.gender || 'male',
+      dob: cl.dob || '',
+      dobTime: cl.dobTime || '',
+      dobPlace: cl.dobPlace || cl.city || '',
+    });
+    setEditClientSuccessMsg('');
+  };
+
+  const handleSaveEditClient = async (triggerWhatsApp = false) => {
+    if (!editClientForm.name.trim()) {
+      alert(lang === 'ta' ? 'தயவுசெய்து வாடிக்கையாளர் பெயரை உள்ளிடவும்.' : 'Please enter Client Name.');
+      return;
+    }
+    const cleanMobile = clean10DigitMobile(editClientForm.mobile);
+    if (triggerWhatsApp && (!cleanMobile || cleanMobile.length !== 10)) {
+      alert(lang === 'ta' ? 'வாட்ஸ்அப் அனுப்ப சரியான 10-இலக்க மொபைல் எண் தேவை.' : 'Valid 10-digit mobile number required to send WhatsApp credentials.');
+      return;
+    }
+
+    setSavingEditClient(true);
+    try {
+      const res = await API.updateClientByAstrologer(editingClient.id || editingClient.clientCode, {
+        ...editClientForm,
+        mobile: cleanMobile || '',
+      });
+
+      setEditClientSuccessMsg(lang === 'ta' ? 'விவரங்கள் வெற்றிகரமாக புதுப்பிக்கப்பட்டது!' : 'Client particulars updated successfully!');
+
+      // If WhatsApp requested
+      if (triggerWhatsApp && cleanMobile) {
+        const cleanPhone = cleanMobile.replace(/[^0-9]/g, '');
+        const phoneParam = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+        const loginUrl = `${window.location.origin}/login`;
+        const waText = `🕉️ *ASTROJIT VEDIC ASTROLOGY - CLIENT LOGIN CREDENTIALS*
+
+வணக்கம் / Greetings *${editClientForm.name}*,
+உங்கள் வேத ஜாதக போர்ட்டல் கணக்கு விவரங்கள்:
+Your Astrojit Client Portal login credentials:
+
+----------------------------------------
+🔐 *YOUR LOGIN DETAILS*
+*Portal URL:* ${loginUrl}
+*Client ID:* ${editingClient.clientCode || 'CLI-Client'}
+*Username (Mobile):* ${cleanMobile}
+*Password:* ${editClientForm.password}
+
+----------------------------------------
+👤 *NATIVE DETAILS*
+*DOB:* ${editClientForm.dob} | ${editClientForm.dobTime}
+*Place:* ${editClientForm.dobPlace}
+
+*Astrologer:* ${user?.name || 'Astrojit Astrologer'}
+*Contact:* ${user?.mobile || ''}
+
+_You can log in anytime to view your complete Vedic Horoscope, Predictions, Daily Panchangam, and Matchmaking services._
+Shubham Bhavatu! 🙏`;
+
+        const waUrl = `https://api.whatsapp.com/send?phone=${phoneParam}&text=${encodeURIComponent(waText)}`;
+        window.open(waUrl, '_blank');
+      }
+
+      // Reload referred clients
+      const data = await API.getReferredClients();
+      setReferredData(data);
+
+      setTimeout(() => {
+        setEditingClient(null);
+      }, 1500);
+    } catch (err) {
+      alert((lang === 'ta' ? 'புதுப்பிக்க முடியவில்லை: ' : 'Failed to update client: ') + err.message);
+    } finally {
+      setSavingEditClient(false);
+    }
+  };
+
+  const handleSendWhatsAppQuick = (cl) => {
+    const cleanMobile = clean10DigitMobile(cl.mobile);
+    if (!cleanMobile || cleanMobile.length !== 10) {
+      alert(lang === 'ta' ? 'இந்த வாடிக்கையாளருக்கு மொபைல் எண் இல்லை. "Edit" சொடுக்கி மொபைல் எண்ணை சேர்க்கவும்.' : 'This client has no mobile number. Click "Edit" to add mobile number first.');
+      return;
+    }
+    const cleanPhone = cleanMobile.replace(/[^0-9]/g, '');
+    const phoneParam = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+    const loginUrl = `${window.location.origin}/login`;
+    const pwd = cl.plainInitialPassword || 'Client@123';
+    const waText = `🕉️ *ASTROJIT VEDIC ASTROLOGY - CLIENT LOGIN CREDENTIALS*
+
+வணக்கம் / Greetings *${cl.name}*,
+உங்கள் வேத ஜாதக போர்ட்டல் கணக்கு விவரங்கள்:
+Your Astrojit Client Portal login credentials:
+
+----------------------------------------
+🔐 *YOUR LOGIN DETAILS*
+*Portal URL:* ${loginUrl}
+*Client ID:* ${cl.clientCode || 'CLI-Client'}
+*Username (Mobile):* ${cleanMobile}
+*Password:* ${pwd}
+
+----------------------------------------
+👤 *NATIVE DETAILS*
+*DOB:* ${cl.dob} | ${cl.dobTime}
+*Place:* ${cl.dobPlace || cl.nativePlace || cl.city}
+
+*Astrologer:* ${user?.name || 'Astrojit Astrologer'}
+*Contact:* ${user?.mobile || ''}
+
+_You can log in anytime to view your complete Vedic Horoscope, Predictions, Daily Panchangam, and Matchmaking services._
+Shubham Bhavatu! 🙏`;
+
+    const waUrl = `https://api.whatsapp.com/send?phone=${phoneParam}&text=${encodeURIComponent(waText)}`;
+    window.open(waUrl, '_blank');
   };
 
   return (
@@ -2109,6 +2249,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-slate-200 text-slate-500 font-semibold">
+                    <th className="py-2 px-2.5">Client ID</th>
                     <th className="py-2 px-2.5">{t('thClientName')}</th>
                     <th className="py-2 px-2.5">{t('thMobile')}</th>
                     <th className="py-2 px-2.5">{t('thDobTime')}</th>
@@ -2119,28 +2260,66 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                 <tbody className="divide-y divide-slate-100">
                   {referredData.clients.map((cl) => (
                     <tr key={cl.id} className="hover:bg-amber-50/40">
+                      <td className="py-2.5 px-2.5 font-mono text-[11px] font-bold text-indigo-700">
+                        <span className="bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-md">
+                          {cl.clientCode || 'CLI-Client'}
+                        </span>
+                      </td>
                       <td className="py-2.5 px-2.5 font-bold text-slate-900">{cl.name}</td>
-                      <td className="py-2.5 px-2.5 font-mono text-amber-800 font-bold">{cl.mobile}</td>
+                      <td className="py-2.5 px-2.5 font-mono font-bold">
+                        {cl.mobile ? (
+                          <span className="text-amber-800">{cl.mobile}</span>
+                        ) : (
+                          <span className="text-slate-400 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded text-[10px] font-normal">
+                            {lang === 'ta' ? 'எண் இல்லை' : 'No Mobile'}
+                          </span>
+                        )}
+                      </td>
                       <td className="py-2.5 px-2.5 text-slate-700">{cl.dob} ({cl.dobTime})</td>
-                      <td className="py-2.5 px-2.5 text-slate-700">{cl.dobPlace}</td>
+                      <td className="py-2.5 px-2.5 text-slate-700">{cl.dobPlace || cl.nativePlace || cl.city}</td>
                       <td className="py-2.5 px-2.5 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
+                        <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                          {/* Edit button */}
+                          <button
+                            onClick={() => handleOpenEditClientModal(cl)}
+                            className="bg-amber-500 hover:bg-amber-600 text-white px-2 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-2xs flex items-center gap-1"
+                            title={lang === 'ta' ? 'விவரங்களைத் திருத்து & மொபைல் எண் சேர்க்க' : 'Edit Client Details & Add Mobile'}
+                          >
+                            <span>✏️</span>
+                            <span>{lang === 'ta' ? 'திருத்து' : 'Edit'}</span>
+                          </button>
+
+                          {/* WhatsApp Credentials trigger */}
+                          {cl.mobile ? (
+                            <button
+                              onClick={() => handleSendWhatsAppQuick(cl)}
+                              className="bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-2xs flex items-center gap-1"
+                              title={lang === 'ta' ? 'வாட்ஸ்அப்பில் உள்நுழைவு விவரங்களை அனுப்புக' : 'Send WhatsApp Login Credentials'}
+                            >
+                              <span>📲</span>
+                              <span>WhatsApp</span>
+                            </button>
+                          ) : null}
+
+                          {/* Receipt */}
                           <button
                             onClick={() => handleViewClientReceipt(cl.id)}
-                            className="bg-amber-50 hover:bg-amber-500 hover:text-white text-amber-900 border border-amber-300 px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-2xs flex items-center gap-1"
+                            className="bg-amber-50 hover:bg-amber-500 hover:text-white text-amber-900 border border-amber-300 px-2 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-2xs flex items-center gap-1"
                             title="Print / Share Official Registration Receipt"
                           >
                             <span>🧾</span>
                             <span>Receipt</span>
                           </button>
+
+                          {/* View details */}
                           <button
                             onClick={() => {
                               setActiveTab('search');
-                              handleSelectClient(cl.mobile);
+                              handleSelectClient(cl.mobile || cl.clientCode);
                             }}
-                            className="bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer"
+                            className="bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-700 border border-indigo-200 px-2 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer"
                           >
-                            {lang === 'ta' ? 'விவரங்களைப் பார்க்க' : 'View Details'}
+                            {lang === 'ta' ? 'விவரங்கள்' : 'View'}
                           </button>
                         </div>
                       </td>
@@ -2450,6 +2629,229 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
               </div>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* Astrologer Edit Client Particulars & Trigger WhatsApp Modal */}
+      {editingClient && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-stone-200">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 border-b border-stone-100 bg-[#FAF7F2] rounded-t-2xl">
+              <div>
+                <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
+                  <span>✏️</span>
+                  <span>{lang === 'ta' ? 'வாடிக்கையாளர் விவரங்களைத் திருத்து' : 'Edit Client Profile & Login'}</span>
+                </h3>
+                <p className="text-xs text-stone-500 mt-0.5">
+                  Client ID: <span className="font-mono font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-1.5 py-0.5 rounded">{editingClient.clientCode || 'CLI-Client'}</span>
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingClient(null)}
+                className="text-stone-400 hover:text-stone-700 p-1.5 rounded-lg hover:bg-stone-200 text-lg transition-colors cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-4 sm:p-5 space-y-3.5 text-xs">
+              {editClientSuccessMsg && (
+                <div className="p-2.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl font-bold flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>{editClientSuccessMsg}</span>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Full Name */}
+                <div className="sm:col-span-2">
+                  <label className="block font-bold text-stone-800 mb-1">
+                    {lang === 'ta' ? 'முழு பெயர் *' : 'Full Name *'}
+                  </label>
+                  <input
+                    type="text"
+                    value={editClientForm.name}
+                    onChange={(e) => setEditClientForm({ ...editClientForm, name: e.target.value })}
+                    className="w-full bg-[#FAF6EF] border border-stone-300 rounded-xl px-3 py-2 text-stone-900 font-bold focus:outline-none"
+                    placeholder="Full Name"
+                    required
+                  />
+                </div>
+
+                {/* Mobile Number */}
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    {lang === 'ta' ? 'வாடிக்கையாளர் மொபைல் (10 இலக்கம்)' : 'Client Mobile No. (10 Digits)'}
+                  </label>
+                  <div className="flex">
+                    <span className="bg-stone-200 px-2.5 py-2 rounded-l-xl text-xs font-bold text-stone-600 border border-r-0 border-stone-300">
+                      +91
+                    </span>
+                    <input
+                      type="tel"
+                      maxLength={10}
+                      value={editClientForm.mobile}
+                      onChange={(e) => setEditClientForm({ ...editClientForm, mobile: clean10DigitMobile(e.target.value) })}
+                      className="w-full bg-[#FAF6EF] border border-stone-300 rounded-r-xl px-3 py-2 text-stone-900 font-mono font-bold focus:outline-none"
+                      placeholder="10-digit mobile"
+                    />
+                  </div>
+                  <span className="text-[10px] text-stone-500 mt-0.5 block">
+                    {lang === 'ta' ? 'உள்நுழைவு பயனர்பெயராகவும் வாட்ஸ்அப்பிற்கும் பயன்படும்.' : 'Used as login username & for WhatsApp.'}
+                  </span>
+                </div>
+
+                {/* Password */}
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    {lang === 'ta' ? 'போர்ட்டல் கடவுச்சொல்' : 'Client Portal Password'}
+                  </label>
+                  <input
+                    type="text"
+                    value={editClientForm.password}
+                    onChange={(e) => setEditClientForm({ ...editClientForm, password: e.target.value })}
+                    className="w-full bg-[#FAF6EF] border border-stone-300 rounded-xl px-3 py-2 text-stone-900 font-mono font-bold focus:outline-none"
+                    placeholder="Client@123"
+                  />
+                  <span className="text-[10px] text-stone-500 mt-0.5 block">
+                    {lang === 'ta' ? 'வாடிக்கையாளரின் ஆரம்ப கடவுச்சொல்.' : 'Initial password for client login.'}
+                  </span>
+                </div>
+
+                {/* Gender */}
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    {lang === 'ta' ? 'பாலினம்' : 'Gender'}
+                  </label>
+                  <select
+                    value={editClientForm.gender}
+                    onChange={(e) => setEditClientForm({ ...editClientForm, gender: e.target.value })}
+                    className="w-full bg-[#FAF6EF] border border-stone-300 rounded-xl px-3 py-2 text-stone-900 font-bold focus:outline-none cursor-pointer"
+                  >
+                    <option value="male">{lang === 'ta' ? 'ஆண் (Male)' : 'Male'}</option>
+                    <option value="female">{lang === 'ta' ? 'பெண் (Female)' : 'Female'}</option>
+                  </select>
+                </div>
+
+                {/* Native Place */}
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    {lang === 'ta' ? 'சொந்த ஊர்' : 'Native Place'}
+                  </label>
+                  <input
+                    type="text"
+                    value={editClientForm.nativePlace}
+                    onChange={(e) => setEditClientForm({ ...editClientForm, nativePlace: e.target.value })}
+                    className="w-full bg-[#FAF6EF] border border-stone-300 rounded-xl px-3 py-2 text-stone-900 font-bold focus:outline-none"
+                    placeholder="Native place"
+                  />
+                </div>
+
+                {/* DOB */}
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    {lang === 'ta' ? 'பிறந்த தேதி' : 'Date of Birth (YYYY-MM-DD)'}
+                  </label>
+                  <input
+                    type="date"
+                    value={editClientForm.dob}
+                    onChange={(e) => setEditClientForm({ ...editClientForm, dob: e.target.value })}
+                    className="w-full bg-[#FAF6EF] border border-stone-300 rounded-xl px-3 py-2 text-stone-900 font-bold focus:outline-none"
+                  />
+                </div>
+
+                {/* Birth Time */}
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    {lang === 'ta' ? 'பிறந்த நேரம்' : 'Birth Time (HH:MM / AM/PM)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={editClientForm.dobTime}
+                    onChange={(e) => setEditClientForm({ ...editClientForm, dobTime: e.target.value })}
+                    className="w-full bg-[#FAF6EF] border border-stone-300 rounded-xl px-3 py-2 text-stone-900 font-bold focus:outline-none"
+                    placeholder="e.g. 05:15:00 AM"
+                  />
+                </div>
+
+                {/* Birth Place */}
+                <div className="sm:col-span-2">
+                  <label className="block font-bold text-stone-800 mb-1">
+                    {lang === 'ta' ? 'பிறந்த இடம்' : 'Birth Place / City'}
+                  </label>
+                  <input
+                    type="text"
+                    value={editClientForm.dobPlace}
+                    onChange={(e) => setEditClientForm({ ...editClientForm, dobPlace: e.target.value })}
+                    className="w-full bg-[#FAF6EF] border border-stone-300 rounded-xl px-3 py-2 text-stone-900 font-bold focus:outline-none"
+                    placeholder="e.g. Hosur, Tamil Nadu"
+                  />
+                </div>
+
+                {/* Father's Name */}
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    {lang === 'ta' ? 'தந்தை பெயர்' : "Father's Name"}
+                  </label>
+                  <input
+                    type="text"
+                    value={editClientForm.fatherName}
+                    onChange={(e) => setEditClientForm({ ...editClientForm, fatherName: e.target.value })}
+                    className="w-full bg-[#FAF6EF] border border-stone-300 rounded-xl px-3 py-2 text-stone-900 font-bold focus:outline-none"
+                    placeholder="Father's Name"
+                  />
+                </div>
+
+                {/* Mother's Name */}
+                <div>
+                  <label className="block font-bold text-stone-800 mb-1">
+                    {lang === 'ta' ? 'தாய் பெயர்' : "Mother's Name"}
+                  </label>
+                  <input
+                    type="text"
+                    value={editClientForm.motherName}
+                    onChange={(e) => setEditClientForm({ ...editClientForm, motherName: e.target.value })}
+                    className="w-full bg-[#FAF6EF] border border-stone-300 rounded-xl px-3 py-2 text-stone-900 font-bold focus:outline-none"
+                    placeholder="Mother's Name"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="p-4 border-t border-stone-100 bg-stone-50 rounded-b-2xl flex flex-wrap items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setEditingClient(null)}
+                className="px-4 py-2 rounded-xl border border-stone-300 text-stone-700 font-bold text-xs hover:bg-stone-100 transition-colors cursor-pointer"
+              >
+                {lang === 'ta' ? 'ரத்து செய்' : 'Cancel'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleSaveEditClient(false)}
+                disabled={savingEditClient}
+                className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-colors cursor-pointer disabled:opacity-50"
+              >
+                {savingEditClient ? (lang === 'ta' ? 'சேமிக்கிறது...' : 'Saving...') : (lang === 'ta' ? 'மாற்றங்களைச் சேமிக்க' : 'Save Changes')}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleSaveEditClient(true)}
+                disabled={savingEditClient}
+                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                title="Save client details and open WhatsApp with login credentials"
+              >
+                <span>📲</span>
+                <span>{lang === 'ta' ? 'சேமித்து வாட்ஸ்அப் அனுப்ப' : 'Save & Send WhatsApp'}</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

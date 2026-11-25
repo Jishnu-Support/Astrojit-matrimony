@@ -1287,10 +1287,10 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
       starBasis = 'moon',
     } = req.body;
 
-    const cleanMobile = clean10DigitMobile(mobile || req.body.username);
-    if (!name || !cleanMobile) {
+    const cleanMobile = clean10DigitMobile(mobile || req.body.username || '');
+    if (!name || !name.trim()) {
       return res.status(400).json({
-        error: 'Client Name and 10-Digit Mobile Number are required.',
+        error: 'Client Name is required.',
       });
     }
 
@@ -1298,16 +1298,34 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
     const resolvedTime = (dobTime || dobTime12 || req.body.time || '12:00:00').trim();
     const resolvedTime12 = (dobTime12 || dobTime || '12:00:00 PM').trim();
     const resolvedPlace = (typeof dobPlace === 'string' ? dobPlace : (dobPlace?.name || city || req.body.place || nativePlace || 'Salem')).trim();
-    const cleanPassword = (initialPassword || password || req.body.password || 'Astro@123').trim();
+    const cleanPassword = (initialPassword || password || req.body.password || 'Client@123').trim();
     const salt = bcrypt.genSaltSync(8);
     const passwordHash = bcrypt.hashSync(cleanPassword, salt);
 
-    let client = db.clients.find((c) => clean10DigitMobile(c.mobile) === cleanMobile || clean10DigitMobile(c.username) === cleanMobile);
-    const clientCode = client?.clientCode || ('CLI-' + Math.floor(100000 + Math.random() * 900000));
+    // Find existing client: by mobile (if mobile given) or by id/clientCode
+    let client = null;
+    if (cleanMobile) {
+      client = db.clients.find((c) => clean10DigitMobile(c.mobile) === cleanMobile || clean10DigitMobile(c.username) === cleanMobile);
+    } else if (req.body.id) {
+      client = db.clients.find((c) => c.id === req.body.id);
+    } else if (req.body.clientCode) {
+      client = db.clients.find((c) => c.clientCode === req.body.clientCode);
+    }
+
+    // Generate unique Client Code CLI-XXXXXX
+    const generateUniqueClientCode = () => {
+      let code;
+      do {
+        code = 'CLI-' + Math.floor(100000 + Math.random() * 900000);
+      } while (db.clients.some((c) => c.clientCode === code));
+      return code;
+    };
+
+    const clientCode = client?.clientCode || generateUniqueClientCode();
 
     if (client) {
       // If client is already registered under another astrologer, block hijacking
-      if (client.registeredByAstrologerId && client.registeredByAstrologerId !== astro.id) {
+      if (cleanMobile && client.registeredByAstrologerId && client.registeredByAstrologerId !== astro.id) {
         return res.status(400).json({
           error: 'A client with this mobile number is already registered under another astrologer.',
         });
@@ -1453,9 +1471,9 @@ app.post('/api/astrologer/register-client', authenticate, (req, res) => {
       astrologicalSnapshot,
       credentials: {
         portalUrl: `${req.headers.origin || (req.headers.host ? `${req.protocol || 'http'}://${req.headers.host}` : 'http://localhost:3005')}/login`,
-        username: client.mobile,
-        initialPassword: cleanPassword,
-        loginType: 'Mobile Number + Password',
+        username: client.mobile || client.clientCode,
+        initialPassword: client.plainInitialPassword || cleanPassword,
+        loginType: client.mobile ? 'Mobile Number + Password' : 'Client ID (Add Mobile to Enable Login)',
       },
     };
 
@@ -1549,6 +1567,136 @@ app.get('/api/astrologer/client-receipt/:clientId', authenticate, (req, res) => 
   } catch (error) {
     console.error('Fetch client receipt error:', error);
     return res.status(500).json({ error: 'Failed to fetch client receipt' });
+  }
+});
+
+// Astrologer: Update an existing client's details (add mobile, edit particulars, set password)
+app.put('/api/astrologer/client/:clientId', authenticate, (req, res) => {
+  try {
+    const db = readDb();
+    const astro = (db.astrologers || []).find((a) => a.mobile === req.user.mobile || a.id === req.user.id)
+      || (db.astrologers && db.astrologers.length > 0 ? db.astrologers[0] : null)
+      || { id: 'admin-jit', name: 'Astrojit Headquarters', mobile: req.user.mobile || 'jit_admin', referralCode: 'JIT' };
+
+    const { clientId } = req.params;
+    let client = db.clients.find((c) => c.id === clientId || c.clientCode === clientId || (c.mobile && c.mobile === clientId));
+
+    if (!client) {
+      return res.status(404).json({ error: 'Client not found.' });
+    }
+
+    const {
+      name,
+      mobile,
+      fatherName,
+      motherName,
+      nativePlace,
+      gender,
+      dob,
+      dobTime,
+      dobTime12,
+      dobPlace,
+      city,
+      state,
+      country,
+      lat,
+      lon,
+      password,
+    } = req.body;
+
+    if (name && name.trim()) {
+      client.name = name.trim();
+    }
+
+    if (mobile !== undefined) {
+      const cleanMob = clean10DigitMobile(mobile);
+      if (cleanMob) {
+        if (cleanMob.length !== 10) {
+          return res.status(400).json({ error: 'Mobile number must be a valid 10-digit number.' });
+        }
+        // Check duplicate
+        const duplicate = db.clients.find((c) => c.id !== client.id && clean10DigitMobile(c.mobile) === cleanMob);
+        if (duplicate) {
+          return res.status(400).json({ error: `Mobile number ${cleanMob} is already registered to ${duplicate.name}.` });
+        }
+        client.mobile = cleanMob;
+        client.username = cleanMob;
+      }
+    }
+
+    if (fatherName !== undefined) client.fatherName = (fatherName || '').trim();
+    if (motherName !== undefined) client.motherName = (motherName || '').trim();
+    if (nativePlace !== undefined) client.nativePlace = (nativePlace || '').trim();
+    if (gender !== undefined) client.gender = gender;
+    if (dob !== undefined) client.dob = dob.trim();
+    if (dobTime !== undefined) client.dobTime = dobTime.trim();
+    if (dobTime12 !== undefined) client.dobTime12 = dobTime12.trim();
+    if (dobPlace !== undefined) client.dobPlace = (typeof dobPlace === 'string' ? dobPlace : (dobPlace?.name || '')).trim();
+    if (city !== undefined) client.city = (typeof city === 'string' ? city : (city?.name || '')).trim();
+    if (state !== undefined) client.state = (typeof state === 'string' ? state : (state?.name || '')).trim();
+    if (country !== undefined) client.country = country;
+    if (lat !== undefined) client.lat = lat;
+    if (lon !== undefined) client.lon = lon;
+
+    if (password && password.trim().length >= 6) {
+      const cleanPass = password.trim();
+      client.plainInitialPassword = cleanPass;
+      client.passwordHash = bcrypt.hashSync(cleanPass, bcrypt.genSaltSync(8));
+    }
+
+    // Ensure clientCode exists
+    if (!client.clientCode) {
+      client.clientCode = 'CLI-' + Math.floor(100000 + Math.random() * 900000);
+    }
+
+    client.updatedAt = new Date().toISOString();
+    writeDb(db);
+
+    const { passwordHash: _, ...safeClient } = client;
+
+    // Build receipt payload
+    const receipt = {
+      receiptNumber: 'REC-' + (client.clientCode ? client.clientCode.replace('CLI-', '') : Date.now().toString().slice(-6)),
+      clientCode: client.clientCode,
+      registrationDate: client.createdAt || new Date().toISOString(),
+      astrologer: {
+        id: astro.id,
+        name: astro.name || '',
+        mobile: astro.mobile || '',
+        email: astro.email || '',
+        referralCode: astro.referralCode || '',
+        experience: astro.experience || '',
+        officeAddress: astro.officeAddress || astro.address || '',
+      },
+      client: {
+        id: client.id,
+        name: client.name,
+        clientCode: client.clientCode,
+        fatherName: client.fatherName,
+        motherName: client.motherName,
+        gender: client.gender,
+        mobile: client.mobile || '',
+        dob: client.dob,
+        dobTime: client.dobTime,
+        dobPlace: client.dobPlace,
+        nativePlace: client.nativePlace,
+      },
+      credentials: {
+        portalUrl: `${req.headers.origin || (req.headers.host ? `${req.protocol || 'http'}://${req.headers.host}` : 'http://localhost:3005')}/login`,
+        username: client.mobile || client.clientCode,
+        initialPassword: client.plainInitialPassword || 'Client@123',
+        loginType: client.mobile ? 'Mobile Number + Password' : 'Client ID',
+      },
+    };
+
+    return res.json({
+      message: 'Client updated successfully!',
+      client: safeClient,
+      receipt,
+    });
+  } catch (error) {
+    console.error('Update client error:', error);
+    return res.status(500).json({ error: 'Failed to update client: ' + error.message });
   }
 });
 
@@ -1799,13 +1947,14 @@ app.get('/api/astrologer/search-client', authenticate, (req, res) => {
           if (!isOwnClient) return false;
         }
 
+        const cc = (c.clientCode || '').toLowerCase();
         const m = (c.mobile || '').toLowerCase();
         const n = (c.name || '').toLowerCase();
         const dob = (c.dob || '').toLowerCase();
         const pob = (c.dobPlace || c.pob || c.birthPlace || c.place || c.city || c.nativePlace || '').toLowerCase();
         const fn = (c.fatherName || '').toLowerCase();
         const mn = (c.motherName || '').toLowerCase();
-        const combined = `${n} ${fn} ${mn} ${dob} ${pob} ${m}`;
+        const combined = `${cc} ${n} ${fn} ${mn} ${dob} ${pob} ${m}`;
 
         const cleanQueryMobile = clean10DigitMobile(rawQuery);
         const cCleanMobile = clean10DigitMobile(c.mobile || c.username);
@@ -1813,8 +1962,8 @@ app.get('/api/astrologer/search-client', authenticate, (req, res) => {
           return true;
         }
 
-        // Match if query is contained directly in mobile, name, dob, or place (even 1 character)
-        if (m.includes(query) || n.includes(query) || dob.includes(query) || pob.includes(query) || fn.includes(query) || mn.includes(query) || combined.includes(query)) {
+        // Match if query is contained directly in clientCode, mobile, name, dob, place, or parents
+        if (cc.includes(query) || m.includes(query) || n.includes(query) || dob.includes(query) || pob.includes(query) || fn.includes(query) || mn.includes(query) || combined.includes(query)) {
           return true;
         }
 
@@ -1900,8 +2049,15 @@ app.get('/api/astrologer/referred-clients', authenticate, (req, res) => {
         );
       })
       .map((c) => {
+        if (!c.clientCode) {
+          c.clientCode = 'CLI-' + Math.floor(100000 + Math.random() * 900000);
+        }
         const { passwordHash, ...data } = c;
-        return data;
+        return {
+          ...data,
+          clientCode: c.clientCode,
+          plainInitialPassword: c.plainInitialPassword || 'Client@123'
+        };
       });
 
     return res.json({
