@@ -41,10 +41,15 @@ import HoroscopeHub from '../components/HoroscopeHub';
 import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
 import HoroscopePagerView from '../components/HoroscopePagerView';
 import { MATCH_I18N } from '../matchmakingI18n';
-import { useClientBirth } from '../context/ClientBirthContext';
+import { useClientBirth, to24HourTime } from '../context/ClientBirthContext';
 import BirthDetailsIntakeCard from '../components/BirthDetailsIntakeCard';
 import { calculateThirukanithaHoroscope, NAKSHATRAS, RASHIS } from '../utils/thirukanithaEngine';
 import { clean10DigitMobile } from '../utils/phoneUtils';
+import { GEO_DATA, lookupCoordinates } from '../data/geoCoordinates';
+
+const HOURS_12 = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
+const MINUTES_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
+const SECONDS_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 
 export default function AstrologerDashboard({ activeTab: propTab, onTabChange }) {
   const { user, setUser } = useAuth();
@@ -137,6 +142,99 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
       return null;
     }
   }, [partnerDetails.dob, partnerDetails.dobTime, partnerDetails.dobPlace, partnerDetails.name]);
+
+  // 12-Hour Time States for Matchmaking (same as in Horoscope)
+  const [p1TimeState, setP1TimeState] = useState({ hour: '10', minute: '30', second: '00', period: 'AM' });
+  const [p2TimeState, setP2TimeState] = useState({ hour: '09', minute: '15', second: '00', period: 'AM' });
+
+  // Place Autocomplete States for Matchmaking (same as in Horoscope)
+  const [p1CityInput, setP1CityInput] = useState('');
+  const [showP1CityDropdown, setShowP1CityDropdown] = useState(false);
+  const p1CityBoxRef = useRef(null);
+
+  const [p2CityInput, setP2CityInput] = useState('');
+  const [showP2CityDropdown, setShowP2CityDropdown] = useState(false);
+  const p2CityBoxRef = useRef(null);
+
+  const updateP1TimePart = (field, val) => {
+    const next = { ...p1TimeState, [field]: val };
+    setP1TimeState(next);
+    const t24 = to24HourTime(next.hour, next.minute, next.second, next.period);
+    setManualPerson1Details(prev => ({
+      ...prev,
+      dobTime: t24,
+      dobTime12: `${next.hour}:${next.minute}:${next.second} ${next.period}`
+    }));
+  };
+
+  const toggleP1Period = () => {
+    const nextPeriod = p1TimeState.period === 'AM' ? 'PM' : 'AM';
+    const next = { ...p1TimeState, period: nextPeriod };
+    setP1TimeState(next);
+    const t24 = to24HourTime(next.hour, next.minute, next.second, next.period);
+    setManualPerson1Details(prev => ({
+      ...prev,
+      dobTime: t24,
+      dobTime12: `${next.hour}:${next.minute}:${next.second} ${next.period}`
+    }));
+  };
+
+  const updateP2TimePart = (field, val) => {
+    const next = { ...p2TimeState, [field]: val };
+    setP2TimeState(next);
+    const t24 = to24HourTime(next.hour, next.minute, next.second, next.period);
+    setPartnerDetails(prev => ({
+      ...prev,
+      dobTime: t24,
+      dobTime12: `${next.hour}:${next.minute}:${next.second} ${next.period}`
+    }));
+  };
+
+  const toggleP2Period = () => {
+    const nextPeriod = p2TimeState.period === 'AM' ? 'PM' : 'AM';
+    const next = { ...p2TimeState, period: nextPeriod };
+    setP2TimeState(next);
+    const t24 = to24HourTime(next.hour, next.minute, next.second, next.period);
+    setPartnerDetails(prev => ({
+      ...prev,
+      dobTime: t24,
+      dobTime12: `${next.hour}:${next.minute}:${next.second} ${next.period}`
+    }));
+  };
+
+  // Close city autocomplete dropdowns on click outside
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (p1CityBoxRef.current && !p1CityBoxRef.current.contains(e.target)) {
+        setShowP1CityDropdown(false);
+      }
+      if (p2CityBoxRef.current && !p2CityBoxRef.current.contains(e.target)) {
+        setShowP2CityDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Filtered cities for Person 1 (strictly Tamil Nadu by default, matching state)
+  const p1CitySuggestions = React.useMemo(() => {
+    const q = (p1CityInput || '').trim().toLowerCase();
+    const tnCities = GEO_DATA['India']?.['Tamil Nadu'] || [];
+    if (!q) return tnCities.slice(0, 15);
+    const starts = tnCities.filter(c => (c.name || '').toLowerCase().startsWith(q));
+    const contains = tnCities.filter(c => !(c.name || '').toLowerCase().startsWith(q) && (c.name || '').toLowerCase().includes(q));
+    return [...starts, ...contains].slice(0, 30);
+  }, [p1CityInput]);
+
+  // Filtered cities for Partner (strictly Tamil Nadu by default, matching state)
+  const p2CitySuggestions = React.useMemo(() => {
+    const q = (p2CityInput || '').trim().toLowerCase();
+    const tnCities = GEO_DATA['India']?.['Tamil Nadu'] || [];
+    if (!q) return tnCities.slice(0, 15);
+    const starts = tnCities.filter(c => (c.name || '').toLowerCase().startsWith(q));
+    const contains = tnCities.filter(c => !(c.name || '').toLowerCase().startsWith(q) && (c.name || '').toLowerCase().includes(q));
+    return [...starts, ...contains].slice(0, 30);
+  }, [p2CityInput]);
   const [activeClientMatchReport, setActiveClientMatchReport] = useState(null);
   const [calculatingActiveMatch, setCalculatingActiveMatch] = useState(false);
   const [activeMatchTab, setActiveMatchTab] = useState('tamil');
@@ -160,6 +258,10 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
       lat: 11.6643,
       lon: 78.1460
     });
+    setP1CityInput('');
+    setP2CityInput('');
+    setP1TimeState({ hour: '10', minute: '30', second: '00', period: 'AM' });
+    setP2TimeState({ hour: '09', minute: '15', second: '00', period: 'AM' });
     setActiveClientMatchReport(null);
   };
 
@@ -1709,29 +1811,129 @@ Shubham Bhavatu! 🙏`;
                               className="w-full bg-white border border-indigo-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-indigo-400"
                             />
                           </div>
+                          {/* Birth Time (12-Hour AM/PM format, same as in Horoscope) */}
                           <div>
                             <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
-                              {lang === 'ta' ? 'பிறந்த நேரம் (24h)' : 'Birth Time (24h)'}
+                              <Clock className="w-3 h-3 inline mr-1 text-indigo-600" />
+                              {lang === 'ta' ? 'பிறந்த நேரம் (12-மணி AM/PM)' : 'Birth Time (12-Hour AM/PM)'}
                             </label>
-                            <input
-                              type="text"
-                              value={manualPerson1Details.dobTime}
-                              onChange={(e) => setManualPerson1Details({ ...manualPerson1Details, dobTime: e.target.value })}
-                              placeholder="HH:MM (e.g. 10:30)"
-                              className="w-full bg-white border border-indigo-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-indigo-400 placeholder:text-slate-400"
-                            />
+                            <div className="flex items-center gap-1">
+                              <select
+                                value={p1TimeState.hour}
+                                onChange={e => updateP1TimePart('hour', e.target.value)}
+                                className="bg-white border border-indigo-200 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-indigo-400"
+                              >
+                                {HOURS_12.map(h => (
+                                  <option key={h} value={h}>{h}</option>
+                                ))}
+                              </select>
+                              <span className="font-bold text-slate-400">:</span>
+                              <select
+                                value={p1TimeState.minute}
+                                onChange={e => updateP1TimePart('minute', e.target.value)}
+                                className="bg-white border border-indigo-200 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-indigo-400"
+                              >
+                                {MINUTES_60.map(m => (
+                                  <option key={m} value={m}>{m}</option>
+                                ))}
+                              </select>
+                              <span className="font-bold text-slate-400">:</span>
+                              <select
+                                value={p1TimeState.second}
+                                onChange={e => updateP1TimePart('second', e.target.value)}
+                                className="bg-white border border-indigo-200 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-indigo-400"
+                              >
+                                {SECONDS_60.map(s => (
+                                  <option key={s} value={s}>{s}</option>
+                                ))}
+                              </select>
+                              <button
+                                type="button"
+                                onClick={toggleP1Period}
+                                className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition-all cursor-pointer shadow-2xs ${
+                                  p1TimeState.period === 'PM'
+                                    ? 'bg-indigo-700 text-white border border-indigo-700'
+                                    : 'bg-amber-600 text-white border border-amber-600'
+                                }`}
+                              >
+                                {p1TimeState.period}
+                              </button>
+                            </div>
                           </div>
-                          <div>
+
+                          {/* Birth City / Place - Search by letter autocomplete (same as in Horoscope) */}
+                          <div ref={p1CityBoxRef} className="relative">
                             <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
-                              {lang === 'ta' ? 'பிறந்த ஊர்' : 'Birth City / Place'}
+                              <MapPin className="w-3 h-3 inline mr-1 text-indigo-600" />
+                              {lang === 'ta' ? 'பிறந்த இடம் (City / Place)' : 'Birth City / Place'}
                             </label>
-                            <input
-                              type="text"
-                              value={manualPerson1Details.dobPlace}
-                              onChange={(e) => setManualPerson1Details({ ...manualPerson1Details, dobPlace: e.target.value })}
-                              placeholder={lang === 'ta' ? 'பிறந்த ஊர்' : 'Enter Birth City / Place'}
-                              className="w-full bg-white border border-indigo-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-indigo-400 placeholder:text-slate-400"
-                            />
+                            <div className="relative">
+                              <input
+                                type="text"
+                                value={p1CityInput}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setP1CityInput(val);
+                                  setManualPerson1Details(prev => ({ ...prev, dobPlace: val }));
+                                  setShowP1CityDropdown(true);
+
+                                  const exact = (GEO_DATA['India']?.['Tamil Nadu'] || []).find(c => c.name.toLowerCase() === val.trim().toLowerCase());
+                                  if (exact) {
+                                    setManualPerson1Details(prev => ({
+                                      ...prev,
+                                      dobPlace: exact.name,
+                                      lat: exact.latDec !== undefined ? exact.latDec : exact.lat,
+                                      lon: exact.lonDec !== undefined ? exact.lonDec : exact.lon
+                                    }));
+                                  }
+                                }}
+                                onFocus={() => setShowP1CityDropdown(true)}
+                                placeholder={lang === 'ta' ? 'ஊர் பெயர் தட்டச்சு செய்க...' : 'Type city name...'}
+                                className="w-full bg-white border border-indigo-200 rounded-lg px-2.5 py-1.5 pr-7 text-xs text-slate-900 font-medium focus:outline-none focus:border-indigo-400 placeholder:text-slate-400"
+                                autoComplete="off"
+                              />
+                              {p1CityInput && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setP1CityInput('');
+                                    setManualPerson1Details(prev => ({ ...prev, dobPlace: '' }));
+                                    setShowP1CityDropdown(true);
+                                  }}
+                                  className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs font-bold cursor-pointer"
+                                  title="Clear"
+                                >
+                                  ✕
+                                </button>
+                              )}
+                            </div>
+
+                            {showP1CityDropdown && p1CitySuggestions.length > 0 && (
+                              <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-indigo-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto divide-y divide-slate-100">
+                                {p1CitySuggestions.map((item, idx) => (
+                                  <button
+                                    key={`${item.name}-${idx}`}
+                                    type="button"
+                                    onClick={() => {
+                                      setP1CityInput(item.name);
+                                      setManualPerson1Details(prev => ({
+                                        ...prev,
+                                        dobPlace: item.name,
+                                        lat: item.latDec !== undefined ? item.latDec : item.lat,
+                                        lon: item.lonDec !== undefined ? item.lonDec : item.lon
+                                      }));
+                                      setShowP1CityDropdown(false);
+                                    }}
+                                    className="w-full text-left px-2.5 py-1.5 text-xs flex items-center justify-between hover:bg-indigo-50 cursor-pointer"
+                                  >
+                                    <span className="font-semibold text-slate-900">{item.name}</span>
+                                    <span className="text-[10px] font-mono text-slate-400">
+                                      ({typeof item.latDec === 'number' ? item.latDec.toFixed(2) : item.lat}°, {typeof item.lonDec === 'number' ? item.lonDec.toFixed(2) : item.lon}°)
+                                    </span>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
 
@@ -1795,29 +1997,129 @@ Shubham Bhavatu! 🙏`;
                           className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400"
                         />
                       </div>
+                      {/* Birth Time (12-Hour AM/PM format, same as in Horoscope) */}
                       <div>
                         <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
-                          {lang === 'ta' ? 'பிறந்த நேரம் (24h)' : 'Birth Time (24h)'}
+                          <Clock className="w-3 h-3 inline mr-1 text-rose-600" />
+                          {lang === 'ta' ? 'பிறந்த நேரம் (12-மணி AM/PM)' : 'Birth Time (12-Hour AM/PM)'}
                         </label>
-                        <input
-                          type="text"
-                          value={partnerDetails.dobTime}
-                          onChange={(e) => setPartnerDetails({ ...partnerDetails, dobTime: e.target.value })}
-                          placeholder="HH:MM (e.g. 09:15)"
-                          className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400 placeholder:text-slate-400"
-                        />
+                        <div className="flex items-center gap-1">
+                          <select
+                            value={p2TimeState.hour}
+                            onChange={e => updateP2TimePart('hour', e.target.value)}
+                            className="bg-white border border-rose-200 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-rose-400"
+                          >
+                            {HOURS_12.map(h => (
+                              <option key={h} value={h}>{h}</option>
+                            ))}
+                          </select>
+                          <span className="font-bold text-slate-400">:</span>
+                          <select
+                            value={p2TimeState.minute}
+                            onChange={e => updateP2TimePart('minute', e.target.value)}
+                            className="bg-white border border-rose-200 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-rose-400"
+                          >
+                            {MINUTES_60.map(m => (
+                              <option key={m} value={m}>{m}</option>
+                            ))}
+                          </select>
+                          <span className="font-bold text-slate-400">:</span>
+                          <select
+                            value={p2TimeState.second}
+                            onChange={e => updateP2TimePart('second', e.target.value)}
+                            className="bg-white border border-rose-200 rounded-lg px-1.5 py-1 text-xs font-bold focus:outline-none focus:border-rose-400"
+                          >
+                            {SECONDS_60.map(s => (
+                              <option key={s} value={s}>{s}</option>
+                            ))}
+                          </select>
+                          <button
+                            type="button"
+                            onClick={toggleP2Period}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition-all cursor-pointer shadow-2xs ${
+                              p2TimeState.period === 'PM'
+                                ? 'bg-rose-700 text-white border border-rose-700'
+                                : 'bg-amber-600 text-white border border-amber-600'
+                            }`}
+                          >
+                            {p2TimeState.period}
+                          </button>
+                        </div>
                       </div>
-                      <div>
+
+                      {/* Birth City / Place - Search by letter autocomplete (same as in Horoscope) */}
+                      <div ref={p2CityBoxRef} className="relative">
                         <label className="text-[10px] uppercase font-bold text-slate-600 block mb-0.5">
-                          {lang === 'ta' ? 'பிறந்த ஊர்' : 'Birth City / Place'}
+                          <MapPin className="w-3 h-3 inline mr-1 text-rose-600" />
+                          {lang === 'ta' ? 'பிறந்த இடம் (City / Place)' : 'Birth City / Place'}
                         </label>
-                        <input
-                          type="text"
-                          value={partnerDetails.dobPlace}
-                          onChange={(e) => setPartnerDetails({ ...partnerDetails, dobPlace: e.target.value })}
-                          placeholder={lang === 'ta' ? 'பிறந்த ஊர்' : 'Enter Birth City / Place'}
-                          className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400 placeholder:text-slate-400"
-                        />
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={p2CityInput}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setP2CityInput(val);
+                              setPartnerDetails(prev => ({ ...prev, dobPlace: val }));
+                              setShowP2CityDropdown(true);
+
+                              const exact = (GEO_DATA['India']?.['Tamil Nadu'] || []).find(c => c.name.toLowerCase() === val.trim().toLowerCase());
+                              if (exact) {
+                                setPartnerDetails(prev => ({
+                                  ...prev,
+                                  dobPlace: exact.name,
+                                  lat: exact.latDec !== undefined ? exact.latDec : exact.lat,
+                                  lon: exact.lonDec !== undefined ? exact.lonDec : exact.lon
+                                }));
+                              }
+                            }}
+                            onFocus={() => setShowP2CityDropdown(true)}
+                            placeholder={lang === 'ta' ? 'ஊர் பெயர் தட்டச்சு செய்க...' : 'Type city name...'}
+                            className="w-full bg-white border border-rose-200 rounded-lg px-2.5 py-1.5 pr-7 text-xs text-slate-900 font-medium focus:outline-none focus:border-rose-400 placeholder:text-slate-400"
+                            autoComplete="off"
+                          />
+                          {p2CityInput && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setP2CityInput('');
+                                setPartnerDetails(prev => ({ ...prev, dobPlace: '' }));
+                                setShowP2CityDropdown(true);
+                              }}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs font-bold cursor-pointer"
+                              title="Clear"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
+
+                        {showP2CityDropdown && p2CitySuggestions.length > 0 && (
+                          <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-rose-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto divide-y divide-slate-100">
+                            {p2CitySuggestions.map((item, idx) => (
+                              <button
+                                key={`${item.name}-${idx}`}
+                                type="button"
+                                onClick={() => {
+                                  setP2CityInput(item.name);
+                                  setPartnerDetails(prev => ({
+                                    ...prev,
+                                    dobPlace: item.name,
+                                    lat: item.latDec !== undefined ? item.latDec : item.lat,
+                                    lon: item.lonDec !== undefined ? item.lonDec : item.lon
+                                  }));
+                                  setShowP2CityDropdown(false);
+                                }}
+                                className="w-full text-left px-2.5 py-1.5 text-xs flex items-center justify-between hover:bg-rose-50 cursor-pointer"
+                              >
+                                <span className="font-semibold text-slate-900">{item.name}</span>
+                                <span className="text-[10px] font-mono text-slate-400">
+                                  ({typeof item.latDec === 'number' ? item.latDec.toFixed(2) : item.lat}°, {typeof item.lonDec === 'number' ? item.lonDec.toFixed(2) : item.lon}°)
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
 
