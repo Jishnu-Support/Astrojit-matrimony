@@ -13,10 +13,12 @@ import {
   Info,
   Flame,
   Award,
+  Zap,
 } from 'lucide-react';
 import { useLang } from '../i18n';
 import { MATCH_I18N, getMatchText, translateEntity } from '../matchmakingI18n';
 import GujaDashaChart from './GujaDashaChart';
+import RahuKetuChart from './RahuKetuChart';
 
 /**
  * Astrojit Classical 10 & 12 Vivaha Porutham Card
@@ -31,6 +33,7 @@ export default function TamilPoruthamCard({ matchReport }) {
   const [expandedPorutham, setExpandedPorutham] = useState(null);
   const [showAllPoruthams, setShowAllPoruthams] = useState(false);
   const [showGujaChart, setShowGujaChart] = useState(false);
+  const [showRahuKetuChart, setShowRahuKetuChart] = useState(false);
 
   if (!matchReport) return null;
 
@@ -692,6 +695,72 @@ export default function TamilPoruthamCard({ matchReport }) {
                 : lang === 'hi'
                 ? 'दोनों कुंडलियों में मंगल दोष परिहार होने से विवाह हेतु शुभ स्थिति है।'
                 : chevvaiAnalysis.compatibilitySummary}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 6. Rahu-Ketu / Sarpa Dosha Section */}
+      {matchReport.rahuKetuAnalysis && (
+        <div className="bg-white border border-teal-200 rounded-2xl p-4 sm:p-5 space-y-3 shadow-xs">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-teal-100 pb-2 gap-2">
+            <div>
+              <h4 className="font-bold text-teal-950 text-xs sm:text-sm flex items-center gap-1.5">
+                <Zap className="w-4 h-4 text-teal-700" />
+                {MATCH_I18N.tabRahuKetu[lang] || MATCH_I18N.tabRahuKetu.en}
+              </h4>
+              <span className="text-[10px] text-slate-500">
+                {lang === 'ta' ? '1/7, 2/8, 5/11 சர்ப்ப தோஷ அச்சு மற்றும் சமநிலை ஆய்வு' : '1/7, 2/8, 5/11 Nodal Axis & Sarpa Samyam Evaluation'}
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowRahuKetuChart(!showRahuKetuChart)}
+              className="text-[11px] font-bold px-3 py-1 bg-gradient-to-r from-teal-700 to-cyan-800 hover:from-teal-800 hover:to-cyan-900 text-white rounded-lg shadow-2xs cursor-pointer flex items-center gap-1.5 transition-all self-end sm:self-auto"
+            >
+              <Zap className="w-3.5 h-3.5 text-amber-300" />
+              <span>
+                {showRahuKetuChart
+                  ? (lang === 'ta' ? '▲ கட்டத்தை மறைக்கவும்' : '▲ Hide Chart')
+                  : (lang === 'ta' ? '▼ சர்ப்ப தோஷக் கட்ட ஆய்வு' : '▼ View Rahu-Ketu Chart')}
+              </span>
+            </button>
+          </div>
+
+          {/* Expandable Rahu-Ketu Chart */}
+          {showRahuKetuChart && (
+            <div className="pt-2 border-t border-teal-100">
+              <RahuKetuChart matchReport={matchReport} />
+            </div>
+          )}
+
+          {/* Compact summary row if collapsed */}
+          {!showRahuKetuChart && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="p-3 bg-teal-50/50 rounded-xl border border-teal-100 flex justify-between items-center">
+                <span className="font-bold text-teal-950">
+                  {lang === 'ta' ? 'மணமகன் சர்ப்ப நிலை:' : "Groom's Axis:"} {lang === 'ta' ? matchReport.rahuKetuAnalysis.boy?.axisNameTamil : matchReport.rahuKetuAnalysis.boy?.axisName}
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-100 text-teal-900">
+                  {lang === 'ta' ? matchReport.rahuKetuAnalysis.boy?.doshaLevelTamil : matchReport.rahuKetuAnalysis.boy?.doshaLevel}
+                </span>
+              </div>
+              <div className="p-3 bg-purple-50/50 rounded-xl border border-purple-100 flex justify-between items-center">
+                <span className="font-bold text-purple-950">
+                  {lang === 'ta' ? 'மணமகள் சர்ப்ப நிலை:' : "Bride's Axis:"} {lang === 'ta' ? matchReport.rahuKetuAnalysis.girl?.axisNameTamil : matchReport.rahuKetuAnalysis.girl?.axisName}
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-900">
+                  {lang === 'ta' ? matchReport.rahuKetuAnalysis.girl?.doshaLevelTamil : matchReport.rahuKetuAnalysis.girl?.doshaLevel}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {matchReport.rahuKetuAnalysis.doshaSamyam && (
+            <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-700">
+              <strong>{MATCH_I18N.compatibilityVerdictHeading[lang] || MATCH_I18N.compatibilityVerdictHeading.en}</strong>{' '}
+              {lang === 'ta' ? matchReport.rahuKetuAnalysis.doshaSamyam.summary : matchReport.rahuKetuAnalysis.doshaSamyam.summary}
             </div>
           )}
         </div>

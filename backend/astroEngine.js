@@ -1179,6 +1179,323 @@ function calculateGujaDashaAnalysis(boyInput = {}, girlInput = {}) {
 }
 
 /**
+ * Detailed Rahu-Ketu (Sarpa) Dosha Evaluation with Classical Sastric Nivrutti Rules
+ */
+function evaluateDetailedRahuKetu(grahas, personInput = {}) {
+  const { rashis } = grahas;
+  const lagnaRasi = rashis.lagna;
+  const moonRasi = rashis.moon;
+  const venusRasi = rashis.venus;
+  const rahuRasi = rashis.rahu;
+  const ketuRasi = rashis.ketu;
+  const jupRasi = rashis.jupiter;
+
+  // Exact houses of Rahu & Ketu from Lagna, Moon, Venus
+  const houseLagnaRahu = ((rahuRasi - lagnaRasi + 12) % 12) + 1;
+  const houseLagnaKetu = ((ketuRasi - lagnaRasi + 12) % 12) + 1;
+
+  const houseMoonRahu = ((rahuRasi - moonRasi + 12) % 12) + 1;
+  const houseMoonKetu = ((ketuRasi - moonRasi + 12) % 12) + 1;
+
+  const houseVenusRahu = ((rahuRasi - venusRasi + 12) % 12) + 1;
+  const houseVenusKetu = ((ketuRasi - venusRasi + 12) % 12) + 1;
+
+  // Determine Axis Type from Lagna
+  let axisType = 'Other';
+  let axisName = 'Neutral Axis (No Kalathra Dosha)';
+  let axisNameTamil = 'தோஷமற்ற நடுநிலை அச்சு';
+  let isKalathraDosha = false;
+  let isMangalyaDosha = false;
+  let isPutraDosha = false;
+  let isSukhaDosha = false;
+
+  if (houseLagnaRahu === 1 || houseLagnaRahu === 7) {
+    axisType = '1_7_Axis';
+    axisName = '1st / 7th Axis (Kalathra Sarpa Dosha)';
+    axisNameTamil = '1 / 7 ஆம் இடம் (களத்திர சர்ப்ப தோஷம்)';
+    isKalathraDosha = true;
+  } else if (houseLagnaRahu === 2 || houseLagnaRahu === 8) {
+    axisType = '2_8_Axis';
+    axisName = '2nd / 8th Axis (Mangalya & Kutumba Sarpa Dosha)';
+    axisNameTamil = '2 / 8 ஆம் இடம் (மாங்கல்ய & குடும்ப சர்ப்ப தோஷம்)';
+    isMangalyaDosha = true;
+  } else if (houseLagnaRahu === 5 || houseLagnaRahu === 11) {
+    axisType = '5_11_Axis';
+    axisName = '5th / 11th Axis (Putra / Naga Dosha)';
+    axisNameTamil = '5 / 11 ஆம் இடம் (புத்திர நாக தோஷம்)';
+    isPutraDosha = true;
+  } else if (houseLagnaRahu === 4 || houseLagnaRahu === 12) {
+    axisType = '4_12_Axis';
+    axisName = '4th / 12th Axis (Sukha / Sayana Dosha)';
+    axisNameTamil = '4 / 12 ஆம் இடம் (சுக / சயன தோஷம்)';
+    isSukhaDosha = true;
+  }
+
+  const rawHasDosha = isKalathraDosha || isMangalyaDosha || isPutraDosha || isSukhaDosha;
+
+  // Sastric Nivrutti (Cancellations) for Rahu-Ketu
+  const cancellations = [];
+
+  // 1. Guru Parvai (Jupiter aspect on Rahu or Ketu or 7th house)
+  const distFromGuruToRahu = ((rahuRasi - jupRasi + 12) % 12) + 1;
+  const distFromGuruToKetu = ((ketuRasi - jupRasi + 12) % 12) + 1;
+  const isGuruAspectRahu = [1, 5, 7, 9].includes(distFromGuruToRahu);
+  const isGuruAspectKetu = [1, 5, 7, 9].includes(distFromGuruToKetu);
+
+  if (isGuruAspectRahu || isGuruAspectKetu) {
+    cancellations.push('Guru Parvai Nivrutti: Jupiter conjuncts or directly aspects Rahu/Ketu, fully purifying the nodal axis.');
+  }
+
+  // 2. Favorable signs for Rahu (Taurus, Gemini, Virgo, Aquarius)
+  if ([1, 2, 5, 10].includes(rahuRasi)) {
+    cancellations.push('Favorable Rahu Sign: Rahu placed in auspicious/own sign (Taurus/Gemini/Virgo/Aquarius).');
+  }
+
+  // 3. Favorable signs for Ketu (Scorpio, Sagittarius, Pisces)
+  if ([7, 8, 11].includes(ketuRasi)) {
+    cancellations.push('Favorable Ketu Sign: Ketu placed in exaltation/moksha sign (Scorpio/Sagittarius/Pisces).');
+  }
+
+  // 4. Benefic Conjunction (Venus or Jupiter in same sign)
+  if (rahuRasi === rashis.venus || ketuRasi === rashis.venus) {
+    cancellations.push('Sukra Chaya Yoga: Conjunction with natural benefic Venus softens nodal severity.');
+  }
+
+  // 5. Upachaya placement from Moon
+  if ([3, 6, 11].includes(houseMoonRahu) && [3, 6, 11].includes(houseMoonKetu)) {
+    cancellations.push('Upachaya Bhava Exemption: Nodes in 3rd/6th/11th from Moon act as wealth and courage givers.');
+  }
+
+  const isCancelled = rawHasDosha && cancellations.length > 0;
+  const netHasDosha = rawHasDosha && !isCancelled;
+
+  let doshaLevel = 'None';
+  let doshaLevelTamil = 'தோஷம் இல்லை';
+  if (netHasDosha) {
+    if (isKalathraDosha || isMangalyaDosha) {
+      doshaLevel = 'High (Severe Sarpa Dosha)';
+      doshaLevelTamil = 'அதி தீவிர சர்ப்ப தோஷம்';
+    } else {
+      doshaLevel = 'Moderate / Mild';
+      doshaLevelTamil = 'மிதமான சர்ப்ப தோஷம்';
+    }
+  } else if (isCancelled) {
+    doshaLevel = 'Exempted / Cancelled (Nivrutti)';
+    doshaLevelTamil = 'தோஷ நிவர்த்தி (சாஸ்திர விதிப்படி நீக்கம்)';
+  }
+
+  return {
+    axisType,
+    axisName,
+    axisNameTamil,
+    hasDosha: rawHasDosha,
+    isCancelled,
+    netHasDosha,
+    doshaLevel,
+    doshaLevelTamil,
+    isKalathraDosha,
+    isMangalyaDosha,
+    isPutraDosha,
+    isSukhaDosha,
+    houses: {
+      lagnaRahu: houseLagnaRahu,
+      lagnaKetu: houseLagnaKetu,
+      moonRahu: houseMoonRahu,
+      moonKetu: houseMoonKetu,
+      venusRahu: houseVenusRahu,
+      venusKetu: houseVenusKetu,
+    },
+    cancellations: cancellations.length > 0 ? cancellations : ['Favorable nodal disposition / neutral bhava alignment'],
+    verdict: netHasDosha ? `${axisName} Present` : isCancelled ? `${axisName} Cancelled (Nivrutti)` : 'Free from Rahu-Ketu Dosha',
+    verdictTamil: netHasDosha ? `${axisNameTamil} உள்ளது` : isCancelled ? `${axisNameTamil} நிவர்த்தி` : 'ராகு-கேது தோஷம் இல்லை'
+  };
+}
+
+/**
+ * South Indian 12-Cell Rasi Chart Builder specifically highlighting Rahu & Ketu
+ */
+function buildSouthIndianRahuKetuChart(grahas, rkInfo) {
+  const { rashis } = grahas;
+  const cells = [];
+
+  for (let sIdx = 0; sIdx < 12; sIdx++) {
+    const occupants = [];
+    if (rashis.lagna === sIdx) occupants.push({ name: 'Lagna', code: 'ASC / ல', isLagna: true });
+    if (rashis.rahu === sIdx) occupants.push({
+      name: 'Rahu',
+      code: 'ராகு / Rahu',
+      isRahu: true,
+      houseFromLagna: rkInfo.houses.lagnaRahu,
+      isDoshaHouse: [1, 2, 7, 8].includes(rkInfo.houses.lagnaRahu)
+    });
+    if (rashis.ketu === sIdx) occupants.push({
+      name: 'Ketu',
+      code: 'கேது / Ketu',
+      isKetu: true,
+      houseFromLagna: rkInfo.houses.lagnaKetu,
+      isDoshaHouse: [1, 2, 7, 8].includes(rkInfo.houses.lagnaKetu)
+    });
+    if (rashis.mars === sIdx) occupants.push({ name: 'Mars', code: 'செவ் / Mars', isMars: true });
+    if (rashis.moon === sIdx) occupants.push({ name: 'Moon', code: 'சந் / Moon', isMoon: true });
+    if (rashis.venus === sIdx) occupants.push({ name: 'Venus', code: 'சுக் / Ven', isVenus: true });
+    if (rashis.jupiter === sIdx) occupants.push({ name: 'Jupiter', code: 'குரு / Jup', isJupiter: true });
+    if (rashis.sun === sIdx) occupants.push({ name: 'Sun', code: 'சூரி / Sun' });
+    if (rashis.mercury === sIdx) occupants.push({ name: 'Mercury', code: 'புதன் / Mer' });
+    if (rashis.saturn === sIdx) occupants.push({ name: 'Saturn', code: 'சனி / Sat' });
+
+    cells.push({
+      signIdx: sIdx,
+      signName: RASHIS[sIdx]?.name,
+      signTamil: RASHIS[sIdx]?.tamil,
+      occupants
+    });
+  }
+
+  return cells;
+}
+
+/**
+ * Full Classical Rahu-Ketu (Sarpa) Matchmaking Analysis
+ */
+function calculateRahuKetuMatchAnalysis(boyInput = {}, girlInput = {}) {
+  const boyGrahas = computePersonGrahas(boyInput);
+  const girlGrahas = computePersonGrahas(girlInput);
+
+  const boyRK = evaluateDetailedRahuKetu(boyGrahas, boyInput);
+  const girlRK = evaluateDetailedRahuKetu(girlGrahas, girlInput);
+
+  const boyChartCells = buildSouthIndianRahuKetuChart(boyGrahas, boyRK);
+  const girlChartCells = buildSouthIndianRahuKetuChart(girlGrahas, girlRK);
+
+  const boyDasha = computePersonDashaTimeline(boyGrahas);
+  const girlDasha = computePersonDashaTimeline(girlGrahas);
+
+  // Extract Rahu & Ketu Mahadashas
+  const boyRahuDasha = boyDasha.allDashas.find(d => d.lordId === 'rahu') || {};
+  const boyKetuDasha = boyDasha.allDashas.find(d => d.lordId === 'ketu') || {};
+  const girlRahuDasha = girlDasha.allDashas.find(d => d.lordId === 'rahu') || {};
+  const girlKetuDasha = girlDasha.allDashas.find(d => d.lordId === 'ketu') || {};
+
+  // Dosha Samyam (Mutual Balance / Neutralization)
+  let samyamVerdict = 'Auspicious (Dosha Samyam Achieved)';
+  let samyamVerdictTamil = 'சுபமானது (சர்ப்ப தோஷ சமநிலை பெற்றது)';
+  let samyamSummary = 'Both horoscopes possess classical dosha nivrutti or matching nodal placement, ensuring harmony.';
+
+  // If both have sensitive axes (1/7 or 2/8)
+  const isBoySensitive = boyRK.isKalathraDosha || boyRK.isMangalyaDosha;
+  const isGirlSensitive = girlRK.isKalathraDosha || girlRK.isMangalyaDosha;
+
+  if (isBoySensitive && isGirlSensitive) {
+    samyamVerdict = 'Auspicious (Like Neutralizes Like - Samyam)';
+    samyamVerdictTamil = 'உத்தமம் (இருவருக்கும் சர்ப்ப தோஷம் சமநிலையில் உள்ளது)';
+    samyamSummary = 'Both Groom and Bride possess matching Rahu-Ketu sensitive axes (1/7 or 2/8). Sastra affirms that equal nodal affliction neutralizes malefic effects perfectly.';
+  } else if (!isBoySensitive && !isGirlSensitive) {
+    samyamVerdict = 'Auspicious (Both Free from Kalathra Sarpa Dosha)';
+    samyamVerdictTamil = 'உத்தமம் (இருவருக்கும் களத்திர சர்ப்ப தோஷம் இல்லை)';
+    samyamSummary = 'Both charts are completely free from active Rahu-Ketu marital affliction or have complete Sastric Nivrutti.';
+  } else {
+    samyamVerdict = 'Remedies Required (Nodal Asymmetry)';
+    samyamVerdictTamil = 'பரிகாரம் தேவை (ஒருவருக்கு மட்டும் சர்ப்ப தோஷம் உள்ளது)';
+    samyamSummary = 'One chart carries Rahu-Ketu affliction on the marriage house (1st/7th or 2nd/8th) while the other chart is free from it. Pre-marital Sarpa Shanti pariharams are advised.';
+  }
+
+  return {
+    boy: {
+      name: boyInput.name || 'Groom',
+      star: boyGrahas.starObj ? boyGrahas.starObj.name : 'Mula',
+      starTamil: boyGrahas.starObj ? boyGrahas.starObj.tamil : 'மூலம்',
+      pada: boyGrahas.pada,
+      lagnaRasiIdx: boyGrahas.rashis.lagna,
+      lagnaRasi: RASHIS[boyGrahas.rashis.lagna]?.name,
+      lagnaRasiTamil: RASHIS[boyGrahas.rashis.lagna]?.tamil,
+      moonRasiIdx: boyGrahas.rashis.moon,
+      moonRasi: RASHIS[boyGrahas.rashis.moon]?.name,
+      moonRasiTamil: RASHIS[boyGrahas.rashis.moon]?.tamil,
+      rahuRasiIdx: boyGrahas.rashis.rahu,
+      rahuRasi: RASHIS[boyGrahas.rashis.rahu]?.name,
+      rahuRasiTamil: RASHIS[boyGrahas.rashis.rahu]?.tamil,
+      ketuRasiIdx: boyGrahas.rashis.ketu,
+      ketuRasi: RASHIS[boyGrahas.rashis.ketu]?.name,
+      ketuRasiTamil: RASHIS[boyGrahas.rashis.ketu]?.tamil,
+      jupiterRasiIdx: boyGrahas.rashis.jupiter,
+      jupiterRasi: RASHIS[boyGrahas.rashis.jupiter]?.name,
+      jupiterRasiTamil: RASHIS[boyGrahas.rashis.jupiter]?.tamil,
+      axisType: boyRK.axisType,
+      axisName: boyRK.axisName,
+      axisNameTamil: boyRK.axisNameTamil,
+      houses: boyRK.houses,
+      hasDosha: boyRK.hasDosha,
+      isCancelled: boyRK.isCancelled,
+      netHasDosha: boyRK.netHasDosha,
+      doshaLevel: boyRK.doshaLevel,
+      doshaLevelTamil: boyRK.doshaLevelTamil,
+      cancellations: boyRK.cancellations,
+      verdict: boyRK.verdict,
+      verdictTamil: boyRK.verdictTamil,
+      chartCells: boyChartCells,
+      rahuDasha: boyRahuDasha,
+      ketuDasha: boyKetuDasha,
+      currentDasha: boyDasha.currentRunningDasha,
+    },
+    girl: {
+      name: girlInput.name || 'Bride',
+      star: girlGrahas.starObj ? girlGrahas.starObj.name : 'Purva Phalguni',
+      starTamil: girlGrahas.starObj ? girlGrahas.starObj.tamil : 'பூரம்',
+      pada: girlGrahas.pada,
+      lagnaRasiIdx: girlGrahas.rashis.lagna,
+      lagnaRasi: RASHIS[girlGrahas.rashis.lagna]?.name,
+      lagnaRasiTamil: RASHIS[girlGrahas.rashis.lagna]?.tamil,
+      moonRasiIdx: girlGrahas.rashis.moon,
+      moonRasi: RASHIS[girlGrahas.rashis.moon]?.name,
+      moonRasiTamil: RASHIS[girlGrahas.rashis.moon]?.tamil,
+      rahuRasiIdx: girlGrahas.rashis.rahu,
+      rahuRasi: RASHIS[girlGrahas.rashis.rahu]?.name,
+      rahuRasiTamil: RASHIS[girlGrahas.rashis.rahu]?.tamil,
+      ketuRasiIdx: girlGrahas.rashis.ketu,
+      ketuRasi: RASHIS[girlGrahas.rashis.ketu]?.name,
+      ketuRasiTamil: RASHIS[girlGrahas.rashis.ketu]?.tamil,
+      jupiterRasiIdx: girlGrahas.rashis.jupiter,
+      jupiterRasi: RASHIS[girlGrahas.rashis.jupiter]?.name,
+      jupiterRasiTamil: RASHIS[girlGrahas.rashis.jupiter]?.tamil,
+      axisType: girlRK.axisType,
+      axisName: girlRK.axisName,
+      axisNameTamil: girlRK.axisNameTamil,
+      houses: girlRK.houses,
+      hasDosha: girlRK.hasDosha,
+      isCancelled: girlRK.isCancelled,
+      netHasDosha: girlRK.netHasDosha,
+      doshaLevel: girlRK.doshaLevel,
+      doshaLevelTamil: girlRK.doshaLevelTamil,
+      cancellations: girlRK.cancellations,
+      verdict: girlRK.verdict,
+      verdictTamil: girlRK.verdictTamil,
+      chartCells: girlChartCells,
+      rahuDasha: girlRahuDasha,
+      ketuDasha: girlKetuDasha,
+      currentDasha: girlDasha.currentRunningDasha,
+    },
+    doshaSamyam: {
+      isCompatible: !(isBoySensitive !== isGirlSensitive && (boyRK.netHasDosha || girlRK.netHasDosha)),
+      verdict: samyamVerdict,
+      verdictTamil: samyamVerdictTamil,
+      summary: samyamSummary,
+    },
+    remedies: [
+      'Pilgrimage to Tirunageswaram (Rahu Sthalam) & performing Milk Abhishekam.',
+      'Pilgrimage to Keezhaperumpallam (Ketu Sthalam) with multicolored floral offering.',
+      'Srikalahasti Rahu-Ketu Sarpa Dosha Nivarana Puja or Kukke Subramanya Ashlesha Bali.',
+      'Chanting of Rahu Gayatri and Ketu Gayatri mantras on Tuesdays/Saturdays.'
+    ],
+    remediesTamil: [
+      'திருநாகேஸ்வரம் ராகு ஸ்தலத்தில் பால் அபிஷேகம் செய்து வழிபடுதல்.',
+      'கீழப்பெரும்பள்ளம் கேது பகவான் கோவிலில் கொள்ளு நைவேத்தியம் படைத்து வணங்குதல்.',
+      'ஸ்ரீ காளஹஸ்தி ராகு-கேது சர்ப்ப தோஷ நிவாரண பூஜை அல்லது குக்கே சுப்பிரமண்யா ஆஷ்லேஷ பலி.',
+      'ராகு காயத்ரி மற்றும் கேது காயத்ரி மந்திரங்களை செவ்வாய்/சனிக்கிழமைகளில் 108 முறை ஜெபித்தல்.'
+    ]
+  };
+}
+
+/**
  * 36 Gunas Ashtakoota Matchmaking
  */
 function calculateKundliMatch(boyBirth, girlBirth) {
@@ -1232,6 +1549,7 @@ function calculateKundliMatch(boyBirth, girlBirth) {
   ];
 
   const gujaDashaAnalysis = calculateGujaDashaAnalysis(boyBirth, girlBirth);
+  const rahuKetuAnalysis = calculateRahuKetuMatchAnalysis(boyBirth, girlBirth);
 
   return {
     boy: boyBirth,
@@ -1249,7 +1567,8 @@ function calculateKundliMatch(boyBirth, girlBirth) {
       compatibilitySummary: gujaDashaAnalysis.doshaSamyam.summary,
       doshaSamyam: gujaDashaAnalysis.doshaSamyam
     },
-    gujaDashaAnalysis: gujaDashaAnalysis
+    gujaDashaAnalysis: gujaDashaAnalysis,
+    rahuKetuAnalysis: rahuKetuAnalysis
   };
 }
 
@@ -1350,5 +1669,6 @@ module.exports = {
   calculateKundliMatch,
   evaluateChevvaiDosha,
   calculateGujaDashaAnalysis,
+  calculateRahuKetuMatchAnalysis,
   getDailyPanchangam,
 };

@@ -32,6 +32,7 @@ import {
   RotateCcw,
   PlusCircle,
   Flame,
+  Zap,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../i18n';
@@ -39,6 +40,7 @@ import { API } from '../api';
 import ClientRegistrationReceiptModal from '../components/ClientRegistrationReceiptModal';
 import TamilPoruthamCard from '../components/TamilPoruthamCard';
 import GujaDashaChart from '../components/GujaDashaChart';
+import RahuKetuChart from '../components/RahuKetuChart';
 import HoroscopeHub from '../components/HoroscopeHub';
 import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
 import HoroscopePagerView from '../components/HoroscopePagerView';
@@ -2186,12 +2188,26 @@ Shubham Bhavatu! 🙏`;
                         <Flame className="w-3.5 h-3.5 text-rose-600" />
                         <span>{MATCH_I18N.tabGujaDasha[lang] || MATCH_I18N.tabGujaDasha.en}</span>
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveMatchTab('rahu_ketu')}
+                        className={`pb-2 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                          activeMatchTab === 'rahu_ketu'
+                            ? 'border-teal-600 text-teal-900 font-bold'
+                            : 'border-transparent text-slate-500 hover:text-slate-700'
+                        }`}
+                      >
+                        <Zap className="w-3.5 h-3.5 text-teal-600" />
+                        <span>{MATCH_I18N.tabRahuKetu[lang] || MATCH_I18N.tabRahuKetu.en}</span>
+                      </button>
                     </div>
 
                     {activeMatchTab === 'tamil' ? (
                       <TamilPoruthamCard matchReport={activeClientMatchReport} />
                     ) : activeMatchTab === 'guja_dasha' ? (
                       <GujaDashaChart matchReport={activeClientMatchReport} />
+                    ) : activeMatchTab === 'rahu_ketu' ? (
+                      <RahuKetuChart matchReport={activeClientMatchReport} />
                     ) : (
                       <div className="space-y-3 bg-amber-50/50 p-4 rounded-xl border border-amber-200 text-xs">
                         <div className="flex justify-between items-center pb-2 border-b border-amber-200">
@@ -2436,12 +2452,26 @@ Shubham Bhavatu! 🙏`;
                         <Flame className="w-3.5 h-3.5 text-rose-600" />
                         <span>{MATCH_I18N.tabGujaDasha[lang] || MATCH_I18N.tabGujaDasha.en}</span>
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => setModalMatchTab('rahu_ketu')}
+                        className={`pb-2 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                          modalMatchTab === 'rahu_ketu'
+                            ? 'border-teal-600 text-teal-900 font-bold'
+                            : 'border-transparent text-slate-500 hover:text-slate-700'
+                        }`}
+                      >
+                        <Zap className="w-3.5 h-3.5 text-teal-600" />
+                        <span>{MATCH_I18N.tabRahuKetu[lang] || MATCH_I18N.tabRahuKetu.en}</span>
+                      </button>
                     </div>
 
                     {modalMatchTab === 'tamil' ? (
                       <TamilPoruthamCard matchReport={selectedMatchReq.matchReport} />
                     ) : modalMatchTab === 'guja_dasha' ? (
                       <GujaDashaChart matchReport={selectedMatchReq.matchReport} />
+                    ) : modalMatchTab === 'rahu_ketu' ? (
+                      <RahuKetuChart matchReport={selectedMatchReq.matchReport} />
                     ) : (
                       <div className="space-y-3 bg-amber-50/50 p-4 rounded-xl border border-amber-200 text-xs">
                         <div className="flex justify-between items-center pb-2 border-b border-amber-200">
