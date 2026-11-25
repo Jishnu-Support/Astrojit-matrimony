@@ -142,9 +142,9 @@ export default function BirthDetailsIntakeCard({
     const q = (cityInput || '').trim().toLowerCase();
     const stateCities = GEO_DATA[currentCountry]?.[currentState] || [];
 
-    // If query is empty, show top 15 cities for current state
+    // If query is empty, show top 30 cities for current state
     if (!q) {
-      return stateCities.slice(0, 15);
+      return stateCities.slice(0, 30);
     }
 
     // 1. Cities in current state starting with query letter(s)
@@ -153,7 +153,7 @@ export default function BirthDetailsIntakeCard({
     const containsInState = stateCities.filter(c => !(c.name || '').toLowerCase().startsWith(q) && (c.name || '').toLowerCase().includes(q));
 
     // Strictly return only cities from the selected state
-    return [...startsInState, ...containsInState].slice(0, 50);
+    return [...startsInState, ...containsInState].slice(0, 100);
   }, [cityInput, currentCountry, currentState]);
 
   // Search debounce timer ref
