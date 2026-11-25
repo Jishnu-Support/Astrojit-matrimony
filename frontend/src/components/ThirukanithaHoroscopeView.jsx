@@ -936,41 +936,6 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
             );
           })()}
 
-          {/* Chart System Switcher Header: South Indian Box vs North Indian Diamond */}
-          <div className="flex items-center justify-between pb-1 border-b border-amber-900/10">
-            <span className="text-xs font-bold text-stone-600 dark:text-stone-300">
-              {isTamil ? 'சக்கர அமைப்பு முறை:' : 'Chart Display Style:'}
-            </span>
-            <div className="flex items-center gap-1 bg-amber-50 dark:bg-stone-800 p-0.5 rounded-lg border border-amber-900/15">
-              <button
-                type="button"
-                onClick={() => setChartStyle('south')}
-                className={`px-2.5 py-1 rounded text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                  chartStyle === 'south'
-                    ? 'bg-[#7A1A22] text-amber-100 shadow-2xs font-black'
-                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
-                }`}
-                title={isTamil ? 'தென்னிந்திய கட்டச் சக்கரம்' : 'South Indian Square Box Chart'}
-              >
-                <span>⏹️</span>
-                <span>{isTamil ? 'தென்னிந்திய முறை' : 'South Indian'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setChartStyle('north')}
-                className={`px-2.5 py-1 rounded text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                  chartStyle === 'north'
-                    ? 'bg-[#7A1A22] text-amber-100 shadow-2xs font-black'
-                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
-                }`}
-                title={isTamil ? 'வடஇந்திய வைரக் குண்டலி சக்கரம்' : 'North Indian Diamond Kundli Chart'}
-              >
-                <span>💠</span>
-                <span>{isTamil ? 'வடஇந்திய முறை' : 'North Indian'}</span>
-              </button>
-            </div>
-          </div>
-
           {/* Render Chart (Screen: selected active, Print: D1 and D9 side-by-side) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:grid-cols-2">
             {/* Chart 1: Active Varga, Bava Chart, or Gocharam */}

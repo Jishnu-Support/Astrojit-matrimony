@@ -75,39 +75,8 @@ export default function HoroscopeHub({
           </div>
         </div>
 
-        {/* Controls: Chart Style (South/North) & View Mode (Screen/Print) */}
+        {/* View Mode Toggle: Horoscope Screen View & Horoscope Print */}
         <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
-          {/* Chart Style Switcher: South Indian vs North Indian */}
-          <div className="flex items-center gap-1 p-1 bg-stone-100 dark:bg-stone-900/80 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs">
-            <button
-              type="button"
-              onClick={() => updateField('chartStyle', 'south')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                (clientData?.chartStyle || activeBirthData?.chartStyle || 'south') === 'south'
-                  ? 'bg-amber-600 text-white shadow-xs font-black'
-                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100'
-              }`}
-              title={isTa ? 'தென்னிந்திய கட்டச் சக்கரம்' : 'South Indian Square Box Chart'}
-            >
-              <span>⏹️</span>
-              <span>{isTa ? 'தென்னிந்தியா' : 'South Indian'}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => updateField('chartStyle', 'north')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                (clientData?.chartStyle || activeBirthData?.chartStyle) === 'north'
-                  ? 'bg-amber-600 text-white shadow-xs font-black'
-                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100'
-              }`}
-              title={isTa ? 'வடஇந்திய வைரச் சக்கரம் (குண்டலி)' : 'North Indian Diamond Chart (Kundli)'}
-            >
-              <span>💠</span>
-              <span>{isTa ? 'வடஇந்தியா' : 'North Indian'}</span>
-            </button>
-          </div>
-
-          {/* View Mode Toggle: Horoscope Screen View & Horoscope Print */}
           <div className="flex items-center gap-1.5 p-1 bg-stone-100 dark:bg-stone-900/80 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs">
             <button
               type="button"
