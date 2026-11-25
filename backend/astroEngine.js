@@ -36,33 +36,33 @@ const NAKSHATRAS = [
 ];
 
 const TAMIL_STARS = [
-  { index: 0, name: 'Ashwini', tamil: 'அசுவினி', lord: 'Ketu', rashi: 'Mesha', gana: 'Deva', yoni: 'Horse', yoniSex: 'Male', rajju: 'Paadha', vedha: 'Jyeshtha' },
-  { index: 1, name: 'Bharani', tamil: 'பரணி', lord: 'Venus', rashi: 'Mesha', gana: 'Manushya', yoni: 'Elephant', yoniSex: 'Male', rajju: 'Thodai', vedha: 'Anuradha' },
-  { index: 2, name: 'Krittika', tamil: 'கார்த்திகை', lord: 'Sun', rashi: 'Mesha/Vrishabha', gana: 'Rakshasa', yoni: 'Sheep', yoniSex: 'Female', rajju: 'Naabhi', vedha: 'Vishakha' },
-  { index: 3, name: 'Rohini', tamil: 'ரோகிணி', lord: 'Moon', rashi: 'Vrishabha', gana: 'Manushya', yoni: 'Serpent', yoniSex: 'Male', rajju: 'Kanda', vedha: 'Swati' },
-  { index: 4, name: 'Mrigashira', tamil: 'மிருகசீரிடம்', lord: 'Mars', rashi: 'Vrishabha/Mithuna', gana: 'Deva', yoni: 'Serpent', yoniSex: 'Female', rajju: 'Sirasu', vedha: 'Chitra' },
-  { index: 5, name: 'Ardra', tamil: 'திருவாதிரை', lord: 'Rahu', rashi: 'Mithuna', gana: 'Manushya', yoni: 'Dog', yoniSex: 'Female', rajju: 'Kanda', vedha: 'Shravana' },
-  { index: 6, name: 'Punarvasu', tamil: 'புனர்பூசம்', lord: 'Jupiter', rashi: 'Mithuna/Karka', gana: 'Deva', yoni: 'Cat', yoniSex: 'Female', rajju: 'Naabhi', vedha: 'Uttara Ashadha' },
-  { index: 7, name: 'Pushya', tamil: 'பூசம்', lord: 'Saturn', rashi: 'Karka', gana: 'Deva', yoni: 'Sheep', yoniSex: 'Male', rajju: 'Thodai', vedha: 'Purva Ashadha' },
-  { index: 8, name: 'Ashlesha', tamil: 'ஆயில்யம்', lord: 'Mercury', rashi: 'Karka', gana: 'Rakshasa', yoni: 'Cat', yoniSex: 'Male', rajju: 'Paadha', vedha: 'Mula' },
-  { index: 9, name: 'Magha', tamil: 'மகம்', lord: 'Ketu', rashi: 'Simha', gana: 'Rakshasa', yoni: 'Rat', yoniSex: 'Male', rajju: 'Paadha', vedha: 'Revati' },
-  { index: 10, name: 'Purva Phalguni', tamil: 'பூரம்', lord: 'Venus', rashi: 'Simha', gana: 'Manushya', yoni: 'Rat', yoniSex: 'Female', rajju: 'Thodai', vedha: 'Uttara Bhadrapada' },
-  { index: 11, name: 'Uttara Phalguni', tamil: 'உத்திரம்', lord: 'Sun', rashi: 'Simha/Kanya', gana: 'Manushya', yoni: 'Cow', yoniSex: 'Male', rajju: 'Naabhi', vedha: 'Purva Bhadrapada' },
-  { index: 12, name: 'Hasta', tamil: 'அஸ்தம்', lord: 'Moon', rashi: 'Kanya', gana: 'Deva', yoni: 'Buffalo', yoniSex: 'Female', rajju: 'Kanda', vedha: 'Shatabhisha' },
-  { index: 13, name: 'Chitra', tamil: 'சித்திரை', lord: 'Mars', rashi: 'Kanya/Tula', gana: 'Rakshasa', yoni: 'Tiger', yoniSex: 'Female', rajju: 'Sirasu', vedha: 'Mrigashira' },
-  { index: 14, name: 'Swati', tamil: 'சுவாதி', lord: 'Rahu', rashi: 'Tula', gana: 'Deva', yoni: 'Buffalo', yoniSex: 'Male', rajju: 'Kanda', vedha: 'Rohini' },
-  { index: 15, name: 'Vishakha', tamil: 'விசாகம்', lord: 'Jupiter', rashi: 'Tula/Vrishchika', gana: 'Rakshasa', yoni: 'Tiger', yoniSex: 'Male', rajju: 'Naabhi', vedha: 'Krittika' },
-  { index: 16, name: 'Anuradha', tamil: 'அனுஷம்', lord: 'Saturn', rashi: 'Vrishchika', gana: 'Deva', yoni: 'Deer', yoniSex: 'Female', rajju: 'Thodai', vedha: 'Bharani' },
-  { index: 17, name: 'Jyeshtha', tamil: 'கேட்டை', lord: 'Mercury', rashi: 'Vrishchika', gana: 'Rakshasa', yoni: 'Deer', yoniSex: 'Male', rajju: 'Paadha', vedha: 'Ashwini' },
-  { index: 18, name: 'Mula', tamil: 'மூலம்', lord: 'Ketu', rashi: 'Dhanu', gana: 'Rakshasa', yoni: 'Dog', yoniSex: 'Male', rajju: 'Paadha', vedha: 'Ashlesha' },
-  { index: 19, name: 'Purva Ashadha', tamil: 'பூராடம்', lord: 'Venus', rashi: 'Dhanu', gana: 'Manushya', yoni: 'Monkey', yoniSex: 'Male', rajju: 'Thodai', vedha: 'Pushya' },
-  { index: 20, name: 'Uttara Ashadha', tamil: 'உத்திராடம்', lord: 'Sun', rashi: 'Dhanu/Makara', gana: 'Manushya', yoni: 'Mongoose', yoniSex: 'Male', rajju: 'Naabhi', vedha: 'Punarvasu' },
-  { index: 21, name: 'Shravana', tamil: 'திருவோணம்', lord: 'Moon', rashi: 'Makara', gana: 'Deva', yoni: 'Monkey', yoniSex: 'Female', rajju: 'Kanda', vedha: 'Ardra' },
-  { index: 22, name: 'Dhanishta', tamil: 'அவிட்டம்', lord: 'Mars', rashi: 'Makara/Kumbha', gana: 'Rakshasa', yoni: 'Lion', yoniSex: 'Female', rajju: 'Sirasu', vedha: 'Chitra' },
-  { index: 23, name: 'Shatabhisha', tamil: 'சதயம்', lord: 'Rahu', rashi: 'Kumbha', gana: 'Rakshasa', yoni: 'Horse', yoniSex: 'Female', rajju: 'Kanda', vedha: 'Hasta' },
-  { index: 24, name: 'Purva Bhadrapada', tamil: 'பூரட்டாதி', lord: 'Jupiter', rashi: 'Kumbha/Meena', gana: 'Manushya', yoni: 'Lion', yoniSex: 'Male', rajju: 'Naabhi', vedha: 'Uttara Phalguni' },
-  { index: 25, name: 'Uttara Bhadrapada', tamil: 'உத்திரட்டாதி', lord: 'Saturn', rashi: 'Meena', gana: 'Manushya', yoni: 'Cow', yoniSex: 'Female', rajju: 'Thodai', vedha: 'Purva Phalguni' },
-  { index: 26, name: 'Revati', tamil: 'ரேவதி', lord: 'Mercury', rashi: 'Meena', gana: 'Deva', yoni: 'Elephant', yoniSex: 'Female', rajju: 'Paadha', vedha: 'Magha' },
+  { index: 0, name: 'Ashwini', tamil: 'அசுவினி', lord: 'Ketu', rashi: 'Aries', gana: 'Deva', yoni: 'Horse', yoniSex: 'Male', rajju: 'Pada', rajjuDirection: 'Aroha', bird: 'Hawk', tree: 'Etti', milkyTree: false, nadi: 'Adi', vedha: 'Jyeshtha' },
+  { index: 1, name: 'Bharani', tamil: 'பரணி', lord: 'Venus', rashi: 'Aries', gana: 'Manushya', yoni: 'Elephant', yoniSex: 'Male', rajju: 'Thodai', rajjuDirection: 'Aroha', bird: 'Hawk', tree: 'Nelli', milkyTree: false, nadi: 'Madhya', vedha: 'Anuradha' },
+  { index: 2, name: 'Krittika', tamil: 'கார்த்திகை', lord: 'Sun', rashi: 'Aries', gana: 'Rakshasa', yoni: 'Sheep', yoniSex: 'Female', rajju: 'Udara', rajjuDirection: 'Aroha', bird: 'Hawk', tree: 'Aththi', milkyTree: true, nadi: 'Antya', vedha: 'Vishakha' },
+  { index: 3, name: 'Rohini', tamil: 'ரோகிணி', lord: 'Moon', rashi: 'Taurus', gana: 'Manushya', yoni: 'Serpent', yoniSex: 'Male', rajju: 'Kanda', rajjuDirection: 'Aroha', bird: 'Hawk', tree: 'Naval', milkyTree: false, nadi: 'Antya', vedha: 'Swati' },
+  { index: 4, name: 'Mrigashira', tamil: 'மிருகசீரிடம்', lord: 'Mars', rashi: 'Taurus', gana: 'Deva', yoni: 'Serpent', yoniSex: 'Female', rajju: 'Sirasu', rajjuDirection: 'Center', bird: 'Hawk', tree: 'Karungali', milkyTree: false, nadi: 'Madhya', vedha: 'Chitra' },
+  { index: 5, name: 'Ardra', tamil: 'திருவாதிரை', lord: 'Rahu', rashi: 'Gemini', gana: 'Manushya', yoni: 'Dog', yoniSex: 'Female', rajju: 'Kanda', rajjuDirection: 'Avaroha', bird: 'Owl', tree: 'Sengali', milkyTree: false, nadi: 'Adi', vedha: 'Shravana' },
+  { index: 6, name: 'Punarvasu', tamil: 'புனர்பூசம்', lord: 'Jupiter', rashi: 'Gemini', gana: 'Deva', yoni: 'Cat', yoniSex: 'Female', rajju: 'Udara', rajjuDirection: 'Avaroha', bird: 'Owl', tree: 'Moongil', milkyTree: false, nadi: 'Adi', vedha: 'Uttara Ashadha' },
+  { index: 7, name: 'Pushya', tamil: 'பூசம்', lord: 'Saturn', rashi: 'Cancer', gana: 'Deva', yoni: 'Sheep', yoniSex: 'Male', rajju: 'Thodai', rajjuDirection: 'Avaroha', bird: 'Owl', tree: 'Arasu', milkyTree: true, nadi: 'Madhya', vedha: 'Purva Ashadha' },
+  { index: 8, name: 'Ashlesha', tamil: 'ஆயில்யம்', lord: 'Mercury', rashi: 'Cancer', gana: 'Rakshasa', yoni: 'Cat', yoniSex: 'Male', rajju: 'Pada', rajjuDirection: 'Avaroha', bird: 'Owl', tree: 'Punnai', milkyTree: false, nadi: 'Antya', vedha: 'Mula' },
+  { index: 9, name: 'Magha', tamil: 'மகம்', lord: 'Ketu', rashi: 'Leo', gana: 'Rakshasa', yoni: 'Rat', yoniSex: 'Male', rajju: 'Pada', rajjuDirection: 'Aroha', bird: 'Owl', tree: 'Al', milkyTree: true, nadi: 'Antya', vedha: 'Revati' },
+  { index: 10, name: 'Purva Phalguni', tamil: 'பூரம்', lord: 'Venus', rashi: 'Leo', gana: 'Manushya', yoni: 'Rat', yoniSex: 'Female', rajju: 'Thodai', rajjuDirection: 'Aroha', bird: 'Owl', tree: 'Pala', milkyTree: true, nadi: 'Madhya', vedha: 'Uttara Bhadrapada' },
+  { index: 11, name: 'Uttara Phalguni', tamil: 'உத்திரம்', lord: 'Sun', rashi: 'Leo', gana: 'Manushya', yoni: 'Cow', yoniSex: 'Male', rajju: 'Udara', rajjuDirection: 'Aroha', bird: 'Crow', tree: 'Alari', milkyTree: true, nadi: 'Adi', vedha: 'Purva Bhadrapada' },
+  { index: 12, name: 'Hasta', tamil: 'அஸ்தம்', lord: 'Moon', rashi: 'Virgo', gana: 'Deva', yoni: 'Buffalo', yoniSex: 'Female', rajju: 'Kanda', rajjuDirection: 'Aroha', bird: 'Crow', tree: 'Vilvam', milkyTree: false, nadi: 'Adi', vedha: 'Shatabhisha' },
+  { index: 13, name: 'Chitra', tamil: 'சித்திரை', lord: 'Mars', rashi: 'Virgo', gana: 'Rakshasa', yoni: 'Tiger', yoniSex: 'Female', rajju: 'Sirasu', rajjuDirection: 'Center', bird: 'Crow', tree: 'Marutham', milkyTree: false, nadi: 'Madhya', vedha: 'Mrigashira' },
+  { index: 14, name: 'Swati', tamil: 'சுவாதி', lord: 'Rahu', rashi: 'Libra', gana: 'Deva', yoni: 'Buffalo', yoniSex: 'Male', rajju: 'Kanda', rajjuDirection: 'Avaroha', bird: 'Crow', tree: 'Vila', milkyTree: false, nadi: 'Antya', vedha: 'Rohini' },
+  { index: 15, name: 'Vishakha', tamil: 'விசாகம்', lord: 'Jupiter', rashi: 'Libra', gana: 'Rakshasa', yoni: 'Tiger', yoniSex: 'Male', rajju: 'Udara', rajjuDirection: 'Avaroha', bird: 'Crow', tree: 'Vila', milkyTree: true, nadi: 'Antya', vedha: 'Krittika' },
+  { index: 16, name: 'Anuradha', tamil: 'அனுஷம்', lord: 'Saturn', rashi: 'Scorpio', gana: 'Deva', yoni: 'Deer', yoniSex: 'Female', rajju: 'Thodai', rajjuDirection: 'Avaroha', bird: 'Cock', tree: 'Magizham', milkyTree: false, nadi: 'Madhya', vedha: 'Bharani' },
+  { index: 17, name: 'Jyeshtha', tamil: 'கேட்டை', lord: 'Mercury', rashi: 'Scorpio', gana: 'Rakshasa', yoni: 'Deer', yoniSex: 'Male', rajju: 'Pada', rajjuDirection: 'Avaroha', bird: 'Cock', tree: 'Parai', milkyTree: true, nadi: 'Adi', vedha: 'Ashwini' },
+  { index: 18, name: 'Mula', tamil: 'மூலம்', lord: 'Ketu', rashi: 'Sagittarius', gana: 'Rakshasa', yoni: 'Dog', yoniSex: 'Male', rajju: 'Pada', rajjuDirection: 'Aroha', bird: 'Cock', tree: 'Maram', milkyTree: true, nadi: 'Adi', vedha: 'Ashlesha' },
+  { index: 19, name: 'Purva Ashadha', tamil: 'பூராடம்', lord: 'Venus', rashi: 'Sagittarius', gana: 'Manushya', yoni: 'Monkey', yoniSex: 'Male', rajju: 'Thodai', rajjuDirection: 'Aroha', bird: 'Cock', tree: 'Vanji', milkyTree: false, nadi: 'Madhya', vedha: 'Pushya' },
+  { index: 20, name: 'Uttara Ashadha', tamil: 'உத்திராடம்', lord: 'Sun', rashi: 'Sagittarius', gana: 'Manushya', yoni: 'Mongoose', yoniSex: 'Male', rajju: 'Udara', rajjuDirection: 'Aroha', bird: 'Cock', tree: 'Pala', milkyTree: true, nadi: 'Antya', vedha: 'Punarvasu' },
+  { index: 21, name: 'Shravana', tamil: 'திருவோணம்', lord: 'Moon', rashi: 'Capricorn', gana: 'Deva', yoni: 'Monkey', yoniSex: 'Female', rajju: 'Kanda', rajjuDirection: 'Aroha', bird: 'Peacock', tree: 'Erukku', milkyTree: true, nadi: 'Antya', vedha: 'Ardra' },
+  { index: 22, name: 'Dhanishta', tamil: 'அவிட்டம்', lord: 'Mars', rashi: 'Capricorn', gana: 'Rakshasa', yoni: 'Lion', yoniSex: 'Female', rajju: 'Sirasu', rajjuDirection: 'Center', bird: 'Peacock', tree: 'Vanni', milkyTree: false, nadi: 'Madhya', vedha: 'Chitra' },
+  { index: 23, name: 'Shatabhisha', tamil: 'சதயம்', lord: 'Rahu', rashi: 'Aquarius', gana: 'Rakshasa', yoni: 'Horse', yoniSex: 'Female', rajju: 'Kanda', rajjuDirection: 'Avaroha', bird: 'Peacock', tree: 'Kadambu', milkyTree: false, nadi: 'Adi', vedha: 'Hasta' },
+  { index: 24, name: 'Purva Bhadrapada', tamil: 'பூரட்டாதி', lord: 'Jupiter', rashi: 'Aquarius', gana: 'Manushya', yoni: 'Lion', yoniSex: 'Male', rajju: 'Udara', rajjuDirection: 'Avaroha', bird: 'Peacock', tree: 'Themaa', milkyTree: false, nadi: 'Adi', vedha: 'Uttara Phalguni' },
+  { index: 25, name: 'Uttara Bhadrapada', tamil: 'உத்திரட்டாதி', lord: 'Saturn', rashi: 'Pisces', gana: 'Manushya', yoni: 'Cow', yoniSex: 'Female', rajju: 'Thodai', rajjuDirection: 'Avaroha', bird: 'Peacock', tree: 'Veppu', milkyTree: false, nadi: 'Madhya', vedha: 'Purva Phalguni' },
+  { index: 26, name: 'Revati', tamil: 'ரேவதி', lord: 'Mercury', rashi: 'Pisces', gana: 'Deva', yoni: 'Elephant', yoniSex: 'Female', rajju: 'Pada', rajjuDirection: 'Avaroha', bird: 'Peacock', tree: 'Iluppai', milkyTree: true, nadi: 'Antya', vedha: 'Magha' },
 ];
 
 const RASHIS = [
@@ -122,35 +122,52 @@ function findStarObj(nameOrObj) {
   if (typeof nameOrObj === 'object') {
     const candidate = nameOrObj.starNakshatra || nameOrObj.nakshatra || nameOrObj.star || nameOrObj.astrologicalDetails?.nakshatra;
     if (candidate) {
-      const cStr = String(candidate).toLowerCase().trim();
-      const found = TAMIL_STARS.find(s => s.name.toLowerCase() === cStr || s.tamil === candidate || s.tamil.includes(candidate) || cStr.includes(s.name.toLowerCase()));
+      const cleanCandidate = String(candidate).replace(/\(.*?\)/g, '').trim().toLowerCase();
+      const found = TAMIL_STARS.find(s =>
+        s.name.toLowerCase() === cleanCandidate ||
+        s.tamil === cleanCandidate ||
+        cleanCandidate.includes(s.name.toLowerCase()) ||
+        s.name.toLowerCase().includes(cleanCandidate)
+      );
       if (found) return found;
     }
     if (nameOrObj.name) {
-      const nStr = String(nameOrObj.name).toLowerCase().trim();
-      const found = TAMIL_STARS.find(s => s.name.toLowerCase() === nStr || s.tamil === nameOrObj.name);
+      const cleanName = String(nameOrObj.name).replace(/\(.*?\)/g, '').trim().toLowerCase();
+      const found = TAMIL_STARS.find(s => s.name.toLowerCase() === cleanName || s.tamil === cleanName);
       if (found) return found;
     }
   }
-  const str = nameOrObj.toString().toLowerCase().trim();
-  return TAMIL_STARS.find(s => s.name.toLowerCase() === str || s.tamil.includes(str) || str.includes(s.name.toLowerCase())) || TAMIL_STARS[0];
+  const str = String(nameOrObj).replace(/\(.*?\)/g, '').trim().toLowerCase();
+  return TAMIL_STARS.find(s =>
+    s.name.toLowerCase() === str ||
+    s.tamil.includes(str) ||
+    str.includes(s.name.toLowerCase()) ||
+    s.name.toLowerCase().includes(str)
+  ) || TAMIL_STARS[0];
 }
 
 function findRashiIdx(nameOrObj) {
   if (!nameOrObj) return 0;
   let str = '';
   if (typeof nameOrObj === 'object') {
-    str = nameOrObj.rasiMoonSign || nameOrObj.moonSign || nameOrObj.rasi || nameOrObj.astrologicalDetails?.moonSign || '';
+    str = nameOrObj.rasiMoonSign || nameOrObj.moonSign || nameOrObj.rasi || nameOrObj.rashi || nameOrObj.astrologicalDetails?.moonSign || '';
   } else {
     str = nameOrObj.toString();
   }
-  str = str.toLowerCase().trim();
-  const idx = RASHIS.findIndex(r => r.name.toLowerCase() === str || r.name.toLowerCase().includes(str) || r.tamil === str || r.tamil.includes(str));
+  str = String(str).replace(/\(.*?\)/g, '').trim().toLowerCase();
+  const idx = RASHIS.findIndex(r =>
+    r.name.toLowerCase() === str ||
+    r.name.toLowerCase().includes(str) ||
+    str.includes(r.name.toLowerCase()) ||
+    r.tamil === str ||
+    r.tamil.includes(str)
+  );
   return idx >= 0 ? idx : 0;
 }
 
 /**
- * 10 Tamil Poruthams for Matrimony
+ * 10 & 12 Classical Tamil Vivaha Poruthams
+ * Strictly following Nirayana Muhurtha Panchangam rules.
  */
 function calculateTamilPoruthams(boyInput, girlInput) {
   const boyNak = findStarObj(boyInput);
@@ -158,14 +175,18 @@ function calculateTamilPoruthams(boyInput, girlInput) {
   const boySignIdx = findRashiIdx(boyInput);
   const girlSignIdx = findRashiIdx(girlInput);
 
+  // Star distance: from Bride (girl) to Groom (boy) - 1 to 27
   const starDistance = ((boyNak.index - girlNak.index + 27) % 27) + 1;
+  // Rasi distance: from Bride (girl) to Groom (boy) - 1 to 12
   const rashiDistance = ((boySignIdx - girlSignIdx + 12) % 12) + 1;
 
   const poruthams = [];
 
-  // 1. Dina Porutham
+  // 1. Dina Porutham (1 point)
   const goodDinaCounts = [2, 4, 6, 8, 9, 11, 13, 15, 18, 20, 24, 26];
-  const dinaPass = goodDinaCounts.includes(starDistance) || starDistance === 1;
+  const janmaStarsPermitted = ['Rohini', 'Ardra', 'Magha', 'Hasta', 'Vishakha', 'Anuradha', 'Mula', 'Uttara Bhadrapada', 'Revati'];
+  const isJanmaAuspicious = (starDistance === 1) && (janmaStarsPermitted.includes(girlNak.name) || janmaStarsPermitted.includes(boyNak.name));
+  const dinaPass = goodDinaCounts.includes(starDistance) || isJanmaAuspicious;
   poruthams.push({
     name: 'Dina Porutham',
     nameTamil: 'தினப் பொருத்தம்',
@@ -173,25 +194,43 @@ function calculateTamilPoruthams(boyInput, girlInput) {
     maxPoints: 1,
     status: dinaPass ? 'Uttamam' : 'Porunthathu',
     statusTamil: dinaPass ? 'உத்தமம்' : 'பொருந்தாது',
-    note: dinaPass ? 'Auspicious health and fortune.' : 'Requires reconciliation.'
+    rule: dinaPass
+      ? 'தினப் பொருத்தம் உத்தமமாக உள்ளது. தம்பதியருக்கு நீண்ட ஆயுள் மற்றும் ஆரோக்கியத்தைத் தரும்.'
+      : 'தினப் பொருத்தம் அமையவில்லை. அசுப தாராபலத்தில் நட்சத்திரம் அமைந்துள்ளது.'
   });
 
-  // 2. Gana Porutham
-  let ganaPass = false;
-  if (girlNak.gana === boyNak.gana) ganaPass = true;
-  else if (girlNak.gana === 'Deva' && boyNak.gana === 'Manushya') ganaPass = true;
-  else if (girlNak.gana === 'Manushya' && boyNak.gana === 'Deva') ganaPass = true;
+  // 2. Gana Porutham (1 point)
+  let ganaPoints = 0;
+  let ganaStatus = 'Porunthathu';
+  let ganaRule = '';
+  if (girlNak.gana === boyNak.gana) {
+    ganaPoints = 1;
+    ganaStatus = 'Uttamam';
+    ganaRule = 'இருவருக்கும் ஒரே கணம் (தேவ/மனித/ராட்சஸ) அமைந்ததால் மன ஒற்றுமை மிகச் சிறப்பு.';
+  } else if ((girlNak.gana === 'Deva' && boyNak.gana === 'Manushya') || (girlNak.gana === 'Manushya' && boyNak.gana === 'Deva')) {
+    ganaPoints = 0.5;
+    ganaStatus = 'Madhyamam';
+    ganaRule = 'தேவ-மனித கணங்கள் இணைவதால் மத்திமப் பொருத்தம் உண்டாகிறது.';
+  } else if (starDistance > 14) {
+    ganaPoints = 0.5;
+    ganaStatus = 'Madhyamam';
+    ganaRule = 'ராட்சஸ கணம் ஆயினும், 14 நட்சத்திரங்களுக்கு மேல் இடைவெளி இருப்பதால் கண தோஷ நிவர்த்தி பெற்று மத்திமமாகிறது.';
+  } else {
+    ganaPoints = 0;
+    ganaStatus = 'Porunthathu';
+    ganaRule = 'கணப் பொருத்தம் பொருந்தாது. ராட்சஸ கணமும் தேவ/மனித கணமும் 14 நட்சத்திர இடைவெளியின்றி அமைந்ததால் தோஷமாகும்.';
+  }
   poruthams.push({
     name: 'Gana Porutham',
     nameTamil: 'கணப் பொருத்தம்',
-    points: ganaPass ? 1 : 0,
+    points: ganaPoints,
     maxPoints: 1,
-    status: ganaPass ? 'Uttamam' : 'Madhyamam',
-    statusTamil: ganaPass ? 'உத்தமம்' : 'மத்திமம்',
-    note: ganaPass ? 'Harmonious temperament.' : 'Complementary temperaments.'
+    status: ganaStatus,
+    statusTamil: ganaStatus === 'Uttamam' ? 'உத்தமம்' : ganaStatus === 'Madhyamam' ? 'மத்திமம்' : 'பொருந்தாது',
+    rule: ganaRule
   });
 
-  // 3. Mahendra Porutham
+  // 3. Mahendra Porutham (1 point)
   const mahendraDistances = [4, 7, 10, 13, 16, 19, 22, 25];
   const mahendraPass = mahendraDistances.includes(starDistance);
   poruthams.push({
@@ -199,67 +238,158 @@ function calculateTamilPoruthams(boyInput, girlInput) {
     nameTamil: 'மகேந்திரப் பொருத்தம்',
     points: mahendraPass ? 1 : 0,
     maxPoints: 1,
-    status: mahendraPass ? 'Uttamam' : 'Illai',
-    statusTamil: mahendraPass ? 'உத்தமம்' : 'இல்லை',
-    note: mahendraPass ? 'Family prosperity and lineage growth.' : 'Standard.'
+    status: mahendraPass ? 'Uttamam' : 'Porunthathu',
+    statusTamil: mahendraPass ? 'உத்தமம்' : 'பொருந்தாது',
+    rule: mahendraPass
+      ? 'மகேந்திரப் பொருத்தம் உத்தமம். வம்ச விருத்தி, புத்திர பாக்கியம் மற்றும் சந்ததி செழிப்பை நல்கும்.'
+      : 'மகேந்திரப் பொருத்தம் அமையவில்லை.'
   });
 
-  // 4. Stree Dheerkha
-  const streePass = starDistance >= 13;
+  // 4. Stree Deergham (1 point)
+  let streePoints = 0;
+  let streeStatus = 'Porunthathu';
+  let streeRule = '';
+  if (starDistance >= 13) {
+    streePoints = 1;
+    streeStatus = 'Uttamam';
+    streeRule = 'பெண் நட்சத்திரத்திலிருந்து வரன் நட்சத்திரம் 13-க்கு மேல் உள்ளதால் தீர்க்க சுமங்கலி யோகம் உண்டாகும்.';
+  } else if (starDistance >= 7) {
+    streePoints = 0.5;
+    streeStatus = 'Madhyamam';
+    streeRule = 'நட்சத்திர இடைவெளி 7 முதல் 12 வரை உள்ளதால் மத்திம ஸ்திரீ தீர்க்கமாகும்.';
+  } else {
+    streePoints = 0;
+    streeStatus = 'Porunthathu';
+    streeRule = 'ஸ்திரீ தீர்க்கப் பொருத்தம் அமையவில்லை (இடைவெளி 7-க்குக் கீழ்).';
+  }
   poruthams.push({
-    name: 'Stree Dheerkha Porutham',
+    name: 'Stree Deergham',
     nameTamil: 'ஸ்திரீ தீர்க்கப் பொருத்தம்',
-    points: streePass ? 1 : 0.5,
+    points: streePoints,
     maxPoints: 1,
-    status: streePass ? 'Uttamam' : 'Madhyamam',
-    statusTamil: streePass ? 'உத்தமம்' : 'மத்திமம்',
-    note: streePass ? 'Spousal longevity.' : 'Acceptable.'
+    status: streeStatus,
+    statusTamil: streeStatus === 'Uttamam' ? 'உத்தமம்' : streeStatus === 'Madhyamam' ? 'மத்திமம்' : 'பொருந்தாது',
+    rule: streeRule
   });
 
-  // 5. Yoni Porutham
+  // 5. Yoni Porutham (1 point)
   const isEnemyYoni = ENEMY_YONIS.some(([y1, y2]) =>
     (girlNak.yoni === y1 && boyNak.yoni === y2) || (girlNak.yoni === y2 && boyNak.yoni === y1)
   );
-  const yoniPass = girlNak.yoni === boyNak.yoni || !isEnemyYoni;
+  let yoniPoints = 0;
+  let yoniStatus = 'Porunthathu';
+  let yoniRule = '';
+  if (girlNak.yoni === boyNak.yoni) {
+    if (girlNak.yoniSex !== boyNak.yoniSex) {
+      yoniPoints = 1;
+      yoniStatus = 'Uttamam';
+      yoniRule = 'இருவருக்கும் ஒரே மிருக யோனியும் ஆண்-பெண் சேர்க்கையும் அமைந்ததால் உத்தம தாம்பத்திய ஒற்றுமை.';
+    } else {
+      yoniPoints = 0.5;
+      yoniStatus = 'Madhyamam';
+      yoniRule = 'ஒரே யோனியாக அமைந்தாலும் ஒரே பாலினமாக இருப்பதால் மத்திம யோனிப் பொருத்தம்.';
+    }
+  } else if (!isEnemyYoni) {
+    yoniPoints = 0.5;
+    yoniStatus = 'Madhyamam';
+    yoniRule = 'பகை யோனிகள் அல்லாததால் தாம்பத்தியத்தில் நற்பலன் தரும் மத்திம யோனிப் பொருத்தம்.';
+  } else {
+    yoniPoints = 0;
+    yoniStatus = 'Porunthathu';
+    yoniRule = 'பகை யோனிகள் (சிங்கம்-யானை, பசு-புலி, குதிரை-எருமை முதலியன) அமைந்ததால் யோனிப் பொருத்தம் இல்லை.';
+  }
   poruthams.push({
     name: 'Yoni Porutham',
     nameTamil: 'யோனிப் பொருத்தம்',
-    points: yoniPass ? (girlNak.yoni === boyNak.yoni ? 1 : 0.5) : 0,
+    points: yoniPoints,
     maxPoints: 1,
-    status: yoniPass ? 'Uttamam' : 'Porunthathu',
-    statusTamil: yoniPass ? 'உத்தமம்' : 'பொருந்தாது',
-    note: yoniPass ? 'Physical harmony.' : 'Incompatible yoni.'
+    status: yoniStatus,
+    statusTamil: yoniStatus === 'Uttamam' ? 'உத்தமம்' : yoniStatus === 'Madhyamam' ? 'மத்திமம்' : 'பொருந்தாது',
+    rule: yoniRule
   });
 
-  // 6. Rasi Porutham
+  // 6. Rasi Porutham (1 point)
+  // Subha Shashtashtakam pairs check
+  const subhaPairs = [
+    [0, 7], [7, 0], // Aries & Scorpio (Mars)
+    [1, 6], [6, 1], // Taurus & Libra (Venus)
+    [2, 9], [9, 2], // Gemini & Capricorn
+    [3, 8], [8, 3], // Cancer & Sagittarius
+    [4, 11], [11, 4], // Leo & Pisces
+  ];
+  const isSubhaShashtashtakam = (rashiDistance === 6 || rashiDistance === 8) &&
+    subhaPairs.some(([b, g]) => boySignIdx === b && girlSignIdx === g);
+
   const goodRashiDist = [1, 7, 3, 4, 10, 11];
-  const rasiPass = goodRashiDist.includes(rashiDistance);
+  let rasiPoints = 0;
+  let rasiStatus = 'Porunthathu';
+  let rasiRule = '';
+  if (isSubhaShashtashtakam) {
+    rasiPoints = 1;
+    rasiStatus = 'Uttamam';
+    rasiRule = 'தேவகேரளம் சாஸ்திர விதிப்படி அதிபதிகள் நட்பானதால் 6-8 ராசி இடைவெளியிலும் சுப ஷஷ்டாஷ்டகமாக உத்தமம்!';
+  } else if (goodRashiDist.includes(rashiDistance)) {
+    rasiPoints = 1;
+    rasiStatus = 'Uttamam';
+    rasiRule = 'ராசிப் பொருத்தம் உத்தமம். சப்தம (7), 3, 4, 10, 11 ராசிகளில் அமைந்ததால் குடும்ப ஒற்றுமை சிறக்கும்.';
+  } else if (rashiDistance === 5 || rashiDistance === 9) {
+    rasiPoints = 0.5;
+    rasiStatus = 'Madhyamam';
+    rasiRule = 'நவபஞ்சம (5-9) அமைப்பில் உள்ளதால் மத்திமப் பொருத்தம்.';
+  } else {
+    rasiPoints = 0;
+    rasiStatus = 'Porunthathu';
+    rasiRule = 'அசுப ஷஷ்டாஷ்டகம் (6-8) அல்லது துவித்வாதசம் (2-12) அமைப்பில் உள்ளதால் ராசிப் பொருத்தம் பொருந்தாது.';
+  }
   poruthams.push({
     name: 'Rasi Porutham',
     nameTamil: 'ராசிப் பொருத்தம்',
-    points: rasiPass ? 1 : 0,
+    points: rasiPoints,
     maxPoints: 1,
-    status: rasiPass ? 'Uttamam' : 'Madhyamam',
-    statusTamil: rasiPass ? 'உத்தமம்' : 'மத்திமம்',
-    note: rasiPass ? 'Family alignment.' : 'Neutral alignment.'
+    status: rasiStatus,
+    statusTamil: rasiStatus === 'Uttamam' ? 'உத்தமம்' : rasiStatus === 'Madhyamam' ? 'மத்திமம்' : 'பொருந்தாது',
+    rule: rasiRule
   });
 
-  // 7. Rasi Adhipathi
-  const lordPass = RASHIS[boySignIdx].lord === RASHIS[girlSignIdx].lord;
+  // 7. Rasi Adhipathi Porutham (1 point)
+  const boyLord = RASHIS[boySignIdx]?.lord;
+  const girlLord = RASHIS[girlSignIdx]?.lord;
+  const devasGroup = ['Sun', 'Moon', 'Mars', 'Jupiter'];
+  const asurasGroup = ['Mercury', 'Venus', 'Saturn'];
+  const areFriends = (boyLord === girlLord) ||
+    (devasGroup.includes(boyLord) && devasGroup.includes(girlLord)) ||
+    (asurasGroup.includes(boyLord) && asurasGroup.includes(girlLord));
+
+  let adhipathiPoints = 0;
+  let adhipathiStatus = 'Porunthathu';
+  let adhipathiRule = '';
+  if (areFriends) {
+    adhipathiPoints = 1;
+    adhipathiStatus = 'Uttamam';
+    adhipathiRule = 'இரு ராசிநாதர்களும் ஒரே கிரகமாகவோ அல்லது பரஸ்பர மித்திரர்களாகவோ உள்ளதால் உத்தமப் பொருத்தம்.';
+  } else if (boyLord === 'Jupiter' || girlLord === 'Jupiter' || boyLord === 'Mercury' || girlLord === 'Mercury') {
+    adhipathiPoints = 0.5;
+    adhipathiStatus = 'Madhyamam';
+    adhipathiRule = 'ராசிநாதர்கள் சமநிலையில் உள்ளதால் மத்திமப் பொருத்தம்.';
+  } else {
+    adhipathiPoints = 0;
+    adhipathiStatus = 'Porunthathu';
+    adhipathiRule = 'ராசிநாதர்கள் பரஸ்பர சத்ருக்களாக உள்ளதால் ராசி அதிபதிப் பொருத்தம் இல்லை.';
+  }
   poruthams.push({
     name: 'Rasi Adhipathi Porutham',
     nameTamil: 'ராசி அதிபதிப் பொருத்தம்',
-    points: lordPass ? 1 : 0.5,
+    points: adhipathiPoints,
     maxPoints: 1,
-    status: lordPass ? 'Uttamam' : 'Madhyamam',
-    statusTamil: lordPass ? 'உத்தமம்' : 'மத்திமம்',
-    note: lordPass ? 'Planetary friendship.' : 'Mutual neutrality.'
+    status: adhipathiStatus,
+    statusTamil: adhipathiStatus === 'Uttamam' ? 'உத்தமம்' : adhipathiStatus === 'Madhyamam' ? 'மத்திமம்' : 'பொருந்தாது',
+    rule: adhipathiRule
   });
 
-  // 8. Vashya Porutham
-  const girlRashiName = RASHIS[girlSignIdx].name;
-  const boyRashiName = RASHIS[boySignIdx].name;
-  const vashyaPass = (VASHYA_MAP[girlRashiName] || []).includes(boyRashiName);
+  // 8. Vashya Porutham (1 point)
+  const girlRashiName = RASHIS[girlSignIdx]?.name;
+  const boyRashiName = RASHIS[boySignIdx]?.name;
+  const vashyaPass = Boolean((VASHYA_MAP[girlRashiName] || []).includes(boyRashiName) || (VASHYA_MAP[boyRashiName] || []).includes(girlRashiName));
   poruthams.push({
     name: 'Vashya Porutham',
     nameTamil: 'வசியப் பொருத்தம்',
@@ -267,77 +397,166 @@ function calculateTamilPoruthams(boyInput, girlInput) {
     maxPoints: 1,
     status: vashyaPass ? 'Uttamam' : 'Illai',
     statusTamil: vashyaPass ? 'உத்தமம்' : 'இல்லை',
-    note: vashyaPass ? 'Mutual affection.' : 'Standard.'
+    rule: vashyaPass
+      ? 'வசியப் பொருத்தம் உத்தமம். தம்பதியரிடையே பிரிக்க முடியாத அன்பு மற்றும் ஈர்ப்பு நிலைத்திருக்கும்.'
+      : 'வசியப் பொருத்தம் இல்லை.'
   });
 
-  // 9. Rajju Porutham
-  const rajjuPass = girlNak.rajju !== boyNak.rajju;
+  // 9. Rajju Porutham (1 point) - Critical
+  const isArohaAvarohaException = (boyNak.rajju === girlNak.rajju) &&
+    (boyNak.rajjuDirection && girlNak.rajjuDirection && boyNak.rajjuDirection !== girlNak.rajjuDirection);
+  const rajjuDifferent = girlNak.rajju !== boyNak.rajju;
+  const rajjuPoints = (rajjuDifferent || isArohaAvarohaException) ? 1 : 0;
+  const rajjuStatus = (rajjuDifferent || isArohaAvarohaException) ? 'Uttamam' : 'Porunthathu';
+  let rajjuRule = '';
+  if (isArohaAvarohaException) {
+    rajjuRule = 'இருவரும் ஒரே ரஜ்ஜுவில் அமைந்திருந்தாலும், ஒருவர் ஏறுமுகம் மற்றவர் இறங்குமுகம் என எதிர் திசையில் அமைந்ததால் ரஜ்ஜு தோஷம் நிவர்த்தியாகி உத்தமமாகிறது!';
+  } else if (rajjuDifferent) {
+    rajjuRule = 'இருவருக்கும் வெவ்வேறு ரஜ்ஜு அமைந்ததால் தீர்க்க மாங்கல்ய பலம் மற்றும் நல்வாழ்வு உறுதி.';
+  } else {
+    rajjuRule = 'இருவருக்கும் ஒரே ரஜ்ஜுவும் ஒரே திசையும் அமைந்ததால் ரஜ்ஜு தட்டல் (தோஷம்) உள்ளது. சாஸ்திர பரிகாரம் அவசியம்.';
+  }
   poruthams.push({
     name: 'Rajju Porutham',
     nameTamil: 'ரஜ்ஜுப் பொருத்தம்',
-    points: rajjuPass ? 1 : 0,
+    points: rajjuPoints,
     maxPoints: 1,
-    status: rajjuPass ? 'Uttamam' : 'Eka Rajju',
-    statusTamil: rajjuPass ? 'உத்தமம்' : 'ஏக ரஜ்ஜு',
-    note: rajjuPass ? 'Different rajju (auspicious marital bond).' : 'Same rajju.'
+    status: rajjuStatus,
+    statusTamil: rajjuStatus === 'Uttamam' ? 'உத்தமம்' : 'பொருந்தாது',
+    rule: rajjuRule
   });
 
-  // 10. Vedha Porutham
+  // 10. Vedha Porutham (1 point) - Critical
   const isVedha = VEDHA_PAIRS.some(([s1, s2]) =>
     (girlNak.name === s1 && boyNak.name === s2) || (girlNak.name === s2 && boyNak.name === s1)
   );
-  const vedhaPass = !isVedha;
+  const vedhaPoints = isVedha ? 0 : 1;
+  const vedhaStatus = isVedha ? 'Porunthathu' : 'Uttamam';
   poruthams.push({
     name: 'Vedha Porutham',
     nameTamil: 'வேதைப் பொருத்தம்',
-    points: vedhaPass ? 1 : 0,
+    points: vedhaPoints,
     maxPoints: 1,
-    status: vedhaPass ? 'Uttamam' : 'Vedha Affliction',
-    statusTamil: vedhaPass ? 'உத்தமம்' : 'வேதை உண்டு',
-    note: vedhaPass ? 'No mutual affliction.' : 'Affliction present.'
+    status: vedhaStatus,
+    statusTamil: vedhaStatus === 'Uttamam' ? 'உத்தமம்' : 'பொருந்தாது',
+    rule: isVedha
+      ? 'பரஸ்பர வேதை நட்சத்திரங்களாக அமைந்ததால் வேதை தோஷம் உள்ளது.'
+      : 'வேதை தோஷம் இல்லை. உத்தமமான நட்சத்திர அமைவு.'
   });
 
-  const totalPoints = poruthams.reduce((sum, p) => sum + p.points, 0);
+  // 11. Nadi Porutham (11th Porutham)
+  const nadiPass = boyNak.nadi !== girlNak.nadi;
+  poruthams.push({
+    name: 'Nadi Porutham',
+    nameTamil: 'நாடிப் பொருத்தம்',
+    points: nadiPass ? 1 : 0,
+    maxPoints: 1,
+    status: nadiPass ? 'Uttamam' : 'Porunthathu',
+    statusTamil: nadiPass ? 'உத்தமம்' : 'பொருந்தாது',
+    rule: nadiPass
+      ? 'வெவ்வேறு நாடிகளாக அமைந்ததால் உடல்நலம் மற்றும் மரபியல் பொருத்தம் உத்தமம்.'
+      : 'ஒரே நாடியாக அமைந்ததால் நாடிப் பொருத்தம் அமையவில்லை.'
+  });
+
+  // 12. Vriksha Porutham (12th Porutham)
+  const hasMilkyTree = Boolean(boyNak.milkyTree || girlNak.milkyTree);
+  poruthams.push({
+    name: 'Vriksha Porutham',
+    nameTamil: 'விருட்சப் பொருத்தம்',
+    points: hasMilkyTree ? 1 : 0.5,
+    maxPoints: 1,
+    status: hasMilkyTree ? 'Uttamam' : 'Madhyamam',
+    statusTamil: hasMilkyTree ? 'உத்தமம்' : 'மத்திமம்',
+    rule: hasMilkyTree
+      ? 'பால் உள்ள விருட்சம் அமைந்ததால் சந்ததி விருத்திக்கு உத்தமம்.'
+      : 'இருவரும் பால் அற்ற விருட்சங்கள் ஆதலால் மத்திமம்.'
+  });
+
+  // Total points for primary 10 poruthams
+  const primary10 = poruthams.slice(0, 10);
+  const totalScore = primary10.reduce((sum, p) => sum + p.points, 0);
+
+  // Extract pada from input or default to 1
+  const boyPada = boyInput.pada || boyInput.padam || boyInput.moonPada || 1;
+  const girlPada = girlInput.pada || girlInput.padam || girlInput.moonPada || 1;
 
   const boyDetails = {
     name: boyInput.name || 'Groom',
+    star: boyNak.name,
     nakshatra: boyNak.name,
     nakshatraTamil: boyNak.tamil,
+    padam: boyPada,
+    pada: boyPada,
+    rasi: RASHIS[boySignIdx]?.name || boyNak.rashi,
     rashi: RASHIS[boySignIdx]?.name || boyNak.rashi,
     rashiTamil: RASHIS[boySignIdx]?.tamil,
     gana: boyNak.gana,
+    animal: boyNak.yoni,
     yoni: boyNak.yoni,
+    yoniSex: boyNak.yoniSex || 'Male',
+    bird: boyNak.bird,
+    tree: boyNak.tree,
+    vriksha: boyNak.tree,
+    milkyTree: Boolean(boyNak.milkyTree),
     rajju: boyNak.rajju,
-    rajjuDirection: boyNak.index <= 13 ? 'Aroha' : 'Avaroha',
-    nadi: boyNak.nadi || (boyNak.index % 3 === 0 ? 'Adi' : boyNak.index % 3 === 1 ? 'Madhya' : 'Antya'),
-    vriksha: boyNak.vriksha || 'Pala',
+    rajjuDirection: boyNak.rajjuDirection,
+    nadi: boyNak.nadi,
   };
 
   const girlDetails = {
     name: girlInput.name || 'Bride',
+    star: girlNak.name,
     nakshatra: girlNak.name,
     nakshatraTamil: girlNak.tamil,
+    padam: girlPada,
+    pada: girlPada,
+    rasi: RASHIS[girlSignIdx]?.name || girlNak.rashi,
     rashi: RASHIS[girlSignIdx]?.name || girlNak.rashi,
     rashiTamil: RASHIS[girlSignIdx]?.tamil,
     gana: girlNak.gana,
+    animal: girlNak.yoni,
     yoni: girlNak.yoni,
+    yoniSex: girlNak.yoniSex || 'Female',
+    bird: girlNak.bird,
+    tree: girlNak.tree,
+    vriksha: girlNak.tree,
+    milkyTree: Boolean(girlNak.milkyTree),
     rajju: girlNak.rajju,
-    rajjuDirection: girlNak.index <= 13 ? 'Aroha' : 'Avaroha',
-    nadi: girlNak.nadi || (girlNak.index % 3 === 0 ? 'Adi' : girlNak.index % 3 === 1 ? 'Madhya' : 'Antya'),
-    vriksha: girlNak.vriksha || 'Vanni',
+    rajjuDirection: girlNak.rajjuDirection,
+    nadi: girlNak.nadi,
   };
 
   return {
     poruthams,
-    totalPoints,
-    totalScore: totalPoints,
+    totalPoints: totalScore,
+    totalScore: totalScore,
     maxPoints: 10,
+    maxScore: 10,
     boyDetails,
     girlDetails,
-    isRajjuMatching: rajjuPass,
+    rajjuAnalysis: {
+      hasDosha: (boyNak.rajju === girlNak.rajju),
+      isArohaAvarohaException: isArohaAvarohaException,
+      limbAfflicted: boyNak.rajju,
+      boyRajju: boyNak.rajju,
+      girlRajju: girlNak.rajju,
+      boyDirection: boyNak.rajjuDirection,
+      girlDirection: girlNak.rajjuDirection,
+    },
+    vedhaAnalysis: {
+      hasVedha: isVedha,
+      boyStar: boyNak.name,
+      girlStar: girlNak.name
+    },
+    subhaShashtashtakam: {
+      isSubhaShashtashtakam: isSubhaShashtashtakam,
+      boySign: RASHIS[boySignIdx]?.name,
+      girlSign: RASHIS[girlSignIdx]?.name,
+    },
+    isRajjuMatching: rajjuPoints === 1,
     isDinaMatching: dinaPass,
-    verdict: totalPoints >= 7 ? 'Uttamam' : totalPoints >= 5 ? 'Madhyamam' : 'Adhamam',
-    verdictTamil: totalPoints >= 7 ? 'உத்தமப் பொருத்தம்' : totalPoints >= 5 ? 'மத்திமப் பொருத்தம்' : 'அற்பப் பொருத்தம்'
+    verdict: totalScore >= 7 ? 'Uttamam' : totalScore >= 5 ? 'Madhyamam' : 'Adhamam',
+    verdictTamil: totalScore >= 7 ? 'உத்தமப் பொருத்தம்' : totalScore >= 5 ? 'மத்திமப் பொருத்தம்' : 'அற்பப் பொருத்தம்'
   };
 }
 
@@ -395,12 +614,20 @@ function calculateKundliMatch(boyBirth, girlBirth) {
   ];
 
   return {
+    boy: boyBirth,
+    girl: girlBirth,
     kootas,
     totalScore,
     maxScore: 36,
     percentage: Math.round((totalScore / 36) * 100),
     verdict: totalScore >= 28 ? 'Excellent Match' : totalScore >= 18 ? 'Good Match' : 'Requires Remedies',
-    tamilPorutham: calculateTamilPoruthams(boyBirth, girlBirth)
+    compatibility: totalScore >= 28 ? 'Excellent Match' : totalScore >= 18 ? 'Good Match' : 'Requires Remedies',
+    tamilPorutham: calculateTamilPoruthams(boyBirth, girlBirth),
+    chevvaiAnalysis: {
+      boy: evaluateChevvaiDosha(boyBirth, 'male'),
+      girl: evaluateChevvaiDosha(girlBirth, 'female'),
+      compatibilitySummary: 'Both horoscopes evaluated for Chevvai Dosha & cancellations.'
+    }
   };
 }
 
@@ -409,13 +636,19 @@ function calculateKundliMatch(boyBirth, girlBirth) {
  */
 function evaluateChevvaiDosha(person = {}, gender = 'male') {
   const hasDosha = Boolean(person.hasDosha || person.chevvaiDosha || person.marsDosha);
+  const houses = person.houses || {
+    lagna: person.chevvaiHouseLagna || person.marsHouse || (hasDosha ? 7 : 9),
+    moon: person.chevvaiHouseMoon || (hasDosha ? 8 : 11),
+    venus: person.chevvaiHouseVenus || (hasDosha ? 2 : 5)
+  };
   return {
     hasDosha,
     isAfflicted: hasDosha,
     remedyRequired: hasDosha,
     verdict: hasDosha ? 'Chevvai Dosha Present' : 'Free from Chevvai Dosha',
     verdictTamil: hasDosha ? 'செவ்வாய் தோஷம் உண்டு' : 'செவ்வாய் தோஷம் இல்லை',
-    cancellations: []
+    houses,
+    cancellations: person.cancellations || (hasDosha ? [] : ['Friendly / neutral sign placement'])
   };
 }
 

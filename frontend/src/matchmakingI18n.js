@@ -933,7 +933,41 @@ export function getMatchText(key, lang = 'en') {
  */
 export function translateEntity(group, code, lang = 'en') {
   if (!code || !MATCH_I18N[group]) return code || '';
-  const cleanCode = String(code).trim().replace(/\(.*?\)/g, '').trim();
+  let cleanCode = String(code).trim().replace(/\(.*?\)/g, '').trim();
+
+  // Common astrological alias normalization
+  if (group === 'rashis') {
+    const rashiAliases = {
+      aries: 'Mesha', taurus: 'Vrishabha', gemini: 'Mithuna', cancer: 'Kataka',
+      leo: 'Simha', virgo: 'Kanya', libra: 'Thula', scorpio: 'Vrischika',
+      sagittarius: 'Dhanus', capricorn: 'Makara', aquarius: 'Kumbha', pisces: 'Meena'
+    };
+    if (rashiAliases[cleanCode.toLowerCase()]) cleanCode = rashiAliases[cleanCode.toLowerCase()];
+  } else if (group === 'nakshatras') {
+    const nakAliases = {
+      mula: 'Moola', purvaphalguni: 'PurvaPhalguni', uttaraphalguni: 'UttaraPhalguni',
+      purvaashadha: 'PurvaAshadha', uttaraashadha: 'UttaraAshadha',
+      purvabhadrapada: 'PurvaBhadrapada', uttarabhadrapada: 'UttaraBhadrapada'
+    };
+    const key = cleanCode.toLowerCase().replace(/[\s\-_]/g, '');
+    if (nakAliases[key]) cleanCode = nakAliases[key];
+  } else if (group === 'rajjuLimbs') {
+    const limbAliases = {
+      paadha: 'Pada', naabhi: 'Udara', foot: 'Pada', thigh: 'Thodai',
+      navel: 'Udara', neck: 'Kanda', head: 'Sirasu'
+    };
+    if (limbAliases[cleanCode.toLowerCase()]) cleanCode = limbAliases[cleanCode.toLowerCase()];
+  } else if (group === 'nadis') {
+    const nadiAliases = {
+      adi: 'Vama', antya: 'Dakshina', left: 'Vama', right: 'Dakshina', center: 'Madhya'
+    };
+    if (nadiAliases[cleanCode.toLowerCase()]) cleanCode = nadiAliases[cleanCode.toLowerCase()];
+  } else if (group === 'animals') {
+    const animalAliases = {
+      sheep: 'Goat', serpent: 'Snake'
+    };
+    if (animalAliases[cleanCode.toLowerCase()]) cleanCode = animalAliases[cleanCode.toLowerCase()];
+  }
 
   // 1. Direct key match
   let match = MATCH_I18N[group][code] || MATCH_I18N[group][cleanCode];

@@ -228,22 +228,26 @@ export default function TamilPoruthamCard({ matchReport }) {
 
   // Chevvai houses placement string
   const getChevvaiHousesString = (houses = {}) => {
+    const lagna = houses?.lagna || 9;
+    const moon = houses?.moon || 11;
+    const venus = houses?.venus || 5;
+
     if (lang === 'kn') {
-      return `ಲಗ್ನದಿಂದ ${houses.lagna}, ಚಂದ್ರನಿಂದ ${houses.moon}, ಶುಕ್ರನಿಂದ ${houses.venus} ನೇ ಮನೆ.`;
+      return `ಲಗ್ನದಿಂದ ${lagna}, ಚಂದ್ರನಿಂದ ${moon}, ಶುಕ್ರನಿಂದ ${venus} ನೇ ಮನೆ.`;
     }
     if (lang === 'ta') {
-      return `லக்னத்திலிருந்து ${houses.lagna}-ஆம் இடம், சந்திரனிலிருந்து ${houses.moon}-ஆம் இடம், சுக்கிரனிலிருந்து ${houses.venus}-ஆம் இடம்.`;
+      return `லக்னத்திலிருந்து ${lagna}-ஆம் இடம், சந்திரனிலிருந்து ${moon}-ஆம் இடம், சுக்கிரனிலிருந்து ${venus}-ஆம் இடம்.`;
     }
     if (lang === 'hi') {
-      return `लग्न से ${houses.lagna} भाव, चन्द्र से ${houses.moon} भाव, शुक्र से ${houses.venus} भाव।`;
+      return `लग्न से ${lagna} भाव, चन्द्र से ${moon} भाव, शुक्र से ${venus} भाव।`;
     }
     if (lang === 'te') {
-      return `లగ్నం నుండి ${houses.lagna}, చంద్రుని నుండి ${houses.moon}, శుక్రుని నుండి ${houses.venus} వ స్థానం.`;
+      return `లగ్నం నుండి ${lagna}, చంద్రుని నుండి ${moon}, శుక్రుని నుండి ${venus} వ స్థానం.`;
     }
     if (lang === 'bn') {
-      return `লগ্ন থেকে ${houses.lagna}, চন্দ্র থেকে ${houses.moon}, শুক্র থেকে ${houses.venus} ভাব।`;
+      return `লগ্ন থেকে ${lagna}, চন্দ্র থেকে ${moon}, শুক্র থেকে ${venus} ভাব।`;
     }
-    return `House ${houses.lagna} from Ascendant, ${houses.moon} from Moon, ${houses.venus} from Venus.`;
+    return `House ${lagna} from Ascendant, ${moon} from Moon, ${venus} from Venus.`;
   };
 
   // Localized cancellation rules for Chevvai
@@ -395,26 +399,26 @@ export default function TamilPoruthamCard({ matchReport }) {
           {/* Groom attributes */}
           <div className="bg-white p-3 rounded-xl border border-indigo-100 shadow-2xs space-y-1.5">
             <div className="font-bold text-indigo-900 flex flex-wrap justify-between items-center gap-1 border-b border-indigo-50 pb-1">
-              <span>{MATCH_I18N.groomHeading[lang] || MATCH_I18N.groomHeading.en}: {boy?.name || 'Groom'}</span>
+              <span>{MATCH_I18N.groomHeading[lang] || MATCH_I18N.groomHeading.en}: {boy?.name || boyDetails?.name || 'Groom'}</span>
               <span className="text-[10px] bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded font-bold shrink-0">
-                {translateEntity('nakshatras', boyDetails.star, lang)} ({boyDetails.padam} {MATCH_I18N.attrLabels.pada[lang]})
+                {translateEntity('nakshatras', boyDetails.star || boyDetails.nakshatra || boy?.starNakshatra || boy?.nakshatra, lang)} ({boyDetails.padam || boyDetails.pada || boy?.pada || '1'} {MATCH_I18N.attrLabels.pada[lang]})
               </span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 text-slate-600">
               <div>
-                {MATCH_I18N.attrLabels.rashi[lang]}: <strong className="text-slate-800">{translateEntity('rashis', boyDetails.rasi, lang)}</strong>
+                {MATCH_I18N.attrLabels.rashi[lang]}: <strong className="text-slate-800">{translateEntity('rashis', boyDetails.rasi || boyDetails.rashi || boy?.moonSign || boy?.rasi, lang)}</strong>
               </div>
               <div>
                 {MATCH_I18N.attrLabels.gana[lang]}: <strong className="text-slate-800">{translateEntity('ganas', boyDetails.gana, lang)}</strong>
               </div>
               <div>
-                {MATCH_I18N.attrLabels.yoni[lang]}: <strong className="text-slate-800">{translateEntity('animals', boyDetails.animal, lang)} ({boyDetails.yoniSex === 'Male' ? MATCH_I18N.attrLabels.male[lang] : MATCH_I18N.attrLabels.female[lang]})</strong>
+                {MATCH_I18N.attrLabels.yoni[lang]}: <strong className="text-slate-800">{translateEntity('animals', boyDetails.animal || boyDetails.yoni, lang)} ({boyDetails.yoniSex === 'Male' ? MATCH_I18N.attrLabels.male[lang] : MATCH_I18N.attrLabels.female[lang]})</strong>
               </div>
               <div>
                 {MATCH_I18N.attrLabels.bird[lang]}: <strong className="text-slate-800">{translateEntity('birds', boyDetails.bird, lang)}</strong>
               </div>
               <div>
-                {MATCH_I18N.attrLabels.tree[lang]}: <strong className="text-slate-800">{translateEntity('trees', boyDetails.tree, lang)} {boyDetails.milkyTree ? MATCH_I18N.attrLabels.milkyTree[lang] : ''}</strong>
+                {MATCH_I18N.attrLabels.tree[lang]}: <strong className="text-slate-800">{translateEntity('trees', boyDetails.tree || boyDetails.vriksha, lang)} {boyDetails.milkyTree ? MATCH_I18N.attrLabels.milkyTree[lang] : ''}</strong>
               </div>
               <div>
                 {MATCH_I18N.attrLabels.nadi[lang]}: <strong className="text-slate-800">{translateEntity('nadis', boyDetails.nadi, lang)}</strong>
@@ -428,26 +432,26 @@ export default function TamilPoruthamCard({ matchReport }) {
           {/* Bride attributes */}
           <div className="bg-white p-3 rounded-xl border border-rose-100 shadow-2xs space-y-1.5">
             <div className="font-bold text-rose-900 flex flex-wrap justify-between items-center gap-1 border-b border-rose-50 pb-1">
-              <span>{MATCH_I18N.brideHeading[lang] || MATCH_I18N.brideHeading.en}: {girl?.name || 'Bride'}</span>
+              <span>{MATCH_I18N.brideHeading[lang] || MATCH_I18N.brideHeading.en}: {girl?.name || girlDetails?.name || 'Bride'}</span>
               <span className="text-[10px] bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded font-bold shrink-0">
-                {translateEntity('nakshatras', girlDetails.star, lang)} ({girlDetails.padam} {MATCH_I18N.attrLabels.pada[lang]})
+                {translateEntity('nakshatras', girlDetails.star || girlDetails.nakshatra || girl?.starNakshatra || girl?.nakshatra, lang)} ({girlDetails.padam || girlDetails.pada || girl?.pada || '1'} {MATCH_I18N.attrLabels.pada[lang]})
               </span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 text-slate-600">
               <div>
-                {MATCH_I18N.attrLabels.rashi[lang]}: <strong className="text-slate-800">{translateEntity('rashis', girlDetails.rasi, lang)}</strong>
+                {MATCH_I18N.attrLabels.rashi[lang]}: <strong className="text-slate-800">{translateEntity('rashis', girlDetails.rasi || girlDetails.rashi || girl?.moonSign || girl?.rasi, lang)}</strong>
               </div>
               <div>
                 {MATCH_I18N.attrLabels.gana[lang]}: <strong className="text-slate-800">{translateEntity('ganas', girlDetails.gana, lang)}</strong>
               </div>
               <div>
-                {MATCH_I18N.attrLabels.yoni[lang]}: <strong className="text-slate-800">{translateEntity('animals', girlDetails.animal, lang)} ({girlDetails.yoniSex === 'Male' ? MATCH_I18N.attrLabels.male[lang] : MATCH_I18N.attrLabels.female[lang]})</strong>
+                {MATCH_I18N.attrLabels.yoni[lang]}: <strong className="text-slate-800">{translateEntity('animals', girlDetails.animal || girlDetails.yoni, lang)} ({girlDetails.yoniSex === 'Male' ? MATCH_I18N.attrLabels.male[lang] : MATCH_I18N.attrLabels.female[lang]})</strong>
               </div>
               <div>
                 {MATCH_I18N.attrLabels.bird[lang]}: <strong className="text-slate-800">{translateEntity('birds', girlDetails.bird, lang)}</strong>
               </div>
               <div>
-                {MATCH_I18N.attrLabels.tree[lang]}: <strong className="text-slate-800">{translateEntity('trees', girlDetails.tree, lang)} {girlDetails.milkyTree ? MATCH_I18N.attrLabels.milkyTree[lang] : ''}</strong>
+                {MATCH_I18N.attrLabels.tree[lang]}: <strong className="text-slate-800">{translateEntity('trees', girlDetails.tree || girlDetails.vriksha, lang)} {girlDetails.milkyTree ? MATCH_I18N.attrLabels.milkyTree[lang] : ''}</strong>
               </div>
               <div>
                 {MATCH_I18N.attrLabels.nadi[lang]}: <strong className="text-slate-800">{translateEntity('nadis', girlDetails.nadi, lang)}</strong>
