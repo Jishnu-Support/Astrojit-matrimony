@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Search,
   User,
@@ -346,6 +346,22 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   const [loadingClient, setLoadingClient] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [referredData, setReferredData] = useState({ totalReferred: 0, clients: [] });
+  const [loadingReferred, setLoadingReferred] = useState(false);
+
+  // Instantly load/refresh referred clients list
+  const loadReferredClients = useCallback(async () => {
+    try {
+      setLoadingReferred(true);
+      const data = await API.getReferredClients();
+      if (data) {
+        setReferredData(data);
+      }
+    } catch (err) {
+      console.error('Error loading astrologer referred data:', err);
+    } finally {
+      setLoadingReferred(false);
+    }
+  }, []);
 
   // Edit Client Modal State for Referred Page
   const [editingClient, setEditingClient] = useState(null);
@@ -399,8 +415,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   useEffect(() => {
     async function loadInitial() {
       try {
-        const data = await API.getReferredClients();
-        setReferredData(data);
+        await loadReferredClients();
         await loadMatchRequests();
         await loadAppointments();
       } catch (err) {
@@ -408,7 +423,27 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
       }
     }
     loadInitial();
-  }, []);
+  }, [loadReferredClients]);
+
+  // Real-time listener: Whenever any client is registered or saved across Horoscope/Search/Matchmaking, update immediately!
+  useEffect(() => {
+    const handleClientRefresh = () => {
+      loadReferredClients();
+    };
+    window.addEventListener('astrojit:client-registered', handleClientRefresh);
+    window.addEventListener('astrojit:refresh-referred-clients', handleClientRefresh);
+    return () => {
+      window.removeEventListener('astrojit:client-registered', handleClientRefresh);
+      window.removeEventListener('astrojit:refresh-referred-clients', handleClientRefresh);
+    };
+  }, [loadReferredClients]);
+
+  // When switching to the Referred Clients tab, always refresh data
+  useEffect(() => {
+    if (activeTab === 'referred') {
+      loadReferredClients();
+    }
+  }, [activeTab, loadReferredClients]);
 
   const loadAppointments = async () => {
     try {
@@ -822,8 +857,7 @@ Shubham Bhavatu! 🙏`;
       }
 
       // Reload referred clients
-      const data = await API.getReferredClients();
-      setReferredData(data);
+      await loadReferredClients();
 
       setTimeout(() => {
         setEditingClient(null);
@@ -1362,6 +1396,7 @@ Shubham Bhavatu! 🙏`;
       {(activeTab === 'horoscope' || activeTab === 'thirukanitha') && (
         <HoroscopeHub
           hideClientLookup={false}
+          onClientSaved={loadReferredClients}
         />
       )}
 
@@ -1380,6 +1415,7 @@ Shubham Bhavatu! 🙏`;
           <BirthDetailsIntakeCard
             module="search"
             onCalculate={() => refreshCalculations()}
+            onClientSaved={loadReferredClients}
           />
 
           {/* Active Client Details & Kundli Snapshot */}
@@ -1607,6 +1643,7 @@ Shubham Bhavatu! 🙏`;
           <BirthDetailsIntakeCard
             module="matchmaking"
             onCalculate={() => refreshCalculations()}
+            onClientSaved={loadReferredClients}
           />
 
           {/* Live Client Matchmaking (10 Poruthams & Compatibility) Analyzer */}
@@ -2597,9 +2634,21 @@ Shubham Bhavatu! 🙏`;
                 {t('registeredUsingCode')} <strong>{user?.referralCode}</strong>
               </p>
             </div>
-            <span className="text-xs font-bold text-amber-900 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-200">
-              {referredData.clients.length} {t('totalClientsBadge')}
-            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={loadReferredClients}
+                disabled={loadingReferred}
+                className="px-2.5 py-1 text-xs font-bold text-slate-600 hover:text-indigo-600 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs disabled:opacity-50"
+                title={lang === 'ta' ? 'பட்டியலைப் புதுப்பிக்க' : 'Refresh Referred Clients'}
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${loadingReferred ? 'animate-spin text-indigo-600' : ''}`} />
+                <span>{lang === 'ta' ? 'புதுப்பி' : 'Refresh'}</span>
+              </button>
+              <span className="text-xs font-bold text-amber-900 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-200">
+                {referredData.clients.length} {t('totalClientsBadge')}
+              </span>
+            </div>
           </div>
 
           {referredData.clients.length === 0 ? (

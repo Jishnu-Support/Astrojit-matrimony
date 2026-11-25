@@ -36,7 +36,8 @@ const SECONDS_60 = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0
 export default function BirthDetailsIntakeCard({
   module = 'horoscope', // 'horoscope' | 'search' | 'matchmaking'
   onCalculate,
-  hideClientLookup = false
+  hideClientLookup = false,
+  onClientSaved
 }) {
   const { lang } = useLang();
   const { user } = useAuth();
@@ -433,6 +434,17 @@ export default function BirthDetailsIntakeCard({
       const registerFn = API.registerClientFromAstrologer || API.registerClientByAstrologer;
       const res = await registerFn(payload);
 
+      // Notify parent components and global event listeners immediately
+      if (typeof onClientSaved === 'function') {
+        try {
+          onClientSaved(res);
+        } catch (callbackErr) {
+          console.error('onClientSaved callback error:', callbackErr);
+        }
+      }
+      window.dispatchEvent(new CustomEvent('astrojit:client-registered', { detail: res }));
+      window.dispatchEvent(new CustomEvent('astrojit:refresh-referred-clients', { detail: res }));
+
       const receiptPayload = res.receipt || {
         client: res.client || payload,
         credentials: {
@@ -443,6 +455,10 @@ export default function BirthDetailsIntakeCard({
         astrologer: user || {},
         loginUrl: `${window.location.origin}/login`
       };
+
+      if (res.client) {
+        selectClient(res.client);
+      }
 
       setReceiptModalData(receiptPayload);
 
@@ -532,6 +548,17 @@ Shubham Bhavatu! 🙏`;
 
       const registerFn = API.registerClientFromAstrologer || API.registerClientByAstrologer;
       const res = await registerFn(payload);
+
+      // Notify parent components and global event listeners immediately
+      if (typeof onClientSaved === 'function') {
+        try {
+          onClientSaved(res);
+        } catch (callbackErr) {
+          console.error('onClientSaved callback error:', callbackErr);
+        }
+      }
+      window.dispatchEvent(new CustomEvent('astrojit:client-registered', { detail: res }));
+      window.dispatchEvent(new CustomEvent('astrojit:refresh-referred-clients', { detail: res }));
 
       const savedClient = res.client || payload;
       const clientCode = savedClient.clientCode || res.receipt?.clientCode || '';

@@ -19,7 +19,8 @@ import HoroscopeMultiPagePrint from './HoroscopeMultiPagePrint';
 export default function HoroscopeHub({
   initialClient = null,
   onClose,
-  hideClientLookup = false
+  hideClientLookup = false,
+  onClientSaved
 }) {
   const { lang } = useLang();
   const { user } = useAuth();
@@ -118,6 +119,7 @@ export default function HoroscopeHub({
               module="horoscope"
               hideClientLookup={shouldHideLookup}
               onCalculate={() => refreshCalculations()}
+              onClientSaved={onClientSaved}
             />
           </div>
 
