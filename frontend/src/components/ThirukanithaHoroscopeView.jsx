@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useLang } from '../i18n';
 import { useTheme } from '../context/ThemeContext';
 import {
@@ -1259,7 +1259,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                   <span>{isTamil ? '3. கிரக நிலைகள் அட்டவணை (நிராயண)' : '3. Nirayana Planetary Positions Table'}</span>
                 </h2>
                 <p className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5 line-clamp-1">
-                  {isTamil ? 'துல்லியமான நிராயண கிரக நிலைகள், பாகை, நட்சத்திரம், பாதம், நவாம்சம் மற்றும் பாவகம்' : 'Accurate Nirayana Planetary Longitudes, Nakshatra, Pada, Navamsa & Bhava'}
+                  {isTamil ? 'துல்லியமான நிராயண கிரக நிலைகள், பாகை, நட்சத்திரம், பாதம், நட்சத்திர அதிபதி மற்றும் பாவகம்' : 'Accurate Nirayana Planetary Longitudes, Nakshatra, Pada, Nakshatra Athipathi & Bhava'}
                 </p>
               </div>
             </div>
@@ -1284,7 +1284,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                   <th className="py-2.5 px-3">{isTamil ? 'ராசி' : 'Sign (Rasi)'}</th>
                   <th className="py-2.5 px-3">{isTamil ? 'நட்சத்திரம்' : 'Nakshatra'}</th>
                   <th className="py-2.5 px-3">{T.pada}</th>
-                  <th className="py-2.5 px-3">{T.d9}</th>
+                  <th className="py-2.5 px-3">{isTamil ? 'நட்சத்திர அதிபதி' : 'Nakshatra Athipathi'}</th>
                   <th className="py-2.5 px-3 text-center">{T.dignity || (isTamil ? 'நிலை' : 'Dignity')}</th>
                   <th className="py-2.5 px-3 text-right">{T.bhava}</th>
                 </tr>
@@ -1323,7 +1323,23 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                       <td className="py-2 px-3 font-bold">{isTamil ? RASHIS[p.rasi].ta : RASHIS[p.rasi].en}</td>
                       <td className="py-2 px-3">{isTamil ? NAKSHATRAS[p.nakshatra].ta : NAKSHATRAS[p.nakshatra].en}</td>
                       <td className="py-2 px-3 font-bold">{p.pada}</td>
-                      <td className="py-2 px-3">{isTamil ? RASHIS[p.navamsa].ta : RASHIS[p.navamsa].en}</td>
+                      <td className="py-2 px-3 font-semibold text-stone-700 dark:text-stone-300">
+                        {(() => {
+                          const lordEn = NAKSHATRAS[p.nakshatra]?.lord;
+                          const lordTa = {
+                            Ketu: 'கேது',
+                            Venus: 'சுக்கிரன்',
+                            Sun: 'சூரியன்',
+                            Moon: 'சந்திரன்',
+                            Mars: 'செவ்வாய்',
+                            Rahu: 'ராகு',
+                            Jupiter: 'குரு',
+                            Saturn: 'சனி',
+                            Mercury: 'புதன்',
+                          }[lordEn];
+                          return isTamil ? (lordTa || lordEn || '---') : (lordEn || '---');
+                        })()}
+                      </td>
                       <td className="py-2 px-3 text-center font-bold">
                         {isLagna || isMandi ? (
                           <span className="text-stone-400 font-mono">---</span>
