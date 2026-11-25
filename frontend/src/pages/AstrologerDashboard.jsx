@@ -42,6 +42,7 @@ import HoroscopePagerView from '../components/HoroscopePagerView';
 import { MATCH_I18N } from '../matchmakingI18n';
 import { useClientBirth } from '../context/ClientBirthContext';
 import BirthDetailsIntakeCard from '../components/BirthDetailsIntakeCard';
+import { calculateThirukanithaHoroscope, NAKSHATRAS, RASHIS } from '../utils/thirukanithaEngine';
 
 export default function AstrologerDashboard({ activeTab: propTab, onTabChange }) {
   const { user, setUser } = useAuth();
@@ -83,6 +84,26 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
     lat: 13.0827,
     lon: 80.2707
   });
+
+  // Calculate live Thirukanitha Horoscope for partner when DOB is entered
+  const partnerHoroscope = React.useMemo(() => {
+    if (!partnerDetails.dob) return null;
+    try {
+      const parts = String(partnerDetails.dob).split(/[-/.]/);
+      if (parts.length !== 3) return null;
+      return calculateThirukanithaHoroscope({
+        name: partnerDetails.name || 'Partner',
+        dob: partnerDetails.dob,
+        dobTime: partnerDetails.dobTime || '12:00',
+        city: partnerDetails.dobPlace || 'Chennai',
+        placeName: partnerDetails.dobPlace || 'Chennai',
+        lat: partnerDetails.lat || 13.0827,
+        lon: partnerDetails.lon || 80.2707
+      });
+    } catch {
+      return null;
+    }
+  }, [partnerDetails.dob, partnerDetails.dobTime, partnerDetails.dobPlace, partnerDetails.name]);
   const [activeClientMatchReport, setActiveClientMatchReport] = useState(null);
   const [calculatingActiveMatch, setCalculatingActiveMatch] = useState(false);
   const [activeMatchTab, setActiveMatchTab] = useState('tamil');
@@ -404,6 +425,11 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
     setCalculatingActiveMatch(true);
     try {
       const isClientMale = (activeBirthData.gender || 'male').toLowerCase() !== 'female';
+      const clientNak = calculatedHoroscope?.summary?.nakshatraEn || (typeof calculatedHoroscope?.summary?.moonNak === 'number' && NAKSHATRAS[calculatedHoroscope.summary.moonNak]?.en);
+      const clientRasi = calculatedHoroscope?.summary?.moonSignEn || (typeof calculatedHoroscope?.summary?.moonRasi === 'number' && RASHIS[calculatedHoroscope.summary.moonRasi]?.en);
+      const partnerNak = partnerHoroscope?.summary?.nakshatraEn || (typeof partnerHoroscope?.summary?.moonNak === 'number' && NAKSHATRAS[partnerHoroscope.summary.moonNak]?.en);
+      const partnerRasi = partnerHoroscope?.summary?.moonSignEn || (typeof partnerHoroscope?.summary?.moonRasi === 'number' && RASHIS[partnerHoroscope.summary.moonRasi]?.en);
+
       const boyData = isClientMale
         ? {
             name: activeBirthData.name || 'Groom',
@@ -411,7 +437,13 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
             dobTime: activeBirthData.dobTime || '10:30',
             dobPlace: activeBirthData.city || activeBirthData.placeName || 'Salem',
             lat: activeBirthData.lat || 11.6643,
-            lon: activeBirthData.lon || 78.1460
+            lon: activeBirthData.lon || 78.1460,
+            starNakshatra: clientNak,
+            nakshatra: clientNak,
+            moonSign: clientRasi,
+            rasi: clientRasi,
+            rasiMoonSign: clientRasi,
+            pada: calculatedHoroscope?.summary?.moonPada || 1
           }
         : {
             name: partnerDetails.name?.trim() || 'Groom',
@@ -419,7 +451,13 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
             dobTime: partnerDetails.dobTime || '12:00',
             dobPlace: partnerDetails.dobPlace || 'Chennai',
             lat: partnerDetails.lat || 13.0827,
-            lon: partnerDetails.lon || 80.2707
+            lon: partnerDetails.lon || 80.2707,
+            starNakshatra: partnerNak,
+            nakshatra: partnerNak,
+            moonSign: partnerRasi,
+            rasi: partnerRasi,
+            rasiMoonSign: partnerRasi,
+            pada: partnerHoroscope?.summary?.moonPada || 1
           };
       const girlData = isClientMale
         ? {
@@ -428,7 +466,13 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
             dobTime: partnerDetails.dobTime || '12:00',
             dobPlace: partnerDetails.dobPlace || 'Chennai',
             lat: partnerDetails.lat || 13.0827,
-            lon: partnerDetails.lon || 80.2707
+            lon: partnerDetails.lon || 80.2707,
+            starNakshatra: partnerNak,
+            nakshatra: partnerNak,
+            moonSign: partnerRasi,
+            rasi: partnerRasi,
+            rasiMoonSign: partnerRasi,
+            pada: partnerHoroscope?.summary?.moonPada || 1
           }
         : {
             name: activeBirthData.name || 'Bride',
@@ -436,7 +480,13 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
             dobTime: activeBirthData.dobTime || '10:30',
             dobPlace: activeBirthData.city || activeBirthData.placeName || 'Salem',
             lat: activeBirthData.lat || 11.6643,
-            lon: activeBirthData.lon || 78.1460
+            lon: activeBirthData.lon || 78.1460,
+            starNakshatra: clientNak,
+            nakshatra: clientNak,
+            moonSign: clientRasi,
+            rasi: clientRasi,
+            rasiMoonSign: clientRasi,
+            pada: calculatedHoroscope?.summary?.moonPada || 1
           };
 
       const report = await API.calculateMatch(boyData, girlData);
@@ -1038,15 +1088,30 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                 <span className="font-bold text-slate-900">{activeBirthData?.placeName || activeBirthData?.city || clientProfile?.dobPlace || '—'}</span>
               </div>
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                <span className="text-slate-500 block text-[10px] uppercase font-bold">Nakshatra / Moon Sign</span>
+                <span className="text-slate-500 block text-[10px] uppercase font-bold">{lang === 'ta' ? 'நட்சத்திரம் / ராசி' : 'Nakshatra / Moon Sign'}</span>
                 <span className="font-bold text-slate-900">
-                  {calculatedHoroscope?.summary?.nakshatra || clientProfile?.nakshatra || '—'} / {calculatedHoroscope?.summary?.moonSign || clientProfile?.rasi || '—'}
+                  {(() => {
+                    const nak = lang === 'ta'
+                      ? (calculatedHoroscope?.summary?.nakshatraTa || (typeof calculatedHoroscope?.summary?.moonNak === 'number' && NAKSHATRAS[calculatedHoroscope.summary.moonNak]?.ta) || clientProfile?.nakshatra)
+                      : (calculatedHoroscope?.summary?.nakshatraEn || calculatedHoroscope?.summary?.nakshatra || (typeof calculatedHoroscope?.summary?.moonNak === 'number' && NAKSHATRAS[calculatedHoroscope.summary.moonNak]?.en) || clientProfile?.nakshatra);
+
+                    const pada = calculatedHoroscope?.summary?.moonPada ? (lang === 'ta' ? ` (${calculatedHoroscope.summary.moonPada} பாதம்)` : ` (Pada ${calculatedHoroscope.summary.moonPada})`) : '';
+
+                    const rasi = lang === 'ta'
+                      ? (calculatedHoroscope?.summary?.moonSignTa || calculatedHoroscope?.summary?.rasiTa || (typeof calculatedHoroscope?.summary?.moonRasi === 'number' && RASHIS[calculatedHoroscope.summary.moonRasi]?.ta) || clientProfile?.rasi)
+                      : (calculatedHoroscope?.summary?.moonSignEn || calculatedHoroscope?.summary?.moonSign || calculatedHoroscope?.summary?.rasiEn || (typeof calculatedHoroscope?.summary?.moonRasi === 'number' && RASHIS[calculatedHoroscope.summary.moonRasi]?.en) || clientProfile?.rasi);
+
+                    return `${nak ? `${nak}${pada}` : '—'} / ${rasi || '—'}`;
+                  })()}
                 </span>
               </div>
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                <span className="text-slate-500 block text-[10px] uppercase font-bold">Lagna (Ascendant)</span>
+                <span className="text-slate-500 block text-[10px] uppercase font-bold">{lang === 'ta' ? 'லக்னம்' : 'Lagna (Ascendant)'}</span>
                 <span className="font-bold text-indigo-700">
-                  {calculatedHoroscope?.summary?.lagna || '—'}
+                  {lang === 'ta'
+                    ? (calculatedHoroscope?.summary?.lagnaTa || (typeof calculatedHoroscope?.summary?.lagnaRasi === 'number' && RASHIS[calculatedHoroscope.summary.lagnaRasi]?.ta) || '—')
+                    : (calculatedHoroscope?.summary?.lagnaEn || calculatedHoroscope?.summary?.lagna || (typeof calculatedHoroscope?.summary?.lagnaRasi === 'number' && RASHIS[calculatedHoroscope.summary.lagnaRasi]?.en) || '—')}
+                  {calculatedHoroscope?.summary?.lagnaDegInSign ? ` (${calculatedHoroscope.summary.lagnaDegInSign})` : ''}
                 </span>
               </div>
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
@@ -1261,7 +1326,20 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                     <strong>Place:</strong> {activeBirthData?.placeName || activeBirthData?.city || '—'}{activeBirthData?.state ? `, ${typeof activeBirthData.state === 'object' && activeBirthData.state !== null ? activeBirthData.state.name || '' : activeBirthData.state}` : ''}
                   </p>
                   <p className="text-slate-700 font-medium pt-1 border-t border-slate-200">
-                    <strong>Nakshatra / Moon Sign:</strong> {calculatedHoroscope?.summary?.nakshatra || '—'} / {calculatedHoroscope?.summary?.moonSign || '—'}
+                    <strong>{lang === 'ta' ? 'நட்சத்திரம் / ராசி:' : 'Nakshatra / Moon Sign:'}</strong>{' '}
+                    {(() => {
+                      const nak = lang === 'ta'
+                        ? (calculatedHoroscope?.summary?.nakshatraTa || (typeof calculatedHoroscope?.summary?.moonNak === 'number' && NAKSHATRAS[calculatedHoroscope.summary.moonNak]?.ta) || clientProfile?.nakshatra)
+                        : (calculatedHoroscope?.summary?.nakshatraEn || calculatedHoroscope?.summary?.nakshatra || (typeof calculatedHoroscope?.summary?.moonNak === 'number' && NAKSHATRAS[calculatedHoroscope.summary.moonNak]?.en) || clientProfile?.nakshatra);
+
+                      const pada = calculatedHoroscope?.summary?.moonPada ? (lang === 'ta' ? ` (${calculatedHoroscope.summary.moonPada} பாதம்)` : ` (Pada ${calculatedHoroscope.summary.moonPada})`) : '';
+
+                      const rasi = lang === 'ta'
+                        ? (calculatedHoroscope?.summary?.moonSignTa || calculatedHoroscope?.summary?.rasiTa || (typeof calculatedHoroscope?.summary?.moonRasi === 'number' && RASHIS[calculatedHoroscope.summary.moonRasi]?.ta) || clientProfile?.rasi)
+                        : (calculatedHoroscope?.summary?.moonSignEn || calculatedHoroscope?.summary?.moonSign || calculatedHoroscope?.summary?.rasiEn || (typeof calculatedHoroscope?.summary?.moonRasi === 'number' && RASHIS[calculatedHoroscope.summary.moonRasi]?.en) || clientProfile?.rasi);
+
+                      return `${nak ? `${nak}${pada}` : '—'} / ${rasi || '—'}`;
+                    })()}
                   </p>
                 </div>
               </div>
@@ -1321,6 +1399,25 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
                     />
                   </div>
                 </div>
+
+                {partnerHoroscope?.summary && (
+                  <p className="text-rose-900 font-medium pt-1 border-t border-rose-200 text-xs">
+                    <strong>{lang === 'ta' ? 'நட்சத்திரம் / ராசி:' : 'Nakshatra / Moon Sign:'}</strong>{' '}
+                    {(() => {
+                      const nak = lang === 'ta'
+                        ? (partnerHoroscope.summary.nakshatraTa || (typeof partnerHoroscope.summary.moonNak === 'number' && NAKSHATRAS[partnerHoroscope.summary.moonNak]?.ta))
+                        : (partnerHoroscope.summary.nakshatraEn || partnerHoroscope.summary.nakshatra || (typeof partnerHoroscope.summary.moonNak === 'number' && NAKSHATRAS[partnerHoroscope.summary.moonNak]?.en));
+
+                      const pada = partnerHoroscope.summary.moonPada ? (lang === 'ta' ? ` (${partnerHoroscope.summary.moonPada} பாதம்)` : ` (Pada ${partnerHoroscope.summary.moonPada})`) : '';
+
+                      const rasi = lang === 'ta'
+                        ? (partnerHoroscope.summary.moonSignTa || partnerHoroscope.summary.rasiTa || (typeof partnerHoroscope.summary.moonRasi === 'number' && RASHIS[partnerHoroscope.summary.moonRasi]?.ta))
+                        : (partnerHoroscope.summary.moonSignEn || partnerHoroscope.summary.moonSign || partnerHoroscope.summary.rasiEn || (typeof partnerHoroscope.summary.moonRasi === 'number' && RASHIS[partnerHoroscope.summary.moonRasi]?.en));
+
+                      return `${nak ? `${nak}${pada}` : '—'} / ${rasi || '—'}`;
+                    })()}
+                  </p>
+                )}
               </div>
             </div>
 

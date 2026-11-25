@@ -120,33 +120,32 @@ const VASHYA_MAP = {
 function findStarObj(nameOrObj) {
   if (!nameOrObj) return TAMIL_STARS[0];
   if (typeof nameOrObj === 'object') {
+    const candidate = nameOrObj.starNakshatra || nameOrObj.nakshatra || nameOrObj.star || nameOrObj.astrologicalDetails?.nakshatra;
+    if (candidate) {
+      const cStr = String(candidate).toLowerCase().trim();
+      const found = TAMIL_STARS.find(s => s.name.toLowerCase() === cStr || s.tamil === candidate || s.tamil.includes(candidate) || cStr.includes(s.name.toLowerCase()));
+      if (found) return found;
+    }
     if (nameOrObj.name) {
-      const found = TAMIL_STARS.find(s => s.name.toLowerCase() === nameOrObj.name.toLowerCase());
-      if (found) return found;
-    }
-    if (nameOrObj.starNakshatra) {
-      const found = TAMIL_STARS.find(s => s.name.toLowerCase() === nameOrObj.starNakshatra.toLowerCase());
-      if (found) return found;
-    }
-    if (nameOrObj.astrologicalDetails?.nakshatra) {
-      const found = TAMIL_STARS.find(s => s.name.toLowerCase() === nameOrObj.astrologicalDetails.nakshatra.toLowerCase());
+      const nStr = String(nameOrObj.name).toLowerCase().trim();
+      const found = TAMIL_STARS.find(s => s.name.toLowerCase() === nStr || s.tamil === nameOrObj.name);
       if (found) return found;
     }
   }
   const str = nameOrObj.toString().toLowerCase().trim();
-  return TAMIL_STARS.find(s => s.name.toLowerCase() === str || s.tamil.includes(str)) || TAMIL_STARS[0];
+  return TAMIL_STARS.find(s => s.name.toLowerCase() === str || s.tamil.includes(str) || str.includes(s.name.toLowerCase())) || TAMIL_STARS[0];
 }
 
 function findRashiIdx(nameOrObj) {
   if (!nameOrObj) return 0;
   let str = '';
   if (typeof nameOrObj === 'object') {
-    str = nameOrObj.rasiMoonSign || nameOrObj.moonSign || nameOrObj.astrologicalDetails?.moonSign || '';
+    str = nameOrObj.rasiMoonSign || nameOrObj.moonSign || nameOrObj.rasi || nameOrObj.astrologicalDetails?.moonSign || '';
   } else {
     str = nameOrObj.toString();
   }
   str = str.toLowerCase().trim();
-  const idx = RASHIS.findIndex(r => r.name.toLowerCase().includes(str) || r.tamil.includes(str));
+  const idx = RASHIS.findIndex(r => r.name.toLowerCase() === str || r.name.toLowerCase().includes(str) || r.tamil === str || r.tamil.includes(str));
   return idx >= 0 ? idx : 0;
 }
 
