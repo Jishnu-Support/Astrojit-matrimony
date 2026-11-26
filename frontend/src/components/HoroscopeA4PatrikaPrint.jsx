@@ -79,7 +79,7 @@ function SouthIndianChartBox({ title, chartBoxes, isTa, lagnaRasi }) {
 
   return (
     <div className="border border-black bg-white">
-      <div className="grid grid-cols-4 grid-rows-4 w-full h-[49mm] text-[8.5px] leading-tight">
+      <div className="grid grid-cols-4 grid-rows-4 w-full h-[55mm] text-[9px] leading-tight">
         {[0, 1, 2, 3].map(r =>
           [0, 1, 2, 3].map(c => {
             if ((r === 1 || r === 2) && (c === 1 || c === 2)) {
@@ -392,16 +392,16 @@ export default function HoroscopeA4PatrikaPrint({
         </div>
       </div>
 
-      {/* Strict Single A4 Page (198mm x 272mm matching printHelper #astrojit-horoscope-1page) */}
+      {/* Strict Single A4 Page (200mm x 288mm filling full printable A4 area) */}
       <div className="w-full overflow-x-auto pb-4">
         <div
           id="astrojit-horoscope-1page"
-          className="w-[198mm] h-[272mm] mx-auto bg-white text-black p-[1.5mm] shadow-lg overflow-hidden print:shadow-none"
+          className="w-[200mm] h-[288mm] mx-auto bg-white text-black p-[1mm] shadow-lg overflow-hidden print:shadow-none"
           style={{ pageBreakAfter: 'avoid', breakInside: 'avoid' }}
         >
           {/* Thin Black Double Page Border */}
           <div className="w-full h-full border border-black p-[1mm] flex flex-col">
-            <div className="w-full h-full border border-black/70 px-[3.5mm] py-[2mm] flex flex-col justify-between gap-1 bg-white">
+            <div className="w-full h-full border border-black/70 px-[4mm] py-[2.5mm] flex flex-col justify-between gap-1.5 bg-white">
 
               {/* 1. HEADER – ASTROLOGY CENTRE DETAILS (Left: AstroJit Logo | Center: Astrologer Details | Right: Astrologer Logo) */}
               <div className="border-b border-black pb-1.5">
@@ -427,21 +427,21 @@ export default function HoroscopeA4PatrikaPrint({
 
                   {/* Center: Astrology Centre & Astrologer Details */}
                   <div className="flex-1 text-center px-1 min-w-0">
-                    <div className="text-[14.5px] font-black text-black leading-tight truncate">
+                    <div className="text-[13px] font-black text-black leading-tight">
                       {astrologerTitle}
                     </div>
                     {astrologerSubTitle && (
-                      <div className="text-[9.5px] font-bold text-stone-800 leading-tight mt-0.5 truncate">
+                      <div className="text-[9px] font-bold text-stone-800 leading-tight mt-0.5">
                         {astrologerSubTitle}
                       </div>
                     )}
                     {astrologerAddress && (
-                      <div className="text-[8.5px] text-stone-700 leading-tight mt-0.5 truncate">
+                      <div className="text-[8px] text-stone-700 leading-tight mt-0.5">
                         {astrologerAddress}
                       </div>
                     )}
                     {astrologerContact && (
-                      <div className="text-[8.5px] font-mono font-semibold text-stone-800 leading-tight mt-0.5 truncate">
+                      <div className="text-[8px] font-mono font-semibold text-stone-800 leading-tight mt-0.5">
                         {astrologerContact}
                       </div>
                     )}
@@ -450,10 +450,10 @@ export default function HoroscopeA4PatrikaPrint({
                   {/* Right: Astrologer Logo */}
                   <div className="w-[36mm] shrink-0 flex items-center justify-end gap-1.5 text-right">
                     <div className="min-w-0">
-                      <div className="text-[8.5px] font-black text-black uppercase leading-tight truncate">
+                      <div className="text-[8px] font-black text-black uppercase leading-tight break-words">
                         {user?.name || (isTa ? 'ஜோதிடர்' : 'Astrologer')}
                       </div>
-                      <div className="text-[7.5px] font-semibold text-stone-600 mt-0.5">
+                      <div className="text-[7px] font-semibold text-stone-600 mt-0.5">
                         {isTa ? 'திருக்கணித ஜாதகம்' : 'Thirukanitha'}
                       </div>
                     </div>

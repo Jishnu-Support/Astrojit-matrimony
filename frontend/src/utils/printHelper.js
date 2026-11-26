@@ -84,11 +84,11 @@ export function printElementById(elementId, customTitle = 'Astrojit_Document') {
             box-sizing: border-box !important;
           }
           #astrojit-horoscope-1page {
-            width: 198mm !important;
-            max-width: 198mm !important;
-            height: 272mm !important;
-            min-height: 272mm !important;
-            max-height: 272mm !important;
+            width: 200mm !important;
+            max-width: 200mm !important;
+            height: 288mm !important;
+            min-height: 288mm !important;
+            max-height: 288mm !important;
             box-sizing: border-box !important;
             display: flex !important;
             flex-direction: column !important;
