@@ -4,6 +4,7 @@ import { useLang } from '../i18n';
 import { useAuth } from '../context/AuthContext';
 import LetterheadBrandingModal, { getInitialLetterhead } from './LetterheadBrandingModal';
 import GeneralPredictionsModal from './GeneralPredictionsModal';
+import AIPrompt1PageModal from './AIPrompt1PageModal';
 import { getGeneralPredictions } from '../utils/generalPredictionsEngine';
 import {
   calculateThirukanithaHoroscope,
@@ -191,6 +192,7 @@ export default function HoroscopeOnePagePrint({
   // 'predictions' (1-Page General Predictions Sheet only)
   const [printPageMode, setPrintPageMode] = useState('both');
   const [predictionsModalOpen, setPredictionsModalOpen] = useState(false);
+  const [aiPromptModalOpen, setAiPromptModalOpen] = useState(false);
 
   // Extract Astrologer Profile Details (Title & Brand from letterhead state or profile)
   const astrologerTitle =
@@ -873,6 +875,17 @@ export default function HoroscopeOnePagePrint({
             <span>{isTa ? 'லெட்டர்ஹெட் திருத்து' : 'Edit Letterhead'}</span>
           </button>
 
+          {/* 1-Page AI Prompt Button */}
+          <button
+            type="button"
+            onClick={() => setAiPromptModalOpen(true)}
+            className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-black text-xs transition-all cursor-pointer flex items-center gap-1.5 shadow-sm border border-amber-400"
+            title={isTa ? '1-பக்க ஜாதகத்திற்கான AI ஆய்வு Prompt-ஐ காண்க' : 'Open 1-Page AI Analysis Prompt'}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-stone-950 fill-amber-300" />
+            <span>{isTa ? '1-பக்க AI Prompt' : '1-Page AI Prompt'}</span>
+          </button>
+
           {/* Switch to Multi-Page Booklet Button */}
           {onSwitchToMultiPage && (
             <button
@@ -1499,6 +1512,13 @@ export default function HoroscopeOnePagePrint({
             printElementById('astrojit-horoscope-predictions-sheet', `${birthData?.name || 'Native'}_Predictions_Astrojit`);
           }, 150);
         }}
+      />
+      {/* 1-Page AI Analysis Prompt Modal */}
+      <AIPrompt1PageModal
+        isOpen={aiPromptModalOpen}
+        onClose={() => setAiPromptModalOpen(false)}
+        birthData={birthData}
+        horoscopeData={horoscope}
       />
     </div>
   );
