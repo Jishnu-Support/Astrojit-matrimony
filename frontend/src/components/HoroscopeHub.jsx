@@ -13,6 +13,7 @@ import { useAuth } from '../context/AuthContext';
 import { useClientBirth } from '../context/ClientBirthContext';
 import ThirukanithaHoroscopeView from './ThirukanithaHoroscopeView';
 import BirthDetailsIntakeCard from './BirthDetailsIntakeCard';
+import HoroscopeA4PatrikaPrint from './HoroscopeA4PatrikaPrint';
 
 export default function HoroscopeHub({
   initialClient = null,
@@ -131,20 +132,12 @@ export default function HoroscopeHub({
           </div>
         </>
       ) : (
-        /* HOROSCOPE PRINT MODULE (Clean Container - Pagers & Features Removed) */
-        <div className="bg-white/95 dark:bg-[#251E1A] p-8 sm:p-12 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs text-center space-y-3">
-          <div className="w-12 h-12 mx-auto rounded-2xl bg-amber-100 dark:bg-amber-950/50 text-[#7A1A22] dark:text-amber-300 flex items-center justify-center">
-            <Printer className="w-6 h-6" />
-          </div>
-          <h2 className="text-base sm:text-lg font-black text-[#7A1A22] dark:text-[#E8838B]">
-            {isTa ? 'ஜாதகம் அச்சு' : 'Horoscope Print'}
-          </h2>
-          <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md mx-auto">
-            {isTa
-              ? 'ஜாதகம் அச்சுப் பகுதி தயாராக உள்ளது.'
-              : 'Horoscope Print module is ready.'}
-          </p>
-        </div>
+        /* HOROSCOPE PRINT MODULE (Strict Single A4 Patrika) */
+        <HoroscopeA4PatrikaPrint
+          key={`print-a4-${calcKey}`}
+          birthData={activeBirthData}
+          onSwitchToScreen={() => setHoroscopeMode('screen')}
+        />
       )}
     </div>
   );
