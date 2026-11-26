@@ -79,7 +79,7 @@ function SouthIndianChartBox({ title, chartBoxes, isTa, lagnaRasi }) {
 
   return (
     <div className="border border-black bg-white">
-      <div className="grid grid-cols-4 grid-rows-4 w-full h-[55mm] text-[9px] leading-tight">
+      <div className="grid grid-cols-4 grid-rows-4 w-full h-[49mm] text-[8.5px] leading-tight">
         {[0, 1, 2, 3].map(r =>
           [0, 1, 2, 3].map(c => {
             if ((r === 1 || r === 2) && (c === 1 || c === 2)) {
@@ -401,7 +401,7 @@ export default function HoroscopeA4PatrikaPrint({
         >
           {/* Thin Black Double Page Border */}
           <div className="w-full h-full border border-black p-[1mm] flex flex-col">
-            <div className="w-full h-full border border-black/70 px-[4mm] py-[3mm] flex flex-col justify-between gap-1.5 bg-white">
+            <div className="w-full h-full border border-black/70 px-[3.5mm] py-[2mm] flex flex-col justify-between gap-1 bg-white">
 
               {/* 1. HEADER – ASTROLOGY CENTRE DETAILS (Left: AstroJit Logo | Center: Astrologer Details | Right: Astrologer Logo) */}
               <div className="border-b border-black pb-1.5">
@@ -468,11 +468,11 @@ export default function HoroscopeA4PatrikaPrint({
               </div>
 
               {/* 2. TWO-COLUMN JATHAGAM PERSONAL DETAILS & ASTROLOGICAL ANALYSIS (14 Left / 11 Right) */}
-              <div className="grid grid-cols-2 gap-3 border border-black/70 px-2.5 py-1.5 text-[8.8px] leading-[1.3] font-serif bg-white">
+              <div className="grid grid-cols-2 gap-3 border border-black/70 px-2.5 py-1 text-[8.3px] leading-[1.25] font-serif bg-white">
                 {/* LEFT COLUMN – Birth & Astrological Details (14 Fields) */}
                 <div className="border-r border-black/35 pr-2.5 divide-y divide-black/15">
                   {leftColumnRows.map((row, idx) => (
-                    <div key={idx} className="grid grid-cols-[44%_8px_1fr] items-start py-[2px]">
+                    <div key={idx} className="grid grid-cols-[44%_8px_1fr] items-start py-[1.4px]">
                       <span className="font-bold text-black text-left">{row.label}</span>
                       <span className="font-bold text-black text-center">:</span>
                       <span className="font-semibold text-stone-900 break-words">{row.value}</span>
@@ -483,7 +483,7 @@ export default function HoroscopeA4PatrikaPrint({
                 {/* RIGHT COLUMN – Horoscope & Planetary Analysis (11 Fields) */}
                 <div className="flex flex-col justify-between divide-y divide-black/15">
                   {rightColumnRows.map((row, idx) => (
-                    <div key={idx} className="grid grid-cols-[42%_8px_1fr] items-start py-[2.8px]">
+                    <div key={idx} className="grid grid-cols-[42%_8px_1fr] items-start py-[2px]">
                       <span className="font-bold text-black text-left">{row.label}</span>
                       <span className="font-bold text-black text-center">:</span>
                       <span className="font-semibold text-stone-900 break-words">{row.value}</span>
@@ -493,22 +493,22 @@ export default function HoroscopeA4PatrikaPrint({
               </div>
 
               {/* 3. FULL-WIDTH PLANETARY POSITIONS – GRAHA NILAI (8 REQUIRED COLUMNS) */}
-              <div className="border border-black/70 overflow-hidden">
-                <div className="bg-stone-100 border-b border-black/60 px-2.5 py-1 font-black text-[9px] uppercase flex justify-between">
+              <div className="border border-black/70 shrink-0">
+                <div className="bg-stone-100 border-b border-black/60 px-2.5 py-0.5 font-black text-[8.5px] uppercase flex justify-between">
                   <span>{isTa ? 'கிரக நிலைகள் அட்டவணை (நிராயண)' : 'Planetary Positions – Graha Nilai (Nirayana)'}</span>
                   <span>{isTa ? '★ வர்கோத்தமம்' : '★ Vargottama'}</span>
                 </div>
-                <table className="w-full text-[8.5px] text-left border-collapse">
+                <table className="w-full text-[8.1px] text-left border-collapse">
                   <thead>
                     <tr className="bg-stone-50 font-bold border-b border-black/40">
-                      <th className="py-1 px-1.5 border-r border-black/20">{isTa ? 'கிரகம்' : 'Planet'}</th>
-                      <th className="py-1 px-1.5 border-r border-black/20">{isTa ? 'நிராயண பாகை' : 'Longitude'}</th>
-                      <th className="py-1 px-1.5 border-r border-black/20">{isTa ? 'நட்சத்திரம்' : 'Nakshatra'}</th>
-                      <th className="py-1 px-1 text-center border-r border-black/20">{isTa ? 'பாதம்' : 'Pada'}</th>
-                      <th className="py-1 px-1.5 border-r border-black/20">{isTa ? 'நட்சத்திர அதிபதி' : 'Nakshatra Lord'}</th>
-                      <th className="py-1 px-1.5 border-r border-black/20">{isTa ? 'ராசி' : 'Rasi'}</th>
-                      <th className="py-1 px-1.5 border-r border-black/20">{isTa ? 'ராசி பாகை' : 'Rasi Long'}</th>
-                      <th className="py-1 px-1.5">{isTa ? 'கிரக நிலை' : 'Planetary Status'}</th>
+                      <th className="py-0.5 px-1.5 border-r border-black/20">{isTa ? 'கிரகம்' : 'Planet'}</th>
+                      <th className="py-0.5 px-1.5 border-r border-black/20">{isTa ? 'நிராயண பாகை' : 'Longitude'}</th>
+                      <th className="py-0.5 px-1.5 border-r border-black/20">{isTa ? 'நட்சத்திரம்' : 'Nakshatra'}</th>
+                      <th className="py-0.5 px-1 text-center border-r border-black/20">{isTa ? 'பாதம்' : 'Pada'}</th>
+                      <th className="py-0.5 px-1.5 border-r border-black/20">{isTa ? 'நட்சத்திர அதிபதி' : 'Nakshatra Lord'}</th>
+                      <th className="py-0.5 px-1.5 border-r border-black/20">{isTa ? 'ராசி' : 'Rasi'}</th>
+                      <th className="py-0.5 px-1.5 border-r border-black/20">{isTa ? 'ராசி பாகை' : 'Rasi Long'}</th>
+                      <th className="py-0.5 px-1.5">{isTa ? 'கிரக நிலை' : 'Planetary Status'}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-black/20">
@@ -521,18 +521,18 @@ export default function HoroscopeA4PatrikaPrint({
                       const isVargottama = !isLagna && !isMandi && p.rasi === p.navamsa;
                       return (
                         <tr key={p.id} className={isLagna ? 'bg-amber-50/60 font-bold' : ''}>
-                          <td className="py-[2.5px] px-1.5 font-bold border-r border-black/15 whitespace-nowrap">
+                          <td className="py-[1.8px] px-1.5 font-bold border-r border-black/15 whitespace-nowrap">
                             {isTa ? p.info.ta : p.info.en}
                             {p.isRetrograde ? (isTa ? ' (வ)' : ' (R)') : ''}
                             {isVargottama ? ' ★' : ''}
                           </td>
-                          <td className="py-[2.5px] px-1.5 font-mono border-r border-black/15 whitespace-nowrap">{p.dms}</td>
-                          <td className="py-[2.5px] px-1.5 border-r border-black/15 whitespace-nowrap">{isTa ? starObj.ta : starObj.en}</td>
-                          <td className="py-[2.5px] px-1 text-center font-bold border-r border-black/15">{p.pada}</td>
-                          <td className="py-[2.5px] px-1.5 border-r border-black/15 whitespace-nowrap">{lordText}</td>
-                          <td className="py-[2.5px] px-1.5 border-r border-black/15 whitespace-nowrap">{isTa ? RASHIS[p.rasi]?.ta : RASHIS[p.rasi]?.en}</td>
-                          <td className="py-[2.5px] px-1.5 font-mono border-r border-black/15 whitespace-nowrap">{p.degInSign}</td>
-                          <td className="py-[2.5px] px-1.5 font-bold whitespace-nowrap">
+                          <td className="py-[1.8px] px-1.5 font-mono border-r border-black/15 whitespace-nowrap">{p.dms}</td>
+                          <td className="py-[1.8px] px-1.5 border-r border-black/15 whitespace-nowrap">{isTa ? starObj.ta : starObj.en}</td>
+                          <td className="py-[1.8px] px-1 text-center font-bold border-r border-black/15">{p.pada}</td>
+                          <td className="py-[1.8px] px-1.5 border-r border-black/15 whitespace-nowrap">{lordText}</td>
+                          <td className="py-[1.8px] px-1.5 border-r border-black/15 whitespace-nowrap">{isTa ? RASHIS[p.rasi]?.ta : RASHIS[p.rasi]?.en}</td>
+                          <td className="py-[1.8px] px-1.5 font-mono border-r border-black/15 whitespace-nowrap">{p.degInSign}</td>
+                          <td className="py-[1.8px] px-1.5 font-bold whitespace-nowrap">
                             {isLagna || isMandi ? '---' : (isTa ? p.dignityTa : p.dignityEn)}
                           </td>
                         </tr>
@@ -580,7 +580,7 @@ export default function HoroscopeA4PatrikaPrint({
               </div>
 
               {/* 5. VIMSHOTTARI DASHA & BHUKTI INFORMATION + MAHADASHA BHODHAGAR, VEDHAGAR, PASAGAR, KARAGAR */}
-              <div className="border border-black/70 p-2 text-[8.5px] leading-snug bg-stone-50/40 space-y-1">
+              <div className="border border-black/70 p-1.5 text-[8.2px] leading-snug bg-stone-50/40 space-y-0.5 shrink-0">
                 <div className="font-black text-[9px] border-b border-black/35 pb-0.5 uppercase flex items-center justify-between">
                   <span>{isTa ? 'விம்சோத்தரி தசா & புக்தி விவரம்' : 'Vimshottari Dasha & Bhukti Information'}</span>
                   <span className="text-[8px] font-bold">
@@ -626,9 +626,9 @@ export default function HoroscopeA4PatrikaPrint({
               </div>
 
               {/* 6. ADDITIONAL ASTROLOGICAL + LUCKY & TRADITIONAL REFERENCE INFO */}
-              <div className="grid grid-cols-2 gap-2.5 text-[8.2px] leading-snug">
+              <div className="grid grid-cols-2 gap-2 text-[8px] leading-snug shrink-0">
                 {/* Additional Astrological Information */}
-                <div className="border border-black/70 p-2 space-y-0.5">
+                <div className="border border-black/70 p-1.5 space-y-0.5">
                   <div className="font-black text-[8.8px] border-b border-black/35 pb-0.5 uppercase">
                     {isTa ? 'கூடுதல் ஜோதிட விவரங்கள்' : 'Additional Astrological Information'}
                   </div>
@@ -659,7 +659,7 @@ export default function HoroscopeA4PatrikaPrint({
                 </div>
 
                 {/* Lucky & Traditional Reference Information */}
-                <div className="border border-black/70 p-2 space-y-0.5">
+                <div className="border border-black/70 p-1.5 space-y-0.5">
                   <div className="font-black text-[8.8px] border-b border-black/35 pb-0.5 uppercase">
                     {isTa ? 'அதிர்ஷ்ட & பாரம்பரிய குறிப்புகள்' : 'Lucky & Traditional Reference'}
                   </div>
