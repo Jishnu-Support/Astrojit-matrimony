@@ -184,24 +184,65 @@ export default function HoroscopeA4PatrikaPrint({
   const astrologerContact = letterhead?.phoneEmail || [user?.phone, user?.email].filter(Boolean).join(' | ');
   const invocationText = letterhead?.invocation || (isTa ? 'ஸ்ரீ கணேசாய நமஹ • சுபம்' : 'Sri Ganeshaya Namah');
 
-  // Personal & Birth Details
-  const nativeName = birthData?.name || summary?.name || (isTa ? 'ஜாதகர்' : 'Native');
+  // Personal & Birth Details (Formatted per Master Prompt Rules)
+  const nativeName = birthData?.name || summary?.name || '---';
   const fatherName = birthData?.fatherName || '---';
   const motherName = birthData?.motherName || '---';
-  const genderText = birthData?.gender === 'female' ? (isTa ? 'பெண்' : 'Female') : birthData?.gender === 'male' ? (isTa ? 'ஆண்' : 'Male') : '---';
-  const dob = birthData?.dob || summary?.dob || '---';
-  const dobTime = birthData?.dobTime12 || birthData?.dobTime || summary?.dobTime || '---';
+  const isFemale = (birthData?.gender || '').toLowerCase() === 'female' || (birthData?.gender || '').includes('பெண்');
+  const genderLabel = birthData?.gender ? (isTa ? (isFemale ? 'பெண்' : 'ஆண்') : (isFemale ? 'Female' : 'Male')) : '---';
+  const ageYears = summary?.age?.years;
+  const genderAndAge = ageYears !== undefined && ageYears !== null
+    ? `${genderLabel} (${ageYears} ${isTa ? 'வயது' : 'Yrs'})`
+    : genderLabel;
+
+  // Date of Birth in DD-MM-YYYY
+  const dobFormatted = useMemo(() => {
+    const rawDob = birthData?.dob || summary?.dob || '';
+    if (!rawDob) return '---';
+    const parts = rawDob.split(/[-/.]/);
+    if (parts.length === 3 && parts[0].length === 4) {
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    return rawDob;
+  }, [birthData?.dob, summary?.dob]);
+
+  // Time of Birth in HH:MM AM/PM
+  const timeFormatted = useMemo(() => {
+    if (birthData?.dobTime12) return birthData.dobTime12;
+    const raw = birthData?.dobTime || summary?.dobTime || '';
+    if (!raw) return '---';
+    if (/AM|PM/i.test(raw)) return raw;
+    const [hStr, mStr] = raw.split(':');
+    const h = parseInt(hStr, 10);
+    if (isNaN(h)) return raw;
+    const period = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return `${String(h12).padStart(2, '0')}:${(mStr || '00').slice(0, 2)} ${period}`;
+  }, [birthData?.dobTime12, birthData?.dobTime, summary?.dobTime]);
+
   const place = birthData?.placeName || birthData?.city || summary?.placeName || '---';
-  const stateCountry = [birthData?.state, birthData?.country].filter(Boolean).join(', ') || '---';
-  const latStr = birthData?.lat !== undefined ? `${Number(birthData.lat).toFixed(4)}°N` : '---';
-  const lonStr = birthData?.lon !== undefined ? `${Number(birthData.lon).toFixed(4)}°E` : '---';
-  const tzStr = birthData?.utcOffset ? `UTC ${birthData.utcOffset}` : 'UTC +05:30';
-  const sunriseTime = birthData?.sunrise || '06:05 AM';
-  const sunsetTime = birthData?.sunset || '06:15 PM';
+  const latNum = birthData?.lat !== undefined ? Number(birthData.lat) : null;
+  const lonNum = birthData?.lon !== undefined ? Number(birthData.lon) : null;
+  const latLonFormatted = (latNum !== null && !isNaN(latNum) && lonNum !== null && !isNaN(lonNum))
+    ? `${Math.abs(latNum).toFixed(4)}° ${latNum >= 0 ? 'N' : 'S'} / ${Math.abs(lonNum).toFixed(4)}° ${lonNum >= 0 ? 'E' : 'W'}`
+    : '---';
+
+  // Sunrise / Sunset based on birth latitude
+  const effLat = latNum !== null && !isNaN(latNum) ? latNum : 11.65;
+  const srDec = 6.0 - (effLat - 12.0) * 0.02;
+  const srH = Math.floor(srDec);
+  const srM = Math.floor((srDec - srH) * 60);
+  const ssH = 18 - (srH - 6);
+  const ssM = (60 - srM) % 60;
+  const sunriseTime = birthData?.sunrise || `${String(srH).padStart(2, '0')}:${String(srM).padStart(2, '0')} AM`;
+  const sunsetTime = birthData?.sunset || `${String(ssH > 12 ? ssH - 12 : ssH).padStart(2, '0')}:${String(ssM).padStart(2, '0')} PM`;
+
+  const lagnaRoles = summary?.lagnaRoles || {};
+  const grahaFourRoles = summary?.grahaFourRoles || {};
 
   // Paksha from tithiNum (1-15 Shukla, 16-30 Krishna)
   const tithiNum = summary?.tithiNum || 1;
-  const pakshaText = tithiNum <= 15 ? (isTa ? 'வளர்பிறை' : 'Shukla Paksha') : (isTa ? 'தேய்பிறை' : 'Krishna Paksha');
+  const pakshaText = tithiNum <= 15 ? (isTa ? 'வளர்பிறை' : 'Shukla') : (isTa ? 'தேய்பிறை' : 'Krishna');
 
   // Moon Nakshatra & Lucky Letters
   const moonNakIdx = summary.moonNak ?? 0;
@@ -216,6 +257,49 @@ export default function HoroscopeA4PatrikaPrint({
   const lagnaRasi = summary.lagnaRasi ?? 0;
   const lagnaLordId = SIGN_LORD_ID[lagnaRasi] || 'mars';
   const luckyInfo = LUCKY_BY_LORD[lagnaLordId] || LUCKY_BY_LORD.jupiter;
+
+  // 14 LEFT COLUMN FIELDS (Exact Order)
+  const leftColumnRows = [
+    { label: isTa ? 'பெயர்' : 'Name', value: nativeName },
+    { label: isTa ? 'தந்தை பெயர்' : "Father's Name", value: fatherName },
+    { label: isTa ? 'தாய் பெயர்' : "Mother's Name", value: motherName },
+    { label: isTa ? 'பாலினம் & வயது' : 'Gender & Age', value: genderAndAge },
+    { label: isTa ? 'பிறந்த தேதி' : 'Date of Birth', value: dobFormatted },
+    { label: isTa ? 'பிறந்த நேரம்' : 'Time of Birth', value: timeFormatted },
+    { label: isTa ? 'பிறந்த இடம்' : 'Place of Birth', value: place },
+    { label: isTa ? 'அட்சரேகை / தீர்க்கரேகை' : 'Latitude / Longitude', value: latLonFormatted },
+    { label: isTa ? 'உதயம் / அஸ்தமனம்' : 'Sunrise / Sunset', value: `${sunriseTime} / ${sunsetTime}` },
+    { label: isTa ? 'அயனாம்சம்' : 'Ayanamsa', value: summary.ayanamshaDMS || '---' },
+    { label: isTa ? 'யோகி கிரகம்' : 'Yogi Graha', value: (isTa ? yogiAvayogi.yogiTa : yogiAvayogi.yogiEn) || '---' },
+    { label: isTa ? 'அவயோகி கிரகம்' : 'Ayogi Graha', value: (isTa ? yogiAvayogi.avayogiTa : yogiAvayogi.avayogiEn) || '---' },
+    {
+      label: isTa ? 'லக்ன போதகர் & வேதகர்' : 'Lagna Bodhagar & Vedhagar',
+      value: `${isTa ? (grahaFourRoles.bhodhagarTa || '---') : (grahaFourRoles.bhodhagarEn || '---')} / ${isTa ? (grahaFourRoles.vedhagarTa || '---') : (grahaFourRoles.vedhagarEn || '---')}`
+    },
+    {
+      label: isTa ? 'லக்ன பாசகர் & காரகர்' : 'Lagna Pasagar & Karagar',
+      value: `${isTa ? (grahaFourRoles.pasagarTa || '---') : (grahaFourRoles.pasagarEn || '---')} / ${isTa ? (grahaFourRoles.karagarTa || '---') : (grahaFourRoles.karagarEn || '---')}`
+    },
+  ];
+
+  // 12 RIGHT COLUMN FIELDS (Exact Order)
+  const rightColumnRows = [
+    { label: isTa ? 'ஜனன லக்னம்' : 'Janma Lagna', value: (isTa ? summary.lagnaTa : summary.lagnaEn) || '---' },
+    { label: isTa ? 'லக்னாதிபதி' : 'Lagna Lord', value: (isTa ? lagnaRoles.lordTa : lagnaRoles.lordEn) || '---' },
+    { label: isTa ? 'ஜனன ராசி' : 'Janma Rasi', value: (isTa ? summary.rasiTa : summary.rasiEn) || '---' },
+    { label: isTa ? 'ஜனன நட்சத்திரம்' : 'Janma Nakshatra', value: (isTa ? summary.nakshatraWithPadaTa : summary.nakshatraWithPadaEn) || '---' },
+    { label: isTa ? 'திதி' : 'Tithi', value: `${(isTa ? summary.tithiNameTa : summary.tithiNameEn) || '---'} (${pakshaText})` },
+    { label: isTa ? 'யோகம் - கரணம்' : 'Yoga - Karana', value: (isTa ? summary.yogaKarana?.textTa : summary.yogaKarana?.textEn) || '---' },
+    { label: isTa ? 'சுபர்கள்' : 'Benefics', value: (isTa ? lagnaRoles.subharTa : lagnaRoles.subharEn) || '---' },
+    { label: isTa ? 'அசுபர்கள்' : 'Malefics', value: (isTa ? lagnaRoles.asubharTa : lagnaRoles.asubharEn) || '---' },
+    { label: isTa ? 'பாக்கியாதிபதி (9)' : 'Bhagya Lord (9th)', value: (isTa ? lagnaRoles.bhagyaTa : lagnaRoles.bhagyaEn) || '---' },
+    { label: isTa ? 'பாதகாதிபதி' : 'Badhaka Lord', value: (isTa ? lagnaRoles.badhakaTa : lagnaRoles.badhakaEn) || '---' },
+    { label: isTa ? 'பிறப்பு தசை இருப்பு' : 'Birth Dasha Balance', value: (isTa ? dashaBalance.textTa : dashaBalance.textEn) || '---' },
+    {
+      label: isTa ? 'நடப்பு தசா-புக்தி' : 'Current Dasha-Bhukti',
+      value: `${(isTa ? currentDasha.textTa : currentDasha.textEn) || '---'}${currentDasha.endDate ? ` (${isTa ? 'முடிவு' : 'Ends'}: ${currentDasha.endDate})` : ''}`
+    },
+  ];
 
   const marsPlanet = planets.find(p => p.id === 'mars');
   const rahuPlanet = planets.find(p => p.id === 'rahu');
@@ -380,48 +464,28 @@ export default function HoroscopeA4PatrikaPrint({
                 </div>
               </div>
 
-              {/* 2. TWO-COLUMN PERSONAL, BIRTH & ASTROLOGICAL DETAILS */}
-              <div className="grid grid-cols-2 gap-2 border border-black/60 p-1.5 text-[7.5px] leading-snug bg-stone-50/40">
-                {/* Left Column: Personal & Birth Information */}
-                <div className="border-r border-black/30 pr-2 space-y-0.5">
-                  <div className="font-black text-[8px] border-b border-black/30 pb-0.5 mb-0.5 uppercase">
-                    {isTa ? 'ஜனன & தனிப்பட்ட விவரங்கள்' : 'Personal & Birth Information'}
-                  </div>
-                  <div className="grid grid-cols-2 gap-x-2 gap-y-0.5">
-                    <div><span className="text-stone-600">{isTa ? 'பெயர்:' : 'Name:'}</span> <strong>{nativeName}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'பாலினம்:' : 'Gender:'}</span> <strong>{genderText}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'தந்தை:' : 'Father:'}</span> <strong>{fatherName}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'தாய்:' : 'Mother:'}</span> <strong>{motherName}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'பிறந்த தேதி:' : 'DOB:'}</span> <strong>{dob}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'பிறந்த நேரம்:' : 'Time:'}</span> <strong>{dobTime}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'பிறந்த இடம்:' : 'Place:'}</span> <strong>{place}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'மாநிலம்/நாடு:' : 'Region:'}</span> <strong>{stateCountry}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'தமிழ் தேதி:' : 'Tamil Date:'}</span> <strong>{isTa ? summary.tamilDate?.ta : summary.tamilDate?.en}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'நேர மண்டலம்:' : 'Timezone:'}</span> <strong>{tzStr}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'அட்சரேகை:' : 'Lat:'}</span> <strong className="font-mono">{latStr}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'தீர்க்கரேகை:' : 'Lon:'}</span> <strong className="font-mono">{lonStr}</strong></div>
-                  </div>
+              {/* 2. TWO-COLUMN JATHAGAM PERSONAL DETAILS & ASTROLOGICAL ANALYSIS (14 Left / 12 Right) */}
+              <div className="grid grid-cols-2 gap-3 border border-black/70 px-2 py-1 text-[7.3px] leading-[1.25] font-serif bg-white">
+                {/* LEFT COLUMN – Birth & Astrological Details (14 Fields) */}
+                <div className="border-r border-black/35 pr-2 divide-y divide-black/15">
+                  {leftColumnRows.map((row, idx) => (
+                    <div key={idx} className="grid grid-cols-[44%_8px_1fr] items-start py-[1.2px]">
+                      <span className="font-bold text-black text-left">{row.label}</span>
+                      <span className="font-bold text-black text-center">:</span>
+                      <span className="font-semibold text-stone-900 break-words">{row.value}</span>
+                    </div>
+                  ))}
                 </div>
 
-                {/* Right Column: Astrological Information */}
-                <div className="space-y-0.5">
-                  <div className="font-black text-[8px] border-b border-black/30 pb-0.5 mb-0.5 uppercase">
-                    {isTa ? 'ஜோதிட & பஞ்சாங்க விவரங்கள்' : 'Astrological & Panchanga Details'}
-                  </div>
-                  <div className="grid grid-cols-2 gap-x-2 gap-y-0.5">
-                    <div><span className="text-stone-600">{isTa ? 'லக்னம்:' : 'Lagnam:'}</span> <strong>{isTa ? summary.lagnaTa : summary.lagnaEn}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'ராசி:' : 'Rasi:'}</span> <strong>{isTa ? summary.rasiTa : summary.rasiEn}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'நட்சத்திரம்:' : 'Nakshatram:'}</span> <strong>{isTa ? summary.nakshatraTa : summary.nakshatraEn} ({moonPada})</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'நட்சத்திர அதிபதி:' : 'Star Lord:'}</span> <strong>{moonLordDisplay}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'திதி:' : 'Tithi:'}</span> <strong>{isTa ? summary.tithiNameTa : summary.tithiNameEn}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'பக்ஷம்:' : 'Paksha:'}</span> <strong>{pakshaText}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'யோகம்:' : 'Yoga:'}</span> <strong>{isTa ? summary.yogaKarana?.yogaTa : summary.yogaKarana?.yogaEn}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'கரணம்:' : 'Karana:'}</span> <strong>{isTa ? summary.yogaKarana?.karanaTa : summary.yogaKarana?.karanaEn}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'கிழமை:' : 'Weekday:'}</span> <strong>{isTa ? summary.weekday?.ta : summary.weekday?.en}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'அயனாம்சம்:' : 'Ayanamsa:'}</span> <strong className="font-mono">{summary.ayanamshaDMS || '---'}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'சூரிய உதயம்:' : 'Sunrise:'}</span> <strong>{sunriseTime}</strong></div>
-                    <div><span className="text-stone-600">{isTa ? 'சூரிய அஸ்தமனம்:' : 'Sunset:'}</span> <strong>{sunsetTime}</strong></div>
-                  </div>
+                {/* RIGHT COLUMN – Horoscope & Planetary Analysis (12 Fields) */}
+                <div className="divide-y divide-black/15">
+                  {rightColumnRows.map((row, idx) => (
+                    <div key={idx} className="grid grid-cols-[42%_8px_1fr] items-start py-[1.6px]">
+                      <span className="font-bold text-black text-left">{row.label}</span>
+                      <span className="font-bold text-black text-center">:</span>
+                      <span className="font-semibold text-stone-900 break-words">{row.value}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
