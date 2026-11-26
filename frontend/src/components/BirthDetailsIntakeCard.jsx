@@ -1074,7 +1074,7 @@ Shubham Bhavatu! 🙏`;
                         <span className="font-semibold">{item.name}</span>
                       </div>
                       <span className="text-[10px] font-mono text-stone-500 dark:text-stone-400">
-                        ({typeof item.latDec === 'number' ? item.latDec.toFixed(2) : item.lat}°, {typeof item.lonDec === 'number' ? item.lonDec.toFixed(2) : item.lon}°)
+                        ({typeof item.latDec === 'number' ? item.latDec.toFixed(4) : item.lat}°, {typeof item.lonDec === 'number' ? item.lonDec.toFixed(4) : item.lon}°)
                       </span>
                     </button>
                   );
