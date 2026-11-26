@@ -157,6 +157,10 @@ export default function HoroscopeA4PatrikaPrint({
   const [chartStyle, setChartStyle] = useState(() => birthData?.chartStyle || 'south');
 
   useEffect(() => {
+    setLetterhead(getInitialLetterhead(user, isTa));
+  }, [user, isTa]);
+
+  useEffect(() => {
     if (birthData?.chartStyle) setChartStyle(birthData.chartStyle);
   }, [birthData?.chartStyle]);
 
@@ -409,20 +413,14 @@ export default function HoroscopeA4PatrikaPrint({
                   {invocationText}
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                  {/* Left: AstroJit Logo */}
-                  <div className="w-[36mm] shrink-0 flex items-center gap-1.5 text-left">
+                  {/* Left: AstroJit Logo ONLY (Image already includes AstroJit name & tagline) */}
+                  <div className="w-[34mm] shrink-0 flex items-center justify-start">
                     <img
                       src="/astrojit-logo.webp"
                       alt="AstroJit"
-                      className="w-10 h-10 object-contain shrink-0"
+                      className="h-11 w-auto max-w-[33mm] object-contain shrink-0"
                       onError={e => { e.target.style.display = 'none'; }}
                     />
-                    <div>
-                      <div className="text-[13px] font-black tracking-tight text-black leading-none">ASTROJIT</div>
-                      <div className="text-[8px] font-bold text-stone-600 uppercase mt-0.5">
-                        {isTa ? 'வேத ஜோதிடம்' : 'Vedic Astrology'}
-                      </div>
-                    </div>
                   </div>
 
                   {/* Center: Astrology Centre & Astrologer Details */}
@@ -447,22 +445,34 @@ export default function HoroscopeA4PatrikaPrint({
                     )}
                   </div>
 
-                  {/* Right: Astrologer Logo */}
-                  <div className="w-[36mm] shrink-0 flex items-center justify-end gap-1.5 text-right">
-                    <div className="min-w-0">
-                      <div className="text-[8px] font-black text-black uppercase leading-tight break-words">
-                        {user?.name || (isTa ? 'ஜோதிடர்' : 'Astrologer')}
-                      </div>
-                      <div className="text-[7px] font-semibold text-stone-600 mt-0.5">
-                        {isTa ? 'திருக்கணித ஜாதகம்' : 'Thirukanitha'}
-                      </div>
-                    </div>
-                    <img
-                      src={letterhead?.astrologerLogo || '/astrojit-emblem.webp'}
-                      alt="Astrologer Logo"
-                      className="w-10 h-10 object-contain rounded border border-black/40 bg-white p-0.5 shrink-0"
-                      onError={e => { e.target.style.display = 'none'; }}
-                    />
+                  {/* Right: Astrologer Uploaded Logo (from Profile 1-Page Editor / Letterhead) */}
+                  <div className="w-[34mm] shrink-0 flex items-center justify-end gap-1.5 text-right">
+                    {(letterhead?.astrologerLogo || user?.pagerHeader?.astrologerLogo) ? (
+                      <>
+                        <div className="min-w-0">
+                          <div className="text-[8px] font-black text-black uppercase leading-tight break-words">
+                            {user?.name || (isTa ? 'ஜோதிடர்' : 'Astrologer')}
+                          </div>
+                          <div className="text-[7px] font-semibold text-stone-600 mt-0.5">
+                            {isTa ? 'திருக்கணித ஜாதகம்' : 'Thirukanitha'}
+                          </div>
+                        </div>
+                        <img
+                          src={letterhead?.astrologerLogo || user?.pagerHeader?.astrologerLogo}
+                          alt="Astrologer Logo"
+                          className="w-10 h-10 object-contain rounded border border-black/40 bg-white p-0.5 shrink-0"
+                          onError={e => { e.target.style.display = 'none'; }}
+                        />
+                      </>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setBrandingModalOpen(true)}
+                        className="print:hidden text-[8.5px] font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-400 rounded px-2 py-1 cursor-pointer"
+                      >
+                        {isTa ? '+ ஜோதிடர் லோகோ' : '+ Add Logo'}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

@@ -283,7 +283,8 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
       line2: user?.pagerHeader?.line2 || user?.brandLine2 || '',
       address1: user?.pagerHeader?.address1 || user?.address1 || '',
       address2: user?.pagerHeader?.address2 || user?.address2 || '',
-      phoneEmail: user?.pagerHeader?.phoneEmail || user?.phoneEmail || ''
+      phoneEmail: user?.pagerHeader?.phoneEmail || user?.phoneEmail || '',
+      astrologerLogo: user?.pagerHeader?.astrologerLogo || ''
     }
   });
   const [savingProfile, setSavingProfile] = useState(false);
@@ -305,7 +306,8 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
           line2: user.pagerHeader?.line2 || user.brandLine2 || 'SAI BALAJI ASTROLOGICAL RESEARCH CENTRE',
           address1: user.pagerHeader?.address1 || user.address1 || 'Salem, தமிழ்நாடு - 636001',
           address2: user.pagerHeader?.address2 || user.address2 || 'சென்னை & பெங்களூரு கிளைகள்',
-          phoneEmail: user.pagerHeader?.phoneEmail || user.phoneEmail || 'தொலைபேசி: +91 98765 43210 | மின்னஞ்சல்: astro@astrojit.com'
+          phoneEmail: user.pagerHeader?.phoneEmail || user.phoneEmail || 'தொலைபேசி: +91 98765 43210 | மின்னஞ்சல்: astro@astrojit.com',
+          astrologerLogo: user.pagerHeader?.astrologerLogo || ''
         }
       });
     }
@@ -331,6 +333,15 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
       });
       if (res?.user && setUser) {
         setUser(res.user);
+      }
+      try {
+        const existing = JSON.parse(localStorage.getItem('astrojit_letterhead_v1') || '{}');
+        localStorage.setItem('astrojit_letterhead_v1', JSON.stringify({
+          ...existing,
+          ...profileForm.pagerHeader
+        }));
+      } catch {
+        // ignore storage errors
       }
       setProfileSuccessMsg(lang === 'ta' ? 'சுயவிவரம் மற்றும் 1-பேஜர் முகப்பு வெற்றிகரமாக சேமிக்கப்பட்டது!' : 'Profile & 1-Pager Header saved successfully!');
       setTimeout(() => setProfileSuccessMsg(''), 4000);
@@ -2925,37 +2936,97 @@ Shubham Bhavatu! 🙏`;
                   />
                 </div>
 
+                {/* Astrologer Logo Upload (Right Side of 1-Page Title) */}
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">
+                    {lang === 'ta' ? 'ஜோதிடர் / நிலைய லோகோ படம் (வலது பக்கம்)' : 'Astrologer / Centre Logo Image (Right Side of Title)'}
+                  </label>
+                  <div className="flex flex-wrap items-center gap-3">
+                    {profileForm.pagerHeader.astrologerLogo ? (
+                      <img
+                        src={profileForm.pagerHeader.astrologerLogo}
+                        alt="Astrologer Logo"
+                        className="w-12 h-12 object-contain rounded-lg border border-slate-300 bg-white p-1"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-lg border border-dashed border-slate-300 bg-slate-50 flex items-center justify-center text-[10px] text-slate-400">
+                        {lang === 'ta' ? 'லோகோ' : 'Logo'}
+                      </div>
+                    )}
+                    <label className="px-3 py-1.5 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-950 font-bold text-xs cursor-pointer border border-amber-300 transition-colors">
+                      <span>{lang === 'ta' ? 'படம் பதிவேற்றுக' : 'Upload Logo Image'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const reader = new FileReader();
+                          reader.onload = (ev) => {
+                            setProfileForm(prev => ({
+                              ...prev,
+                              pagerHeader: { ...prev.pagerHeader, astrologerLogo: ev.target?.result || '' }
+                            }));
+                          };
+                          reader.readAsDataURL(file);
+                        }}
+                      />
+                    </label>
+                    {profileForm.pagerHeader.astrologerLogo && (
+                      <button
+                        type="button"
+                        onClick={() => setProfileForm(prev => ({
+                          ...prev,
+                          pagerHeader: { ...prev.pagerHeader, astrologerLogo: '' }
+                        }))}
+                        className="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 cursor-pointer"
+                      >
+                        {lang === 'ta' ? 'நீக்கு' : 'Remove'}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
                 {/* REAL-TIME LIVE 1-PAGER HEADER PREVIEW BOX */}
                 <div className="pt-2">
                   <span className="text-[10px] uppercase font-bold text-slate-500 block mb-1.5 flex items-center gap-1.5">
                     <span>👁️</span>
                     <span>{lang === 'ta' ? '1-பேஜர் தாளில் தோன்றும் நேரடி முன்தோற்றம் (Live Header Preview):' : 'Live Preview as Printed on 1-Pager Sheet:'}</span>
                   </span>
-                  <div className="border border-black p-3 text-center rounded-xs bg-white text-black space-y-0.5 shadow-2xs font-serif min-h-[50px] flex flex-col justify-center">
-                    {profileForm.pagerHeader.line1 && (
-                      <div className="text-base sm:text-lg font-black tracking-tight">
-                        {profileForm.pagerHeader.line1}
-                      </div>
-                    )}
-                    {profileForm.pagerHeader.line2 && (
-                      <div className="text-xs font-bold">
-                        {profileForm.pagerHeader.line2}
-                      </div>
-                    )}
-                    {(profileForm.pagerHeader.address1 || profileForm.pagerHeader.address2) && (
-                      <div className="text-[10.5px] text-stone-700 leading-tight">
-                        {profileForm.pagerHeader.address1}{profileForm.pagerHeader.address1 && profileForm.pagerHeader.address2 ? ' • ' : ''}{profileForm.pagerHeader.address2}
-                      </div>
-                    )}
-                    {profileForm.pagerHeader.phoneEmail && (
-                      <div className="text-[9.5px] font-mono font-semibold text-stone-800">
-                        {profileForm.pagerHeader.phoneEmail}
-                      </div>
-                    )}
-                    {!profileForm.pagerHeader.line1 && !profileForm.pagerHeader.line2 && !profileForm.pagerHeader.address1 && !profileForm.pagerHeader.address2 && !profileForm.pagerHeader.phoneEmail && (
-                      <div className="text-xs text-stone-400 italic py-2">
-                        {lang === 'ta' ? '(விவரங்கள் எதுவும் உள்ளிடப்படவில்லை - வெற்றுத் தாள்)' : '(No letterhead details entered - will be blank)'}
-                      </div>
+                  <div className="border border-black p-2.5 rounded-xs bg-white text-black shadow-2xs font-serif min-h-[54px] flex items-center justify-between gap-2">
+                    <img src="/astrojit-logo.webp" alt="AstroJit" className="h-10 w-auto object-contain shrink-0" />
+                    <div className="flex-1 text-center space-y-0.5 min-w-0">
+                      {profileForm.pagerHeader.line1 && (
+                        <div className="text-sm sm:text-base font-black tracking-tight">
+                          {profileForm.pagerHeader.line1}
+                        </div>
+                      )}
+                      {profileForm.pagerHeader.line2 && (
+                        <div className="text-xs font-bold">
+                          {profileForm.pagerHeader.line2}
+                        </div>
+                      )}
+                      {(profileForm.pagerHeader.address1 || profileForm.pagerHeader.address2) && (
+                        <div className="text-[10px] text-stone-700 leading-tight">
+                          {profileForm.pagerHeader.address1}{profileForm.pagerHeader.address1 && profileForm.pagerHeader.address2 ? ' • ' : ''}{profileForm.pagerHeader.address2}
+                        </div>
+                      )}
+                      {profileForm.pagerHeader.phoneEmail && (
+                        <div className="text-[9.5px] font-mono font-semibold text-stone-800">
+                          {profileForm.pagerHeader.phoneEmail}
+                        </div>
+                      )}
+                      {!profileForm.pagerHeader.line1 && !profileForm.pagerHeader.line2 && !profileForm.pagerHeader.address1 && !profileForm.pagerHeader.address2 && !profileForm.pagerHeader.phoneEmail && (
+                        <div className="text-xs text-stone-400 italic py-1">
+                          {lang === 'ta' ? '(விவரங்கள் எதுவும் உள்ளிடப்படவில்லை - வெற்றுத் தாள்)' : '(No letterhead details entered - will be blank)'}
+                        </div>
+                      )}
+                    </div>
+                    {profileForm.pagerHeader.astrologerLogo ? (
+                      <img src={profileForm.pagerHeader.astrologerLogo} alt="Astrologer Logo" className="w-10 h-10 object-contain rounded border border-black/30 p-0.5 shrink-0" />
+                    ) : (
+                      <div className="w-10 h-10 shrink-0" />
                     )}
                   </div>
                 </div>
