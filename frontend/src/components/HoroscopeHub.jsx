@@ -13,8 +13,6 @@ import { useAuth } from '../context/AuthContext';
 import { useClientBirth } from '../context/ClientBirthContext';
 import ThirukanithaHoroscopeView from './ThirukanithaHoroscopeView';
 import BirthDetailsIntakeCard from './BirthDetailsIntakeCard';
-import HoroscopeOnePagePrint from './HoroscopeOnePagePrint';
-import HoroscopeMultiPagePrint from './HoroscopeMultiPagePrint';
 
 export default function HoroscopeHub({
   initialClient = null,
@@ -28,9 +26,6 @@ export default function HoroscopeHub({
 
   // Toggle Mode: 'screen' (Horoscope Screen View) | 'print' (Horoscope Print)
   const [horoscopeMode, setHoroscopeMode] = useState('screen');
-
-  // Sub-mode under print: 'onepage' (1-Page Janma Patrika) | 'multipage' (Multi-Page 20 Titles Booklet)
-  const [printSubMode, setPrintSubMode] = useState('multipage');
 
   // Client view should not have the previous client search bar; astrologer portal requires it
   const shouldHideLookup = Boolean(hideClientLookup || user?.role === 'client');
@@ -131,72 +126,24 @@ export default function HoroscopeHub({
               onClose={onClose}
               onSwitchToPrint={() => {
                 setHoroscopeMode('print');
-                setPrintSubMode('multipage');
               }}
             />
           </div>
         </>
       ) : (
-        /* HOROSCOPE PRINT VIEW: Sub-Mode Switcher + Render */
-        <div className="space-y-4">
-          {/* Sub-mode selector bar between 1-Page and Multi-Page */}
-          <div className="bg-white/95 dark:bg-[#251E1A] p-2.5 sm:p-3 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs flex items-center justify-between gap-3 no-print">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-stone-500 dark:text-stone-400">
-                {isTa ? 'அச்சு வடிவம்:' : 'Print Layout:'}
-              </span>
-              <div className="flex items-center gap-1.5 bg-stone-100 dark:bg-stone-900 p-1 rounded-xl border border-stone-200 dark:border-stone-800">
-                <button
-                  type="button"
-                  onClick={() => setPrintSubMode('onepage')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                    printSubMode === 'onepage'
-                      ? 'bg-white dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 shadow-xs border border-stone-300 dark:border-stone-700'
-                      : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
-                  }`}
-                >
-                  <FileText className="w-3.5 h-3.5" />
-                  <span>{isTa ? '1-பக்க ஜாதக ஏடு' : '1-Page Janma Patrika'}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setPrintSubMode('multipage')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                    printSubMode === 'multipage'
-                      ? 'bg-white dark:bg-stone-800 text-[#7A1A22] dark:text-amber-200 shadow-xs border border-stone-300 dark:border-stone-700'
-                      : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
-                  }`}
-                >
-                  <BookOpen className="w-3.5 h-3.5" />
-                  <span>{isTa ? '51-பக்க முழு ஜாதக புத்தகம்' : '51-Page Full Booklet'}</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="text-[11px] font-semibold text-stone-500 dark:text-stone-400 hidden sm:block">
-              {printSubMode === 'onepage'
-                ? (isTa ? 'முழு A4 பக்கத்தில் அடங்கும் விரைவு ஜாதகம்' : 'Single-page quick natal summary sheet')
-                : (isTa ? 'அனைத்து விவரங்களையும் கொண்ட விரிவான 51-பக்க ஜாதக புத்தகம் (A4)' : 'Comprehensive 51-page authentic Vedic horoscope booklet (A4)')}
-            </div>
+        /* HOROSCOPE PRINT MODULE (Clean Container - Pagers & Features Removed) */
+        <div className="bg-white/95 dark:bg-[#251E1A] p-8 sm:p-12 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs text-center space-y-3">
+          <div className="w-12 h-12 mx-auto rounded-2xl bg-amber-100 dark:bg-amber-950/50 text-[#7A1A22] dark:text-amber-300 flex items-center justify-center">
+            <Printer className="w-6 h-6" />
           </div>
-
-          {/* Render Active Print Sub-Mode */}
-          {printSubMode === 'onepage' ? (
-            <HoroscopeOnePagePrint
-              key={`print-one-${calcKey}`}
-              birthData={activeBirthData}
-              onSwitchToScreen={() => setHoroscopeMode('screen')}
-              onSwitchToMultiPage={() => setPrintSubMode('multipage')}
-            />
-          ) : (
-            <HoroscopeMultiPagePrint
-              key={`print-multi-${calcKey}`}
-              birthData={activeBirthData}
-              onSwitchToScreen={() => setHoroscopeMode('screen')}
-              onSwitchToOnePage={() => setPrintSubMode('onepage')}
-            />
-          )}
+          <h2 className="text-base sm:text-lg font-black text-[#7A1A22] dark:text-[#E8838B]">
+            {isTa ? 'ஜாதகம் அச்சு' : 'Horoscope Print'}
+          </h2>
+          <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md mx-auto">
+            {isTa
+              ? 'ஜாதகம் அச்சுப் பகுதி தயாராக உள்ளது.'
+              : 'Horoscope Print module is ready.'}
+          </p>
         </div>
       )}
     </div>
