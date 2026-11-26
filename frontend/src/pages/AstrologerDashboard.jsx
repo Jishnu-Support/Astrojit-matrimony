@@ -242,6 +242,20 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   const [activeClientMatchReport, setActiveClientMatchReport] = useState(null);
   const [calculatingActiveMatch, setCalculatingActiveMatch] = useState(false);
   const [activeMatchTab, setActiveMatchTab] = useState('tamil');
+  const [openMatchSections, setOpenMatchSections] = useState({ 1: true, 2: true, 3: false, 4: false });
+
+  const toggleMatchSection = (num) => {
+    setOpenMatchSections(prev => ({ ...prev, [num]: !prev[num] }));
+  };
+  const expandAllMatchSections = () => setOpenMatchSections({ 1: true, 2: true, 3: true, 4: true });
+  const collapseAllMatchSections = () => setOpenMatchSections({ 1: false, 2: false, 3: false, 4: false });
+  const jumpToMatchSection = (num) => {
+    setOpenMatchSections(prev => ({ ...prev, [num]: true }));
+    setTimeout(() => {
+      const el = document.getElementById(`match-section-${num}`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 60);
+  };
 
   const handleResetMatchmaking = () => {
     setPartnerDetails({
@@ -1720,17 +1734,6 @@ Shubham Bhavatu! 🙏`;
                     >
                       <RotateCcw className="w-4 h-4" />
                     </button>
-
-                    {/* Calculate Button */}
-                    <button
-                      type="button"
-                      onClick={handleCalculateActiveMatch}
-                      disabled={calculatingActiveMatch}
-                      className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-xs transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-                    >
-                      {calculatingActiveMatch ? <Sparkles className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                      <span>{lang === 'ta' ? 'பொருத்தம் கணக்கிடுக' : 'Calculate 10 Poruthams'}</span>
-                    </button>
                   </div>
                 </div>
 
@@ -2248,102 +2251,181 @@ Shubham Bhavatu! 🙏`;
                   </div>
                 </div>
 
-                {/* Calculated Match Results View */}
+                {/* Calculate Button (Below Bride & Groom Details) */}
+                <div className="flex justify-center pt-1">
+                  <button
+                    type="button"
+                    onClick={handleCalculateActiveMatch}
+                    disabled={calculatingActiveMatch}
+                    className="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-bold px-8 py-2.5 rounded-xl text-xs sm:text-sm shadow-sm transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    {calculatingActiveMatch ? <Sparkles className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                    <span>{lang === 'ta' ? 'கணக்கிடுக' : 'Calculate'}</span>
+                  </button>
+                </div>
+
+                {/* Calculated Match Results View (Horoscope Screen View Style: Jump Bar + Collapsible Sections, No Scrolling Tabs) */}
                 {activeClientMatchReport && (
                   <div className="pt-3 border-t border-rose-200 space-y-3">
-                    <div className="flex border-b border-slate-200 text-xs font-bold gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setActiveMatchTab('tamil')}
-                        className={`pb-2 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
-                          activeMatchTab === 'tamil'
-                            ? 'border-amber-600 text-amber-900 font-bold'
-                            : 'border-transparent text-slate-500 hover:text-slate-700'
-                        }`}
-                      >
-                        <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                        <span>{MATCH_I18N.tabTamilPorutham[lang] || MATCH_I18N.tabTamilPorutham.en}</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setActiveMatchTab('ashtakoota')}
-                        className={`pb-2 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
-                          activeMatchTab === 'ashtakoota'
-                            ? 'border-indigo-600 text-indigo-900 font-bold'
-                            : 'border-transparent text-slate-500 hover:text-slate-700'
-                        }`}
-                      >
-                        <Heart className="w-3.5 h-3.5 text-indigo-600" />
-                        <span>{MATCH_I18N.tabAshtakoota[lang] || MATCH_I18N.tabAshtakoota.en}</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setActiveMatchTab('guja_dasha')}
-                        className={`pb-2 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
-                          activeMatchTab === 'guja_dasha'
-                            ? 'border-rose-600 text-rose-900 font-bold'
-                            : 'border-transparent text-slate-500 hover:text-slate-700'
-                        }`}
-                      >
-                        <Flame className="w-3.5 h-3.5 text-rose-600" />
-                        <span>{MATCH_I18N.tabGujaDasha[lang] || MATCH_I18N.tabGujaDasha.en}</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setActiveMatchTab('rahu_ketu')}
-                        className={`pb-2 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
-                          activeMatchTab === 'rahu_ketu'
-                            ? 'border-teal-600 text-teal-900 font-bold'
-                            : 'border-transparent text-slate-500 hover:text-slate-700'
-                        }`}
-                      >
-                        <Zap className="w-3.5 h-3.5 text-teal-600" />
-                        <span>{MATCH_I18N.tabRahuKetu[lang] || MATCH_I18N.tabRahuKetu.en}</span>
-                      </button>
+                    {/* Navigation Bar: Jump-to-Section Dropdown + Expand All / Collapse All */}
+                    <div className="bg-amber-50/70 p-3 rounded-xl border border-amber-900/15 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 flex-1">
+                        <span className="text-xs font-bold text-[#7A1A22] whitespace-nowrap">
+                          {lang === 'ta' ? 'பிரிவுக்குச் செல்ல:' : 'Jump to Section:'}
+                        </span>
+                        <select
+                          onChange={(e) => {
+                            const val = parseInt(e.target.value, 10);
+                            if (val) jumpToMatchSection(val);
+                          }}
+                          defaultValue=""
+                          className="bg-white border border-stone-300 rounded-lg px-2.5 py-1.5 text-xs font-bold text-stone-800 focus:outline-none focus:border-[#7A1A22] w-full max-w-xs cursor-pointer"
+                        >
+                          <option value="">{lang === 'ta' ? '-- 4 பிரிவுகள் (தேர்வு செய்க) --' : '-- Select Section (1 to 4) --'}</option>
+                          <option value="1">1. {MATCH_I18N.tabTamilPorutham[lang] || MATCH_I18N.tabTamilPorutham.en}</option>
+                          <option value="2">2. {MATCH_I18N.tabAshtakoota[lang] || MATCH_I18N.tabAshtakoota.en}</option>
+                          <option value="3">3. {MATCH_I18N.tabGujaDasha[lang] || MATCH_I18N.tabGujaDasha.en}</option>
+                          <option value="4">4. {MATCH_I18N.tabRahuKetu[lang] || MATCH_I18N.tabRahuKetu.en}</option>
+                        </select>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={expandAllMatchSections}
+                          className="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-[#7A1A22] text-[11px] font-bold cursor-pointer transition-colors"
+                        >
+                          {lang === 'ta' ? '▼ அனைத்தும் விரி' : '▼ Expand All'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={collapseAllMatchSections}
+                          className="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 text-[11px] font-bold cursor-pointer transition-colors"
+                        >
+                          {lang === 'ta' ? '▲ அனைத்தும் சுருக்கு' : '▲ Collapse All'}
+                        </button>
+                      </div>
                     </div>
 
-                    {activeMatchTab === 'tamil' ? (
-                      <TamilPoruthamCard matchReport={activeClientMatchReport} />
-                    ) : activeMatchTab === 'guja_dasha' ? (
-                      <GujaDashaChart matchReport={activeClientMatchReport} />
-                    ) : activeMatchTab === 'rahu_ketu' ? (
-                      <RahuKetuChart matchReport={activeClientMatchReport} />
-                    ) : (
-                      <div className="space-y-3 bg-amber-50/50 p-4 rounded-xl border border-amber-200 text-xs">
-                        <div className="flex justify-between items-center pb-2 border-b border-amber-200">
-                          <div>
-                            <span className="text-[10px] font-bold text-amber-900 uppercase tracking-wider block">
-                              Engine Computed Compatibility
-                            </span>
-                            <span className="font-bold text-slate-800">
-                              {activeClientMatchReport.compatibility} ({activeClientMatchReport.percentage}%)
-                            </span>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-2xl font-black text-amber-700">
-                              {activeClientMatchReport.totalScore} / 36
-                            </span>
-                            <span className="text-[10px] text-slate-500 block">Total Gunas</span>
-                          </div>
+                    {/* SECTION 1: 10 Classical Poruthams & Dosha Analysis */}
+                    <div id="match-section-1" className="bg-white rounded-2xl border border-amber-900/15 shadow-xs overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => toggleMatchSection(1)}
+                        className="w-full p-3.5 sm:p-4 flex items-center justify-between text-left hover:bg-amber-50/50 transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-7 h-7 rounded-xl bg-amber-900/10 text-[#7A1A22] font-bold flex items-center justify-center text-xs font-mono shrink-0">1</span>
+                          <span className="text-sm font-bold text-[#7A1A22] flex items-center gap-1.5">
+                            <Sparkles className="w-4 h-4 text-amber-600" />
+                            <span>{MATCH_I18N.tabTamilPorutham[lang] || MATCH_I18N.tabTamilPorutham.en}</span>
+                          </span>
                         </div>
+                        <span className="text-xs font-bold text-stone-500">{openMatchSections[1] ? '▲' : '▼'}</span>
+                      </button>
+                      {openMatchSections[1] && (
+                        <div className="p-3.5 sm:p-4 pt-0 border-t border-amber-900/10">
+                          <TamilPoruthamCard matchReport={activeClientMatchReport} />
+                        </div>
+                      )}
+                    </div>
 
-                        {/* Compact 8 Kootas */}
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
-                          {activeClientMatchReport.kootas?.map((k, i) => (
-                            <div key={i} className="bg-white p-1.5 rounded-lg border border-amber-100 flex justify-between">
-                              <span className="font-semibold text-slate-700">{k.koota}</span>
-                              <span className="font-bold text-amber-800">{k.obtained}/{k.max}</span>
+                    {/* SECTION 2: Ashtakoota 36 Gunas Matrix */}
+                    <div id="match-section-2" className="bg-white rounded-2xl border border-amber-900/15 shadow-xs overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => toggleMatchSection(2)}
+                        className="w-full p-3.5 sm:p-4 flex items-center justify-between text-left hover:bg-amber-50/50 transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-7 h-7 rounded-xl bg-indigo-900/10 text-indigo-800 font-bold flex items-center justify-center text-xs font-mono shrink-0">2</span>
+                          <span className="text-sm font-bold text-indigo-900 flex items-center gap-1.5">
+                            <Heart className="w-4 h-4 text-indigo-600" />
+                            <span>{MATCH_I18N.tabAshtakoota[lang] || MATCH_I18N.tabAshtakoota.en}</span>
+                          </span>
+                        </div>
+                        <span className="text-xs font-bold text-stone-500">{openMatchSections[2] ? '▲' : '▼'}</span>
+                      </button>
+                      {openMatchSections[2] && (
+                        <div className="p-3.5 sm:p-4 border-t border-amber-900/10 space-y-3 bg-amber-50/40 text-xs">
+                          <div className="flex justify-between items-center pb-2 border-b border-amber-200">
+                            <div>
+                              <span className="text-[10px] font-bold text-amber-900 uppercase tracking-wider block">
+                                Engine Computed Compatibility
+                              </span>
+                              <span className="font-bold text-slate-800">
+                                {activeClientMatchReport.compatibility} ({activeClientMatchReport.percentage}%)
+                              </span>
                             </div>
-                          ))}
-                        </div>
+                            <div className="text-right">
+                              <span className="text-2xl font-black text-amber-700">
+                                {activeClientMatchReport.totalScore} / 36
+                              </span>
+                              <span className="text-[10px] text-slate-500 block">Total Gunas</span>
+                            </div>
+                          </div>
 
-                        {/* Manglik status */}
-                        <div className="text-[11px] text-slate-700 pt-1 border-t border-amber-200 flex flex-col sm:flex-row justify-between gap-1">
-                          <span><strong>{t('groomBoyLabel') || 'Groom'}:</strong> {activeClientMatchReport.manglik?.boy?.details}</span>
-                          <span><strong>{t('brideGirlLabel') || 'Bride'}:</strong> {activeClientMatchReport.manglik?.girl?.details}</span>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                            {activeClientMatchReport.kootas?.map((k, i) => (
+                              <div key={i} className="bg-white p-1.5 rounded-lg border border-amber-100 flex justify-between">
+                                <span className="font-semibold text-slate-700">{k.koota}</span>
+                                <span className="font-bold text-amber-800">{k.obtained}/{k.max}</span>
+                              </div>
+                            ))}
+                          </div>
+
+                          <div className="text-[11px] text-slate-700 pt-1 border-t border-amber-200 flex flex-col sm:flex-row justify-between gap-1">
+                            <span><strong>{t('brideGirlLabel') || 'Bride'}:</strong> {activeClientMatchReport.manglik?.girl?.details}</span>
+                            <span><strong>{t('groomBoyLabel') || 'Groom'}:</strong> {activeClientMatchReport.manglik?.boy?.details}</span>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
+
+                    {/* SECTION 3: Guja (Chevvai) Dasha & Chart */}
+                    <div id="match-section-3" className="bg-white rounded-2xl border border-amber-900/15 shadow-xs overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => toggleMatchSection(3)}
+                        className="w-full p-3.5 sm:p-4 flex items-center justify-between text-left hover:bg-amber-50/50 transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-7 h-7 rounded-xl bg-rose-900/10 text-rose-800 font-bold flex items-center justify-center text-xs font-mono shrink-0">3</span>
+                          <span className="text-sm font-bold text-rose-900 flex items-center gap-1.5">
+                            <Flame className="w-4 h-4 text-rose-600" />
+                            <span>{MATCH_I18N.tabGujaDasha[lang] || MATCH_I18N.tabGujaDasha.en}</span>
+                          </span>
+                        </div>
+                        <span className="text-xs font-bold text-stone-500">{openMatchSections[3] ? '▲' : '▼'}</span>
+                      </button>
+                      {openMatchSections[3] && (
+                        <div className="p-3.5 sm:p-4 pt-0 border-t border-amber-900/10">
+                          <GujaDashaChart matchReport={activeClientMatchReport} />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* SECTION 4: Rahu-Ketu (Sarpa) Dosha & Chart */}
+                    <div id="match-section-4" className="bg-white rounded-2xl border border-amber-900/15 shadow-xs overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => toggleMatchSection(4)}
+                        className="w-full p-3.5 sm:p-4 flex items-center justify-between text-left hover:bg-amber-50/50 transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-7 h-7 rounded-xl bg-teal-900/10 text-teal-800 font-bold flex items-center justify-center text-xs font-mono shrink-0">4</span>
+                          <span className="text-sm font-bold text-teal-900 flex items-center gap-1.5">
+                            <Zap className="w-4 h-4 text-teal-600" />
+                            <span>{MATCH_I18N.tabRahuKetu[lang] || MATCH_I18N.tabRahuKetu.en}</span>
+                          </span>
+                        </div>
+                        <span className="text-xs font-bold text-stone-500">{openMatchSections[4] ? '▲' : '▼'}</span>
+                      </button>
+                      {openMatchSections[4] && (
+                        <div className="p-3.5 sm:p-4 pt-0 border-t border-amber-900/10">
+                          <RahuKetuChart matchReport={activeClientMatchReport} />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
