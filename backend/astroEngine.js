@@ -4,6 +4,8 @@
  * and Daily Panchangam. All horoscope calculation modules have been removed.
  */
 
+const Astronomy = require('astronomy-engine');
+
 // 27 Nakshatras with ruling planets and deities
 const NAKSHATRAS = [
   { name: 'Ashwini', lord: 'Ketu', deity: 'Ashwini Kumaras', sign: 'Aries', varna: 'Kshatriya', yoni: 'Horse', gana: 'Deva', nadi: 'Adi' },
@@ -612,86 +614,86 @@ function computeJulianDay(Y, M, D, hour = 0, minute = 0) {
 /**
  * Computes Sidereal planetary positions for Lagna, Sun, Moon, Mars, Jupiter, Venus, Saturn, Rahu, Ketu
  */
+function parseBackendUtcOffset(tzVal) {
+  if (typeof tzVal === 'number' && !isNaN(tzVal)) return tzVal;
+  if (typeof tzVal === 'string') {
+    const m = tzVal.match(/([+-]?)(\d{1,2})(?::(\d{2}))?/);
+    if (m) {
+      const sign = m[1] === '-' ? -1 : 1;
+      const hrs = parseInt(m[2], 10) || 0;
+      const mins = parseInt(m[3], 10) || 0;
+      return sign * (hrs + mins / 60);
+    }
+    const f = parseFloat(tzVal);
+    if (!isNaN(f)) return f;
+  }
+  return 5.5;
+}
+
 function computePersonGrahas(input = {}) {
   const { year, month, day } = parseDobParts(input.dob || input.birthDate || input.dateOfBirth);
   const { hour, minute } = parseTimeParts(input.dobTime || input.birthTime || input.timeOfBirth || '06:00');
-  const lat = parseFloat(input.lat || input.latitude || 11.6643);
-  const lon = parseFloat(input.lon || input.longitude || 78.1460);
-  const utcOffset = 5.5;
+  const lat = parseFloat(input.lat || input.latitude || 11.65);
+  const lon = parseFloat(input.lon || input.longitude || 78.20);
+  const utcOffset = parseBackendUtcOffset(input.utcOffset ?? input.tz ?? 5.5);
 
-  const jd = computeJulianDay(year, month, day, hour - utcOffset, minute);
-  const d = jd - 2451545.0;
-  const T = d / 36525.0;
+  const utHours = (hour + minute / 60) - utcOffset;
+  const utcDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0) + utHours * 3600000);
+  if (year >= 0 && year < 100) utcDate.setUTCFullYear(year);
+  const astroTime = Astronomy.MakeTime(utcDate);
+  const T = astroTime.tt / 36525.0;
 
-  // Lahiri Ayanamsha
-  const ayanamsha = normalizeDeg(23.85 + (d / 365.25) * 0.01397);
+  // Lahiri (Chitrapaksha) Ayanamsha & True Obliquity via astronomy-engine
+  const tilt = Astronomy.e_tilt(astroTime);
+  const ayanamsha = normalizeDeg(23.857092 + (5029.0966 * T + 1.11161 * T * T) / 3600.0 + tilt.dpsi / 3600.0);
 
-  // Sun
-  const M_sun = normalizeDeg(357.529 + 0.98560028 * d);
-  const L_sun = normalizeDeg(280.466 + 0.98564736 * d);
-  const sunTrop = normalizeDeg(L_sun + 1.915 * sinD(M_sun) + 0.02 * sinD(2 * M_sun));
-  const sunSid = normalizeDeg(sunTrop - ayanamsha);
-
-  // Mars (Chevvai / Guja)
-  const M_mars = normalizeDeg(19.373 + 0.5240207 * d);
-  const L_mars = normalizeDeg(355.433 + 0.5240330 * d);
-  const marsTrop = normalizeDeg(L_mars + 10.691 * sinD(M_mars) + 0.623 * sinD(2 * M_mars));
-  const marsSid = normalizeDeg(marsTrop - ayanamsha);
-
-  // Jupiter (Guru)
-  const M_jup = normalizeDeg(20.020 + 0.0830853 * d);
-  const L_jup = normalizeDeg(34.351 + 0.0830912 * d);
-  const jupTrop = normalizeDeg(L_jup + 5.555 * sinD(M_jup) + 0.166 * sinD(2 * M_jup));
-  const jupSid = normalizeDeg(jupTrop - ayanamsha);
-
-  // Venus (Sukra)
-  const M_ven = normalizeDeg(50.115 + 1.6021302 * d);
-  const L_ven = normalizeDeg(181.979 + 1.6021305 * d);
-  const venTrop = normalizeDeg(L_ven - 0.776 * sinD(M_ven));
-  const venSid = normalizeDeg(venTrop - ayanamsha);
-
-  // Saturn (Sani)
-  const M_sat = normalizeDeg(317.020 + 0.0334442 * d);
-  const L_sat = normalizeDeg(50.077 + 0.0334597 * d);
-  const satTrop = normalizeDeg(L_sat + 6.300 * sinD(M_sat));
-  const satSid = normalizeDeg(satTrop - ayanamsha);
-
-  // Mercury (Budha)
-  const M_mer = normalizeDeg(174.794 + 4.0923344 * d);
-  const L_mer = normalizeDeg(252.251 + 4.0923388 * d);
-  const merTrop = normalizeDeg(L_mer + 23.440 * sinD(M_mer));
-  const merSid = normalizeDeg(merTrop - ayanamsha);
+  // Geocentric Sidereal Longitudes (VSOP87 / ELP2000 / JPL accuracy)
+  const sunSid = normalizeDeg(Astronomy.SunPosition(astroTime).elon - ayanamsha);
+  const astroMoonSid = normalizeDeg(Astronomy.EclipticGeoMoon(astroTime).lon - ayanamsha);
+  const marsSid = normalizeDeg(Astronomy.Ecliptic(Astronomy.GeoVector(Astronomy.Body.Mars, astroTime, true)).elon - ayanamsha);
+  const jupSid = normalizeDeg(Astronomy.Ecliptic(Astronomy.GeoVector(Astronomy.Body.Jupiter, astroTime, true)).elon - ayanamsha);
+  const venSid = normalizeDeg(Astronomy.Ecliptic(Astronomy.GeoVector(Astronomy.Body.Venus, astroTime, true)).elon - ayanamsha);
+  const satSid = normalizeDeg(Astronomy.Ecliptic(Astronomy.GeoVector(Astronomy.Body.Saturn, astroTime, true)).elon - ayanamsha);
+  const merSid = normalizeDeg(Astronomy.Ecliptic(Astronomy.GeoVector(Astronomy.Body.Mercury, astroTime, true)).elon - ayanamsha);
 
   // Mean Rahu & Ketu
-  const rahuTrop = normalizeDeg(259.183 - 0.05295 * d);
+  const rahuTrop = normalizeDeg(125.04452 - 1934.136261 * T + 0.0020708 * T * T + (T * T * T) / 450000.0);
   const rahuSid = normalizeDeg(rahuTrop - ayanamsha);
   const ketuSid = normalizeDeg(rahuSid + 180);
 
-  // Local Sidereal Time (LST) and Ascendant (Lagna)
-  const GMST = normalizeDeg(280.46061837 + 360.98564736629 * d);
-  const LST = normalizeDeg(GMST + lon);
-  const eps = 23.4392911 - 0.0130042 * T;
+  // Local Sidereal Time (GAST + lon) and Ascendant (Lagna) — standard Meeus quadrant
+  const gastDeg = normalizeDeg(Astronomy.SiderealTime(astroTime) * 15.0);
+  const LST = normalizeDeg(gastDeg + lon);
+  const eps = tilt.tobl;
   const sinLST = sinD(LST);
   const cosLST = cosD(LST);
   const sinEps = sinD(eps);
   const cosEps = cosD(eps);
   const tanLat = Math.tan(lat * Math.PI / 180);
-  const ascRad = Math.atan2(-cosLST, sinLST * cosEps + tanLat * sinEps);
+  const ascRad = Math.atan2(cosLST, -(sinLST * cosEps + tanLat * sinEps));
   const ascTrop = normalizeDeg(ascRad * 180 / Math.PI);
   const ascSid = normalizeDeg(ascTrop - ayanamsha);
 
-  // Moon Position & Star
-  let moonSid = 0;
-  const starObj = findStarObj(input);
+  // Moon Position & Star (use astronomical Moon if no explicit star/pada override was given)
+  let moonSid = astroMoonSid;
+  let starObj = findStarObj(input);
   const rashiIdx = findRashiIdx(input);
-  const pada = parseInt(input.pada || input.padam || 1, 10);
+  let pada = parseInt(input.pada || input.padam || 0, 10);
 
-  if (starObj && starObj.index !== undefined) {
-    // Star index (0..26) * 13°20' + (pada - 1) * 3°20' + 1°40' (mid-pada)
-    moonSid = normalizeDeg(starObj.index * (40 / 3) + (pada - 1) * (10 / 3) + (5 / 3));
+  if (input.star || input.starNakshatra || input.nakshatra) {
+    if (starObj && starObj.index !== undefined) {
+      const pVal = pada >= 1 && pada <= 4 ? pada : 1;
+      pada = pVal;
+      moonSid = normalizeDeg(starObj.index * (40 / 3) + (pVal - 1) * (10 / 3) + (5 / 3));
+    }
   } else {
-    moonSid = normalizeDeg(rashiIdx * 30 + 15);
+    const padaTotal = Math.floor((astroMoonSid * 3 + 1e-9) / 10);
+    const nakIdx = Math.floor(padaTotal / 4) % 27;
+    pada = (padaTotal % 4) + 1;
+    starObj = { ...NAKSHATRAS[nakIdx], index: nakIdx };
+    moonSid = astroMoonSid;
   }
+  if (!pada || pada < 1 || pada > 4) pada = 1;
 
   const lagnaRasi = Math.floor(ascSid / 30) % 12;
   const moonRasi = Math.floor(moonSid / 30) % 12;

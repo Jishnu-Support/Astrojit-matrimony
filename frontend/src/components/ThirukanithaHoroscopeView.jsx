@@ -1582,8 +1582,10 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                   {/* Bhukti Accordion Content */}
                   {isExpanded && (
                     <div className="p-3 sm:p-4 bg-white dark:bg-[#201A16] border-t border-amber-900/10 space-y-2.5">
-                      {/* Pasakar, Bodhakar, Karagar, Vedhakar 4-Roles Banner */}
+                      {/* Pasakar, Bodhakar, Karagar, Vedhakar 4-Roles Banner (Excluded for Rahu & Ketu) */}
                       {(() => {
+                        const mdId = (md.lord?.id || '').toLowerCase();
+                        if (mdId === 'rahu' || mdId === 'ketu') return null;
                         const roles = md.fourRoles || getGrahaFourRoles(md.lord?.id);
                         if (!roles) return null;
                         return (
@@ -1651,7 +1653,8 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                           const isOngoingAtBirth = bh.isOngoingAtBirth;
                           const isPastAtBirth = bh.isPastAtBirth;
 
-                          const mdRoles = md.fourRoles || getGrahaFourRoles(md.lord?.id);
+                          const mdId = (md.lord?.id || '').toLowerCase();
+                          const mdRoles = (mdId === 'rahu' || mdId === 'ketu') ? null : (md.fourRoles || getGrahaFourRoles(md.lord?.id));
                           let bhuktiRoleTag = null;
                           if (mdRoles) {
                             if (bh.bhuktiLord?.id === mdRoles.pasakarId) {

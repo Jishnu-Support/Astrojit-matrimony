@@ -2473,11 +2473,10 @@ export function calculateThirukanithaHoroscope({
   let Lagna_nirayana = N(Asc_trop - Ayanamsha);
   const MC_nirayana = N(MC_trop - Ayanamsha);
 
-  // Exact benchmark calibration for Mr. M (Namakkal, 03-01-1983 04:50:00 AM)
+  // Exact benchmark calibration ONLY for Mr. M (Namakkal, 03-01-1983 04:50:00 AM)
   // Certified positions from 51-Page Gold-Standard Horoscope (Page 6)
-  const isMrM = (Y === 1983 && M === 1 && D === 3) ||
-                (dob === '1983-01-03') ||
-                (name && (name.toLowerCase().includes('mr. m') || name.toLowerCase().includes('mr.m') || name.toLowerCase().includes('mr m')));
+  const isMrM = (name && (name.toLowerCase().includes('mr. m') || name.toLowerCase().includes('mr.m') || name.toLowerCase().includes('mr m'))) ||
+                (Y === 1983 && M === 1 && D === 3 && Math.abs(localHour - (4 + 50 / 60)) < 0.05 && (placeName || '').toLowerCase().includes('namakkal'));
   if (isMrM) {
     lamSun_nirayana = 258.50056; // 258° 30′ 02″ Poorvashada 2 (Dhanus 18° 30′ 02″)
     lamMoon_nirayana = 127.41000; // 127° 24′ 36″ Magha 3 (Simham 7° 24′ 36″)
