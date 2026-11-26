@@ -1,7 +1,9 @@
 /**
  * Thirukanitha (Drik Ganitha) Ephemeris & Vedic Astrology Engine
- * Accurate planetary calculations according to exact specifications.
+ * Powered by astronomy-engine (VSOP87 + ELP2000/JPL accuracy) with Lahiri Ayanamsa.
  */
+
+import * as Astronomy from 'astronomy-engine';
 
 // =============================================================================
 // MAHADASHA BHOGAN-VEDHAGAN-PASAGAN-KARAGAN FIXED CLASSICAL REFERENCE TABLE
@@ -2392,7 +2394,7 @@ export function calculateThirukanithaHoroscope({
   const localHour = parseLocalHour(dobTime12 || dobTime);
   const numUtcOffset = parseUtcOffset(utcOffset);
 
-  // 1. TIME
+  // 1. TIME (Exact UT -> AstroTime with TT / Delta-T)
   const UT = localHour - numUtcOffset;
   let Yp = Y, Mp = M;
   if (M <= 2) {
@@ -2402,65 +2404,46 @@ export function calculateThirukanithaHoroscope({
   const A = Math.floor(Yp / 100);
   const B = 2 - A + Math.floor(A / 4);
   const JD = Math.floor(365.25 * (Yp + 4716)) + Math.floor(30.6001 * (Mp + 1)) + D + UT / 24 + B - 1524.5;
-  const T = (JD - 2451545.0) / 36525.0;
+  const utcDate = new Date(Date.UTC(Y, M - 1, D, 0, 0, 0) + UT * 3600000);
+  if (Y >= 0 && Y < 100) utcDate.setUTCFullYear(Y);
+  const astroTime = Astronomy.MakeTime(utcDate);
+  const astroTimeNext = astroTime.AddDays(1);
+  const T = astroTime.tt / 36525.0;
+  const T_next = astroTimeNext.tt / 36525.0;
 
-  // 2. AYANAMSHA (Lahiri) & OBLIQUITY
-  const Omega = N(125.04452 - 1934.136261 * T);
-  const Ls = N(280.46646 + 36000.76983 * T);
-  const dPsi = -17.2 * sinD(Omega) - 1.32 * sinD(2 * Ls); // arcsec
+  // 2. AYANAMSHA (Lahiri / Chitrapaksha) & TRUE OBLIQUITY (via astronomy-engine nutation)
+  const tilt = Astronomy.e_tilt(astroTime);
+  const tiltNext = Astronomy.e_tilt(astroTimeNext);
+  const dPsi = tilt.dpsi;
+  const dPsi_next = tiltNext.dpsi;
   const Ayanamsha = 23.857092 + (5029.0966 * T + 1.11161 * T * T) / 3600.0 + dPsi / 3600.0;
-  const eps = 23.439291 - 0.0130042 * T;
+  const Ayanamsha_next = 23.857092 + (5029.0966 * T_next + 1.11161 * T_next * T_next) / 3600.0 + dPsi_next / 3600.0;
+  const eps = tilt.tobl;
 
-  // 3. SUN (tropical)
-  const M_sun = N(357.52911 + 35999.05029 * T);
-  const C_sun = (1.914602 - 0.004817 * T) * sinD(M_sun) + 0.019993 * sinD(2 * M_sun) + 0.000289 * sinD(3 * M_sun);
-  const lamSun_tropical = N(Ls + C_sun);
+  // 3. SUN (VSOP87 / JPL apparent true-of-date ecliptic longitude)
+  const lamSun_tropical = N(Astronomy.SunPosition(astroTime).elon);
   let lamSun_nirayana = N(lamSun_tropical - Ayanamsha);
 
-  // 4. MOON (tropical)
-  const Lp = 218.3164477 + 481267.88123421 * T;
-  const D_moon = 297.8501921 + 445267.1114034 * T;
-  const M_moon = 357.5291092 + 35999.0502909 * T;
-  const Mp_moon = 134.9633964 + 477198.8675055 * T;
-  const F_moon = 93.272095 + 483202.0175233 * T;
-
-  let sumMoonTerms = 0;
-  for (const [c, d, m, mp, f] of MOON_TERMS) {
-    const arg = d * D_moon + m * M_moon + mp * Mp_moon + f * F_moon;
-    sumMoonTerms += c * sinD(arg);
-  }
-  sumMoonTerms += 3958 * sinD(119.75 + 131.849 * T);
-  sumMoonTerms += 1962 * sinD(Lp - F_moon);
-  sumMoonTerms += 318 * sinD(53.09 + 479264.29 * T);
-
-  const lamMoon_tropical = N(Lp + sumMoonTerms / 1e6);
+  // 4. MOON (ELP2000/JPL apparent geocentric ecliptic longitude)
+  const lamMoon_tropical = N(Astronomy.EclipticGeoMoon(astroTime).lon);
   let lamMoon_nirayana = N(lamMoon_tropical - Ayanamsha);
 
-  // 5. MERCURY, VENUS, MARS, JUPITER, SATURN, EARTH
-  // Compute at epoch T and T + dT (dT = 1 day = 1/36525.0 Julian centuries)
-  // to calculate true apparent geocentric daily motion (speed) and retrograde status (Vakram / வக்ரம்).
-  const dT = 1.0 / 36525.0;
-  const T_next = T + dT;
-  const Omega_next = N(125.04452 - 1934.136261 * T_next);
-  const Ls_next = N(280.46646 + 36000.76983 * T_next);
-  const dPsi_next = -17.2 * sinD(Omega_next) - 1.32 * sinD(2 * Ls_next);
-  const Ayanamsha_next = 23.857092 + (5029.0966 * T_next + 1.11161 * T_next * T_next) / 3600.0 + dPsi_next / 3600.0;
-
-  const earth = getHelioCoords(PLANET_ELEMENTS.earth, T);
-  const earth_next = getHelioCoords(PLANET_ELEMENTS.earth, T_next);
+  // 5. MERCURY, VENUS, MARS, JUPITER, SATURN (VSOP87/JPL with aberration & light-time)
+  const planetBodyMap = {
+    mercury: Astronomy.Body.Mercury,
+    venus: Astronomy.Body.Venus,
+    mars: Astronomy.Body.Mars,
+    jupiter: Astronomy.Body.Jupiter,
+    saturn: Astronomy.Body.Saturn,
+  };
   const planetLongs = {};
 
   for (const key of ['mercury', 'venus', 'mars', 'jupiter', 'saturn']) {
-    const h = getHelioCoords(PLANET_ELEMENTS[key], T);
-    const dx = h.x - earth.x;
-    const dy = h.y - earth.y;
-    const lam_trop = N(atan2D(dy, dx) + 1.3969713 * T);
+    const body = planetBodyMap[key];
+    const lam_trop = N(Astronomy.Ecliptic(Astronomy.GeoVector(body, astroTime, true)).elon);
     const lam_sid = N(lam_trop - Ayanamsha);
 
-    const h_next = getHelioCoords(PLANET_ELEMENTS[key], T_next);
-    const dx_next = h_next.x - earth_next.x;
-    const dy_next = h_next.y - earth_next.y;
-    const lam_trop_next = N(atan2D(dy_next, dx_next) + 1.3969713 * T_next);
+    const lam_trop_next = N(Astronomy.Ecliptic(Astronomy.GeoVector(body, astroTimeNext, true)).elon);
     const lam_sid_next = N(lam_trop_next - Ayanamsha_next);
 
     // Apparent sidereal daily motion in degrees/day (-180 to +180)
@@ -2476,14 +2459,15 @@ export function calculateThirukanithaHoroscope({
     };
   }
 
-  // 6. NODES
-  const Rahu_trop = N(Omega);
+  // 6. NODES (Mean Lunar Node)
+  const Omega = N(125.04452 - 1934.136261 * T + 0.0020708 * T * T + (T * T * T) / 450000.0);
+  const Rahu_trop = Omega;
   let Rahu_sid = N(Rahu_trop - Ayanamsha);
   let Ketu_sid = N(Rahu_sid + 180);
 
-  // 8. LAGNA & MC
-  const GMST = 280.46061837 + 360.98564736629 * (JD - 2451545.0) + 0.000387933 * T * T;
-  const RAMC = N(GMST + lon);
+  // 8. LAGNA & MC (Using Apparent Greenwich Sidereal Time from astronomy-engine)
+  const GAST_deg = N(Astronomy.SiderealTime(astroTime) * 15.0);
+  const RAMC = N(GAST_deg + lon);
   const MC_trop = atan2D(sinD(RAMC), cosD(RAMC) * cosD(eps));
   const Asc_trop = atan2D(cosD(RAMC), -(sinD(RAMC) * cosD(eps) + Math.tan(lat * D2R) * sinD(eps)));
   let Lagna_nirayana = N(Asc_trop - Ayanamsha);
@@ -2605,10 +2589,11 @@ export function calculateThirukanithaHoroscope({
 
   const planetRows = rawPlanets.map((p) => {
     const info = PLANET_INFO.find(item => item.id === p.key);
-    const lam = p.lam;
-    const rasi = Math.floor(lam / 30);
-    const nakIdx = Math.floor(lam / (40 / 3));
-    const pada = Math.floor((lam % (40 / 3)) / (10 / 3)) + 1;
+    const lam = N(p.lam);
+    const rasi = Math.floor((lam + 1e-9) / 30) % 12;
+    const padaTotal = Math.floor((lam * 3 + 1e-9) / 10);
+    const nakIdx = Math.floor(padaTotal / 4) % 27;
+    const pada = (padaTotal % 4) + 1;
     const div = getDivisions(lam);
     const bhava = getPlanetBhava(lam);
     const dig = getPlanetDignityBilingual(p.key, rasi);
@@ -2645,6 +2630,7 @@ export function calculateThirukanithaHoroscope({
     };
   });
 
+  const lagnaPadaTotal = Math.floor((N(Lagna_nirayana) * 3 + 1e-9) / 10);
   const lagnaRow = {
     id: 'lagna',
     isLagna: true,
@@ -2653,9 +2639,9 @@ export function calculateThirukanithaHoroscope({
     longitude: Lagna_nirayana,
     dms: formatDMS(Lagna_nirayana),
     degInSign: formatDegInSign(Lagna_nirayana),
-    rasi: Math.floor(Lagna_nirayana / 30),
-    nakshatra: Math.floor(Lagna_nirayana / (40 / 3)),
-    pada: Math.floor((Lagna_nirayana % (40 / 3)) / (10 / 3)) + 1,
+    rasi: Math.floor((N(Lagna_nirayana) + 1e-9) / 30) % 12,
+    nakshatra: Math.floor(lagnaPadaTotal / 4) % 27,
+    pada: (lagnaPadaTotal % 4) + 1,
     navamsa: lagnaDivisions.D9,
     bhava: 1,
     div: lagnaDivisions,
@@ -2669,6 +2655,7 @@ export function calculateThirukanithaHoroscope({
     dignityKey: 'none'
   };
 
+  const mandiPadaTotal = Math.floor((N(mandiLong) * 3 + 1e-9) / 10);
   const mandiRow = {
     id: 'mandi',
     isLagna: false,
@@ -2677,9 +2664,9 @@ export function calculateThirukanithaHoroscope({
     longitude: mandiLong,
     dms: formatDMS(mandiLong),
     degInSign: formatDegInSign(mandiLong),
-    rasi: Math.floor(mandiLong / 30),
-    nakshatra: Math.floor(mandiLong / (40 / 3)),
-    pada: Math.floor((mandiLong % (40 / 3)) / (10 / 3)) + 1,
+    rasi: Math.floor((N(mandiLong) + 1e-9) / 30) % 12,
+    nakshatra: Math.floor(mandiPadaTotal / 4) % 27,
+    pada: (mandiPadaTotal % 4) + 1,
     navamsa: mandiDivisions.D9,
     bhava: getPlanetBhava(mandiLong),
     div: mandiDivisions,
@@ -4485,7 +4472,7 @@ export function getVargaSign(lon, vargaNum) {
     return (start + dec) % 12;
   }
   if (vargaNum === 9) {
-    return Math.floor(lon / (30 / 9)) % 12;
+    return Math.floor((N(lon) * 3 + 1e-9) / 10) % 12;
   }
   if (vargaNum === 10) {
     const dec = Math.floor(deg / 3);
