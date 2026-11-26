@@ -2873,7 +2873,7 @@ Shubham Bhavatu! 🙏`;
 
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">
-                    {lang === 'ta' ? 'துணைத் தலைப்பு / மையம் (Line 2 - Subtitle)' : 'Center Name / Subtitle (Line 2)'}
+                    {lang === 'ta' ? 'ஜோதிடர் பெயர்' : 'Astrologer Name'}
                   </label>
                   <input
                     type="text"

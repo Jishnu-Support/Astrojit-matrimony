@@ -196,10 +196,10 @@ export default function LetterheadBrandingModal({
             />
           </div>
 
-          {/* Line 2: Center Name / Subtitle */}
+          {/* Line 2: Astrologer Name */}
           <div>
             <label className="block text-xs font-bold text-slate-700 dark:text-stone-300 mb-1">
-              {isTa ? 'துணைத் தலைப்பு / மையம் (Line 2)' : 'Center Name / Subtitle (Line 2)'}
+              {isTa ? 'ஜோதிடர் பெயர்' : 'Astrologer Name'}
             </label>
             <input
               type="text"
