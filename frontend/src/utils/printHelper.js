@@ -3,12 +3,15 @@
  * Opens a dedicated, isolated print frame containing ONLY the targeted element.
  * Guarantees zero page bleed from background dashboards, multi-page dossiers, or app chrome.
  */
-export function printElementById(elementId, customTitle = 'Astrojit_Document') {
+export function printElementById(elementId, customTitle = 'Astrojit_Document', options = {}) {
   const element = document.getElementById(elementId);
   if (!element) {
     window.print();
     return;
   }
+
+  const pageSize = options.pageSize || 'A4 portrait';
+  const pageMargin = options.pageMargin || '4mm 5mm';
 
   // Find or create the hidden print iframe
   let iframe = document.getElementById('astrojit-print-frame');
@@ -46,8 +49,8 @@ export function printElementById(elementId, customTitle = 'Astrojit_Document') {
         ${styles}
         <style>
           @page {
-            size: A4 portrait;
-            margin: 4mm 5mm !important;
+            size: ${pageSize};
+            margin: ${pageMargin} !important;
           }
           *, *::before, *::after {
             box-sizing: border-box !important;
@@ -83,12 +86,41 @@ export function printElementById(elementId, customTitle = 'Astrojit_Document') {
             max-height: 282mm !important;
             box-sizing: border-box !important;
           }
-          #astrojit-horoscope-1page {
+          .a5-booklet-sheet {
+            width: 140mm !important;
+            max-width: 140mm !important;
+            height: 202mm !important;
+            min-height: 202mm !important;
+            max-height: 202mm !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            page-break-after: always !important;
+            break-after: page !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            box-sizing: border-box !important;
+          }
+          .half-a4-sheet {
             width: 200mm !important;
             max-width: 200mm !important;
             height: 288mm !important;
             min-height: 288mm !important;
             max-height: 288mm !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            page-break-after: always !important;
+            break-after: page !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            box-sizing: border-box !important;
+            background: #ffffff !important;
+          }
+          #astrojit-horoscope-1page {
+            width: 198mm !important;
+            max-width: 198mm !important;
+            height: 285mm !important;
+            min-height: 285mm !important;
+            max-height: 285mm !important;
             box-sizing: border-box !important;
             display: flex !important;
             flex-direction: column !important;
@@ -101,8 +133,8 @@ export function printElementById(elementId, customTitle = 'Astrojit_Document') {
           }
           #astrojit-horoscope-1page > div {
             height: 100% !important;
-            min-height: 270mm !important;
-            max-height: 270mm !important;
+            min-height: 100% !important;
+            max-height: 100% !important;
             box-sizing: border-box !important;
             display: flex !important;
             flex-direction: column !important;

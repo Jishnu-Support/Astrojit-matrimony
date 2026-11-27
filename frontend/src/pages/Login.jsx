@@ -32,7 +32,7 @@ export default function Login({ onSwitchToRegister }) {
   const [viewMode, setViewMode] = useState('login');
 
   // Login form state
-  const [selectedRole, setSelectedRole] = useState('client');
+  const [selectedRole, setSelectedRole] = useState('astrologer');
   const [mobile, setMobile] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -41,7 +41,7 @@ export default function Login({ onSwitchToRegister }) {
 
   // Forgot password workflow state
   const [forgotStep, setForgotStep] = useState(1); // 1: Verify Mobile, 2: OTP & New Password, 3: Success
-  const [forgotRole, setForgotRole] = useState('client');
+  const [forgotRole, setForgotRole] = useState('astrologer');
   const [forgotMobile, setForgotMobile] = useState('');
   const [forgotOtp, setForgotOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');

@@ -95,6 +95,7 @@ export const API = {
   saveConsultationNote: (data) => apiRequest('/astrologer/consultation-note', 'POST', data),
   getReferredClients: () => apiRequest('/astrologer/referred-clients', 'GET'),
   updateClientByAstrologer: (clientId, data) => apiRequest(`/astrologer/client/${clientId}`, 'PUT', data),
+  deleteClientByAstrologer: (clientId) => apiRequest(`/astrologer/client/${clientId}`, 'DELETE'),
 
   // Vendor
   getVendorProducts: () => apiRequest('/vendor/products', 'GET'),

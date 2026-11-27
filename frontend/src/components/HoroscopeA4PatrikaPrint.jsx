@@ -400,29 +400,29 @@ export default function HoroscopeA4PatrikaPrint({
         </div>
       </div>
 
-      {/* Strict Single A4 Page (200mm x 288mm filling full printable A4 area) */}
+      {/* Strict Single A4 Page (198mm x 285mm fitting inside A4 printable area with double border) */}
       <div className="w-full overflow-x-auto pb-4">
         <div
           id="astrojit-horoscope-1page"
-          className="w-[200mm] h-[288mm] mx-auto bg-white text-black p-[1mm] shadow-lg overflow-hidden print:shadow-none"
+          className="w-[198mm] h-[285mm] mx-auto bg-white text-black p-[0.8mm] shadow-lg overflow-hidden print:shadow-none flex flex-col"
           style={{ pageBreakAfter: 'avoid', breakInside: 'avoid' }}
         >
           {/* Thin Black Double Page Border */}
-          <div className="w-full h-full border border-black p-[1mm] flex flex-col">
-            <div className="w-full h-full border border-black/70 px-[4mm] py-[2.5mm] flex flex-col justify-between gap-1.5 bg-white">
+          <div className="w-full flex-1 border border-black p-[0.8mm] flex flex-col min-h-0">
+            <div className="w-full flex-1 border border-black/70 px-[3.5mm] py-[2mm] flex flex-col justify-between gap-1 bg-white min-h-0">
 
               {/* 1. HEADER – ASTROLOGY CENTRE DETAILS (Left: AstroJit Logo | Center: Astrologer Details | Right: Astrologer Logo Only) */}
-              <div className="border-b border-black pb-1.5 shrink-0">
+              <div className="border-b border-black pb-1 shrink-0">
                 <div className="text-center text-[8.5px] font-bold text-stone-700 tracking-wider uppercase mb-0.5">
                   {invocationText}
                 </div>
                 <div className="flex items-center justify-between gap-2">
                   {/* Left: AstroJit Logo ONLY (Enlarged) */}
-                  <div className="w-[38mm] shrink-0 flex items-center justify-start">
+                  <div className="w-[44mm] shrink-0 flex items-center justify-start">
                     <img
                       src="/astrojit-logo.webp"
                       alt="AstroJit"
-                      className="h-14 w-auto max-w-[37mm] object-contain shrink-0"
+                      className="h-[19mm] w-auto max-w-[43mm] object-contain shrink-0"
                       onError={e => { e.target.style.display = 'none'; }}
                     />
                   </div>
@@ -450,12 +450,12 @@ export default function HoroscopeA4PatrikaPrint({
                   </div>
 
                   {/* Right: Astrologer Uploaded Logo ONLY (Enlarged, no name/Thirukanitha text) */}
-                  <div className="w-[38mm] shrink-0 flex items-center justify-end">
+                  <div className="w-[44mm] shrink-0 flex items-center justify-end">
                     {(letterhead?.astrologerLogo || user?.pagerHeader?.astrologerLogo) ? (
                       <img
                         src={letterhead?.astrologerLogo || user?.pagerHeader?.astrologerLogo}
                         alt="Astrologer Logo"
-                        className="h-14 w-auto max-w-[37mm] object-contain rounded border border-black/30 bg-white p-0.5 shrink-0"
+                        className="h-[19mm] w-auto max-w-[43mm] object-contain rounded border border-black/30 bg-white p-0.5 shrink-0"
                         onError={e => { e.target.style.display = 'none'; }}
                       />
                     ) : (
@@ -584,7 +584,7 @@ export default function HoroscopeA4PatrikaPrint({
               </div>
 
               {/* 5. VIMSHOTTARI DASHA & BHUKTI INFORMATION + MAHADASHA BHODHAGAR, VEDHAGAR, PASAGAR, KARAGAR */}
-              <div className="border border-black/70 p-2 text-[8.8px] leading-snug bg-stone-50/40 space-y-1 shrink-0">
+              <div className="border border-black/70 px-2 py-1 text-[8.5px] leading-tight bg-stone-50/40 space-y-0.5 shrink-0">
                 <div className="font-black text-[9px] border-b border-black/35 pb-0.5 uppercase flex items-center justify-between">
                   <span>{isTa ? 'விம்சோத்தரி தசா & புக்தி விவரம்' : 'Vimshottari Dasha & Bhukti Information'}</span>
                   <span className="text-[8px] font-bold">
@@ -630,10 +630,10 @@ export default function HoroscopeA4PatrikaPrint({
               </div>
 
               {/* 6. ADDITIONAL ASTROLOGICAL + LUCKY & TRADITIONAL REFERENCE INFO */}
-              <div className="grid grid-cols-2 gap-2 text-[8.6px] leading-snug shrink-0">
+              <div className="grid grid-cols-2 gap-2 text-[8.1px] leading-[1.24] shrink-0">
                 {/* Additional Astrological Information */}
-                <div className="border border-black/70 p-1.5 space-y-0.5">
-                  <div className="font-black text-[8.8px] border-b border-black/35 pb-0.5 uppercase">
+                <div className="border border-black/70 px-1.5 py-1 space-y-0.5">
+                  <div className="font-black text-[8.4px] border-b border-black/35 pb-0.5 uppercase">
                     {isTa ? 'கூடுதல் ஜோதிட விவரங்கள்' : 'Additional Astrological Information'}
                   </div>
                   <div>
@@ -663,8 +663,8 @@ export default function HoroscopeA4PatrikaPrint({
                 </div>
 
                 {/* Lucky & Traditional Reference Information */}
-                <div className="border border-black/70 p-1.5 space-y-0.5">
-                  <div className="font-black text-[8.8px] border-b border-black/35 pb-0.5 uppercase">
+                <div className="border border-black/70 px-1.5 py-1 space-y-0.5">
+                  <div className="font-black text-[8.4px] border-b border-black/35 pb-0.5 uppercase">
                     {isTa ? 'அதிர்ஷ்ட & பாரம்பரிய குறிப்புகள்' : 'Lucky & Traditional Reference'}
                   </div>
                   <div>
@@ -693,9 +693,13 @@ export default function HoroscopeA4PatrikaPrint({
               </div>
 
               {/* 7. FOOTER – METHODOLOGY & SOFTWARE ATTRIBUTION */}
-              <div className="border-t border-black pt-1 flex items-center justify-between text-[8.5px] text-stone-700 font-semibold shrink-0">
-                <span>{isTa ? 'கணிப்பு முறை: திருக்கணித பஞ்சாங்கம் (லஹரி அயனாம்சம்)' : 'Methodology: Thirukanitha Ephemeris (Lahiri Ayanamsa)'}</span>
-                <span>{isTa ? 'மென்பொருள்: AstroJit வேத ஜோதிட தளம்' : 'Software: AstroJit Vedic Astrology Platform'}</span>
+              <div className="border-t border-black pt-0.5 flex items-center justify-between gap-2 text-[7.5px] text-stone-700 font-semibold shrink-0">
+                <span className="shrink-0">{isTa ? 'கணிப்பு முறை: திருக்கணித பஞ்சாங்கம் (லஹரி அயனாம்சம்)' : 'Methodology: Thirukanitha Ephemeris (Lahiri Ayanamsa)'}</span>
+                <span className="text-right">
+                  {isTa
+                    ? 'மென்பொருள்: Astrojit @ astrojit.co.in powered by Jishnu Infotech Private Limited @ jishnuinfotech.com +91 95668 23219'
+                    : 'Software : Astrojit @ astrojit.co.in powered by Jishnu Infotech Private Limited @ jishnuinfotech.com +91 95668 23219'}
+                </span>
               </div>
             </div>
           </div>

@@ -1085,7 +1085,10 @@ app.get('/api/panchangam', (req, res) => {
 app.get('/api/client/profile-by-mobile/:mobile', authenticate, (req, res) => {
   try {
     const db = readDb();
-    const client = db.clients.find((c) => c.mobile === req.params.mobile.trim());
+    const lookupKey = req.params.mobile.trim();
+    const client = db.clients.find(
+      (c) => c.mobile === lookupKey || c.clientCode === lookupKey || c.id === lookupKey
+    );
 
     if (!client) {
       return res.status(404).json({ error: 'Client with this mobile number does not exist.' });
@@ -1697,6 +1700,53 @@ app.put('/api/astrologer/client/:clientId', authenticate, (req, res) => {
   } catch (error) {
     console.error('Update client error:', error);
     return res.status(500).json({ error: 'Failed to update client: ' + error.message });
+  }
+});
+
+// Delete a client registered / referred by this astrologer
+app.delete('/api/astrologer/client/:clientId', authenticate, (req, res) => {
+  try {
+    const db = readDb();
+    const astro = (db.astrologers || []).find((a) => a.mobile === req.user.mobile || a.id === req.user.id);
+    if (!astro && req.user.role !== 'company') {
+      return res.status(403).json({ error: 'Astrologer account required.' });
+    }
+
+    const { clientId } = req.params;
+    const targetIdx = (db.clients || []).findIndex(
+      (c) => c.id === clientId || c.clientCode === clientId || (c.mobile && c.mobile === clientId)
+    );
+    if (targetIdx === -1) {
+      return res.status(404).json({ error: 'Client not found.' });
+    }
+
+    const target = db.clients[targetIdx];
+    const isOwned =
+      req.user.role === 'company' ||
+      (astro && (
+        target.registeredByAstrologerId === astro.id ||
+        target.referredByAstrologerId === astro.id ||
+        target.defaultAstrologerId === astro.id ||
+        (astro.referralCode &&
+          target.astrologerReferralCode &&
+          target.astrologerReferralCode.toUpperCase() === astro.referralCode.toUpperCase())
+      ));
+
+    if (!isOwned) {
+      return res.status(403).json({ error: 'You can only delete clients registered with your referral code.' });
+    }
+
+    const [removed] = db.clients.splice(targetIdx, 1);
+    writeDb(db);
+
+    return res.json({
+      message: 'Referred client deleted successfully.',
+      deletedId: removed.id,
+      clientCode: removed.clientCode || ''
+    });
+  } catch (error) {
+    console.error('Delete referred client error:', error);
+    return res.status(500).json({ error: 'Failed to delete client: ' + error.message });
   }
 });
 

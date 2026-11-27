@@ -20,7 +20,7 @@ import CosmicZodiac3DBackground from './components/CosmicZodiac3DBackground';
 function AppContent() {
   const { user, role, loading } = useAuth();
   const [authView, setAuthView] = useState('login');
-  const [registerRole, setRegisterRole] = useState('client');
+  const [registerRole, setRegisterRole] = useState('astrologer');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);

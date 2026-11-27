@@ -14,6 +14,7 @@ import { useClientBirth } from '../context/ClientBirthContext';
 import ThirukanithaHoroscopeView from './ThirukanithaHoroscopeView';
 import BirthDetailsIntakeCard from './BirthDetailsIntakeCard';
 import HoroscopeA4PatrikaPrint from './HoroscopeA4PatrikaPrint';
+import HoroscopeMultiPagePrint from './HoroscopeMultiPagePrint';
 
 export default function HoroscopeHub({
   initialClient = null,
@@ -27,6 +28,8 @@ export default function HoroscopeHub({
 
   // Toggle Mode: 'screen' (Horoscope Screen View) | 'print' (Horoscope Print)
   const [horoscopeMode, setHoroscopeMode] = useState('screen');
+  // Print Sub-Mode: 'onepage' (A4 1-Pager) | 'multipage' (Half A4 / A5 Multi-Pager)
+  const [printFormat, setPrintFormat] = useState('onepage');
 
   // Client view should not have the previous client search bar; astrologer portal requires it
   const shouldHideLookup = Boolean(hideClientLookup || user?.role === 'client');
@@ -132,12 +135,55 @@ export default function HoroscopeHub({
           </div>
         </>
       ) : (
-        /* HOROSCOPE PRINT MODULE (Strict Single A4 Patrika) */
-        <HoroscopeA4PatrikaPrint
-          key={`print-a4-${calcKey}`}
-          birthData={activeBirthData}
-          onSwitchToScreen={() => setHoroscopeMode('screen')}
-        />
+        <div className="space-y-4">
+          {/* Print Format Switcher: 1-Page A4 vs Multi-Page Half A4 (A5: 148 x 210 mm) */}
+          <div className="bg-white/95 dark:bg-[#251E1A] px-4 py-2.5 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs flex flex-wrap items-center justify-between gap-2 print:hidden">
+            <span className="text-xs font-bold text-stone-700 dark:text-stone-300">
+              {isTa ? 'அச்சு வடிவமைப்பு:' : 'Print Format:'}
+            </span>
+            <div className="inline-flex items-center gap-1.5 p-1 bg-stone-100 dark:bg-stone-900/80 rounded-xl border border-stone-200 dark:border-stone-800">
+              <button
+                type="button"
+                onClick={() => setPrintFormat('onepage')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  printFormat === 'onepage'
+                    ? 'bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-amber-100 shadow-xs'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100'
+                }`}
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>{isTa ? '1-பக்க ஜாதகம் (A4)' : '1-Page Patrika (A4)'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPrintFormat('multipage')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  printFormat === 'multipage'
+                    ? 'bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-amber-100 shadow-xs'
+                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>{isTa ? 'பலபக்க புத்தகம் (Half A4 / A5)' : 'Multi-Page Booklet (Half A4 / A5)'}</span>
+              </button>
+            </div>
+          </div>
+
+          {printFormat === 'onepage' ? (
+            <HoroscopeA4PatrikaPrint
+              key={`print-a4-${calcKey}`}
+              birthData={activeBirthData}
+              onSwitchToScreen={() => setHoroscopeMode('screen')}
+            />
+          ) : (
+            <HoroscopeMultiPagePrint
+              key={`print-a5-${calcKey}`}
+              birthData={activeBirthData}
+              onSwitchToScreen={() => setHoroscopeMode('screen')}
+              onSwitchToOnePage={() => setPrintFormat('onepage')}
+            />
+          )}
+        </div>
       )}
     </div>
   );

@@ -716,6 +716,7 @@ function computePersonGrahas(input = {}) {
       ascendant: ascSid,
       sun: sunSid,
       moon: moonSid,
+      astroMoon: astroMoonSid,
       mars: marsSid,
       jupiter: jupSid,
       venus: venSid,
@@ -1498,6 +1499,419 @@ function calculateRahuKetuMatchAnalysis(boyInput = {}, girlInput = {}) {
 }
 
 /**
+ * 5th House (Puthrasthanam / Childbirth & Progeny) Analysis
+ * Evaluates:
+ * 1. 5th House from Lagna & 5th Lord placement + dignity
+ * 2. Planets occupying the 5th house (benefics vs malefics)
+ * 3. Puthrakaraka Jupiter strength & aspect on 5th house
+ * 4. Saptamsha (D7) Lagna & Jupiter strength
+ * 5. Beeja Sphuta (Male: Sun + Venus + Jupiter) & Kshetra Sphuta (Female: Moon + Mars + Jupiter)
+ */
+const RASHI_LORDS_KEY = [
+  'mars', 'venus', 'mercury', 'moon', 'sun', 'mercury',
+  'venus', 'mars', 'jupiter', 'saturn', 'saturn', 'jupiter'
+];
+
+const PLANET_NAMES_TA_EN = {
+  sun: { ta: 'சூரியன்', en: 'Sun' },
+  moon: { ta: 'சந்திரன்', en: 'Moon' },
+  mars: { ta: 'செவ்வாய்', en: 'Mars' },
+  mercury: { ta: 'புதன்', en: 'Mercury' },
+  jupiter: { ta: 'குரு', en: 'Jupiter' },
+  venus: { ta: 'சுக்கிரன்', en: 'Venus' },
+  saturn: { ta: 'சனி', en: 'Saturn' },
+  rahu: { ta: 'ராகு', en: 'Rahu' },
+  ketu: { ta: 'கேது', en: 'Ketu' },
+};
+
+const RASHI_TA_NAMES = [
+  'மேஷம்', 'ரிஷபம்', 'மிதுனம்', 'கடகம்', 'சிம்மம்', 'கன்னி',
+  'துலாம்', 'விருச்சிகம்', 'தனுசு', 'மகரம்', 'கும்பம்', 'மீனம்'
+];
+
+const D7_SIGN = (lon) => {
+  const s = Math.floor(normalizeDeg(lon) / 30) % 12;
+  const deg = normalizeDeg(lon) % 30;
+  const part = Math.floor(deg / (30 / 7));
+  const isOdd = s % 2 === 0;
+  return isOdd ? (s + part) % 12 : (s + 6 + part) % 12;
+};
+
+const PLANET_DIGNITY_SIMPLE = (planetId, rasiIdx) => {
+  const utcha = { sun: 0, moon: 1, mars: 9, mercury: 5, jupiter: 3, venus: 11, saturn: 6, rahu: 7, ketu: 7 };
+  const neecha = { sun: 6, moon: 7, mars: 3, mercury: 11, jupiter: 9, venus: 5, saturn: 0, rahu: 1, ketu: 1 };
+  const own = { sun: [4], moon: [3], mars: [0, 7], mercury: [2, 5], jupiter: [8, 11], venus: [1, 6], saturn: [9, 10], rahu: [], ketu: [] };
+  if (rasiIdx === utcha[planetId]) return { key: 'utcha', ta: 'உச்சம்', en: 'Exalted', pts: 25 };
+  if ((own[planetId] || []).includes(rasiIdx)) return { key: 'aatchi', ta: 'ஆட்சி', en: 'Own Sign', pts: 22 };
+  if (rasiIdx === neecha[planetId]) return { key: 'neecha', ta: 'நீசம்', en: 'Debilitated', pts: 5 };
+  return { key: 'samam', ta: 'சமம் / நட்பு', en: 'Balanced', pts: 15 };
+};
+
+function evaluatePersonPuthrasthanam(grahas, isFemale = false) {
+  const { longitudes } = grahas;
+  const rasiOf = (lon) => Math.floor(normalizeDeg(lon) / 30) % 12;
+
+  const lagnaRasi = rasiOf(longitudes.ascendant);
+  const fifthRasi = (lagnaRasi + 4) % 12;
+  const fifthLordId = RASHI_LORDS_KEY[fifthRasi];
+  const fifthLordRasi = rasiOf(longitudes[fifthLordId]);
+  const fifthLordHouse = ((fifthLordRasi - lagnaRasi + 12) % 12) + 1;
+  const fifthLordDig = PLANET_DIGNITY_SIMPLE(fifthLordId, fifthLordRasi);
+
+  const jupRasi = rasiOf(longitudes.jupiter);
+  const jupHouse = ((jupRasi - lagnaRasi + 12) % 12) + 1;
+  const jupDig = PLANET_DIGNITY_SIMPLE('jupiter', jupRasi);
+  // Jupiter aspects 5th, 7th, 9th from itself (so occupies 5th, or in 1st, 9th, 11th)
+  const jupiterAspects5th = [1, 5, 9, 11].includes(jupHouse);
+
+  const planetsIn5th = [];
+  for (const key of ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn', 'rahu', 'ketu']) {
+    if (rasiOf(longitudes[key]) === fifthRasi) {
+      planetsIn5th.push({
+        id: key,
+        ta: PLANET_NAMES_TA_EN[key].ta,
+        en: PLANET_NAMES_TA_EN[key].en,
+        isBenefic: ['jupiter', 'venus', 'mercury', 'moon'].includes(key)
+      });
+    }
+  }
+
+  // Saptamsha (D7) check
+  const d7Lagna = D7_SIGN(longitudes.ascendant);
+  const d7Jupiter = D7_SIGN(longitudes.jupiter);
+  const d7FifthLord = D7_SIGN(longitudes[fifthLordId] ?? longitudes.jupiter);
+
+  // Beeja Sphuta (Male: Sun + Venus + Jupiter) | Kshetra Sphuta (Female: Moon + Mars + Jupiter)
+  const sphutaLon = isFemale
+    ? normalizeDeg(longitudes.moon + longitudes.mars + longitudes.jupiter)
+    : normalizeDeg(longitudes.sun + longitudes.venus + longitudes.jupiter);
+  const sphutaRasi = Math.floor(sphutaLon / 30) % 12;
+  const isOddSphuta = sphutaRasi % 2 === 0; // 0=Aries(odd), 2=Gemini(odd)...
+  const sphutaFavorable = isFemale ? !isOddSphuta : isOddSphuta;
+
+  // Score (0-100)
+  let score = 40;
+  if ([1, 4, 5, 7, 9, 10, 11].includes(fifthLordHouse)) score += 18;
+  else if ([6, 8, 12].includes(fifthLordHouse)) score -= 8;
+  score += Math.round((fifthLordDig.pts - 15) * 0.8);
+  score += Math.round((jupDig.pts - 15) * 0.8);
+  if (jupiterAspects5th) score += 15;
+  if (sphutaFavorable) score += 10;
+  const beneficsIn5 = planetsIn5th.filter(p => p.isBenefic).length;
+  const maleficsIn5 = planetsIn5th.filter(p => !p.isBenefic).length;
+  score += beneficsIn5 * 8 - maleficsIn5 * 6;
+  score = Math.max(25, Math.min(98, score));
+
+  const status = score >= 72 ? 'Strong' : score >= 52 ? 'Moderate' : 'Needs Remedies';
+  const statusTa = score >= 72 ? 'உத்தமம் (பலம்)' : score >= 52 ? 'மத்திமம் (சமநிலை)' : 'பரிகாரத்திற்கு உகந்தது';
+
+  const hasMaleficIn5 = maleficsIn5 > 0;
+  const putraDosha = (hasMaleficIn5 || [6, 8, 12].includes(fifthLordHouse) || fifthLordDig.key === 'neecha') && !jupiterAspects5th;
+
+  return {
+    lagnaRasi: RASHIS[lagnaRasi].name,
+    lagnaRasiTa: RASHI_TA_NAMES[lagnaRasi],
+    lagnaRasiIdx: lagnaRasi,
+    fifthRasi: RASHIS[fifthRasi].name,
+    fifthRasiTa: RASHI_TA_NAMES[fifthRasi],
+    fifthRasiIdx: fifthRasi,
+    fifthLord: PLANET_NAMES_TA_EN[fifthLordId].en,
+    fifthLordTa: PLANET_NAMES_TA_EN[fifthLordId].ta,
+    fifthLordHouse,
+    fifthLordDignity: fifthLordDig.en,
+    fifthLordDignityTa: fifthLordDig.ta,
+    planetsIn5th,
+    jupiterHouse: jupHouse,
+    jupiterRasi: RASHIS[jupRasi].name,
+    jupiterRasiTa: RASHI_TA_NAMES[jupRasi],
+    jupiterDignity: jupDig.en,
+    jupiterDignityTa: jupDig.ta,
+    jupiterAspects5th,
+    d7Lagna: RASHIS[d7Lagna].name,
+    d7LagnaTa: RASHI_TA_NAMES[d7Lagna],
+    d7Jupiter: RASHIS[d7Jupiter].name,
+    d7JupiterTa: RASHI_TA_NAMES[d7Jupiter],
+    d7FifthLord: RASHIS[d7FifthLord].name,
+    d7FifthLordTa: RASHI_TA_NAMES[d7FifthLord],
+    sphutaNameEn: isFemale ? 'Kshetra Sphuta' : 'Beeja Sphuta',
+    sphutaNameTa: isFemale ? 'க்ஷேத்திர ஸ்புடம்' : 'பீஜ ஸ்புடம்',
+    sphutaRasi: RASHIS[sphutaRasi].name,
+    sphutaRasiTa: RASHI_TA_NAMES[sphutaRasi],
+    sphutaFavorable,
+    putraDosha,
+    score,
+    status,
+    statusTa,
+    chartBoxes: buildSouthIndianChart(grahas, { isManglik: false, houses: { lagna: 1, moon: 1, venus: 1 } })
+  };
+}
+
+function calculatePuthrasthanamAnalysis(boyInput = {}, girlInput = {}) {
+  const boyGrahas = computePersonGrahas(boyInput);
+  const girlGrahas = computePersonGrahas(girlInput);
+  const boy = evaluatePersonPuthrasthanam(boyGrahas, false);
+  const girl = evaluatePersonPuthrasthanam(girlGrahas, true);
+
+  const combinedScore = Math.round((boy.score + girl.score) / 2);
+  let verdictEn = '';
+  let verdictTa = '';
+  if (combinedScore >= 70 && (!boy.putraDosha || !girl.putraDosha)) {
+    verdictEn = 'Auspicious Puthrasthanam (5th House) — Strong progeny yoga & healthy lineage prospects.';
+    verdictTa = 'சுப புத்திர ஸ்தானம் (5-ம் வீடு) — சிறந்த குழந்தை பாக்கியம் மற்றும் வம்ச விருத்தி யோகம் உள்ளது.';
+  } else if (combinedScore >= 52) {
+    verdictEn = 'Moderate Puthrasthanam — Favorable progeny support with Jupiter’s grace and timely Dasha.';
+    verdictTa = 'மத்திம புத்திர ஸ்தானம் — குரு அருள் மற்றும் சுப தசா–புக்தி காலத்தில் நற்பலன் உண்டு.';
+  } else {
+    verdictEn = 'Sensitive 5th House Alignment — Traditional Santhana Gopala / Puthrakameshti remedies advised.';
+    verdictTa = 'கவனிக்க வேண்டிய 5-ம் வீடு அமைப்பு — சந்தான கோபால கிருஷ்ண வழிபாடு & எளிய பரிகாரங்கள் நன்மை தரும்.';
+  }
+
+  return {
+    boy,
+    girl,
+    combinedScore,
+    verdictEn,
+    verdictTa
+  };
+}
+
+const TITHI_NAMES_TA = [
+  'பிரதமை', 'துவிதியை', 'திருதியை', 'சதுர்த்தி', 'பஞ்சமி',
+  'சஷ்டி', 'சப்தமி', 'அஷ்டமி', 'நவமி', 'தசமி',
+  'ஏகாதசி', 'துவாதசி', 'திரயோதசி', 'சதுர்தசி', 'பௌர்ணமி'
+];
+
+function evaluatePersonPaksha(grahas) {
+  const moonLon = grahas.longitudes.astroMoon ?? grahas.longitudes.moon;
+  const sunLon = grahas.longitudes.sun;
+  const diff = normalizeDeg(moonLon - sunLon);
+  const tithiNum = (Math.floor(diff / 12) % 30) + 1;
+  const isValarpirai = tithiNum <= 15;
+  const phaseIdx = (tithiNum - 1) % 15;
+  const tithiNameEn = tithiNum === 15 ? 'Pournami (Full Moon)' : tithiNum === 30 ? 'Amavasai (New Moon)' : TITHIS[phaseIdx];
+  const tithiNameTa = tithiNum === 15 ? 'பௌர்ணமி' : tithiNum === 30 ? 'அமாவாசை' : TITHI_NAMES_TA[phaseIdx];
+  const illuminationPct = Math.round(((1 - Math.cos(diff * Math.PI / 180)) / 2) * 100);
+
+  const moonRasi = Math.floor(normalizeDeg(moonLon) / 30) % 12;
+  const jupRasi = Math.floor(normalizeDeg(grahas.longitudes.jupiter) / 30) % 12;
+  const jupDiff = (jupRasi - moonRasi + 12) % 12;
+  const jupiterAspectsMoon = [0, 4, 6, 8].includes(jupDiff);
+  const moonOwnOrExalted = moonRasi === 1 || moonRasi === 3; // Taurus (Exalted) or Cancer (Own)
+  const hasExemption = !isValarpirai && (jupiterAspectsMoon || moonOwnOrExalted || tithiNum <= 20);
+
+  let strengthEn = 'Subha Chandra (Strong)';
+  let strengthTa = 'சுப சந்திரன் (பலம்)';
+  if (!isValarpirai) {
+    if (tithiNum <= 20) {
+      strengthEn = 'Madhyama Chandra (Moderate)';
+      strengthTa = 'மத்திம சந்திரன் (சமநிலை)';
+    } else if (hasExemption) {
+      strengthEn = 'Exempted by Jupiter / Moon Dignity';
+      strengthTa = 'குரு பார்வை / ராசி பலத்தால் நிவர்த்தி';
+    } else {
+      strengthEn = 'Ksheena Chandra (Weak Moon)';
+      strengthTa = 'க்ஷீண சந்திரன் (பலவீனம்)';
+    }
+  }
+
+  return {
+    paksha: isValarpirai ? 'Valarpirai' : 'Theipirai',
+    pakshaTa: isValarpirai ? 'வளர்பிறை' : 'தேய்பிறை',
+    pakshaEn: isValarpirai ? 'Valarpirai (Shukla Paksha)' : 'Theipirai (Krishna Paksha)',
+    isValarpirai,
+    tithiNum,
+    tithiNameEn,
+    tithiNameTa,
+    illuminationPct,
+    moonRasi: RASHIS[moonRasi].name,
+    moonRasiTa: RASHI_TA_NAMES[moonRasi],
+    jupiterAspectsMoon,
+    moonOwnOrExalted,
+    hasExemption,
+    strengthEn,
+    strengthTa
+  };
+}
+
+function calculatePakshaMatchAnalysis(boyInput = {}, girlInput = {}) {
+  const boyGrahas = computePersonGrahas(boyInput);
+  const girlGrahas = computePersonGrahas(girlInput);
+  const boy = evaluatePersonPaksha(boyGrahas);
+  const girl = evaluatePersonPaksha(girlGrahas);
+
+  let status = 'Good';
+  let statusTa = 'நல்ல பொருத்தம்';
+  let verdictEn = '';
+  let verdictTa = '';
+
+  if (boy.isValarpirai && girl.isValarpirai) {
+    status = 'Uttamam';
+    statusTa = 'உத்தமம் (சிறப்பு)';
+    verdictEn = 'Both Bride and Groom are born in Valarpirai (Waxing Moon) — Excellent emotional harmony, optimism & family growth.';
+    verdictTa = 'மணமகள் மற்றும் மணமகன் இருவரும் வளர்பிறையில் பிறந்தவர்கள் — சிறந்த மன இணக்கம், மகிழ்ச்சி மற்றும் குடும்ப வளர்ச்சி உண்டு.';
+  } else if (boy.isValarpirai || girl.isValarpirai) {
+    status = 'Balanced';
+    statusTa = 'நல்லது / சமநிலை';
+    verdictEn = 'One partner is Valarpirai and the other is Theipirai — The waxing Moon balances and supports the waning Moon.';
+    verdictTa = 'ஒருவர் வளர்பிறை மற்றும் ஒருவர் தேய்பிறை — வளர்பிறை சந்திரன் தேய்பிறை சந்திரனுக்கு உறுதுணையாக இருந்து சமநிலை தரும்.';
+  } else if (boy.hasExemption || girl.hasExemption) {
+    status = 'Moderate';
+    statusTa = 'மத்திமம் (நிவர்த்தி உண்டு)';
+    verdictEn = 'Both are born in Theipirai (Waning Moon), but early Krishna Paksha / Jupiter aspect / Moon dignity provides classical balance.';
+    verdictTa = 'இருவரும் தேய்பிறையில் பிறந்தாலும், குரு பார்வை அல்லது சந்திர பலத்தால் தோஷ நிவர்த்தி கிடைக்கிறது.';
+  } else {
+    status = 'Needs Care';
+    statusTa = 'கவனம் தேவை';
+    verdictEn = 'Both are born in late Theipirai (Ksheena Chandra) — Emotional patience and Monday Shiva/Devi worship recommended.';
+    verdictTa = 'இருவரும் தேய்பிறை இறுதி திதிகளில் பிறந்தவர்கள் — மன அமைதிக்கு திங்கட்கிழமை அம்பிகை/சிவன் வழிபாடு சிறந்தது.';
+  }
+
+  return {
+    boy,
+    girl,
+    status,
+    statusTa,
+    verdictEn,
+    verdictTa
+  };
+}
+
+function evaluatePersonMarsVenus(grahas) {
+  const rasiOf = (lon) => Math.floor(normalizeDeg(lon) / 30) % 12;
+  const lagnaRasi = rasiOf(grahas.longitudes.ascendant);
+  const marsRasi = rasiOf(grahas.longitudes.mars);
+  const venusRasi = rasiOf(grahas.longitudes.venus);
+  const jupRasi = rasiOf(grahas.longitudes.jupiter);
+
+  const marsHouse = ((marsRasi - lagnaRasi + 12) % 12) + 1;
+  const venusHouse = ((venusRasi - lagnaRasi + 12) % 12) + 1;
+  const marsDig = PLANET_DIGNITY_SIMPLE('mars', marsRasi);
+  const venusDig = PLANET_DIGNITY_SIMPLE('venus', venusRasi);
+
+  // Distance from Mars to Venus (1..12)
+  const mvDist = ((venusRasi - marsRasi + 12) % 12) + 1;
+  let relationEn = `Mars–Venus ${mvDist}/${14 - mvDist > 12 ? (14 - mvDist - 12) : (14 - mvDist)} Placement`;
+  let relationTa = `செவ்வாய்–சுக்கிரன் ${mvDist}-ம் நிலை`;
+  let relationTone = 'neutral';
+
+  if (mvDist === 1) {
+    relationEn = 'Conjunction (1/1 – Kuja-Sukra Yoga)';
+    relationTa = 'சேர்க்கை (1/1 – செவ்வாய்–சுக்கிரன் யோகம்)';
+    relationTone = 'intense';
+  } else if (mvDist === 7) {
+    relationEn = 'Mutual 7th Aspect (7/7 – Samasaptama)';
+    relationTa = 'சமசப்தம பார்வை (7/7 நேர் பார்வை)';
+    relationTone = 'harmonious';
+  } else if (mvDist === 4 || mvDist === 8) {
+    relationEn = `Mars ${mvDist}th Aspect on Venus`;
+    relationTa = `சுக்கிரன் மீது செவ்வாயின் ${mvDist}-ம் பார்வை`;
+    relationTone = mvDist === 8 ? 'sensitive' : 'intense';
+  } else if (mvDist === 5 || mvDist === 9 || mvDist === 3 || mvDist === 11) {
+    relationEn = `Harmonious ${mvDist}/${14 - mvDist} Alignment`;
+    relationTa = `சுப ${mvDist}-ம் கோண இணக்கம்`;
+    relationTone = 'harmonious';
+  } else if (mvDist === 6 || mvDist === 2 || mvDist === 12) {
+    relationEn = `Sensitive ${mvDist}/${14 - mvDist > 12 ? mvDist : (14 - mvDist)} Separation`;
+    relationTa = `கவனிக்க வேண்டிய ${mvDist}-ம் பிரிவு நிலை`;
+    relationTone = 'sensitive';
+  }
+
+  const jupAspectVenus = [0, 4, 6, 8].includes((jupRasi - venusRasi + 12) % 12);
+  const jupAspectMars = [0, 4, 6, 8].includes((jupRasi - marsRasi + 12) % 12);
+
+  let score = 55;
+  if ([1, 4, 5, 7, 9, 10, 11].includes(venusHouse)) score += 14;
+  else if ([6, 8, 12].includes(venusHouse)) score -= 8;
+  if (venusDig.key === 'utcha' || venusDig.key === 'aatchi') score += 12;
+  else if (venusDig.key === 'neecha') score -= 10;
+
+  if (marsDig.key === 'utcha' || marsDig.key === 'aatchi') score += 8;
+  else if (marsDig.key === 'neecha') score -= 6;
+
+  if (relationTone === 'harmonious') score += 10;
+  else if (relationTone === 'sensitive') score -= 6;
+
+  if (jupAspectVenus) score += 8;
+  if (jupAspectMars) score += 5;
+  score = Math.max(30, Math.min(98, score));
+
+  const status = score >= 74 ? 'Strong' : score >= 55 ? 'Balanced' : 'Needs Care';
+  const statusTa = score >= 74 ? 'உத்தமம் (பலம்)' : score >= 55 ? 'மத்திமம் (சமநிலை)' : 'கவனம் தேவை';
+
+  return {
+    lagnaRasi: RASHIS[lagnaRasi].name,
+    lagnaRasiTa: RASHI_TA_NAMES[lagnaRasi],
+    lagnaRasiIdx: lagnaRasi,
+    marsRasi: RASHIS[marsRasi].name,
+    marsRasiTa: RASHI_TA_NAMES[marsRasi],
+    marsRasiIdx: marsRasi,
+    marsHouse,
+    marsDignity: marsDig.en,
+    marsDignityTa: marsDig.ta,
+    venusRasi: RASHIS[venusRasi].name,
+    venusRasiTa: RASHI_TA_NAMES[venusRasi],
+    venusRasiIdx: venusRasi,
+    venusHouse,
+    venusDignity: venusDig.en,
+    venusDignityTa: venusDig.ta,
+    relationEn,
+    relationTa,
+    relationTone,
+    jupAspectVenus,
+    jupAspectMars,
+    score,
+    status,
+    statusTa,
+    chartBoxes: buildSouthIndianChart(grahas, { isManglik: false, houses: { lagna: 1, moon: 1, venus: 1 } })
+  };
+}
+
+function calculateMarsVenusMatchAnalysis(boyInput = {}, girlInput = {}) {
+  const boyGrahas = computePersonGrahas(boyInput);
+  const girlGrahas = computePersonGrahas(girlInput);
+  const boy = evaluatePersonMarsVenus(boyGrahas);
+  const girl = evaluatePersonMarsVenus(girlGrahas);
+
+  // Cross-couple resonance: Bride Venus <-> Groom Mars & Groom Venus <-> Bride Mars
+  const brideVenToGroomMar = ((boy.marsRasiIdx - girl.venusRasiIdx + 12) % 12) + 1;
+  const groomVenToBrideMar = ((girl.marsRasiIdx - boy.venusRasiIdx + 12) % 12) + 1;
+  const isFavorableDist = (d) => [1, 3, 5, 7, 9, 11].includes(d);
+
+  const cross1Good = isFavorableDist(brideVenToGroomMar);
+  const cross2Good = isFavorableDist(groomVenToBrideMar);
+
+  let combinedScore = Math.round((boy.score + girl.score) / 2);
+  if (cross1Good) combinedScore += 4;
+  if (cross2Good) combinedScore += 4;
+  combinedScore = Math.max(30, Math.min(98, combinedScore));
+
+  let verdictEn = '';
+  let verdictTa = '';
+  if (combinedScore >= 72) {
+    verdictEn = 'Harmonious Mars–Venus (Kuja–Sukra) Alignment — Strong mutual attraction, affection & marital vitality.';
+    verdictTa = 'சிறந்த செவ்வாய்–சுக்கிரன் இணக்கம் — அன்பு, ஈர்ப்பு மற்றும் இல்லற ஒற்றுமை சிறப்பாக உள்ளது.';
+  } else if (combinedScore >= 55) {
+    verdictEn = 'Balanced Mars–Venus Alignment — Good compatibility with mutual understanding and respect.';
+    verdictTa = 'சமநிலையான செவ்வாய்–சுக்கிரன் அமைப்பு — பரஸ்பர புரிதலுடன் நல்ல இல்லற இணக்கம் உண்டு.';
+  } else {
+    verdictEn = 'Sensitive Mars–Venus Placement — Temperament differences possible; Friday Mahalakshmi & Tuesday Murugan worship advised.';
+    verdictTa = 'கவனிக்க வேண்டிய செவ்வாய்–சுக்கிரன் நிலை — மன ஒற்றுமைக்கு வெள்ளி லட்சுமி & செவ்வாய் முருகன் வழிபாடு சிறந்தது.';
+  }
+
+  return {
+    boy,
+    girl,
+    brideVenToGroomMar,
+    groomVenToBrideMar,
+    cross1Good,
+    cross2Good,
+    combinedScore,
+    verdictEn,
+    verdictTa
+  };
+}
+
+/**
  * 36 Gunas Ashtakoota Matchmaking
  */
 function calculateKundliMatch(boyBirth, girlBirth) {
@@ -1552,6 +1966,9 @@ function calculateKundliMatch(boyBirth, girlBirth) {
 
   const gujaDashaAnalysis = calculateGujaDashaAnalysis(boyBirth, girlBirth);
   const rahuKetuAnalysis = calculateRahuKetuMatchAnalysis(boyBirth, girlBirth);
+  const puthrasthanamAnalysis = calculatePuthrasthanamAnalysis(boyBirth, girlBirth);
+  const pakshaAnalysis = calculatePakshaMatchAnalysis(boyBirth, girlBirth);
+  const marsVenusAnalysis = calculateMarsVenusMatchAnalysis(boyBirth, girlBirth);
 
   return {
     boy: boyBirth,
@@ -1570,7 +1987,10 @@ function calculateKundliMatch(boyBirth, girlBirth) {
       doshaSamyam: gujaDashaAnalysis.doshaSamyam
     },
     gujaDashaAnalysis: gujaDashaAnalysis,
-    rahuKetuAnalysis: rahuKetuAnalysis
+    rahuKetuAnalysis: rahuKetuAnalysis,
+    puthrasthanamAnalysis: puthrasthanamAnalysis,
+    pakshaAnalysis: pakshaAnalysis,
+    marsVenusAnalysis: marsVenusAnalysis
   };
 }
 
@@ -1672,5 +2092,8 @@ module.exports = {
   evaluateChevvaiDosha,
   calculateGujaDashaAnalysis,
   calculateRahuKetuMatchAnalysis,
+  calculatePuthrasthanamAnalysis,
+  calculatePakshaMatchAnalysis,
+  calculateMarsVenusMatchAnalysis,
   getDailyPanchangam,
 };

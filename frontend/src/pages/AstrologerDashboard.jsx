@@ -33,6 +33,10 @@ import {
   PlusCircle,
   Flame,
   Zap,
+  Baby,
+  Moon,
+  HeartHandshake,
+  Trash2,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../i18n';
@@ -41,6 +45,9 @@ import ClientRegistrationReceiptModal from '../components/ClientRegistrationRece
 import TamilPoruthamCard from '../components/TamilPoruthamCard';
 import GujaDashaChart from '../components/GujaDashaChart';
 import RahuKetuChart from '../components/RahuKetuChart';
+import PuthrasthanamChart from '../components/PuthrasthanamChart';
+import PakshaMatchCard from '../components/PakshaMatchCard';
+import MarsVenusMatchCard from '../components/MarsVenusMatchCard';
 import HoroscopeHub from '../components/HoroscopeHub';
 import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
 import HoroscopePagerView from '../components/HoroscopePagerView';
@@ -96,6 +103,13 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
     lat: 11.6643,
     lon: 78.1460
   });
+
+  // Automatically use searched/selected active client in Matchmaking when loaded
+  useEffect(() => {
+    if (activeBirthData?.name && activeBirthData?.dob) {
+      setPerson1Mode('client');
+    }
+  }, [activeBirthData?.name, activeBirthData?.dob, activeBirthData?.gender]);
 
   // Calculate live Thirukanitha Horoscope for Person 1 when in manual mode
   const manualPerson1Horoscope = React.useMemo(() => {
@@ -242,13 +256,13 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   const [activeClientMatchReport, setActiveClientMatchReport] = useState(null);
   const [calculatingActiveMatch, setCalculatingActiveMatch] = useState(false);
   const [activeMatchTab, setActiveMatchTab] = useState('tamil');
-  const [openMatchSections, setOpenMatchSections] = useState({ 1: true, 2: true, 3: false, 4: false });
+  const [openMatchSections, setOpenMatchSections] = useState({ 1: true, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false });
 
   const toggleMatchSection = (num) => {
     setOpenMatchSections(prev => ({ ...prev, [num]: !prev[num] }));
   };
-  const expandAllMatchSections = () => setOpenMatchSections({ 1: true, 2: true, 3: true, 4: true });
-  const collapseAllMatchSections = () => setOpenMatchSections({ 1: false, 2: false, 3: false, 4: false });
+  const expandAllMatchSections = () => setOpenMatchSections({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true });
+  const collapseAllMatchSections = () => setOpenMatchSections({ 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false });
   const jumpToMatchSection = (num) => {
     setOpenMatchSections(prev => ({ ...prev, [num]: true }));
     setTimeout(() => {
@@ -409,6 +423,7 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   const [ratePerMinute, setRatePerMinute] = useState(25);
   const [availableSlots, setAvailableSlots] = useState(['10:00 AM', '11:30 AM', '04:00 PM', '06:30 PM']);
   const [selectedReceiptForModal, setSelectedReceiptForModal] = useState(null);
+  const [deletingClientId, setDeletingClientId] = useState(null);
 
   // Matchmaking Requests State for Astrologer
   const [matchRequests, setMatchRequests] = useState([]);
@@ -655,14 +670,14 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   };
 
   const handleCalculateActiveMatch = async () => {
-    const isP1Manual = person1Mode === 'manual';
+    const isP1Manual = person1Mode === 'manual' || !(activeBirthData?.name && activeBirthData?.dob);
 
     if (isP1Manual) {
       if (!manualPerson1Details.name?.trim() || !manualPerson1Details.dob?.trim()) {
         alert(
           lang === 'ta'
-            ? 'தயவுசெய்து நபர் 1 இன் பெயர் மற்றும் பிறந்த தேதியை உள்ளிடவும்.'
-            : 'Please enter Person 1 Name and Birth Date.'
+            ? 'தயவுசெய்து பெயர் மற்றும் பிறந்த தேதியை உள்ளிடவும்.'
+            : 'Please enter Name and Birth Date.'
         );
         return;
       }
@@ -808,6 +823,36 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
       }
     } catch (err) {
       alert('Failed to load client receipt: ' + err.message);
+    }
+  };
+
+  const handleDeleteReferredClient = async (cl) => {
+    const label = `${cl.name || 'Client'}${cl.clientCode ? ` (${cl.clientCode})` : ''}`;
+    const confirmMsg = lang === 'ta'
+      ? `வாடிக்கையாளர் ${label}-ஐ நிரந்தரமாக நீக்க விரும்புகிறீர்களா?`
+      : `Delete referred client ${label}? This cannot be undone.`;
+    if (!window.confirm(confirmMsg)) return;
+
+    const targetKey = cl.id || cl.clientCode || cl.mobile;
+    setDeletingClientId(targetKey);
+    try {
+      await API.deleteClientByAstrologer(targetKey);
+      setReferredData((prev) => {
+        const nextClients = (prev.clients || []).filter(
+          (item) => (item.id || item.clientCode || item.mobile) !== targetKey
+        );
+        return {
+          ...prev,
+          clients: nextClients,
+          totalReferred: nextClients.length
+        };
+      });
+      await loadReferredClients();
+      window.dispatchEvent(new CustomEvent('astrojit:refresh-referred-clients'));
+    } catch (err) {
+      alert((lang === 'ta' ? 'வாடிக்கையாளரை நீக்க முடியவில்லை: ' : 'Failed to delete client: ') + err.message);
+    } finally {
+      setDeletingClientId(null);
     }
   };
 
@@ -1673,7 +1718,8 @@ Shubham Bhavatu! 🙏`;
 
           {/* Live Client Matchmaking (10 Poruthams & Compatibility) Analyzer */}
           {(() => {
-            const isP1Manual = person1Mode === 'manual';
+            const hasActiveClient = Boolean(activeBirthData?.name && activeBirthData?.dob);
+            const isP1Manual = person1Mode === 'manual' || !hasActiveClient;
             const p1Gender = isP1Manual ? (manualPerson1Details.gender || 'female') : (activeBirthData?.gender || 'female');
             const isP1Male = (p1Gender || 'female').toLowerCase() === 'male';
 
@@ -1693,38 +1739,6 @@ Shubham Bhavatu! 🙏`;
                   </div>
 
                   <div className="flex items-center gap-2 flex-wrap">
-                    {/* Mode selection pills */}
-                    <div className="inline-flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
-                      <button
-                        type="button"
-                        onClick={() => setPerson1Mode('client')}
-                        className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                          !isP1Manual
-                            ? 'bg-rose-600 text-white shadow-xs'
-                            : 'text-slate-600 hover:text-slate-900'
-                        }`}
-                      >
-                        <Search className="w-3.5 h-3.5" />
-                        <span>{lang === 'ta' ? 'வாடிக்கையாளர் + வரன்' : 'Searched Client + Partner'}</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPerson1Mode('manual');
-                          setActiveClientMatchReport(null);
-                        }}
-                        className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                          isP1Manual
-                            ? 'bg-rose-600 text-white shadow-xs'
-                            : 'text-slate-600 hover:text-slate-900'
-                        }`}
-                      >
-                        <PlusCircle className="w-3.5 h-3.5" />
-                        <span>{lang === 'ta' ? 'புதிய வரன்கள் (இருவரும்)' : 'Add New Match (Both Newly Added)'}</span>
-                      </button>
-                    </div>
-
                     {/* Reset Button */}
                     <button
                       type="button"
@@ -1737,13 +1751,13 @@ Shubham Bhavatu! 🙏`;
                   </div>
                 </div>
 
-                {/* Comparison Input Grid: Person 1 (Female / Left) vs Person 2 (Male / Right) */}
+                {/* Comparison Input Grid: Bride / Female (Left / md:order-1) vs Groom / Male (Right / md:order-2) */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                  {/* Person 1 Card (Default Female / Bride - Left Side) */}
+                  {/* Person 1 Card (Female/Bride on Left, Male/Groom on Right) */}
                   <div className={`p-4 rounded-xl border space-y-2.5 ${
                     !isP1Male
-                      ? 'bg-rose-50/40 border-rose-200'
-                      : 'bg-indigo-50/40 border-indigo-200'
+                      ? 'md:order-1 bg-rose-50/40 border-rose-200'
+                      : 'md:order-2 bg-indigo-50/40 border-indigo-200'
                   }`}>
                     <div className={`flex justify-between items-center pb-2 border-b ${
                       !isP1Male ? 'border-rose-100' : 'border-indigo-100'
@@ -1754,8 +1768,8 @@ Shubham Bhavatu! 🙏`;
                         }`}>
                           <User className={`w-3.5 h-3.5 ${!isP1Male ? 'text-rose-600' : 'text-indigo-600'}`} />
                           {!isP1Male
-                            ? (lang === 'ta' ? (!isP1Manual ? 'மணமகள் (வாடிக்கையாளர்)' : 'மணமகள் (நபர் 1)') : (!isP1Manual ? 'Bride (Active Client)' : 'Bride (Person 1)'))
-                            : (lang === 'ta' ? (!isP1Manual ? 'மணமகன் (வாடிக்கையாளர்)' : 'மணமகன் (நபர் 1)') : (!isP1Manual ? 'Groom (Active Client)' : 'Groom (Person 1)'))}
+                            ? (lang === 'ta' ? (!isP1Manual ? 'மணமகள் (வாடிக்கையாளர்)' : 'மணமகள்') : (!isP1Manual ? 'Bride (Active Client)' : 'Bride'))
+                            : (lang === 'ta' ? (!isP1Manual ? 'மணமகன் (வாடிக்கையாளர்)' : 'மணமகன்') : (!isP1Manual ? 'Groom (Active Client)' : 'Groom'))}
                         </span>
                         {isP1Manual ? (
                           <div className="inline-flex bg-slate-200/80 p-0.5 rounded-md text-[10px] font-bold">
@@ -1793,16 +1807,18 @@ Shubham Bhavatu! 🙏`;
                         )}
                       </div>
 
-                      {/* Card-level toggle between Client and Manual */}
-                      <button
-                        type="button"
-                        onClick={() => setPerson1Mode(isP1Manual ? 'client' : 'manual')}
-                        className="text-[10px] text-rose-600 hover:text-rose-800 font-bold underline cursor-pointer"
-                      >
-                        {!isP1Manual
-                          ? (lang === 'ta' ? '✏️ கைமுறையாக உள்ளிடு' : '✏️ Enter Manually')
-                          : (lang === 'ta' ? '🔍 வாடிக்கையாளரைப் பயன்படுத்து' : '🔍 Use Active Client')}
-                      </button>
+                      {/* Card-level toggle between Client and Manual when an active client is loaded */}
+                      {hasActiveClient && (
+                        <button
+                          type="button"
+                          onClick={() => setPerson1Mode(isP1Manual ? 'client' : 'manual')}
+                          className="text-[10px] text-rose-600 hover:text-rose-800 font-bold underline cursor-pointer"
+                        >
+                          {!isP1Manual
+                            ? (lang === 'ta' ? '✏️ கைமுறையாக உள்ளிடு' : '✏️ Enter Manually')
+                            : (lang === 'ta' ? '🔍 வாடிக்கையாளரைப் பயன்படுத்து' : '🔍 Use Active Client')}
+                        </button>
+                      )}
                     </div>
 
                     {!isP1Manual ? (
@@ -1842,9 +1858,15 @@ Shubham Bhavatu! 🙏`;
                             <button
                               type="button"
                               onClick={() => setPerson1Mode('manual')}
-                              className="text-xs bg-rose-50 border border-rose-200 text-rose-700 font-bold px-3 py-1 rounded-lg hover:bg-rose-100 cursor-pointer"
+                              className={`text-xs border font-bold px-3 py-1 rounded-lg cursor-pointer ${
+                                !isP1Male
+                                  ? 'bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100'
+                                  : 'bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100'
+                              }`}
                             >
-                              {lang === 'ta' ? '✏️ மணமகள் (நபர் 1) விபரங்களை உள்ளிடுக' : '✏️ Enter Bride (Person 1) Details Manually'}
+                              {!isP1Male
+                                ? (lang === 'ta' ? '✏️ மணமகள் விபரங்களை உள்ளிடுக' : '✏️ Enter Bride Details Manually')
+                                : (lang === 'ta' ? '✏️ மணமகன் விபரங்களை உள்ளிடுக' : '✏️ Enter Groom Details Manually')}
                             </button>
                           </div>
                         )}
@@ -2040,11 +2062,11 @@ Shubham Bhavatu! 🙏`;
                     )}
                   </div>
 
-                  {/* Partner Details (Person 2 - Default Male / Groom - Right Side) */}
+                  {/* Partner Details (Person 2 - Female/Bride on Left, Male/Groom on Right) */}
                   <div className={`p-4 rounded-xl border space-y-2.5 ${
                     isP1Male
-                      ? 'bg-rose-50/40 border-rose-200'
-                      : 'bg-indigo-50/40 border-indigo-200'
+                      ? 'md:order-1 bg-rose-50/40 border-rose-200'
+                      : 'md:order-2 bg-indigo-50/40 border-indigo-200'
                   }`}>
                     <div className={`flex justify-between items-center pb-2 border-b ${
                       isP1Male ? 'border-rose-200' : 'border-indigo-200'
@@ -2054,8 +2076,8 @@ Shubham Bhavatu! 🙏`;
                       }`}>
                         <User className={`w-3.5 h-3.5 ${isP1Male ? 'text-rose-600' : 'text-indigo-600'}`} />
                         {isP1Male
-                          ? (lang === 'ta' ? 'மணமகள் (வரன் / நபர் 2)' : 'Bride (Partner / Person 2)')
-                          : (lang === 'ta' ? 'மணமகன் (வரன் / நபர் 2)' : 'Groom (Partner / Person 2)')}
+                          ? (lang === 'ta' ? 'மணமகள் (வரன்)' : 'Bride (Partner)')
+                          : (lang === 'ta' ? 'மணமகன் (வரன்)' : 'Groom (Partner)')}
                       </span>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                         isP1Male ? 'bg-rose-100 text-rose-800' : 'bg-indigo-100 text-indigo-800'
@@ -2281,11 +2303,14 @@ Shubham Bhavatu! 🙏`;
                           defaultValue=""
                           className="bg-white border border-stone-300 rounded-lg px-2.5 py-1.5 text-xs font-bold text-stone-800 focus:outline-none focus:border-[#7A1A22] w-full max-w-xs cursor-pointer"
                         >
-                          <option value="">{lang === 'ta' ? '-- 4 பிரிவுகள் (தேர்வு செய்க) --' : '-- Select Section (1 to 4) --'}</option>
+                          <option value="">{lang === 'ta' ? '-- 7 பிரிவுகள் (தேர்வு செய்க) --' : '-- Select Section (1 to 7) --'}</option>
                           <option value="1">1. {MATCH_I18N.tabTamilPorutham[lang] || MATCH_I18N.tabTamilPorutham.en}</option>
                           <option value="2">2. {MATCH_I18N.tabAshtakoota[lang] || MATCH_I18N.tabAshtakoota.en}</option>
                           <option value="3">3. {MATCH_I18N.tabGujaDasha[lang] || MATCH_I18N.tabGujaDasha.en}</option>
                           <option value="4">4. {MATCH_I18N.tabRahuKetu[lang] || MATCH_I18N.tabRahuKetu.en}</option>
+                          <option value="5">5. {MATCH_I18N.tabPuthrasthanam[lang] || MATCH_I18N.tabPuthrasthanam.en}</option>
+                          <option value="6">6. {MATCH_I18N.tabPakshaMatch[lang] || MATCH_I18N.tabPakshaMatch.en}</option>
+                          <option value="7">7. {MATCH_I18N.tabMarsVenus[lang] || MATCH_I18N.tabMarsVenus.en}</option>
                         </select>
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -2367,15 +2392,29 @@ Shubham Bhavatu! 🙏`;
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
                             {activeClientMatchReport.kootas?.map((k, i) => (
                               <div key={i} className="bg-white p-1.5 rounded-lg border border-amber-100 flex justify-between">
-                                <span className="font-semibold text-slate-700">{k.koota}</span>
-                                <span className="font-bold text-amber-800">{k.obtained}/{k.max}</span>
+                                <span className="font-semibold text-slate-700">{k.koota || k.name}</span>
+                                <span className="font-bold text-amber-800">{k.obtained}/{k.max ?? k.total}</span>
                               </div>
                             ))}
                           </div>
 
                           <div className="text-[11px] text-slate-700 pt-1 border-t border-amber-200 flex flex-col sm:flex-row justify-between gap-1">
-                            <span><strong>{t('brideGirlLabel') || 'Bride'}:</strong> {activeClientMatchReport.manglik?.girl?.details}</span>
-                            <span><strong>{t('groomBoyLabel') || 'Groom'}:</strong> {activeClientMatchReport.manglik?.boy?.details}</span>
+                            <span>
+                              <strong>{(t('brideGirlLabel') || 'Bride').replace(/:$/, '')}:</strong>{' '}
+                              {activeClientMatchReport.manglik?.girl?.details ||
+                                (lang === 'ta'
+                                  ? (activeClientMatchReport.chevvaiAnalysis?.girl?.doshaLevelTamil || activeClientMatchReport.chevvaiAnalysis?.girl?.verdictTamil)
+                                  : (activeClientMatchReport.chevvaiAnalysis?.girl?.doshaLevel || activeClientMatchReport.chevvaiAnalysis?.girl?.verdict)) ||
+                                '—'}
+                            </span>
+                            <span>
+                              <strong>{(t('groomBoyLabel') || 'Groom').replace(/:$/, '')}:</strong>{' '}
+                              {activeClientMatchReport.manglik?.boy?.details ||
+                                (lang === 'ta'
+                                  ? (activeClientMatchReport.chevvaiAnalysis?.boy?.doshaLevelTamil || activeClientMatchReport.chevvaiAnalysis?.boy?.verdictTamil)
+                                  : (activeClientMatchReport.chevvaiAnalysis?.boy?.doshaLevel || activeClientMatchReport.chevvaiAnalysis?.boy?.verdict)) ||
+                                '—'}
+                            </span>
                           </div>
                         </div>
                       )}
@@ -2423,6 +2462,75 @@ Shubham Bhavatu! 🙏`;
                       {openMatchSections[4] && (
                         <div className="p-3.5 sm:p-4 pt-0 border-t border-amber-900/10">
                           <RahuKetuChart matchReport={activeClientMatchReport} />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* SECTION 5: 5th House – Puthrasthanam (Childbirth / Progeny) */}
+                    <div id="match-section-5" className="bg-white rounded-2xl border border-amber-900/15 shadow-xs overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => toggleMatchSection(5)}
+                        className="w-full p-3.5 sm:p-4 flex items-center justify-between text-left hover:bg-amber-50/50 transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-7 h-7 rounded-xl bg-amber-900/10 text-[#7A1A22] font-bold flex items-center justify-center text-xs font-mono shrink-0">5</span>
+                          <span className="text-sm font-bold text-[#7A1A22] flex items-center gap-1.5">
+                            <Baby className="w-4 h-4 text-[#7A1A22]" />
+                            <span>{MATCH_I18N.tabPuthrasthanam[lang] || MATCH_I18N.tabPuthrasthanam.en}</span>
+                          </span>
+                        </div>
+                        <span className="text-xs font-bold text-stone-500">{openMatchSections[5] ? '▲' : '▼'}</span>
+                      </button>
+                      {openMatchSections[5] && (
+                        <div className="p-3.5 sm:p-4 pt-0 border-t border-amber-900/10">
+                          <PuthrasthanamChart matchReport={activeClientMatchReport} />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* SECTION 6: Valarpirai / Theipirai (Paksha & Chandra Bala) */}
+                    <div id="match-section-6" className="bg-white rounded-2xl border border-amber-900/15 shadow-xs overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => toggleMatchSection(6)}
+                        className="w-full p-3.5 sm:p-4 flex items-center justify-between text-left hover:bg-amber-50/50 transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-7 h-7 rounded-xl bg-amber-900/10 text-[#7A1A22] font-bold flex items-center justify-center text-xs font-mono shrink-0">6</span>
+                          <span className="text-sm font-bold text-[#7A1A22] flex items-center gap-1.5">
+                            <Moon className="w-4 h-4 text-[#7A1A22]" />
+                            <span>{MATCH_I18N.tabPakshaMatch[lang] || MATCH_I18N.tabPakshaMatch.en}</span>
+                          </span>
+                        </div>
+                        <span className="text-xs font-bold text-stone-500">{openMatchSections[6] ? '▲' : '▼'}</span>
+                      </button>
+                      {openMatchSections[6] && (
+                        <div className="p-3.5 sm:p-4 pt-0 border-t border-amber-900/10">
+                          <PakshaMatchCard matchReport={activeClientMatchReport} />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* SECTION 7: Mars & Venus (Lagnam Analysis) */}
+                    <div id="match-section-7" className="bg-white rounded-2xl border border-amber-900/15 shadow-xs overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => toggleMatchSection(7)}
+                        className="w-full p-3.5 sm:p-4 flex items-center justify-between text-left hover:bg-amber-50/50 transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-7 h-7 rounded-xl bg-amber-900/10 text-[#7A1A22] font-bold flex items-center justify-center text-xs font-mono shrink-0">7</span>
+                          <span className="text-sm font-bold text-[#7A1A22] flex items-center gap-1.5">
+                            <HeartHandshake className="w-4 h-4 text-[#7A1A22]" />
+                            <span>{MATCH_I18N.tabMarsVenus[lang] || MATCH_I18N.tabMarsVenus.en}</span>
+                          </span>
+                        </div>
+                        <span className="text-xs font-bold text-stone-500">{openMatchSections[7] ? '▲' : '▼'}</span>
+                      </button>
+                      {openMatchSections[7] && (
+                        <div className="p-3.5 sm:p-4 pt-0 border-t border-amber-900/10">
+                          <MarsVenusMatchCard matchReport={activeClientMatchReport} />
                         </div>
                       )}
                     </div>
@@ -2867,15 +2975,30 @@ Shubham Bhavatu! 🙏`;
                             <span>Receipt</span>
                           </button>
 
-                          {/* View details */}
+                          {/* View in Horoscope */}
                           <button
                             onClick={() => {
-                              setActiveTab('search');
-                              handleSelectClient(cl.mobile || cl.clientCode);
+                              selectClient(cl);
+                              refreshCalculations();
+                              setActiveTab('horoscope');
+                              handleSelectClient(cl.mobile || cl.clientCode || cl.id);
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
                             }}
                             className="bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-700 border border-indigo-200 px-2 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer"
+                            title={lang === 'ta' ? 'ஜாதகத்தில் திறக்க' : 'Open Client in Horoscope'}
                           >
-                            {lang === 'ta' ? 'விவரங்கள்' : 'View'}
+                            {lang === 'ta' ? 'பார்க்க' : 'View'}
+                          </button>
+
+                          {/* Delete referred client */}
+                          <button
+                            onClick={() => handleDeleteReferredClient(cl)}
+                            disabled={deletingClientId === (cl.id || cl.clientCode || cl.mobile)}
+                            className="bg-rose-50 hover:bg-rose-600 hover:text-white text-rose-700 border border-rose-200 px-2 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 disabled:opacity-50"
+                            title={lang === 'ta' ? 'வாடிக்கையாளரை நீக்கு' : 'Delete Client'}
+                          >
+                            <Trash2 className="w-3 h-3" />
+                            <span>{lang === 'ta' ? 'நீக்கு' : 'Delete'}</span>
                           </button>
                         </div>
                       </td>
