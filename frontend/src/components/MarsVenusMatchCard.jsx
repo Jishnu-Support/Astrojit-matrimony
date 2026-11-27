@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { HeartHandshake, Sparkles, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { useLang } from '../i18n';
 
@@ -11,28 +11,83 @@ const SOUTH_CELLS = [
 const RASI_SHORT_TA = ['மேஷ', 'ரிஷ', 'மிது', 'கட', 'சிம்', 'கன்', 'துலா', 'விரு', 'தனு', 'மக', 'கும்', 'மீன'];
 const RASI_SHORT_EN = ['Ari', 'Tau', 'Gem', 'Can', 'Leo', 'Vir', 'Lib', 'Sco', 'Sag', 'Cap', 'Aqu', 'Pis'];
 
-function PersonMarsVenusCard({ person, title, isBride, isTa }) {
+const SHORT_CODE_TA = {
+  lagna: 'லக்', ascendant: 'லக்', mars: 'செவ்', venus: 'சுக்',
+  moon: 'சந்', jupiter: 'குரு', sun: 'சூரி', mercury: 'புத',
+  saturn: 'சனி', rahu: 'ராகு', ketu: 'கேது'
+};
+const SHORT_CODE_EN = {
+  lagna: 'Asc', ascendant: 'Asc', mars: 'Mar', venus: 'Ven',
+  moon: 'Moo', jupiter: 'Jup', sun: 'Sun', mercury: 'Mer',
+  saturn: 'Sat', rahu: 'Rah', ketu: 'Ket'
+};
+
+function getOccupantRole(o) {
+  if (o.id) return o.id;
+  if (o.isLagna) return 'lagna';
+  if (o.isMars) return 'mars';
+  if (o.isMoon) return 'moon';
+  if (o.isVenus) return 'venus';
+  if (o.isJupiter) return 'jupiter';
+  return (o.name || '').toLowerCase();
+}
+
+function formatOccupantLabel(o, isTa) {
+  if (isTa && o.ta) return o.ta;
+  if (!isTa && o.short) return o.short;
+  const role = getOccupantRole(o);
+  return (isTa ? SHORT_CODE_TA[role] : SHORT_CODE_EN[role]) || o.short || o.name || o.code || '';
+}
+
+function getFallbackMoonIdx(person) {
+  if (typeof person?.moonRasiIdx === 'number') return person.moonRasiIdx;
+  const moonBox = (person?.chartBoxes || []).find((b) =>
+    (b.occupants || []).some((o) => getOccupantRole(o) === 'moon')
+  );
+  if (moonBox) return moonBox.signIdx ?? moonBox.rasi;
+  return person?.lagnaRasiIdx ?? 0;
+}
+
+function PersonMarsVenusCard({ person, title, isBride, isTa, isRasi }) {
   const byRasi = {};
-  (person?.chartBoxes || []).forEach(b => {
-    byRasi[b.rasi] = b.occupants || [];
+  (person?.chartBoxes || []).forEach((b) => {
+    const idx = b.rasi ?? b.signIdx;
+    if (typeof idx === 'number') byRasi[idx] = b.occupants || [];
   });
+
+  const moonIdx = getFallbackMoonIdx(person);
+  const marsHouse = isRasi
+    ? (person.marsHouseFromMoon ?? (((person.marsRasiIdx - moonIdx + 12) % 12) + 1))
+    : person.marsHouse;
+  const venusHouse = isRasi
+    ? (person.venusHouseFromMoon ?? (((person.venusRasiIdx - moonIdx + 12) % 12) + 1))
+    : person.venusHouse;
+  const activeScore = isRasi ? (person.rasiScore ?? person.score) : person.score;
+  const activeStatusKey = isRasi ? (person.rasiStatus || person.status) : person.status;
+  const activeStatusLabel = isRasi
+    ? (isTa ? (person.rasiStatusTa || person.statusTa) : (person.rasiStatus || person.status))
+    : (isTa ? person.statusTa : person.status);
+  const refRasiLabel = isRasi
+    ? (isTa ? (person.moonRasiTa || RASI_SHORT_TA[moonIdx]) : (person.moonRasi || RASI_SHORT_EN[moonIdx]))
+    : (isTa ? person.lagnaRasiTa : person.lagnaRasi);
+  const refRasiIdx = isRasi ? moonIdx : person.lagnaRasiIdx;
 
   return (
     <div className={`border rounded-xl p-3 space-y-2.5 ${isBride ? 'bg-rose-50/40 border-rose-200' : 'bg-indigo-50/40 border-indigo-200'}`}>
       <div className="flex items-center justify-between text-xs font-bold">
         <span className={isBride ? 'text-rose-900' : 'text-indigo-900'}>{title}</span>
         <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-          person.status === 'Strong'
+          activeStatusKey === 'Strong'
             ? 'bg-emerald-100 text-emerald-800'
-            : person.status === 'Balanced'
+            : activeStatusKey === 'Balanced'
             ? 'bg-amber-100 text-amber-800'
             : 'bg-rose-100 text-rose-800'
         }`}>
-          {isTa ? person.statusTa : person.status} ({person.score}%)
+          {activeStatusLabel} ({activeScore}%)
         </span>
       </div>
 
-      {/* South Indian Mini Chart Highlighting Mars & Venus */}
+      {/* South Indian Mini Chart Highlighting Mars, Venus & Reference (Lagnam / Moon Rasi) */}
       <div className="grid grid-cols-4 grid-rows-4 aspect-square max-w-[210px] mx-auto border border-stone-300 bg-white text-[9px]">
         {[0, 1, 2, 3].map(r =>
           [0, 1, 2, 3].map(c => {
@@ -44,10 +99,12 @@ function PersonMarsVenusCard({ person, title, isBride, isTa }) {
                       {isTa ? 'செவ்வாய்–சுக்கிரன்' : 'Mars – Venus'}
                     </span>
                     <span className="text-[8px] font-bold text-stone-700 mt-0.5">
-                      {isTa ? `லக்னம்: ${person.lagnaRasiTa}` : `Asc: ${person.lagnaRasi}`}
+                      {isRasi
+                        ? (isTa ? `ராசி: ${refRasiLabel}` : `Rasi: ${refRasiLabel}`)
+                        : (isTa ? `லக்னம்: ${refRasiLabel}` : `Asc: ${refRasiLabel}`)}
                     </span>
                     <span className="text-[7.5px] text-stone-500">
-                      {isTa ? `செவ் ${person.marsHouse} | சுக் ${person.venusHouse}` : `Mar H${person.marsHouse} | Ven H${person.venusHouse}`}
+                      {isTa ? `செவ் ${marsHouse} | சுக் ${venusHouse}` : `Mar H${marsHouse} | Ven H${venusHouse}`}
                     </span>
                   </div>
                 );
@@ -59,6 +116,7 @@ function PersonMarsVenusCard({ person, title, isBride, isTa }) {
             const occupants = byRasi[cell.rasi] || [];
             const hasMars = cell.rasi === person.marsRasiIdx;
             const hasVenus = cell.rasi === person.venusRasiIdx;
+            const isRefCell = cell.rasi === refRasiIdx;
             return (
               <div
                 key={`${r}-${c}`}
@@ -69,26 +127,33 @@ function PersonMarsVenusCard({ person, title, isBride, isTa }) {
                     ? 'bg-rose-100/70'
                     : hasVenus
                     ? 'bg-pink-100/70'
+                    : isRefCell
+                    ? (isRasi ? 'bg-indigo-50/80 ring-1 ring-inset ring-indigo-300' : 'bg-stone-100/70')
                     : 'bg-white'
                 }`}
               >
                 <div className="flex flex-wrap gap-0.5">
-                  {occupants.map((o, idx) => (
-                    <span
-                      key={idx}
-                      className={`px-0.5 rounded font-bold ${
-                        o.id === 'mars'
-                          ? 'bg-rose-600 text-white'
-                          : o.id === 'venus'
-                          ? 'bg-pink-600 text-white'
-                          : o.id === 'ascendant'
-                          ? 'bg-stone-800 text-white'
-                          : 'text-stone-700'
-                      }`}
-                    >
-                      {isTa ? (o.ta || o.short) : (o.short || o.en)}
-                    </span>
-                  ))}
+                  {occupants.map((o, idx) => {
+                    const role = getOccupantRole(o);
+                    return (
+                      <span
+                        key={idx}
+                        className={`px-0.5 rounded font-bold ${
+                          role === 'mars'
+                            ? 'bg-rose-600 text-white'
+                            : role === 'venus'
+                            ? 'bg-pink-600 text-white'
+                            : role === 'moon' && isRasi
+                            ? 'bg-indigo-700 text-white'
+                            : (role === 'ascendant' || role === 'lagna') && !isRasi
+                            ? 'bg-stone-800 text-white'
+                            : 'text-stone-700'
+                        }`}
+                      >
+                        {formatOccupantLabel(o, isTa)}
+                      </span>
+                    );
+                  })}
                 </div>
                 <div className="text-[7px] text-stone-400 text-right leading-none">
                   {isTa ? RASI_SHORT_TA[cell.rasi] : RASI_SHORT_EN[cell.rasi]}
@@ -102,23 +167,35 @@ function PersonMarsVenusCard({ person, title, isBride, isTa }) {
       {/* Metrics Table */}
       <div className="bg-white rounded-lg border border-stone-200 p-2.5 text-[11px] space-y-1">
         <div className="flex justify-between">
-          <span className="text-stone-500">{isTa ? 'லக்னம்:' : 'Lagnam:'}</span>
-          <strong className="text-stone-900">{isTa ? person.lagnaRasiTa : person.lagnaRasi}</strong>
+          <span className="text-stone-500">
+            {isRasi
+              ? (isTa ? 'சந்திர ராசி:' : 'Moon Rasi:')
+              : (isTa ? 'லக்னம்:' : 'Lagnam:')}
+          </span>
+          <strong className="text-stone-900">{refRasiLabel}</strong>
         </div>
         <div className="flex justify-between">
-          <span className="text-stone-500">{isTa ? 'செவ்வாய் (லக்னத்திலிருந்து):' : 'Mars (from Lagnam):'}</span>
+          <span className="text-stone-500">
+            {isRasi
+              ? (isTa ? 'செவ்வாய் (ராசியிலிருந்து):' : 'Mars (from Rasi):')
+              : (isTa ? 'செவ்வாய் (லக்னத்திலிருந்து):' : 'Mars (from Lagnam):')}
+          </span>
           <strong className="text-rose-800">
             {isTa
-              ? `${person.marsRasiTa} (${person.marsHouse}-ம் வீடு, ${person.marsDignityTa})`
-              : `${person.marsRasi} (H${person.marsHouse}, ${person.marsDignity})`}
+              ? `${person.marsRasiTa} (${marsHouse}-ம் வீடு, ${person.marsDignityTa})`
+              : `${person.marsRasi} (H${marsHouse}, ${person.marsDignity})`}
           </strong>
         </div>
         <div className="flex justify-between">
-          <span className="text-stone-500">{isTa ? 'சுக்கிரன் (லக்னத்திலிருந்து):' : 'Venus (from Lagnam):'}</span>
+          <span className="text-stone-500">
+            {isRasi
+              ? (isTa ? 'சுக்கிரன் (ராசியிலிருந்து):' : 'Venus (from Rasi):')
+              : (isTa ? 'சுக்கிரன் (லக்னத்திலிருந்து):' : 'Venus (from Lagnam):')}
+          </span>
           <strong className="text-pink-800">
             {isTa
-              ? `${person.venusRasiTa} (${person.venusHouse}-ம் வீடு, ${person.venusDignityTa})`
-              : `${person.venusRasi} (H${person.venusHouse}, ${person.venusDignity})`}
+              ? `${person.venusRasiTa} (${venusHouse}-ம் வீடு, ${person.venusDignityTa})`
+              : `${person.venusRasi} (H${venusHouse}, ${person.venusDignity})`}
           </strong>
         </div>
         <div className="flex justify-between border-t border-stone-100 pt-1">
@@ -147,19 +224,71 @@ function PersonMarsVenusCard({ person, title, isBride, isTa }) {
 export default function MarsVenusMatchCard({ matchReport }) {
   const { lang } = useLang();
   const isTa = lang === 'ta';
+  const [basis, setBasis] = useState('lagnam');
 
   const mv = matchReport?.marsVenusAnalysis;
   if (!mv) return null;
 
-  const { boy, girl, brideVenToGroomMar, groomVenToBrideMar, cross1Good, cross2Good, combinedScore, verdictEn, verdictTa } = mv;
+  const { boy, girl, brideVenToGroomMar, groomVenToBrideMar, cross1Good, cross2Good } = mv;
+  const isRasi = basis === 'rasi';
+
+  const boyMoonIdx = getFallbackMoonIdx(boy);
+  const girlMoonIdx = getFallbackMoonIdx(girl);
+  const rasiInfo = mv.rasiAnalysis || {
+    brideVenToGroomMoon: ((girl.venusRasiIdx - boyMoonIdx + 12) % 12) + 1,
+    groomVenToBrideMoon: ((boy.venusRasiIdx - girlMoonIdx + 12) % 12) + 1,
+    brideMarToGroomMoon: ((girl.marsRasiIdx - boyMoonIdx + 12) % 12) + 1,
+    groomMarToBrideMoon: ((boy.marsRasiIdx - girlMoonIdx + 12) % 12) + 1,
+    crossVenGroomMoonGood: [1, 2, 4, 5, 7, 9, 10, 11].includes(((girl.venusRasiIdx - boyMoonIdx + 12) % 12) + 1),
+    crossVenBrideMoonGood: [1, 2, 4, 5, 7, 9, 10, 11].includes(((boy.venusRasiIdx - girlMoonIdx + 12) % 12) + 1),
+    combinedScore: mv.combinedScore,
+    verdictEn: mv.verdictEn,
+    verdictTa: mv.verdictTa,
+  };
+
+  const activeScore = isRasi ? rasiInfo.combinedScore : mv.combinedScore;
+  const activeVerdict = isRasi
+    ? (isTa ? rasiInfo.verdictTa : rasiInfo.verdictEn)
+    : (isTa ? mv.verdictTa : mv.verdictEn);
 
   return (
     <div className="space-y-4 pt-2 text-xs">
+      {/* 0. Lagnam vs Rasi Basis Toggle */}
+      <div className="flex flex-wrap items-center justify-between gap-2 bg-stone-50 border border-stone-200 rounded-xl px-3 py-2">
+        <span className="text-[11px] font-bold text-stone-600">
+          {isTa ? 'ஆய்வு அடிப்படை:' : 'Analysis Basis:'}
+        </span>
+        <div className="inline-flex rounded-lg bg-white border border-stone-200 p-0.5 shadow-sm">
+          <button
+            type="button"
+            onClick={() => setBasis('lagnam')}
+            className={`px-3 py-1 rounded-md text-[11px] font-bold transition-colors ${
+              !isRasi
+                ? 'bg-[#7A1A22] text-white shadow-sm'
+                : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
+            }`}
+          >
+            {isTa ? 'லக்னம் (Lagnam-Based)' : 'Lagnam-Based'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setBasis('rasi')}
+            className={`px-3 py-1 rounded-md text-[11px] font-bold transition-colors ${
+              isRasi
+                ? 'bg-[#7A1A22] text-white shadow-sm'
+                : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
+            }`}
+          >
+            {isTa ? 'ராசி (Rasi-Based)' : 'Rasi-Based (Moon Rasi)'}
+          </button>
+        </div>
+      </div>
+
       {/* 1. Overall Verdict Banner */}
       <div className={`p-3.5 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 ${
-        combinedScore >= 72
+        activeScore >= 72
           ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950'
-          : combinedScore >= 55
+          : activeScore >= 55
           ? 'bg-amber-50/70 border-amber-200 text-amber-950'
           : 'bg-rose-50/70 border-rose-200 text-rose-950'
       }`}>
@@ -169,15 +298,17 @@ export default function MarsVenusMatchCard({ matchReport }) {
           </div>
           <div>
             <div className="font-black text-xs sm:text-sm">
-              {isTa ? 'செவ்வாய் & சுக்கிரன் – லக்ன இணக்க ஆய்வு' : 'Mars & Venus – Lagnam Compatibility Analysis'}
+              {isRasi
+                ? (isTa ? 'செவ்வாய் & சுக்கிரன் – ராசி இணக்க ஆய்வு' : 'Mars & Venus – Rasi (Moon Sign) Compatibility Analysis')
+                : (isTa ? 'செவ்வாய் & சுக்கிரன் – லக்ன இணக்க ஆய்வு' : 'Mars & Venus – Lagnam Compatibility Analysis')}
             </div>
             <p className="text-[11px] font-medium mt-0.5">
-              {isTa ? verdictTa : verdictEn}
+              {activeVerdict}
             </p>
           </div>
         </div>
         <div className="text-right shrink-0 self-end sm:self-center bg-white px-3 py-1.5 rounded-xl border border-black/10">
-          <div className="text-lg font-black text-[#7A1A22]">{combinedScore}%</div>
+          <div className="text-lg font-black text-[#7A1A22]">{activeScore}%</div>
           <div className="text-[10px] font-bold text-stone-500">
             {isTa ? 'இணக்க மதிப்பெண்' : 'Harmony Score'}
           </div>
@@ -191,36 +322,69 @@ export default function MarsVenusMatchCard({ matchReport }) {
           title={isTa ? `மணமகள்: ${matchReport.girl?.name || 'Bride'}` : `Bride: ${matchReport.girl?.name || 'Bride'}`}
           isBride
           isTa={isTa}
+          isRasi={isRasi}
         />
         <PersonMarsVenusCard
           person={boy}
           title={isTa ? `மணமகன்: ${matchReport.boy?.name || 'Groom'}` : `Groom: ${matchReport.boy?.name || 'Groom'}`}
           isBride={false}
           isTa={isTa}
+          isRasi={isRasi}
         />
       </div>
 
       {/* 3. Couple Cross-Resonance */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px]">
-        <div className="p-2.5 rounded-xl bg-rose-50/50 border border-rose-200 flex items-center justify-between">
-          <span className="font-semibold text-stone-700">
-            {isTa ? 'மணமகள் சுக்கிரன் ↔ மணமகன் செவ்வாய்:' : 'Bride Venus ↔ Groom Mars:'}
-          </span>
-          <span className={`font-bold flex items-center gap-1 ${cross1Good ? 'text-emerald-700' : 'text-amber-700'}`}>
-            {cross1Good ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
-            <span>{isTa ? `${brideVenToGroomMar}-ம் வீடு (${cross1Good ? 'நல்லது' : 'சமநிலை'})` : `H${brideVenToGroomMar} (${cross1Good ? 'Harmonious' : 'Moderate'})`}</span>
-          </span>
+      {isRasi ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px]">
+          <div className="p-2.5 rounded-xl bg-rose-50/50 border border-rose-200 flex items-center justify-between gap-2">
+            <span className="font-semibold text-stone-700">
+              {isTa ? 'மணமகன் ராசிக்கு மணமகள் சுக் / செவ்:' : 'Bride Ven / Mar from Groom Rasi:'}
+            </span>
+            <span className={`font-bold flex items-center gap-1 shrink-0 ${rasiInfo.crossVenGroomMoonGood ? 'text-emerald-700' : 'text-amber-700'}`}>
+              {rasiInfo.crossVenGroomMoonGood ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
+              <span>
+                {isTa
+                  ? `சுக் ${rasiInfo.brideVenToGroomMoon} | செவ் ${rasiInfo.brideMarToGroomMoon}`
+                  : `Ven H${rasiInfo.brideVenToGroomMoon} | Mar H${rasiInfo.brideMarToGroomMoon}`}
+              </span>
+            </span>
+          </div>
+          <div className="p-2.5 rounded-xl bg-indigo-50/50 border border-indigo-200 flex items-center justify-between gap-2">
+            <span className="font-semibold text-stone-700">
+              {isTa ? 'மணமகள் ராசிக்கு மணமகன் சுக் / செவ்:' : 'Groom Ven / Mar from Bride Rasi:'}
+            </span>
+            <span className={`font-bold flex items-center gap-1 shrink-0 ${rasiInfo.crossVenBrideMoonGood ? 'text-emerald-700' : 'text-amber-700'}`}>
+              {rasiInfo.crossVenBrideMoonGood ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
+              <span>
+                {isTa
+                  ? `சுக் ${rasiInfo.groomVenToBrideMoon} | செவ் ${rasiInfo.groomMarToBrideMoon}`
+                  : `Ven H${rasiInfo.groomVenToBrideMoon} | Mar H${rasiInfo.groomMarToBrideMoon}`}
+              </span>
+            </span>
+          </div>
         </div>
-        <div className="p-2.5 rounded-xl bg-indigo-50/50 border border-indigo-200 flex items-center justify-between">
-          <span className="font-semibold text-stone-700">
-            {isTa ? 'மணமகன் சுக்கிரன் ↔ மணமகள் செவ்வாய்:' : 'Groom Venus ↔ Bride Mars:'}
-          </span>
-          <span className={`font-bold flex items-center gap-1 ${cross2Good ? 'text-emerald-700' : 'text-amber-700'}`}>
-            {cross2Good ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
-            <span>{isTa ? `${groomVenToBrideMar}-ம் வீடு (${cross2Good ? 'நல்லது' : 'சமநிலை'})` : `H${groomVenToBrideMar} (${cross2Good ? 'Harmonious' : 'Moderate'})`}</span>
-          </span>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px]">
+          <div className="p-2.5 rounded-xl bg-rose-50/50 border border-rose-200 flex items-center justify-between">
+            <span className="font-semibold text-stone-700">
+              {isTa ? 'மணமகள் சுக்கிரன் ↔ மணமகன் செவ்வாய்:' : 'Bride Venus ↔ Groom Mars:'}
+            </span>
+            <span className={`font-bold flex items-center gap-1 ${cross1Good ? 'text-emerald-700' : 'text-amber-700'}`}>
+              {cross1Good ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
+              <span>{isTa ? `${brideVenToGroomMar}-ம் வீடு (${cross1Good ? 'நல்லது' : 'சமநிலை'})` : `H${brideVenToGroomMar} (${cross1Good ? 'Harmonious' : 'Moderate'})`}</span>
+            </span>
+          </div>
+          <div className="p-2.5 rounded-xl bg-indigo-50/50 border border-indigo-200 flex items-center justify-between">
+            <span className="font-semibold text-stone-700">
+              {isTa ? 'மணமகன் சுக்கிரன் ↔ மணமகள் செவ்வாய்:' : 'Groom Venus ↔ Bride Mars:'}
+            </span>
+            <span className={`font-bold flex items-center gap-1 ${cross2Good ? 'text-emerald-700' : 'text-amber-700'}`}>
+              {cross2Good ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
+              <span>{isTa ? `${groomVenToBrideMar}-ம் வீடு (${cross2Good ? 'நல்லது' : 'சமநிலை'})` : `H${groomVenToBrideMar} (${cross2Good ? 'Harmonious' : 'Moderate'})`}</span>
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 4. Classical Guidance */}
       <div className="p-3 rounded-xl bg-amber-50/50 border border-amber-200 text-[11px] text-stone-700 flex items-start gap-2">
@@ -229,9 +393,13 @@ export default function MarsVenusMatchCard({ matchReport }) {
           <strong className="text-[#7A1A22]">
             {isTa ? 'சாஸ்திர குறிப்பு:' : 'Classical Note:'}
           </strong>{' '}
-          {isTa
-            ? 'லக்னத்திலிருந்து சுக்கிரன் (களத்திர காரகன்) மற்றும் செவ்வாய் ஆகியோரின் பாவ நிலை, பரஸ்பர பார்வை மற்றும் மணமகள்–மணமகன் குறுக்கு இணைப்பு ஆகியவை இல்லற அன்பையும் ஒற்றுமையையும் காட்டுகின்றன.'
-            : 'The house placement of Kalathirakaraka Venus and Mars from Lagnam, their mutual aspects, and cross-couple Venus–Mars resonance indicate marital warmth and compatibility.'}
+          {isRasi
+            ? (isTa
+                ? 'சந்திர ராசியிலிருந்து சுக்கிரன் மற்றும் செவ்வாய் நிற்கும் பாவ நிலை, பரஸ்பர பார்வை மற்றும் துணையின் சந்திர ராசிக்கு ஏற்ப சுக்கிரன்/செவ்வாய் இணக்கம் ஆகியவை மன ஒற்றுமையையும் இல்லற இனிமையையும் காட்டுகின்றன.'
+                : 'The house placement of Venus and Mars from Moon Rasi (Chandra Lagna), their mutual aspects, and how each partner’s Venus and Mars fall relative to the other’s Moon Rasi reflect emotional rapport and marital harmony.')
+            : (isTa
+                ? 'லக்னத்திலிருந்து சுக்கிரன் (களத்திர காரகன்) மற்றும் செவ்வாய் ஆகியோரின் பாவ நிலை, பரஸ்பர பார்வை மற்றும் மணமகள்–மணமகன் குறுக்கு இணைப்பு ஆகியவை இல்லற அன்பையும் ஒற்றுமையையும் காட்டுகின்றன.'
+                : 'The house placement of Kalathirakaraka Venus and Mars from Lagnam, their mutual aspects, and cross-couple Venus–Mars resonance indicate marital warmth and compatibility.')}
         </div>
       </div>
     </div>

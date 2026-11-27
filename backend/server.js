@@ -1073,8 +1073,8 @@ app.put('/api/user/settings', authenticate, (req, res) => {
 
 app.get('/api/panchangam', (req, res) => {
   try {
-    const dateQuery = req.query.date;
-    const panchangam = getDailyPanchangam(dateQuery);
+    const { date, lat, lon, utcOffset, city, reckoning } = req.query;
+    const panchangam = getDailyPanchangam(date, { lat, lon, utcOffset, city, reckoning });
     return res.json(panchangam);
   } catch (error) {
     console.error('Panchangam calculation error:', error);

@@ -62,7 +62,17 @@ export const API = {
   updateUserSettings: (settings) => apiRequest('/user/settings', 'PUT', { settings }),
 
   // Daily Panchangam
-  getPanchangam: (date) => apiRequest(date ? `/panchangam?date=${date}` : '/panchangam', 'GET'),
+  getPanchangam: (date, params = {}) => {
+    const qs = new URLSearchParams();
+    if (date) qs.set('date', date);
+    if (params.lat != null) qs.set('lat', params.lat);
+    if (params.lon != null) qs.set('lon', params.lon);
+    if (params.utcOffset != null) qs.set('utcOffset', params.utcOffset);
+    if (params.city) qs.set('city', params.city);
+    if (params.reckoning) qs.set('reckoning', params.reckoning);
+    const query = qs.toString();
+    return apiRequest(query ? `/panchangam?${query}` : '/panchangam', 'GET');
+  },
   getClientProfileByMobile: (mobile) => apiRequest(`/client/profile-by-mobile/${mobile}`, 'GET'),
   getClientProfiles: () => apiRequest('/client/profiles', 'GET'),
   saveClientProfile: (data) => apiRequest('/client/profiles', 'POST', data),

@@ -1779,12 +1779,15 @@ function calculatePakshaMatchAnalysis(boyInput = {}, girlInput = {}) {
 function evaluatePersonMarsVenus(grahas) {
   const rasiOf = (lon) => Math.floor(normalizeDeg(lon) / 30) % 12;
   const lagnaRasi = rasiOf(grahas.longitudes.ascendant);
+  const moonRasi = grahas.rashis?.moon ?? rasiOf(grahas.longitudes.moon);
   const marsRasi = rasiOf(grahas.longitudes.mars);
   const venusRasi = rasiOf(grahas.longitudes.venus);
   const jupRasi = rasiOf(grahas.longitudes.jupiter);
 
   const marsHouse = ((marsRasi - lagnaRasi + 12) % 12) + 1;
   const venusHouse = ((venusRasi - lagnaRasi + 12) % 12) + 1;
+  const marsHouseFromMoon = ((marsRasi - moonRasi + 12) % 12) + 1;
+  const venusHouseFromMoon = ((venusRasi - moonRasi + 12) % 12) + 1;
   const marsDig = PLANET_DIGNITY_SIMPLE('mars', marsRasi);
   const venusDig = PLANET_DIGNITY_SIMPLE('venus', venusRasi);
 
@@ -1816,42 +1819,57 @@ function evaluatePersonMarsVenus(grahas) {
     relationTone = 'sensitive';
   }
 
-  const jupAspectVenus = [0, 4, 6, 8].includes((jupRasi - venusRasi + 12) % 12);
-  const jupAspectMars = [0, 4, 6, 8].includes((jupRasi - marsRasi + 12) % 12);
+  // Jupiter aspects 1st (0), 5th (+4), 7th (+6), and 9th (+8) signs forward from Jupiter
+  const jupAspectVenus = [0, 4, 6, 8].includes((venusRasi - jupRasi + 12) % 12);
+  const jupAspectMars = [0, 4, 6, 8].includes((marsRasi - jupRasi + 12) % 12);
 
-  let score = 55;
-  if ([1, 4, 5, 7, 9, 10, 11].includes(venusHouse)) score += 14;
-  else if ([6, 8, 12].includes(venusHouse)) score -= 8;
-  if (venusDig.key === 'utcha' || venusDig.key === 'aatchi') score += 12;
-  else if (venusDig.key === 'neecha') score -= 10;
+  const computeBasisScore = (vHouse) => {
+    let s = 55;
+    if ([1, 2, 4, 5, 7, 9, 10, 11].includes(vHouse)) s += 14;
+    else if ([6, 8, 12].includes(vHouse)) s -= 8;
+    if (venusDig.key === 'utcha' || venusDig.key === 'aatchi') s += 12;
+    else if (venusDig.key === 'neecha') s -= 10;
 
-  if (marsDig.key === 'utcha' || marsDig.key === 'aatchi') score += 8;
-  else if (marsDig.key === 'neecha') score -= 6;
+    if (marsDig.key === 'utcha' || marsDig.key === 'aatchi') s += 8;
+    else if (marsDig.key === 'neecha') s -= 6;
 
-  if (relationTone === 'harmonious') score += 10;
-  else if (relationTone === 'sensitive') score -= 6;
+    if (relationTone === 'harmonious') s += 10;
+    else if (relationTone === 'sensitive') s -= 6;
 
-  if (jupAspectVenus) score += 8;
-  if (jupAspectMars) score += 5;
-  score = Math.max(30, Math.min(98, score));
+    if (jupAspectVenus) s += 8;
+    if (jupAspectMars) s += 5;
+    return Math.max(30, Math.min(98, s));
+  };
 
-  const status = score >= 74 ? 'Strong' : score >= 55 ? 'Balanced' : 'Needs Care';
-  const statusTa = score >= 74 ? 'உத்தமம் (பலம்)' : score >= 55 ? 'மத்திமம் (சமநிலை)' : 'கவனம் தேவை';
+  const statusLabel = (s) => ({
+    en: s >= 74 ? 'Strong' : s >= 55 ? 'Balanced' : 'Needs Care',
+    ta: s >= 74 ? 'உத்தமம் (பலம்)' : s >= 55 ? 'மத்திமம் (சமநிலை)' : 'கவனம் தேவை',
+  });
+
+  const score = computeBasisScore(venusHouse);
+  const lagnamSt = statusLabel(score);
+  const rasiScore = computeBasisScore(venusHouseFromMoon);
+  const rasiSt = statusLabel(rasiScore);
 
   return {
     lagnaRasi: RASHIS[lagnaRasi].name,
     lagnaRasiTa: RASHI_TA_NAMES[lagnaRasi],
     lagnaRasiIdx: lagnaRasi,
+    moonRasi: RASHIS[moonRasi].name,
+    moonRasiTa: RASHI_TA_NAMES[moonRasi],
+    moonRasiIdx: moonRasi,
     marsRasi: RASHIS[marsRasi].name,
     marsRasiTa: RASHI_TA_NAMES[marsRasi],
     marsRasiIdx: marsRasi,
     marsHouse,
+    marsHouseFromMoon,
     marsDignity: marsDig.en,
     marsDignityTa: marsDig.ta,
     venusRasi: RASHIS[venusRasi].name,
     venusRasiTa: RASHI_TA_NAMES[venusRasi],
     venusRasiIdx: venusRasi,
     venusHouse,
+    venusHouseFromMoon,
     venusDignity: venusDig.en,
     venusDignityTa: venusDig.ta,
     relationEn,
@@ -1860,10 +1878,47 @@ function evaluatePersonMarsVenus(grahas) {
     jupAspectVenus,
     jupAspectMars,
     score,
-    status,
-    statusTa,
+    status: lagnamSt.en,
+    statusTa: lagnamSt.ta,
+    rasiScore,
+    rasiStatus: rasiSt.en,
+    rasiStatusTa: rasiSt.ta,
     chartBoxes: buildSouthIndianChart(grahas, { isManglik: false, houses: { lagna: 1, moon: 1, venus: 1 } })
   };
+}
+
+function buildMarsVenusVerdict(combinedScore, isRasi) {
+  if (combinedScore >= 72) {
+    return isRasi
+      ? {
+          verdictEn: 'Harmonious Moon-Rasi Mars–Venus Alignment — Strong emotional bonding, mutual affection & joyful married life.',
+          verdictTa: 'சிறந்த சந்திர ராசி செவ்வாய்–சுக்கிரன் இணக்கம் — மன ஒற்றுமை, அன்பு மற்றும் இனிய இல்லற வாழ்வு சிறப்பாக உள்ளது.'
+        }
+      : {
+          verdictEn: 'Harmonious Mars–Venus (Kuja–Sukra) Alignment — Strong mutual attraction, affection & marital vitality.',
+          verdictTa: 'சிறந்த செவ்வாய்–சுக்கிரன் இணக்கம் — அன்பு, ஈர்ப்பு மற்றும் இல்லற ஒற்றுமை சிறப்பாக உள்ளது.'
+        };
+  }
+  if (combinedScore >= 55) {
+    return isRasi
+      ? {
+          verdictEn: 'Balanced Moon-Rasi Mars–Venus Alignment — Steady emotional rapport and mutual respect.',
+          verdictTa: 'சமநிலையான சந்திர ராசி செவ்வாய்–சுக்கிரன் அமைப்பு — சீரான மனப் புரிதலும் குடும்ப இணக்கமும் உண்டு.'
+        }
+      : {
+          verdictEn: 'Balanced Mars–Venus Alignment — Good compatibility with mutual understanding and respect.',
+          verdictTa: 'சமநிலையான செவ்வாய்–சுக்கிரன் அமைப்பு — பரஸ்பர புரிதலுடன் நல்ல இல்லற இணக்கம் உண்டு.'
+        };
+  }
+  return isRasi
+    ? {
+        verdictEn: 'Sensitive Moon-Rasi Mars–Venus Placement — Mindful communication advised; Friday Mahalakshmi & Tuesday Murugan worship recommended.',
+        verdictTa: 'கவனிக்க வேண்டிய சந்திர ராசி செவ்வாய்–சுக்கிரன் நிலை — அமைதியான உரையாடலுடன் வெள்ளி லட்சுமி & செவ்வாய் முருகன் வழிபாடு சிறந்தது.'
+      }
+    : {
+        verdictEn: 'Sensitive Mars–Venus Placement — Temperament differences possible; Friday Mahalakshmi & Tuesday Murugan worship advised.',
+        verdictTa: 'கவனிக்க வேண்டிய செவ்வாய்–சுக்கிரன் நிலை — மன ஒற்றுமைக்கு வெள்ளி லட்சுமி & செவ்வாய் முருகன் வழிபாடு சிறந்தது.'
+      };
 }
 
 function calculateMarsVenusMatchAnalysis(boyInput = {}, girlInput = {}) {
@@ -1872,7 +1927,7 @@ function calculateMarsVenusMatchAnalysis(boyInput = {}, girlInput = {}) {
   const boy = evaluatePersonMarsVenus(boyGrahas);
   const girl = evaluatePersonMarsVenus(girlGrahas);
 
-  // Cross-couple resonance: Bride Venus <-> Groom Mars & Groom Venus <-> Bride Mars
+  // Cross-couple resonance (Lagnam/Planet-to-Planet): Bride Venus <-> Groom Mars & Groom Venus <-> Bride Mars
   const brideVenToGroomMar = ((boy.marsRasiIdx - girl.venusRasiIdx + 12) % 12) + 1;
   const groomVenToBrideMar = ((girl.marsRasiIdx - boy.venusRasiIdx + 12) % 12) + 1;
   const isFavorableDist = (d) => [1, 3, 5, 7, 9, 11].includes(d);
@@ -1884,19 +1939,23 @@ function calculateMarsVenusMatchAnalysis(boyInput = {}, girlInput = {}) {
   if (cross1Good) combinedScore += 4;
   if (cross2Good) combinedScore += 4;
   combinedScore = Math.max(30, Math.min(98, combinedScore));
+  const lagnamVerdict = buildMarsVenusVerdict(combinedScore, false);
 
-  let verdictEn = '';
-  let verdictTa = '';
-  if (combinedScore >= 72) {
-    verdictEn = 'Harmonious Mars–Venus (Kuja–Sukra) Alignment — Strong mutual attraction, affection & marital vitality.';
-    verdictTa = 'சிறந்த செவ்வாய்–சுக்கிரன் இணக்கம் — அன்பு, ஈர்ப்பு மற்றும் இல்லற ஒற்றுமை சிறப்பாக உள்ளது.';
-  } else if (combinedScore >= 55) {
-    verdictEn = 'Balanced Mars–Venus Alignment — Good compatibility with mutual understanding and respect.';
-    verdictTa = 'சமநிலையான செவ்வாய்–சுக்கிரன் அமைப்பு — பரஸ்பர புரிதலுடன் நல்ல இல்லற இணக்கம் உண்டு.';
-  } else {
-    verdictEn = 'Sensitive Mars–Venus Placement — Temperament differences possible; Friday Mahalakshmi & Tuesday Murugan worship advised.';
-    verdictTa = 'கவனிக்க வேண்டிய செவ்வாய்–சுக்கிரன் நிலை — மன ஒற்றுமைக்கு வெள்ளி லட்சுமி & செவ்வாய் முருகன் வழிபாடு சிறந்தது.';
-  }
+  // Rasi-based (Chandra Rasi) cross-couple resonance: Partner Venus & Mars houses from Moon Rasi
+  const brideVenToGroomMoon = ((girl.venusRasiIdx - boy.moonRasiIdx + 12) % 12) + 1;
+  const groomVenToBrideMoon = ((boy.venusRasiIdx - girl.moonRasiIdx + 12) % 12) + 1;
+  const brideMarToGroomMoon = ((girl.marsRasiIdx - boy.moonRasiIdx + 12) % 12) + 1;
+  const groomMarToBrideMoon = ((boy.marsRasiIdx - girl.moonRasiIdx + 12) % 12) + 1;
+  const isFavorableFromMoon = (d) => [1, 2, 4, 5, 7, 9, 10, 11].includes(d);
+
+  const crossVenGroomMoonGood = isFavorableFromMoon(brideVenToGroomMoon);
+  const crossVenBrideMoonGood = isFavorableFromMoon(groomVenToBrideMoon);
+
+  let rasiCombinedScore = Math.round((boy.rasiScore + girl.rasiScore) / 2);
+  if (crossVenGroomMoonGood) rasiCombinedScore += 4;
+  if (crossVenBrideMoonGood) rasiCombinedScore += 4;
+  rasiCombinedScore = Math.max(30, Math.min(98, rasiCombinedScore));
+  const rasiVerdict = buildMarsVenusVerdict(rasiCombinedScore, true);
 
   return {
     boy,
@@ -1906,8 +1965,19 @@ function calculateMarsVenusMatchAnalysis(boyInput = {}, girlInput = {}) {
     cross1Good,
     cross2Good,
     combinedScore,
-    verdictEn,
-    verdictTa
+    verdictEn: lagnamVerdict.verdictEn,
+    verdictTa: lagnamVerdict.verdictTa,
+    rasiAnalysis: {
+      brideVenToGroomMoon,
+      groomVenToBrideMoon,
+      brideMarToGroomMoon,
+      groomMarToBrideMoon,
+      crossVenGroomMoonGood,
+      crossVenBrideMoonGood,
+      combinedScore: rasiCombinedScore,
+      verdictEn: rasiVerdict.verdictEn,
+      verdictTa: rasiVerdict.verdictTa
+    }
   };
 }
 
@@ -2015,15 +2085,174 @@ function evaluateChevvaiDosha(person = {}, gender = 'male') {
   };
 }
 
+const TAMIL_MONTHS_TA_PANCHANG = [
+  'சித்திரை', 'வைகாசி', 'ஆனி', 'ஆடி', 'ஆவணி', 'புரட்டாசி',
+  'ஐப்பசி', 'கார்த்திகை', 'மார்கழி', 'தை', 'மாசி', 'பங்குனி'
+];
+const TAMIL_MONTHS_EN_PANCHANG = [
+  'Chithirai', 'Vaikasi', 'Aani', 'Aadi', 'Avani', 'Purattasi',
+  'Aippasi', 'Karthigai', 'Margazhi', 'Thai', 'Maasi', 'Panguni'
+];
+const TAMIL_YEARS_60_EN_PANCHANG = [
+  'Prabhava', 'Vibhava', 'Shukla', 'Pramodoota', 'Prajotpatti', 'Angirasa', 'Shrimukha', 'Bhava', 'Yuva', 'Dhatri',
+  'Ishvara', 'Bahudhanya', 'Pramathi', 'Vikrama', 'Vishu', 'Chitrabhanu', 'Subhanu', 'Tarana', 'Parthiva', 'Vyaya',
+  'Sarvajit', 'Sarvadhari', 'Virodhi', 'Vikruti', 'Khara', 'Nandana', 'Vijaya', 'Jaya', 'Manmatha', 'Durmukhi',
+  'Hevilambi', 'Vilambi', 'Vikari', 'Sharvari', 'Plava', 'Shubhakrit', 'Sobhakrit', 'Krodhi', 'Vishvavasu', 'Parabhava',
+  'Plavanga', 'Kilaka', 'Saumya', 'Sadharana', 'Virodhikrit', 'Paridhavi', 'Pramadicha', 'Ananda', 'Rakshasa', 'Nala',
+  'Pingala', 'Kalayukti', 'Siddharthi', 'Raudra', 'Durmati', 'Dundubhi', 'Rudhirodgari', 'Raktakshi', 'Krodhana', 'Akshaya'
+];
+const TAMIL_YEARS_60_TA_PANCHANG = [
+  'பிரபவ', 'விபவ', 'சுக்ல', 'பிரமோதூத', 'பிரஜோத்பத்தி', 'ஆங்கீரச', 'ஸ்ரீமுக', 'பவ', 'யுவ', 'தாது',
+  'ஈஸ்வர', 'வெகுதான்ய', 'பிரமாதி', 'விக்ரம', 'விஷு', 'சித்திரபானு', 'சுபானு', 'தாரண', 'பார்த்திப', 'விய',
+  'சர்வஜித்', 'சர்வதாரி', 'விரோதி', 'விக்ருதி', 'கர', 'நந்தன', 'விஜய', 'ஜெய', 'மன்மத', 'துர்முகி',
+  'ஹேவிளம்பி', 'விளம்பி', 'விகாரி', 'சார்வரி', 'பிலவ', 'சுபகிருது', 'சோபகிருது', 'குரோதி', 'விசுவாவசு', 'பராபவ',
+  'பிலவங்க', 'கீலக', 'சௌமிய', 'சாதாரண', 'விரோதிகிருது', 'பரிதாபி', 'பிரமாதீச', 'ஆனந்த', 'ராட்சத', 'நள',
+  'பிங்கள', 'காளயுக்தி', 'சித்தார்த்தி', 'ரௌத்ரி', 'துர்மதி', 'துந்துபி', 'ருத்ரோத்காரி', 'ரக்தாட்சி', 'குரோதன', 'அட்சய'
+];
+
+function computeSunTimesDecimal(Y, M, D, lat, lon, utcOffset) {
+  const JD = Math.floor(365.25 * (Y + 4716)) + Math.floor(30.6001 * (M + 1)) + D - 1524.5;
+  const T = (JD - 2451545.0) / 36525.0;
+  const eps = 23.439291 - 0.0130042 * T;
+  const Ls = normalizeDeg(280.46646 + 36000.76983 * T);
+  const M_sun = normalizeDeg(357.52911 + 35999.05029 * T);
+  const C_sun = (1.914602 - 0.004817 * T) * sinD(M_sun) + 0.019993 * sinD(2 * M_sun);
+  const lamSun = normalizeDeg(Ls + C_sun);
+
+  const sinDec = sinD(eps) * sinD(lamSun);
+  const cosDec = Math.sqrt(Math.max(0, 1 - sinDec * sinDec));
+  const raSun = normalizeDeg(Math.atan2(cosD(eps) * sinD(lamSun), cosD(lamSun)) * 180 / Math.PI);
+  let eotDeg = Ls - raSun;
+  if (eotDeg > 180) eotDeg -= 360;
+  if (eotDeg < -180) eotDeg += 360;
+  const eotMin = eotDeg * 4;
+
+  const cosH0 = (sinD(-0.8333) - sinD(lat) * sinDec) / (cosD(lat) * cosDec);
+  const clampedCos = Math.max(-0.99, Math.min(0.99, cosH0));
+  const H0 = Math.acos(clampedCos) * (180 / Math.PI) / 15;
+  const noonLST = 12.0 - (lon - utcOffset * 15) / 15 - eotMin / 60;
+  return {
+    tSunrise: noonLST - H0,
+    tSunset: noonLST + H0,
+    solarNoon: noonLST
+  };
+}
+
+function formatTime12Hr(hDec) {
+  let h = Math.floor(hDec);
+  let m = Math.round((hDec - h) * 60);
+  if (m >= 60) { m = 0; h += 1; }
+  h = ((h % 24) + 24) % 24;
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${String(h12).padStart(2, '0')}:${String(m).padStart(2, '0')} ${ampm}`;
+}
+
+function formatUtcDateToLocal12Hr(dateObj, utcOffset) {
+  if (!dateObj) return null;
+  const localMs = dateObj.getTime() + utcOffset * 3600000;
+  const d = new Date(localMs);
+  const h = d.getUTCHours();
+  const m = d.getUTCMinutes();
+  return formatTime12Hr(h + m / 60);
+}
+
+function computePanchangTamilDate(year, month, day, lat, lon, utcOffset) {
+  const getSidSunAtMs = (ms) => {
+    const t = Astronomy.MakeTime(new Date(ms));
+    const T = t.tt / 36525.0;
+    const tilt = Astronomy.e_tilt(t);
+    const ay = 23.857092 + (5029.0966 * T + 1.11161 * T * T) / 3600.0 + tilt.dpsi / 3600.0;
+    return normalizeDeg(Astronomy.SunPosition(t).elon - ay);
+  };
+  const signedDegDiff = (a, b) => {
+    let d = (a - b) % 360;
+    if (d > 180) d -= 360;
+    if (d < -180) d += 360;
+    return d;
+  };
+  const findTamilMonthStartDayUTC = (signIdx, approxMs) => {
+    const targetDeg = (signIdx % 12) * 30;
+    const curSun = getSidSunAtMs(approxMs);
+    let ingMs = approxMs - (signedDegDiff(curSun, targetDeg) / 0.9856) * 86400000;
+    for (let k = 0; k < 5; k++) {
+      const err = signedDegDiff(getSidSunAtMs(ingMs), targetDeg);
+      ingMs -= (err / 0.9856) * 86400000;
+    }
+    const localDate = new Date(ingMs + utcOffset * 3600000);
+    const ingY = localDate.getUTCFullYear();
+    const ingM = localDate.getUTCMonth() + 1;
+    const ingD = localDate.getUTCDate();
+    const ingH = localDate.getUTCHours() + localDate.getUTCMinutes() / 60 + localDate.getUTCSeconds() / 3600;
+    const srss = computeSunTimesDecimal(ingY, ingM, ingD, lat, lon, utcOffset);
+    let dayUTC = Date.UTC(ingY, ingM - 1, ingD);
+    if (ingH > srss.tSunset) dayUTC += 86400000;
+    return dayUTC;
+  };
+
+  const targetDayUTC = Date.UTC(year, month - 1, day);
+  const noonMs = targetDayUTC + (12.0 - utcOffset) * 3600000;
+  const sunLon = getSidSunAtMs(noonMs);
+
+  let tamilMonthIdx = Math.floor(sunLon / 30) % 12;
+  let monthStartUTC = findTamilMonthStartDayUTC(tamilMonthIdx, noonMs);
+  let tamilDay = Math.round((targetDayUTC - monthStartUTC) / 86400000) + 1;
+
+  if (tamilDay < 1) {
+    tamilMonthIdx = (tamilMonthIdx + 11) % 12;
+    monthStartUTC = findTamilMonthStartDayUTC(tamilMonthIdx, noonMs - 20 * 86400000);
+    tamilDay = Math.round((targetDayUTC - monthStartUTC) / 86400000) + 1;
+  } else if (tamilDay >= 29) {
+    const nextStartUTC = findTamilMonthStartDayUTC((tamilMonthIdx + 1) % 12, noonMs + 5 * 86400000);
+    if (targetDayUTC >= nextStartUTC) {
+      tamilMonthIdx = (tamilMonthIdx + 1) % 12;
+      tamilDay = Math.round((targetDayUTC - nextStartUTC) / 86400000) + 1;
+    }
+  }
+
+  const chithirai1UTC = findTamilMonthStartDayUTC(0, Date.UTC(year, 3, 14));
+  const effGYear = targetDayUTC < chithirai1UTC ? year - 1 : year;
+  const cycleIndex = ((effGYear - 1987) % 60 + 60) % 60;
+
+  return {
+    yearEn: TAMIL_YEARS_60_EN_PANCHANG[cycleIndex],
+    yearTa: TAMIL_YEARS_60_TA_PANCHANG[cycleIndex],
+    monthEn: TAMIL_MONTHS_EN_PANCHANG[tamilMonthIdx],
+    monthTa: TAMIL_MONTHS_TA_PANCHANG[tamilMonthIdx],
+    day: tamilDay,
+    monthIndex: tamilMonthIdx,
+    labelEn: `${TAMIL_MONTHS_EN_PANCHANG[tamilMonthIdx]} ${tamilDay}`,
+    labelTa: `${TAMIL_MONTHS_TA_PANCHANG[tamilMonthIdx]} ${tamilDay}`,
+    fullEn: `${TAMIL_YEARS_60_EN_PANCHANG[cycleIndex]} · ${TAMIL_MONTHS_EN_PANCHANG[tamilMonthIdx]} ${tamilDay}`,
+    fullTa: `${TAMIL_YEARS_60_TA_PANCHANG[cycleIndex]} · ${TAMIL_MONTHS_TA_PANCHANG[tamilMonthIdx]} ${tamilDay}`
+  };
+}
+
 /**
- * Daily Panchangam for Calendar
+ * Daily Panchangam for Calendar (supports city coordinates, UTC offset, & reckoning)
  */
-function getDailyPanchangam(dateStr) {
-  const date = dateStr ? new Date(dateStr) : new Date();
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
-  const weekdayIndex = date.getDay();
+function getDailyPanchangam(dateStr, options = {}) {
+  let year, month, day;
+  if (dateStr && /^\d{4}-\d{2}-\d{2}/.test(String(dateStr))) {
+    const parts = String(dateStr).slice(0, 10).split('-').map(Number);
+    year = parts[0];
+    month = parts[1];
+    day = parts[2];
+  } else {
+    const now = new Date();
+    year = now.getFullYear();
+    month = now.getMonth() + 1;
+    day = now.getDate();
+  }
+
+  const lat = Number.isFinite(parseFloat(options.lat)) ? parseFloat(options.lat) : 13.0827; // Chennai default
+  const lon = Number.isFinite(parseFloat(options.lon)) ? parseFloat(options.lon) : 80.2707;
+  const utcOffset = Number.isFinite(parseFloat(options.utcOffset)) ? parseFloat(options.utcOffset) : 5.5;
+  const city = options.city ? String(options.city).trim() : 'Chennai';
+  const reckoning = String(options.reckoning || 'thirukanitha').toLowerCase() === 'vakya' ? 'vakya' : 'thirukanitha';
+
+  const dateObj = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+  const weekdayIndex = dateObj.getUTCDay();
 
   const weekdays = [
     { name: 'Ravivara (Sunday)', lord: 'Sun', deity: 'Surya Dev', nature: 'Auspicious for ceremonies' },
@@ -2035,48 +2264,121 @@ function getDailyPanchangam(dateStr) {
     { name: 'Shanivara (Saturday)', lord: 'Saturn', deity: 'Shani Dev', nature: 'Spiritual grounding' },
   ];
 
-  let y = year, m = month;
-  if (m <= 2) { y -= 1; m += 12; }
-  const A = Math.floor(y / 100);
-  const B = 2 - A + Math.floor(A / 4);
-  const jd = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + day + 0.5 + B - 1524.5;
-  const T = (jd - 2451545.0) / 36525.0;
+  const { tSunrise, tSunset } = computeSunTimesDecimal(year, month, day, lat, lon, utcOffset);
+  const dayLen = tSunset > tSunrise ? (tSunset - tSunrise) : 12.0;
+  const partLen = dayLen / 8.0;
+  const slotStr = (slotNum) => {
+    const s = tSunrise + (slotNum - 1) * partLen;
+    return `${formatTime12Hr(s)} - ${formatTime12Hr(s + partLen)}`;
+  };
 
-  const sunLong = ((280.46646 + 36000.76983 * T) % 360 + 360) % 360;
-  const moonLong = ((218.31645 + 481267.8813 * T) % 360 + 360) % 360;
-  const diff = ((moonLong - sunLong) % 360 + 360) % 360;
+  // Standard 8-segment Muhurat order starting from Sunday (0) .. Saturday (6)
+  const rahuSegByDay = [8, 2, 7, 5, 6, 4, 3];
+  const yamaSegByDay = [5, 4, 3, 2, 1, 7, 6];
+  const guliSegByDay = [7, 6, 5, 4, 3, 2, 1];
+  const amritSegByDay = [4, 2, 3, 6, 5, 4, 3];
 
+  const rahuKalam = slotStr(rahuSegByDay[weekdayIndex]);
+  const yamagandam = slotStr(yamaSegByDay[weekdayIndex]);
+  const gulikaKalam = slotStr(guliSegByDay[weekdayIndex]);
+  const amritKalam = slotStr(amritSegByDay[weekdayIndex]);
+
+  const solarNoonDec = (tSunrise + tSunset) / 2;
+  const muhurtaHalf = (dayLen / 15) / 2;
+  const abhijitMuhurat = `${formatTime12Hr(solarNoonDec - muhurtaHalf)} - ${formatTime12Hr(solarNoonDec + muhurtaHalf)}`;
+  const brahmaMuhurat = `${formatTime12Hr(tSunrise - 1.6)} - ${formatTime12Hr(tSunrise - 0.8)}`;
+
+  // Astronomical Moonrise & Moonset via astronomy-engine Observer
+  let moonriseStr = '01:30 PM';
+  let moonsetStr = '01:15 AM';
+  try {
+    const observer = new Astronomy.Observer(lat, lon, 0);
+    const localMidnightUtc = new Date(Date.UTC(year, month - 1, day, 0, 0, 0) - utcOffset * 3600000);
+    const moonRiseEvt = Astronomy.SearchRiseSet(Astronomy.Body.Moon, observer, +1, localMidnightUtc, 1.2);
+    const moonSetEvt = Astronomy.SearchRiseSet(Astronomy.Body.Moon, observer, -1, localMidnightUtc, 1.2);
+    if (moonRiseEvt?.date) moonriseStr = formatUtcDateToLocal12Hr(moonRiseEvt.date, utcOffset) || moonriseStr;
+    if (moonSetEvt?.date) moonsetStr = formatUtcDateToLocal12Hr(moonSetEvt.date, utcOffset) || moonsetStr;
+  } catch {
+    // Fallback preserved above
+  }
+
+  // Sidereal Sun & Moon longitudes at local sunrise
+  const sunriseUtcMs = Date.UTC(year, month - 1, day, 0, 0, 0) + (tSunrise - utcOffset) * 3600000;
+  const astroTime = Astronomy.MakeTime(new Date(sunriseUtcMs));
+  const T = astroTime.tt / 36525.0;
+  const tilt = Astronomy.e_tilt(astroTime);
+  const ayanamsha = normalizeDeg(23.857092 + (5029.0966 * T + 1.11161 * T * T) / 3600.0 + tilt.dpsi / 3600.0);
+
+  let sunLong = normalizeDeg(Astronomy.SunPosition(astroTime).elon - ayanamsha);
+  let moonLong = normalizeDeg(Astronomy.EclipticGeoMoon(astroTime).lon - ayanamsha);
+  if (reckoning === 'vakya') {
+    // Vakya traditional mean-motion offset (~ -0.32 deg Sun / -0.45 deg Moon traditional correction)
+    sunLong = normalizeDeg(sunLong - 0.32);
+    moonLong = normalizeDeg(moonLong - 0.45);
+  }
+
+  const diff = normalizeDeg(moonLong - sunLong);
   const tithiIndex = Math.floor(diff / 12) % 30;
+  const tithiProgressPct = Math.round(((diff % 12) / 12) * 100);
   const tithiName = TITHIS[tithiIndex];
   const paksha = tithiIndex < 15 ? 'Shukla Paksha' : 'Krishna Paksha';
 
   const nakshatraIndex = Math.floor(moonLong / (360 / 27)) % 27;
   const nakshatra = NAKSHATRAS[nakshatraIndex];
 
-  const yogaIndex = Math.floor(((sunLong + moonLong) % 360) / (360 / 27)) % 27;
-  const yoga = YOGAS[yogaIndex];
+  const yogaIndex = Math.floor(normalizeDeg(sunLong + moonLong) / (360 / 27)) % 27;
+  const yogaName = YOGAS[yogaIndex];
+  const inauspiciousYogas = new Set(['Vishkumbha', 'Atiganda', 'Shoola', 'Ganda', 'Vyaghata', 'Vajra', 'Vyatipata', 'Parigha', 'Vaidhriti']);
   const karanaIndex = Math.floor(diff / 6) % 60;
-  const karana = KARANAS[karanaIndex % 11];
+  const karanaName = KARANAS[karanaIndex % 11];
+  const karanaType = karanaName === 'Vishti' ? 'Avoid auspicious ceremonies (Bhadra)' : 'Favourable for regular ceremonies';
 
-  const rahuKalamSlots = ['04:30 PM - 06:00 PM', '07:30 AM - 09:00 AM', '03:00 PM - 04:30 PM', '12:00 PM - 01:30 PM', '01:30 PM - 03:00 PM', '10:30 AM - 12:00 PM', '09:00 AM - 10:30 AM'];
-  const yamagandamSlots = ['12:00 PM - 01:30 PM', '10:30 AM - 12:00 PM', '09:00 AM - 10:30 AM', '07:30 AM - 09:00 AM', '06:00 AM - 07:30 AM', '03:00 PM - 04:30 PM', '01:30 PM - 03:00 PM'];
-  const gulikaSlots = ['03:00 PM - 04:30 PM', '01:30 PM - 03:00 PM', '12:00 PM - 01:30 PM', '10:30 AM - 12:00 PM', '09:00 AM - 10:30 AM', '07:30 AM - 09:00 AM', '06:00 AM - 07:30 AM'];
+  const ayana = sunLong >= 270 || sunLong < 90 ? 'Uttarayana' : 'Dakshinayana';
+  const rituNames = ['Vasanta (Spring)', 'Grishma (Summer)', 'Varsha (Monsoon)', 'Sharad (Autumn)', 'Hemanta (Pre-Winter)', 'Shishira (Winter)'];
+  const ritu = rituNames[Math.floor(sunLong / 60) % 6];
+
+  const tamilDate = computePanchangTamilDate(year, month, day, lat, lon, utcOffset);
+  const isoDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  const formattedDate = new Date(year, month - 1, day).toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
 
   return {
-    date: date.toISOString().split('T')[0],
+    date: isoDate,
+    formattedDate,
+    city,
+    reckoning,
+    tamilDate,
+    vaar: weekdays[weekdayIndex],
     weekday: weekdays[weekdayIndex],
-    tithi: { name: tithiName, paksha, index: tithiIndex + 1 },
+    tithi: { name: tithiName, paksha, index: (tithiIndex % 15) + 1, rawIndex: tithiIndex + 1, progress: `${tithiProgressPct}% elapsed` },
     nakshatra: { name: nakshatra.name, lord: nakshatra.lord, deity: nakshatra.deity, index: nakshatraIndex + 1 },
-    yoga: { name: yoga, index: yogaIndex + 1 },
-    karana: { name: karana, index: karanaIndex + 1 },
-    rahuKalam: rahuKalamSlots[weekdayIndex],
-    yamagandam: yamagandamSlots[weekdayIndex],
-    gulikaKalam: gulikaSlots[weekdayIndex],
+    yoga: { name: yogaName, nature: inauspiciousYogas.has(yogaName) ? 'Inauspicious' : 'Auspicious', index: yogaIndex + 1 },
+    karana: { name: karanaName, type: karanaType, index: karanaIndex + 1 },
+    rahuKalam,
+    yamagandam,
+    gulikaKalam,
+    timings: {
+      abhijitMuhurat,
+      brahmaMuhurat,
+      amritKalam,
+      rahuKalam,
+      yamagandam,
+      gulikaKalam
+    },
     sunMoonTimes: {
-      sunrise: '06:16 AM',
-      sunset: '05:50 PM',
-      moonrise: '01:30 PM',
-      moonset: '01:15 AM'
+      sunrise: formatTime12Hr(tSunrise),
+      sunset: formatTime12Hr(tSunset),
+      moonrise: moonriseStr,
+      moonset: moonsetStr,
+      sunriseDec: Number(tSunrise.toFixed(3)),
+      sunsetDec: Number(tSunset.toFixed(3))
+    },
+    astronomicalData: {
+      vikramSamvat: String(year + (month >= 4 ? 57 : 56)),
+      shakaSamvat: String(year - (month >= 4 || (month === 3 && day >= 22) ? 78 : 79)),
+      ayana,
+      ritu
     }
   };
 }
