@@ -1982,6 +1982,748 @@ function calculateMarsVenusMatchAnalysis(boyInput = {}, girlInput = {}) {
 }
 
 /**
+ * Section 8: Shashtashtagam (6/8 Rasi, Lagnam & Navamsa D9 Dosha + Cancellation Rules) Analysis
+ */
+const PLANET_FRIENDS_SIMPLE = {
+  Sun:     { friends: ['Moon', 'Mars', 'Jupiter'], enemies: ['Venus', 'Saturn'] },
+  Moon:    { friends: ['Sun', 'Mercury'], enemies: [] },
+  Mars:    { friends: ['Sun', 'Moon', 'Jupiter'], enemies: ['Mercury'] },
+  Mercury: { friends: ['Sun', 'Venus'], enemies: ['Moon'] },
+  Jupiter: { friends: ['Sun', 'Moon', 'Mars'], enemies: ['Mercury', 'Venus'] },
+  Venus:   { friends: ['Mercury', 'Saturn'], enemies: ['Sun', 'Moon'] },
+  Saturn:  { friends: ['Mercury', 'Venus'], enemies: ['Sun', 'Moon', 'Mars'] },
+};
+
+function evaluateLordRelation(lordA, lordB) {
+  if (!lordA || !lordB) {
+    return { key: 'neutral', en: 'Neutral', ta: 'சமம்', isFriendlyOrSame: false };
+  }
+  if (lordA === lordB) {
+    return { key: 'same', en: 'Same Lord (Strong)', ta: 'ஒரே அதிபதி (உத்தமம்)', isFriendlyOrSame: true };
+  }
+  const fA = PLANET_FRIENDS_SIMPLE[lordA] || { friends: [], enemies: [] };
+  const fB = PLANET_FRIENDS_SIMPLE[lordB] || { friends: [], enemies: [] };
+  const aFrB = fA.friends.includes(lordB);
+  const bFrA = fB.friends.includes(lordA);
+  const aEnB = fA.enemies.includes(lordB);
+  const bEnA = fB.enemies.includes(lordA);
+
+  if (aFrB && bFrA) {
+    return { key: 'mutual_friend', en: 'Mutual Friends', ta: 'பரஸ்பர நட்பு', isFriendlyOrSame: true };
+  }
+  if ((aFrB && !bEnA) || (bFrA && !aEnB)) {
+    return { key: 'friendly', en: 'Friendly', ta: 'நட்பு', isFriendlyOrSame: true };
+  }
+  if (aEnB && bEnA) {
+    return { key: 'enemy', en: 'Mutual Enemies', ta: 'பரஸ்பர பகை', isFriendlyOrSame: false };
+  }
+  return { key: 'neutral', en: 'Mixed / Neutral', ta: 'சமம் / கலப்பு', isFriendlyOrSame: false };
+}
+
+function getNavamsaSignIndex(sidLon) {
+  const deg = normalizeDeg(sidLon);
+  const d1 = Math.floor(deg / 30) % 12;
+  const padaInSign = Math.floor((deg % 30) / (30 / 9));
+  const startSign = [0, 9, 6, 3][d1 % 4];
+  return (startSign + padaInSign) % 12;
+}
+
+const SUBHA_SHASHTASHTAKAM_PAIRS = [
+  [0, 7], [7, 0],   // Aries <-> Scorpio
+  [1, 6], [6, 1],   // Taurus <-> Libra
+  [2, 9], [9, 2],   // Gemini <-> Capricorn
+  [3, 8], [8, 3],   // Cancer <-> Sagittarius
+  [4, 11], [11, 4], // Leo <-> Pisces
+];
+
+function evaluateShashtashtagamAxis(boyIdx, girlIdx, axisId) {
+  const brideToGroom = ((boyIdx - girlIdx + 12) % 12) + 1;
+  const groomToBride = ((girlIdx - boyIdx + 12) % 12) + 1;
+
+  const boyRasi = RASHIS[boyIdx]?.name || 'Mesha';
+  const boyRasiTa = RASHI_TA_NAMES[boyIdx] || boyRasi;
+  const girlRasi = RASHIS[girlIdx]?.name || 'Mesha';
+  const girlRasiTa = RASHI_TA_NAMES[girlIdx] || girlRasi;
+
+  const boyLord = RASHIS[boyIdx]?.lord || 'Mars';
+  const girlLord = RASHIS[girlIdx]?.lord || 'Mars';
+  const lordRel = evaluateLordRelation(boyLord, girlLord);
+
+  const is68 = brideToGroom === 6 || brideToGroom === 8;
+  const is212 = brideToGroom === 2 || brideToGroom === 12;
+  const isSubhaPair = is68 && SUBHA_SHASHTASHTAKAM_PAIRS.some(([b, g]) => boyIdx === b && girlIdx === g);
+
+  let status = 'favorable';
+  let statusEn = 'No 6/8 Dosha (Favorable)';
+  let statusTa = 'ஷஷ்டாஷ்டகம் இல்லை (நல்லது)';
+
+  if (isSubhaPair) {
+    status = 'subha';
+    statusEn = 'Subha Shashtashtakam (Auspicious 6/8 Exemption)';
+    statusTa = 'சுப ஷஷ்டாஷ்டகம் (நற்பொருத்தம்)';
+  } else if (is68 && lordRel.isFriendlyOrSame) {
+    status = 'mitigated';
+    statusEn = '6/8 Mitigated by Friendly Lords';
+    statusTa = 'அதிபதி நட்பால் 6/8 தோஷம் தணிவு';
+  } else if (is68) {
+    status = 'asubha';
+    statusEn = 'Asubha Shashtashtakam (6/8 Mismatch)';
+    statusTa = 'அசுப ஷஷ்டாஷ்டகம் (6/8 தோஷம்)';
+  } else if (is212) {
+    status = 'dwidwadasam';
+    statusEn = 'Dwidwadasam (2/12 Placement)';
+    statusTa = 'துவித்வாதசம் (2/12 அமைப்பு)';
+  }
+
+  return {
+    axisId,
+    boyIdx,
+    girlIdx,
+    boyRasi,
+    boyRasiTa,
+    girlRasi,
+    girlRasiTa,
+    boyLord,
+    girlLord,
+    lordRel,
+    brideToGroom,
+    groomToBride,
+    is68,
+    is212,
+    isSubhaPair,
+    status,
+    statusEn,
+    statusTa
+  };
+}
+
+function calculateShashtashtagamAnalysis(boyInput = {}, girlInput = {}) {
+  const boyGrahas = computePersonGrahas(boyInput);
+  const girlGrahas = computePersonGrahas(girlInput);
+
+  const buildPersonSummary = (g) => {
+    const moonIdx = g.rashis.moon;
+    const lagnaIdx = g.rashis.lagna;
+    const jupIdx = g.rashis.jupiter;
+    const navamsaMoonIdx = getNavamsaSignIndex(g.longitudes.moon);
+    const navamsaLagnaIdx = getNavamsaSignIndex(g.longitudes.ascendant);
+    return {
+      moonRasiIdx: moonIdx,
+      moonRasi: RASHIS[moonIdx].name,
+      moonRasiTa: RASHI_TA_NAMES[moonIdx],
+      moonLord: RASHIS[moonIdx].lord,
+      lagnaRasiIdx: lagnaIdx,
+      lagnaRasi: RASHIS[lagnaIdx].name,
+      lagnaRasiTa: RASHI_TA_NAMES[lagnaIdx],
+      lagnaLord: RASHIS[lagnaIdx].lord,
+      navamsaMoonIdx,
+      navamsaMoonRasi: RASHIS[navamsaMoonIdx].name,
+      navamsaMoonRasiTa: RASHI_TA_NAMES[navamsaMoonIdx],
+      navamsaLagnaIdx,
+      jupAspectsMoon: [0, 4, 6, 8].includes((moonIdx - jupIdx + 12) % 12),
+      jupAspectsLagna: [0, 4, 6, 8].includes((lagnaIdx - jupIdx + 12) % 12),
+      chartBoxes: buildSouthIndianChart(g, { isManglik: false, houses: { lagna: 1, moon: 1, venus: 1 } })
+    };
+  };
+
+  const boy = buildPersonSummary(boyGrahas);
+  const girl = buildPersonSummary(girlGrahas);
+
+  const rasiAxis = evaluateShashtashtagamAxis(boy.moonRasiIdx, girl.moonRasiIdx, 'rasi');
+  const lagnaAxis = evaluateShashtashtagamAxis(boy.lagnaRasiIdx, girl.lagnaRasiIdx, 'lagna');
+  const navamsaAxis = evaluateShashtashtagamAxis(boy.navamsaMoonIdx, girl.navamsaMoonIdx, 'navamsa');
+
+  // Cancellation (Bhanga) checklist
+  const cancellations = [
+    {
+      id: 'lord_friendship',
+      active: rasiAxis.lordRel.isFriendlyOrSame,
+      labelEn: 'Rasi Lords Same / Mutual Friends (Rasi Adhipathi)',
+      labelTa: 'ராசி அதிபதிகள் ஒரே கிரகம் அல்லது நட்பு'
+    },
+    {
+      id: 'lagna_clear',
+      active: lagnaAxis.status !== 'asubha',
+      labelEn: 'Janma Lagnam Free from Asubha 6/8 Dosha',
+      labelTa: 'ஜன்ம லக்னத்தில் அசுப ஷஷ்டாஷ்டகம் இல்லை'
+    },
+    {
+      id: 'navamsa_harmony',
+      active: navamsaAxis.status === 'favorable' || navamsaAxis.status === 'subha' || navamsaAxis.lordRel.isFriendlyOrSame,
+      labelEn: 'Navamsa (D9) Moon Rasi Alignment Favorable',
+      labelTa: 'நவாம்ச (D9) சந்திர ராசி இணக்கம் சாதகமாக உள்ளது'
+    },
+    {
+      id: 'jupiter_grace',
+      active: boy.jupAspectsMoon || girl.jupAspectsMoon || boy.jupAspectsLagna || girl.jupAspectsLagna,
+      labelEn: 'Benefic Jupiter Aspect on Moon / Lagnam',
+      labelTa: 'சந்திரன் அல்லது லக்னம் மீது குரு பார்வை (சுப பலம்)'
+    },
+    {
+      id: 'nadi_diff',
+      active: (boyGrahas.starObj?.nadi && girlGrahas.starObj?.nadi && boyGrahas.starObj.nadi !== girlGrahas.starObj.nadi) || false,
+      labelEn: 'Distinct Nadi Support (Physiological Balance)',
+      labelTa: 'நாடி வேறுபாடு (உடல் நல சமநிலை ஆதரவு)'
+    }
+  ];
+
+  const activeCancelCount = cancellations.filter((c) => c.active).length;
+
+  let overallStatus = 'clear';
+  let statusLabelEn = 'Clear — No Shashtashtagam Dosha';
+  let statusLabelTa = 'சுபம் — ஷஷ்டாஷ்டக தோஷம் இல்லை';
+  let score = 88;
+  let verdictEn = '';
+  let verdictTa = '';
+
+  if (rasiAxis.isSubhaPair) {
+    overallStatus = 'subha';
+    statusLabelEn = 'Subha Shashtashtakam (Auspicious Exemption)';
+    statusLabelTa = 'சுப ஷஷ்டாஷ்டகம் (நற்பொருத்தம்)';
+    score = Math.min(94, 78 + activeCancelCount * 3);
+    verdictEn = `Moon Rasis are 6/8 (${rasiAxis.girlRasi} ↔ ${rasiAxis.boyRasi}), but Deva Keralam grants Subha Shashtashtakam exemption due to lord harmony (${rasiAxis.lordRel.en}).`;
+    verdictTa = `மணமகள்–மணமகன் ராசிகள் 6/8 நிலையில் (${rasiAxis.girlRasiTa} ↔ ${rasiAxis.boyRasiTa}) இருந்தாலும், தேவகேரளம் விதிப்படி சுப ஷஷ்டாஷ்டகமாக உத்தம பலன் தரும்.`;
+  } else if (rasiAxis.is68) {
+    if (activeCancelCount >= 3 || (rasiAxis.lordRel.isFriendlyOrSame && lagnaAxis.status !== 'asubha')) {
+      overallStatus = 'cancelled';
+      statusLabelEn = '6/8 Dosha Mitigated / Cancelled (Bhanga)';
+      statusLabelTa = 'ஷஷ்டாஷ்டக தோஷம் நிவர்த்தி (பங்கம்)';
+      score = Math.min(78, 56 + activeCancelCount * 5);
+      verdictEn = `Moon Rasi shows 6/8 spacing (${rasiAxis.brideToGroom}/${rasiAxis.groomToBride}), but ${activeCancelCount} classical cancellation factors neutralize friction and support stability.`;
+      verdictTa = `ராசியில் 6/8 நிலை (${rasiAxis.brideToGroom}/${rasiAxis.groomToBride}) இருந்தாலும், ${activeCancelCount} சாஸ்திர நிவர்த்தி காரணிகள் தோஷத்தைத் தணிக்கின்றன.`;
+    } else {
+      overallStatus = 'dosha';
+      statusLabelEn = 'Asubha Shashtashtakam Present — Care Needed';
+      statusLabelTa = 'அசுப ஷஷ்டாஷ்டகம் — கவனம் & பரிகாரம் தேவை';
+      score = Math.max(36, 42 + activeCancelCount * 4 - (lagnaAxis.status === 'asubha' ? 6 : 0));
+      verdictEn = `Moon Rasis stand in 6/8 (${rasiAxis.girlRasi} ↔ ${rasiAxis.boyRasi}) with ${rasiAxis.lordRel.en} lordship. Detailed astrologer review & Shiva-Parvati / Navagraha pariharam advised.`;
+      verdictTa = `ராசிகள் 6/8 அசுப ஷஷ்டாஷ்டகத்தில் (${rasiAxis.girlRasiTa} ↔ ${rasiAxis.boyRasiTa}) உள்ளதால் தசாசந்தி & ஜாதக பலம் சரிபார்த்து பரிகாரம் செய்வது நன்று.`;
+    }
+  } else if (rasiAxis.is212) {
+    if (lagnaAxis.status === 'asubha') {
+      overallStatus = 'cancelled';
+      statusLabelEn = '2/12 in Rasi (6/8 in Lagnam)';
+      statusLabelTa = 'ராசியில் 2/12 (லக்னத்தில் 6/8)';
+      score = 58;
+      verdictEn = 'Moon Rasis are 2/12 while Janma Lagnams stand 6/8; look at lord friendship and Navamsa strength for final balance.';
+      verdictTa = 'சந்திர ராசி 2/12 அமைப்பிலும் ஜன்ம லக்னம் 6/8 அமைப்பிலும் உள்ளது; நவாம்ச பலம் கொண்டு முடிவு எடுக்கவும்.';
+    } else {
+      overallStatus = 'dwidwadasam';
+      statusLabelEn = 'No 6/8 Dosha (Dwidwadasam 2/12)';
+      statusLabelTa = '6/8 இல்லை (துவித்வாதசம் 2/12)';
+      score = Math.min(76, 62 + activeCancelCount * 3);
+      verdictEn = `No 6/8 Shashtashtagam in Moon Rasi; gentle 2/12 spacing (${rasiAxis.brideToGroom}/${rasiAxis.groomToBride}) balances smoothly when lords/Navamsa align.`;
+      verdictTa = 'சந்திர ராசியில் 6/8 ஷஷ்டாஷ்டகம் இல்லை; 2/12 நிலை அதிபதி நட்பால் சமநிலை பெறும்.';
+    }
+  } else {
+    if (lagnaAxis.status === 'asubha') {
+      overallStatus = 'cancelled';
+      statusLabelEn = 'Rasi Clear (Lagna 6/8 Present)';
+      statusLabelTa = 'ராசி சுபம் (லக்னத்தில் 6/8)';
+      score = 74;
+      verdictEn = `Moon Rasis (${rasiAxis.brideToGroom}/${rasiAxis.groomToBride}) are completely free from Shashtashtagam! Only Janma Lagnam sits 6/8, which carries lighter weight when Moon & D9 agree.`;
+      verdictTa = `சந்திர ராசிகள் (${rasiAxis.brideToGroom}/${rasiAxis.groomToBride}) ஷஷ்டாஷ்டக தோஷமற்றவை! லக்ன 6/8 அமைப்பை ராசிப் பொருத்தம் சமநிலை செய்கிறது.`;
+    } else {
+      overallStatus = 'clear';
+      statusLabelEn = 'Clear — No Shashtashtagam Dosha';
+      statusLabelTa = 'சுபம் — ஷஷ்டாஷ்டக தோஷம் இல்லை';
+      score = Math.min(96, 82 + activeCancelCount * 3);
+      verdictEn = `Both Moon Rasi (${rasiAxis.brideToGroom}/${rasiAxis.groomToBride}) and Janma Lagnam (${lagnaAxis.brideToGroom}/${lagnaAxis.groomToBride}) are completely free from 6/8 Shashtashtagam conflict.`;
+      verdictTa = `சந்திர ராசி (${rasiAxis.brideToGroom}/${rasiAxis.groomToBride}) மற்றும் ஜன்ம லக்னம் (${lagnaAxis.brideToGroom}/${lagnaAxis.groomToBride}) இரண்டிலும் 6/8 ஷஷ்டாஷ்டக தோஷம் இல்லை.`;
+    }
+  }
+
+  return {
+    boy,
+    girl,
+    rasiAxis,
+    lagnaAxis,
+    navamsaAxis,
+    cancellations,
+    activeCancelCount,
+    overallStatus,
+    statusLabelEn,
+    statusLabelTa,
+    score,
+    verdictEn,
+    verdictTa
+  };
+}
+
+/**
+ * Section 9: Chandran (Moon) Compatibility, Yogas & Mental Harmony Analysis
+ */
+function evaluatePersonChandran(grahas) {
+  const rasiOf = (lon) => Math.floor(normalizeDeg(lon) / 30) % 12;
+  const lagnaIdx = grahas.rashis.lagna;
+  const moonIdx = grahas.rashis.moon;
+  const marsIdx = grahas.rashis.mars;
+  const merIdx = grahas.rashis.mercury;
+  const jupIdx = grahas.rashis.jupiter;
+  const venIdx = grahas.rashis.venus;
+  const satIdx = grahas.rashis.saturn;
+  const rahuIdx = grahas.rashis.rahu;
+  const ketuIdx = grahas.rashis.ketu;
+
+  const moonLon = grahas.longitudes.astroMoon ?? grahas.longitudes.moon;
+  const sunLon = grahas.longitudes.sun;
+  const diff = normalizeDeg(moonLon - sunLon);
+  const tithiNum = (Math.floor(diff / 12) % 30) + 1;
+  const isValarpirai = tithiNum <= 15;
+  const illuminationPct = Math.round(((1 - Math.cos((diff * Math.PI) / 180)) / 2) * 100);
+
+  const moonHouseFromLagna = ((moonIdx - lagnaIdx + 12) % 12) + 1;
+  const moonDig = PLANET_DIGNITY_SIMPLE('moon', moonIdx);
+
+  // Neechabhanga check if Moon is debilitated in Scorpio (idx 7)
+  const marsFromMoon = ((marsIdx - moonIdx + 12) % 12) + 1;
+  const marsFromLagna = ((marsIdx - lagnaIdx + 12) % 12) + 1;
+  const venFromMoon = ((venIdx - moonIdx + 12) % 12) + 1;
+  const isNeechabhanga = moonDig.key === 'neecha' && (
+    [1, 4, 7, 10].includes(marsFromMoon) ||
+    [1, 4, 7, 10].includes(marsFromLagna) ||
+    marsIdx === 9 || // Mars exalted
+    [1, 4, 7, 10].includes(venFromMoon) // Taurus lord Venus in Kendra from Moon
+  );
+
+  // Navamsa (D9) Moon
+  const d9MoonIdx = getNavamsaSignIndex(moonLon);
+  const d9Dig = PLANET_DIGNITY_SIMPLE('moon', d9MoonIdx);
+
+  // Classical Moon Yogas & Doshas
+  const jupFromMoon = ((jupIdx - moonIdx + 12) % 12) + 1;
+  const gajakesariYoga = [1, 4, 7, 10].includes(jupFromMoon);
+  const jupAspectsMoon = [0, 4, 6, 8].includes((moonIdx - jupIdx + 12) % 12);
+  const chandraMangalaYoga = marsFromMoon === 1 || marsFromMoon === 7;
+
+  // Kemadruma check (no physical planet other than Sun/Rahu/Ketu in 2nd or 12th from Moon)
+  const otherPlanets = [marsIdx, merIdx, jupIdx, venIdx, satIdx];
+  const has2ndOr12thFromMoon = otherPlanets.some((p) => {
+    const h = ((p - moonIdx + 12) % 12) + 1;
+    return h === 2 || h === 12;
+  });
+  const hasKendraFromMoonOrLagna = [marsIdx, merIdx, jupIdx, venIdx, satIdx].some((p) => {
+    const hM = ((p - moonIdx + 12) % 12) + 1;
+    const hL = ((p - lagnaIdx + 12) % 12) + 1;
+    return [1, 4, 7, 10].includes(hM) || [1, 4, 7, 10].includes(hL);
+  });
+  const kemadrumaStatus = has2ndOr12thFromMoon
+    ? 'supported'
+    : hasKendraFromMoonOrLagna
+    ? 'cancelled'
+    : 'active';
+
+  // Punarphoo (Saturn conjunct/aspecting Moon: 1st, 3rd, 7th, 10th forward from Saturn)
+  const punarphooDosha = [0, 2, 6, 9].includes((moonIdx - satIdx + 12) % 12);
+  // Chandra-Rahu/Ketu Grahan association
+  const grahanYoga = moonIdx === rahuIdx || moonIdx === ketuIdx;
+
+  // Compute Chandran score [32..98]
+  let score = 58;
+  if (moonDig.key === 'utcha' || moonDig.key === 'aatchi') score += 14;
+  else if (isNeechabhanga) score += 6;
+  else if (moonDig.key === 'neecha') score -= 10;
+
+  if (isValarpirai || illuminationPct >= 45) score += 8;
+  else if (illuminationPct < 20) score -= 5;
+
+  if ([1, 4, 5, 7, 9, 10, 11].includes(moonHouseFromLagna)) score += 7;
+  else if ([6, 8, 12].includes(moonHouseFromLagna)) score -= 6;
+
+  if (gajakesariYoga) score += 10;
+  else if (jupAspectsMoon) score += 6;
+  if (chandraMangalaYoga) score += 4;
+  if (kemadrumaStatus === 'active') score -= 8;
+  if (punarphooDosha) score -= 5;
+  if (grahanYoga) score -= 6;
+
+  score = Math.max(32, Math.min(98, score));
+  const status = score >= 74 ? 'Strong' : score >= 55 ? 'Balanced' : 'Needs Care';
+  const statusTa = score >= 74 ? 'உத்தமம் (பலம்)' : score >= 55 ? 'மத்திமம் (சமநிலை)' : 'கவனம் தேவை';
+
+  const yogas = [
+    {
+      id: 'gajakesari',
+      active: gajakesariYoga,
+      tone: 'good',
+      en: gajakesariYoga ? 'Gajakesari Yoga (Wisdom & Grace)' : 'No Gajakesari Yoga',
+      ta: gajakesariYoga ? 'கஜகேசரி யோகம் (அறிவு & செல்வம்)' : 'கஜகேசரி யோகம் இல்லை'
+    },
+    {
+      id: 'chandra_mangala',
+      active: chandraMangalaYoga,
+      tone: 'good',
+      en: chandraMangalaYoga ? 'Chandra–Mangala Yoga (Vitality)' : 'No Chandra–Mangala Yoga',
+      ta: chandraMangalaYoga ? 'சந்திர–மங்கள யோகம் (உறுதி & வளம்)' : 'சந்திர–மங்கள யோகம் இல்லை'
+    },
+    {
+      id: 'kemadruma',
+      active: kemadrumaStatus !== 'supported',
+      tone: kemadrumaStatus === 'active' ? 'warn' : 'good',
+      en:
+        kemadrumaStatus === 'supported'
+          ? 'Moon Flanked (Sunafa/Anafa Support)'
+          : kemadrumaStatus === 'cancelled'
+          ? 'Kemadruma Cancelled (Kendra Bhanga)'
+          : 'Kemadruma Sensitivity (Needs Care)',
+      ta:
+        kemadrumaStatus === 'supported'
+          ? 'சந்திரனுக்கு 2/12 கிரக பலம் (சுனபா/அனபா)'
+          : kemadrumaStatus === 'cancelled'
+          ? 'கேமதுரும தோஷம் நிவர்த்தி (கேந்திர பங்கம்)'
+          : 'கேமதுரும அமைப்பு (மனத் தனிமை கவனம்)'
+    },
+    {
+      id: 'punarphoo',
+      active: punarphooDosha,
+      tone: punarphooDosha ? 'warn' : 'good',
+      en: punarphooDosha ? 'Punarphoo (Saturn–Moon Aspect)' : 'Free from Punarphoo',
+      ta: punarphooDosha ? 'புனர்பூ தோஷம் (சனி–சந்திரன் தொடர்பு)' : 'புனர்பூ தோஷம் இல்லை'
+    },
+    {
+      id: 'grahan',
+      active: grahanYoga,
+      tone: grahanYoga ? 'warn' : 'good',
+      en: grahanYoga ? 'Chandra–Rahu/Ketu Grahan Association' : 'Moon Free from Eclipse Axis',
+      ta: grahanYoga ? 'சந்திர கிரகண அமைப்பு (ராகு/கேது சேர்க்கை)' : 'ராகு/கேது கிரகண தொடர்பு இல்லை'
+    }
+  ];
+
+  const dignityEn = isNeechabhanga ? 'Neechabhanga (Debility Cancelled)' : moonDig.en;
+  const dignityTa = isNeechabhanga ? 'நீசபங்கம் (தோஷ நிவர்த்தி)' : moonDig.ta;
+
+  return {
+    moonRasiIdx: moonIdx,
+    moonRasi: RASHIS[moonIdx].name,
+    moonRasiTa: RASHI_TA_NAMES[moonIdx],
+    lagnaRasiIdx: lagnaIdx,
+    lagnaRasi: RASHIS[lagnaIdx].name,
+    lagnaRasiTa: RASHI_TA_NAMES[lagnaIdx],
+    moonHouseFromLagna,
+    dignityEn,
+    dignityTa,
+    dignityKey: moonDig.key,
+    isNeechabhanga,
+    isValarpirai,
+    illuminationPct,
+    d9MoonIdx,
+    d9MoonRasi: RASHIS[d9MoonIdx].name,
+    d9MoonRasiTa: RASHI_TA_NAMES[d9MoonIdx],
+    d9DignityEn: d9Dig.en,
+    d9DignityTa: d9Dig.ta,
+    gajakesariYoga,
+    jupAspectsMoon,
+    chandraMangalaYoga,
+    kemadrumaStatus,
+    punarphooDosha,
+    grahanYoga,
+    yogas,
+    score,
+    status,
+    statusTa,
+    chartBoxes: buildSouthIndianChart(grahas, { isManglik: false, houses: { lagna: 1, moon: 1, venus: 1 } })
+  };
+}
+
+function calculateChandranMatchAnalysis(boyInput = {}, girlInput = {}) {
+  const boyGrahas = computePersonGrahas(boyInput);
+  const girlGrahas = computePersonGrahas(girlInput);
+  const boy = evaluatePersonChandran(boyGrahas);
+  const girl = evaluatePersonChandran(girlGrahas);
+
+  // Couple Moon-to-Moon & Moon-to-Partner Lagnam
+  const moonToMoon = ((boy.moonRasiIdx - girl.moonRasiIdx + 12) % 12) + 1;
+  const isFavorableHouse = (h) => [1, 3, 4, 5, 7, 9, 10, 11].includes(h);
+  const moonToMoonGood = isFavorableHouse(moonToMoon);
+
+  const brideMoonInGroomLagna = ((girl.moonRasiIdx - boy.lagnaRasiIdx + 12) % 12) + 1;
+  const groomMoonInBrideLagna = ((boy.moonRasiIdx - girl.lagnaRasiIdx + 12) % 12) + 1;
+  const crossMoonLagnaGood = isFavorableHouse(brideMoonInGroomLagna) && isFavorableHouse(groomMoonInBrideLagna);
+
+  const d9MoonDist = ((boy.d9MoonIdx - girl.d9MoonIdx + 12) % 12) + 1;
+  const d9MoonRel = evaluateLordRelation(RASHIS[boy.d9MoonIdx]?.lord, RASHIS[girl.d9MoonIdx]?.lord);
+  const d9HarmonyGood = isFavorableHouse(d9MoonDist) || d9MoonRel.isFriendlyOrSame;
+
+  let combinedScore = Math.round((boy.score + girl.score) / 2);
+  if (moonToMoonGood) combinedScore += 5;
+  else combinedScore -= 4;
+  if (crossMoonLagnaGood) combinedScore += 4;
+  if (d9HarmonyGood) combinedScore += 4;
+  combinedScore = Math.max(32, Math.min(98, combinedScore));
+
+  let verdictEn = '';
+  let verdictTa = '';
+  if (combinedScore >= 74) {
+    verdictEn = 'Harmonious Chandran Alignment — Deep emotional empathy, mental peace & affectionate companionship.';
+    verdictTa = 'உத்தம சந்திர பலம் & மன இணக்கம் — ஆழமான மனப் புரிதல், குடும்ப அமைதி மற்றும் அன்பு சிறப்பாக உள்ளது.';
+  } else if (combinedScore >= 56) {
+    verdictEn = 'Balanced Chandran Placement — Steady mental rapport with mutual care and supportive Dasha timing.';
+    verdictTa = 'சமநிலையான சந்திர அமைப்பு — பரஸ்பர அன்பும் நிதானமான மனப் புரிதலும் குடும்பத்தை வழிநடத்தும்.';
+  } else {
+    verdictEn = 'Sensitive Chandran Alignment — Emotional patience advised; Monday Shiva–Parameshwari & Pournami worship recommended.';
+    verdictTa = 'கவனிக்க வேண்டிய சந்திர நிலை — மன அமைதிக்கு திங்கட்கிழமை சிவன்–பார்வதி & பௌர்ணமி வழிபாடு சிறந்தது.';
+  }
+
+  return {
+    boy,
+    girl,
+    moonToMoon,
+    moonToMoonGood,
+    brideMoonInGroomLagna,
+    groomMoonInBrideLagna,
+    crossMoonLagnaGood,
+    d9MoonDist,
+    d9MoonRel,
+    d9HarmonyGood,
+    combinedScore,
+    verdictEn,
+    verdictTa
+  };
+}
+
+/**
+ * Section 10: Guru (Jupiter) Bala, Guru Paarvai, Yogas & Gochara Transit Analysis
+ */
+function getCurrentTransitJupiterRasi() {
+  try {
+    const nowTime = Astronomy.MakeTime(new Date());
+    const T = nowTime.tt / 36525.0;
+    const tilt = Astronomy.e_tilt(nowTime);
+    const ayanamsha = normalizeDeg(23.857092 + (5029.0966 * T + 1.11161 * T * T) / 3600.0 + tilt.dpsi / 3600.0);
+    const jupSid = normalizeDeg(Astronomy.Ecliptic(Astronomy.GeoVector(Astronomy.Body.Jupiter, nowTime, true)).elon - ayanamsha);
+    return Math.floor(jupSid / 30) % 12;
+  } catch {
+    return 3;
+  }
+}
+
+function evaluatePersonGuru(grahas, transitJupIdx) {
+  const lagnaIdx = grahas.rashis.lagna;
+  const moonIdx = grahas.rashis.moon;
+  const jupIdx = grahas.rashis.jupiter;
+  const venIdx = grahas.rashis.venus;
+  const marsIdx = grahas.rashis.mars;
+  const satIdx = grahas.rashis.saturn;
+  const rahuIdx = grahas.rashis.rahu;
+  const ketuIdx = grahas.rashis.ketu;
+
+  const jupHouseFromLagna = ((jupIdx - lagnaIdx + 12) % 12) + 1;
+  const jupHouseFromMoon = ((jupIdx - moonIdx + 12) % 12) + 1;
+  const jupDig = PLANET_DIGNITY_SIMPLE('jupiter', jupIdx);
+
+  // Neechabhanga check if Jupiter is debilitated in Capricorn (idx 9)
+  const satFromLagna = ((satIdx - lagnaIdx + 12) % 12) + 1;
+  const satFromMoon = ((satIdx - moonIdx + 12) % 12) + 1;
+  const marsFromLagna = ((marsIdx - lagnaIdx + 12) % 12) + 1;
+  const moonFromLagna = ((moonIdx - lagnaIdx + 12) % 12) + 1;
+  const isNeechabhanga = jupDig.key === 'neecha' && (
+    [1, 4, 7, 10].includes(satFromLagna) ||
+    [1, 4, 7, 10].includes(satFromMoon) ||
+    satIdx === 6 || satIdx === 9 || satIdx === 10 || // Saturn exalted or own
+    [1, 4, 7, 10].includes(marsFromLagna) ||
+    [1, 4, 7, 10].includes(moonFromLagna)
+  );
+
+  // Navamsa (D9) Jupiter
+  const d9JupIdx = getNavamsaSignIndex(grahas.longitudes.jupiter);
+  const d9Dig = PLANET_DIGNITY_SIMPLE('jupiter', d9JupIdx);
+
+  // Guru Paarvai (Conjunct 1st, 5th, 7th, 9th aspects forward from Guru)
+  const hasGuruSight = (targetIdx) => [0, 4, 6, 8].includes((targetIdx - jupIdx + 12) % 12);
+  const aspectsLagna = hasGuruSight(lagnaIdx);
+  const aspects2nd = hasGuruSight((lagnaIdx + 1) % 12);
+  const aspects5th = hasGuruSight((lagnaIdx + 4) % 12);
+  const aspects7th = hasGuruSight((lagnaIdx + 6) % 12);
+  const aspectsMoon = hasGuruSight(moonIdx);
+  const aspectsVenus = hasGuruSight(venusIdxSafe(venIdx));
+
+  function venusIdxSafe(v) {
+    return typeof v === 'number' ? v : 0;
+  }
+
+  const blessedTargets = [];
+  if (aspectsLagna) blessedTargets.push({ en: 'Lagnam (Self)', ta: 'லக்னம்' });
+  if (aspects2nd) blessedTargets.push({ en: '2nd Family House', ta: '2-ம் குடும்பம்' });
+  if (aspects5th) blessedTargets.push({ en: '5th Progeny House', ta: '5-ம் புத்திர ஸ்தானம்' });
+  if (aspects7th) blessedTargets.push({ en: '7th Marriage House', ta: '7-ம் களத்திரம்' });
+  if (aspectsMoon) blessedTargets.push({ en: 'Moon (Mind)', ta: 'சந்திரன்' });
+  if (aspectsVenus) blessedTargets.push({ en: 'Venus (Spouse)', ta: 'சுக்கிரன்' });
+
+  // Classical Yogas & Dosha Checks
+  const hamsaYoga = [1, 4, 7, 10].includes(jupHouseFromLagna) && (jupDig.key === 'utcha' || jupDig.key === 'aatchi');
+  const gajakesariYoga = [1, 4, 7, 10].includes(jupHouseFromMoon);
+  const guruMangalaYoga = hasGuruSight(marsIdx);
+  const guruChandalaYoga = jupIdx === rahuIdx || jupIdx === ketuIdx;
+  const kendradhipati = [2, 5, 8, 11].includes(lagnaIdx);
+
+  // Live Gochara Guru Balam (Transit Jupiter in 2, 5, 7, 9, 11 from Natal Moon Rasi)
+  const transitHouseFromMoon = ((transitJupIdx - moonIdx + 12) % 12) + 1;
+  const hasGocharaGuruBalam = [2, 5, 7, 9, 11].includes(transitHouseFromMoon);
+
+  let score = 56;
+  if (jupDig.key === 'utcha' || jupDig.key === 'aatchi') score += 15;
+  else if (isNeechabhanga) score += 7;
+  else if (jupDig.key === 'neecha') score -= 9;
+
+  if ([1, 2, 4, 5, 7, 9, 10, 11].includes(jupHouseFromLagna)) score += 9;
+  else if ([6, 8, 12].includes(jupHouseFromLagna)) score -= 6;
+
+  if (hamsaYoga) score += 8;
+  if (gajakesariYoga) score += 5;
+  if (aspects7th) score += 6;
+  if (aspectsMoon || aspectsVenus) score += 4;
+  if (guruChandalaYoga) score -= 7;
+
+  score = Math.max(32, Math.min(98, score));
+  const status = score >= 74 ? 'Strong' : score >= 55 ? 'Balanced' : 'Needs Care';
+  const statusTa = score >= 74 ? 'உத்தமம் (குரு பலம்)' : score >= 55 ? 'மத்திமம் (சமநிலை)' : 'கவனம் தேவை';
+
+  const yogas = [
+    {
+      id: 'hamsa',
+      active: hamsaYoga,
+      tone: hamsaYoga ? 'good' : 'neutral',
+      en: hamsaYoga ? 'Hamsa Mahapurusha Yoga' : 'No Hamsa Yoga',
+      ta: hamsaYoga ? 'ஹம்ச மகாபுருஷ யோகம் (மிகச் சிறப்பு)' : 'ஹம்ச யோகம் இல்லை'
+    },
+    {
+      id: 'gajakesari',
+      active: gajakesariYoga,
+      tone: gajakesariYoga ? 'good' : 'neutral',
+      en: gajakesariYoga ? 'Gajakesari Yoga' : 'No Gajakesari Yoga',
+      ta: gajakesariYoga ? 'கஜகேசரி யோகம்' : 'கஜகேசரி யோகம் இல்லை'
+    },
+    {
+      id: 'guru_mangala',
+      active: guruMangalaYoga,
+      tone: guruMangalaYoga ? 'good' : 'neutral',
+      en: guruMangalaYoga ? 'Guru–Mangala Yoga' : 'No Guru–Mangala Yoga',
+      ta: guruMangalaYoga ? 'குரு–மங்கள யோகம்' : 'குரு–மங்கள யோகம் இல்லை'
+    },
+    {
+      id: 'guru_chandala',
+      active: guruChandalaYoga,
+      tone: guruChandalaYoga ? 'warn' : 'good',
+      en: guruChandalaYoga ? 'Guru–Chandala Yoga (Rahu/Ketu)' : 'Pure Guru (Free from Nodal Axis)',
+      ta: guruChandalaYoga ? 'குரு–சண்டாள யோகம் (ராகு/கேது சேர்க்கை)' : 'ராகு/கேது கலப்பற்ற சுத்த குரு'
+    },
+    {
+      id: 'kendradhipati',
+      active: kendradhipati,
+      tone: kendradhipati ? 'warn' : 'good',
+      en: kendradhipati ? 'Kendradhipati Lagna Notice' : 'No Kendradhipati Dosha',
+      ta: kendradhipati ? 'கேந்திராதிபத்திய நிலை (உபய லக்னம்)' : 'கேந்திராதிபத்திய தோஷம் இல்லை'
+    }
+  ];
+
+  const dignityEn = isNeechabhanga ? 'Neechabhanga (Cancelled)' : jupDig.en;
+  const dignityTa = isNeechabhanga ? 'நீசபங்கம் (நிவர்த்தி)' : jupDig.ta;
+
+  return {
+    jupRasiIdx: jupIdx,
+    jupRasi: RASHIS[jupIdx].name,
+    jupRasiTa: RASHI_TA_NAMES[jupIdx],
+    lagnaRasiIdx: lagnaIdx,
+    lagnaRasi: RASHIS[lagnaIdx].name,
+    lagnaRasiTa: RASHI_TA_NAMES[lagnaIdx],
+    moonRasiIdx: moonIdx,
+    moonRasi: RASHIS[moonIdx].name,
+    moonRasiTa: RASHI_TA_NAMES[moonIdx],
+    jupHouseFromLagna,
+    jupHouseFromMoon,
+    dignityEn,
+    dignityTa,
+    d9JupIdx,
+    d9JupRasi: RASHIS[d9JupIdx].name,
+    d9JupRasiTa: RASHI_TA_NAMES[d9JupIdx],
+    d9DignityEn: d9Dig.en,
+    d9DignityTa: d9Dig.ta,
+    blessedTargets,
+    aspects7th,
+    aspectsMoon,
+    aspectsVenus,
+    hamsaYoga,
+    guruChandalaYoga,
+    transitJupRasi: RASHIS[transitJupIdx]?.name || 'Cancer',
+    transitJupRasiTa: RASHI_TA_NAMES[transitJupIdx] || 'கடகம்',
+    transitHouseFromMoon,
+    hasGocharaGuruBalam,
+    yogas,
+    score,
+    status,
+    statusTa,
+    chartBoxes: buildSouthIndianChart(grahas, { isManglik: false, houses: { lagna: 1, moon: 1, venus: 1 } })
+  };
+}
+
+function calculateGuruMatchAnalysis(boyInput = {}, girlInput = {}) {
+  const boyGrahas = computePersonGrahas(boyInput);
+  const girlGrahas = computePersonGrahas(girlInput);
+  const transitJupIdx = getCurrentTransitJupiterRasi();
+
+  const boy = evaluatePersonGuru(boyGrahas, transitJupIdx);
+  const girl = evaluatePersonGuru(girlGrahas, transitJupIdx);
+
+  const guruToGuru = ((boy.jupRasiIdx - girl.jupRasiIdx + 12) % 12) + 1;
+  const isFavorableDist = (d) => [1, 3, 4, 5, 7, 9, 10, 11].includes(d);
+  const guruToGuruGood = isFavorableDist(guruToGuru);
+
+  const hasSight = (fromIdx, targetIdx) => [0, 4, 6, 8].includes((targetIdx - fromIdx + 12) % 12);
+  const brideGuruBlessesGroom =
+    hasSight(girl.jupRasiIdx, boy.lagnaRasiIdx) ||
+    hasSight(girl.jupRasiIdx, (boy.lagnaRasiIdx + 6) % 12) ||
+    hasSight(girl.jupRasiIdx, boy.moonRasiIdx);
+  const groomGuruBlessesBride =
+    hasSight(boy.jupRasiIdx, girl.lagnaRasiIdx) ||
+    hasSight(boy.jupRasiIdx, (girl.lagnaRasiIdx + 6) % 12) ||
+    hasSight(boy.jupRasiIdx, girl.moonRasiIdx);
+
+  const d9GuruDist = ((boy.d9JupIdx - girl.d9JupIdx + 12) % 12) + 1;
+  const d9GuruGood = isFavorableDist(d9GuruDist);
+  const gocharaBothReady = boy.hasGocharaGuruBalam && girl.hasGocharaGuruBalam;
+  const gocharaOneReady = boy.hasGocharaGuruBalam || girl.hasGocharaGuruBalam;
+
+  let combinedScore = Math.round((boy.score + girl.score) / 2);
+  if (guruToGuruGood) combinedScore += 4;
+  else combinedScore -= 3;
+  if (brideGuruBlessesGroom) combinedScore += 3;
+  if (groomGuruBlessesBride) combinedScore += 3;
+  if (d9GuruGood) combinedScore += 3;
+  combinedScore = Math.max(32, Math.min(98, combinedScore));
+
+  let verdictEn = '';
+  let verdictTa = '';
+  if (combinedScore >= 74) {
+    verdictEn = 'Auspicious Guru Bala & Paarvai — Strong divine grace, dharmic wisdom, progeny blessing & lifelong marital stability.';
+    verdictTa = 'உத்தம குரு பலம் & குரு பார்வை — தெய்வ அருள், தர்ம சிந்தனை, குடும்ப வளர்ச்சி மற்றும் நீண்ட இல்லற சுபிட்சம் சிறப்பாக உள்ளது.';
+  } else if (combinedScore >= 56) {
+    verdictEn = 'Balanced Guru Placement — Supportive values and steady family progress; Guru grace strengthens key marital houses.';
+    verdictTa = 'சமநிலையான குரு அமைப்பு — நல்ல குடும்ப மதிப்புகளும் சீரான வளர்ச்சியும் உண்டு; சுப தசா காலத்தில் மேலும் சிறக்கும்.';
+  } else {
+    verdictEn = 'Moderate Guru Strength — Thursday Sri Dakshinamurthy / Guru Bhagavan worship & elders’ blessings advised before marriage.';
+    verdictTa = 'மத்திம குரு பலம் — வியாழக்கிழமை ஸ்ரீ தக்ஷிணாமூர்த்தி / குரு பகவான் வழிபாடு மற்றும் பெரியோர்களின் ஆசி சுப பலம் தரும்.';
+  }
+
+  return {
+    boy,
+    girl,
+    transitJupRasi: RASHIS[transitJupIdx]?.name || 'Cancer',
+    transitJupRasiTa: RASHI_TA_NAMES[transitJupIdx] || 'கடகம்',
+    guruToGuru,
+    guruToGuruGood,
+    brideGuruBlessesGroom,
+    groomGuruBlessesBride,
+    d9GuruDist,
+    d9GuruGood,
+    gocharaBothReady,
+    gocharaOneReady,
+    combinedScore,
+    verdictEn,
+    verdictTa
+  };
+}
+
+/**
  * 36 Gunas Ashtakoota Matchmaking
  */
 function calculateKundliMatch(boyBirth, girlBirth) {
@@ -2039,6 +2781,9 @@ function calculateKundliMatch(boyBirth, girlBirth) {
   const puthrasthanamAnalysis = calculatePuthrasthanamAnalysis(boyBirth, girlBirth);
   const pakshaAnalysis = calculatePakshaMatchAnalysis(boyBirth, girlBirth);
   const marsVenusAnalysis = calculateMarsVenusMatchAnalysis(boyBirth, girlBirth);
+  const shashtashtagamAnalysis = calculateShashtashtagamAnalysis(boyBirth, girlBirth);
+  const chandranAnalysis = calculateChandranMatchAnalysis(boyBirth, girlBirth);
+  const guruAnalysis = calculateGuruMatchAnalysis(boyBirth, girlBirth);
 
   return {
     boy: boyBirth,
@@ -2060,7 +2805,10 @@ function calculateKundliMatch(boyBirth, girlBirth) {
     rahuKetuAnalysis: rahuKetuAnalysis,
     puthrasthanamAnalysis: puthrasthanamAnalysis,
     pakshaAnalysis: pakshaAnalysis,
-    marsVenusAnalysis: marsVenusAnalysis
+    marsVenusAnalysis: marsVenusAnalysis,
+    shashtashtagamAnalysis: shashtashtagamAnalysis,
+    chandranAnalysis: chandranAnalysis,
+    guruAnalysis: guruAnalysis
   };
 }
 
@@ -2397,5 +3145,8 @@ module.exports = {
   calculatePuthrasthanamAnalysis,
   calculatePakshaMatchAnalysis,
   calculateMarsVenusMatchAnalysis,
+  calculateShashtashtagamAnalysis,
+  calculateChandranMatchAnalysis,
+  calculateGuruMatchAnalysis,
   getDailyPanchangam,
 };

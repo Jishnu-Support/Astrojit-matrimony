@@ -3,6 +3,7 @@ import { Sun, Moon, ShieldAlert, Award, ChevronLeft, ChevronRight, Sparkles, Mes
 import { useLang } from '../i18n';
 import { API } from '../api';
 import { GEO_DATA, parseCoordinateToDec } from '../data/geoCoordinates';
+import CelestialDayBackdrop from './CelestialDayBackdrop';
 import AlertsSubscriptionModal from './AlertsSubscriptionModal';
 
 // Localization lookup dictionaries
@@ -786,79 +787,18 @@ export default function DailyPanchangam() {
       <div
         className={`relative rounded-2xl border shadow-xl transition-colors duration-700 ${
           isBrightDay
-            ? 'border-sky-300/90 bg-gradient-to-b from-[#38BDF8] via-[#BAE6FD] to-[#FEF3C7] text-slate-900'
+            ? 'border-amber-300/90 bg-[#FDF3DC] text-slate-900'
             : isEveningSky
             ? 'border-amber-800/40 bg-gradient-to-b from-[#1E1B4B] via-[#4C2C59] to-[#9A4223] text-white'
             : 'border-indigo-950 bg-gradient-to-b from-[#020511] via-[#060C22] to-[#0D1533] text-white'
         }`}
       >
-        {/* Dynamic Scenery Backdrop: Bright Daytime Temple & Nature | Evening Light-Dark Dusk | Dark Night Stars & Temple */}
+        {/* Dynamic Scenery Backdrop: Bespoke Panoramic Temple & Lotus Pond (Day) | Evening Dusk | Dark Night Stars & Temple */}
+        {isBrightDay ? (
+          <CelestialDayBackdrop sunLeftPct={solarArcState.leftPct} />
+        ) : (
         <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
-          {isBrightDay ? (
-            <>
-              {/* Sunlit Ambient Sky Glow Behind Current Sun Position */}
-              <div
-                className="absolute -bottom-6 w-80 h-44 rounded-full blur-3xl opacity-75"
-                style={{
-                  left: `${solarArcState.leftPct}%`,
-                  transform: 'translateX(-50%)',
-                  background: 'radial-gradient(circle, rgba(254,240,138,0.85) 0%, rgba(253,224,71,0.35) 55%, transparent 78%)'
-                }}
-              />
-              {/* Bright Daytime Natural Hills, Temple Gopuram, Lush Trees, Clouds & Birds */}
-              <svg
-                viewBox="0 0 1000 220"
-                preserveAspectRatio="none"
-                className="absolute inset-x-0 bottom-0 w-full h-full"
-              >
-                {/* Fluffy White Daytime Clouds */}
-                <path d="M125 48 Q144 31 166 42 Q184 28 202 44 Q218 43 221 55 L118 55 Q115 49 125 48 Z" fill="#FFFFFF" fillOpacity="0.65" />
-                <path d="M450 36 Q466 23 485 31 Q502 20 518 33 Q531 33 534 44 L444 44 Q441 37 450 36 Z" fill="#FFFFFF" fillOpacity="0.52" />
-                <path d="M655 54 Q672 40 692 49 Q710 38 726 51 Q740 50 742 60 L648 60 Q646 55 655 54 Z" fill="#FFFFFF" fillOpacity="0.58" />
-
-                {/* Flying Birds in Clear Sky */}
-                <path d="M515 68 Q521 61 527 68 Q533 61 539 68" fill="none" stroke="#0369A1" strokeOpacity="0.55" strokeWidth="1.6" strokeLinecap="round" />
-                <path d="M548 56 Q552 51 556 56 Q560 51 564 56" fill="none" stroke="#0369A1" strokeOpacity="0.45" strokeWidth="1.4" strokeLinecap="round" />
-
-                {/* Layered Green Nature Hills */}
-                <path d="M0 188 Q125 138 250 172 Q380 128 515 166 Q650 132 790 168 Q900 142 1000 175 L1000 220 L0 220 Z" fill="#4ADE80" fillOpacity="0.38" />
-                <path d="M0 196 Q170 160 320 188 Q475 156 625 184 Q800 158 1000 190 L1000 220 L0 220 Z" fill="#16A34A" fillOpacity="0.52" />
-
-                {/* Sunlit South Indian Sandstone Temple Gopuram */}
-                <g transform="translate(725, 118)">
-                  <rect x="0" y="54" width="96" height="28" rx="1" fill="#9A3412" />
-                  <polygon points="10,54 86,54 80,43 16,43" fill="#B45309" />
-                  <polygon points="16,43 80,43 74,33 22,33" fill="#C2410C" />
-                  <polygon points="22,33 74,33 67,24 29,24" fill="#D97706" />
-                  <polygon points="29,24 67,24 60,16 36,16" fill="#B45309" />
-                  <path d="M35 16 Q48 5 61 16 Z" fill="#9A3412" />
-                  {/* Shining Golden Kalasams */}
-                  <line x1="41" y1="9" x2="41" y2="2" stroke="#F59E0B" strokeWidth="1.7" />
-                  <line x1="48" y1="8" x2="48" y2="0" stroke="#F59E0B" strokeWidth="2" />
-                  <line x1="55" y1="9" x2="55" y2="2" stroke="#F59E0B" strokeWidth="1.7" />
-                  {/* Temple Doorway */}
-                  <path d="M41 82 L41 64 Q48 57 55 64 L55 82 Z" fill="#FEF08A" />
-                  {/* Side Mandapam Pillars */}
-                  <rect x="-24" y="64" width="24" height="18" fill="#7C2D12" />
-                  <rect x="96" y="66" width="20" height="16" fill="#7C2D12" />
-                </g>
-
-                {/* Lush Green Groves & Coconut Palms */}
-                <g fill="#15803D">
-                  <circle cx="48" cy="184" r="18" />
-                  <circle cx="72" cy="180" r="22" fill="#166534" />
-                  <circle cx="96" cy="187" r="15" />
-                  <path d="M135 202 Q130 165 124 142" stroke="#78350F" strokeWidth="3.5" fill="none" />
-                  <path d="M124 142 Q105 134 94 145 M124 142 Q112 126 122 120 M124 142 Q140 128 150 138 M124 142 Q138 143 145 154" stroke="#166534" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-
-                  <circle cx="878" cy="184" r="17" fill="#166534" />
-                  <circle cx="904" cy="180" r="21" />
-                  <path d="M944 202 Q948 168 955 145" stroke="#78350F" strokeWidth="3.2" fill="none" />
-                  <path d="M955 145 Q936 138 928 148 M955 145 Q947 129 956 123 M955 145 Q972 132 982 142 M955 145 Q968 146 975 156" stroke="#166534" strokeWidth="2.4" fill="none" strokeLinecap="round" />
-                </g>
-              </svg>
-            </>
-          ) : isEveningSky ? (
+          {isEveningSky ? (
             <>
               {/* Light-Dark Dusk Horizon Glow & Early Evening Stars */}
               <div
@@ -933,6 +873,7 @@ export default function DailyPanchangam() {
             </>
           )}
         </div>
+        )}
 
         {/* Hanging Golden Temple Bell — Only rings with sound & swing on click */}
         <button
@@ -979,20 +920,20 @@ export default function DailyPanchangam() {
             {/* Left: Gregorian + Tamil Solar Date & Reckoning */}
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
-                <span className={`text-xs sm:text-sm font-bold tracking-wide ${isBrightDay ? 'text-slate-900' : 'text-white'}`}>
+                <span className={`text-xs sm:text-sm font-bold tracking-wide ${isBrightDay ? 'text-[#5B1419]' : 'text-white'}`}>
                   {heroDateInfo.relLabel}
                 </span>
-                <span className={`text-[11px] font-medium ${isBrightDay ? 'text-sky-950/75' : 'text-indigo-300/80'}`}>
+                <span className={`text-[11px] font-medium ${isBrightDay ? 'text-amber-950/75' : 'text-indigo-300/80'}`}>
                   · {t('dailyPanchangam')}
                 </span>
               </div>
-              <div className={`text-xs sm:text-sm font-semibold ${isBrightDay ? 'text-sky-950/85' : 'text-indigo-200/85'}`}>
+              <div className={`text-xs sm:text-sm font-semibold ${isBrightDay ? 'text-amber-950/85' : 'text-indigo-200/85'}`}>
                 {heroDateInfo.weekdayLabel}
               </div>
 
-              <h2 className={`text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight ${isBrightDay ? 'text-slate-950' : 'text-white'}`}>
+              <h2 className={`text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight ${isBrightDay ? 'text-stone-950' : 'text-white'}`}>
                 {heroDateInfo.dayNum} {heroDateInfo.monthLabel}{' '}
-                <span className={`font-semibold ${isBrightDay ? 'text-sky-900/75' : 'text-indigo-200/75'}`}>{heroDateInfo.yearNum}</span>
+                <span className={`font-semibold ${isBrightDay ? 'text-amber-900/75' : 'text-indigo-200/75'}`}>{heroDateInfo.yearNum}</span>
               </h2>
 
               {/* Tamil Solar Date Highlight */}
@@ -1002,25 +943,25 @@ export default function DailyPanchangam() {
                     ? (lang === 'ta' ? panchang.tamilDate.labelTa : panchang.tamilDate.labelEn)
                     : (lang === 'ta' ? 'தமிழ் பஞ்சாங்கம்' : 'Tamil Solar Calendar')}
                 </div>
-                <div className={`text-xs font-semibold ${isBrightDay ? 'text-slate-800/90' : 'text-indigo-200/75'}`}>
+                <div className={`text-xs font-semibold ${isBrightDay ? 'text-stone-800/95' : 'text-indigo-200/75'}`}>
                   {heroDateInfo.weekdayEn}
                   {panchang?.tamilDate
                     ? ` · ${panchang.tamilDate.yearEn} · ${panchang.tamilDate.labelTa}`
                     : ''}
                 </div>
-                <div className={`text-[11px] sm:text-xs flex items-center gap-1.5 pt-0.5 ${isBrightDay ? 'text-sky-950/85 font-medium' : 'text-indigo-300/80'}`}>
+                <div className={`text-[11px] sm:text-xs flex items-center gap-1.5 pt-0.5 ${isBrightDay ? 'text-amber-950/85 font-medium' : 'text-indigo-300/80'}`}>
                   <span>
                     {reckoning === 'thirukanitha'
                       ? (lang === 'ta' ? 'திருக்கணித பஞ்சாங்கம்' : 'Thirukanitha reckoning')
                       : (lang === 'ta' ? 'வாக்கிய பஞ்சாங்கம்' : 'Vakya reckoning')}
                   </span>
-                  <span className={isBrightDay ? 'text-sky-700' : 'text-indigo-400'}>·</span>
+                  <span className={isBrightDay ? 'text-amber-800' : 'text-indigo-400'}>·</span>
                   <button
                     type="button"
                     onClick={toggleReckoning}
                     className={`underline underline-offset-2 transition-colors cursor-pointer font-bold ${
                       isBrightDay
-                        ? 'decoration-sky-700/60 text-sky-950 hover:text-[#7A1A22]'
+                        ? 'decoration-amber-800/60 text-amber-950 hover:text-[#7A1A22]'
                         : 'decoration-indigo-400/70 text-indigo-200 hover:text-amber-300'
                     }`}
                   >
@@ -1039,13 +980,13 @@ export default function DailyPanchangam() {
                   onClick={() => setShowCityPicker((prev) => !prev)}
                   className={`inline-flex items-center gap-1.5 rounded-full border backdrop-blur-md px-3.5 py-1.5 text-xs font-medium transition-all cursor-pointer shadow-sm ${
                     isBrightDay
-                      ? 'border-white/90 bg-white/75 hover:bg-white/90 text-slate-800'
+                      ? 'border-amber-200 bg-white/85 hover:bg-white text-stone-900'
                       : 'border-indigo-400/25 bg-white/10 hover:bg-white/15 text-indigo-100'
                   }`}
                 >
                   <MapPin className={`w-3.5 h-3.5 shrink-0 ${isBrightDay ? 'text-amber-600' : 'text-amber-300'}`} />
-                  <span className={`font-semibold ${isBrightDay ? 'text-slate-900' : 'text-white'}`}>{location.name}</span>
-                  <span className={`underline underline-offset-2 ml-0.5 ${isBrightDay ? 'decoration-sky-700/60 text-sky-800' : 'decoration-indigo-300/70 text-indigo-200'}`}>
+                  <span className={`font-semibold ${isBrightDay ? 'text-stone-950' : 'text-white'}`}>{location.name}</span>
+                  <span className={`underline underline-offset-2 ml-0.5 ${isBrightDay ? 'decoration-amber-700/60 text-[#7A1A22]' : 'decoration-indigo-300/70 text-indigo-200'}`}>
                     {lang === 'ta' ? 'மாற்றுக' : 'change'}
                   </span>
                 </button>
@@ -1184,8 +1125,8 @@ export default function DailyPanchangam() {
               <path
                 d="M 50 98 Q 500 -70 950 98"
                 fill="none"
-                stroke={isBrightDay ? '#0369A1' : '#94A3B8'}
-                strokeOpacity={isBrightDay ? '0.45' : '0.55'}
+                stroke={isBrightDay ? '#78350F' : '#94A3B8'}
+                strokeOpacity={isBrightDay ? '0.58' : '0.55'}
                 strokeWidth="2"
                 strokeDasharray="3 6"
               />
@@ -1195,16 +1136,16 @@ export default function DailyPanchangam() {
                 y1="98"
                 x2="972"
                 y2="98"
-                stroke={isBrightDay ? '#0F172A' : '#94A3B8'}
-                strokeOpacity={isBrightDay ? '0.45' : '0.65'}
+                stroke={isBrightDay ? '#78350F' : '#94A3B8'}
+                strokeOpacity={isBrightDay ? '0.62' : '0.65'}
                 strokeWidth="1.6"
               />
               {/* Scalloped Horizon Wave Motif */}
               <path
                 d={HORIZON_WAVE_PATH}
                 fill="none"
-                stroke={isBrightDay ? '#166534' : '#475569'}
-                strokeOpacity={isBrightDay ? '0.50' : '0.70'}
+                stroke={isBrightDay ? '#92400E' : '#475569'}
+                strokeOpacity={isBrightDay ? '0.48' : '0.70'}
                 strokeWidth="1.4"
               />
             </svg>

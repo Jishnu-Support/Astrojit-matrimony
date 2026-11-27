@@ -20,6 +20,8 @@ import {
   HelpCircle,
   Flame,
   Zap,
+  GitCompare,
+  Moon,
   MapPin,
 } from 'lucide-react';
 import { API } from '../api';
@@ -28,6 +30,9 @@ import { useLang } from '../i18n';
 import TamilPoruthamCard from './TamilPoruthamCard';
 import GujaDashaChart from './GujaDashaChart';
 import RahuKetuChart from './RahuKetuChart';
+import ShashtashtagamMatchCard from './ShashtashtagamMatchCard';
+import ChandranMatchCard from './ChandranMatchCard';
+import GuruMatchCard from './GuruMatchCard';
 import { MATCH_I18N, ASHTAKOOTA_I18N, getMatchText } from '../matchmakingI18n';
 import { GEO_DATA, lookupCoordinates } from '../data/geoCoordinates';
 
@@ -1021,6 +1026,42 @@ export default function KundliMatchmaking() {
               <Zap className="w-4 h-4 text-teal-600" />
               <span>{MATCH_I18N.tabRahuKetu[lang] || MATCH_I18N.tabRahuKetu.en}</span>
             </button>
+            <button
+              type="button"
+              onClick={() => setSelfResultTab('shashtashtagam')}
+              className={`pb-2.5 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                selfResultTab === 'shashtashtagam'
+                  ? 'border-[#7A1A22] text-[#7A1A22] font-bold'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              <GitCompare className="w-4 h-4 text-[#7A1A22]" />
+              <span>{MATCH_I18N.tabShashtashtagam[lang] || MATCH_I18N.tabShashtashtagam.en}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelfResultTab('chandran')}
+              className={`pb-2.5 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                selfResultTab === 'chandran'
+                  ? 'border-indigo-700 text-indigo-900 font-bold'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              <Moon className="w-4 h-4 text-indigo-600" />
+              <span>{MATCH_I18N.tabChandran[lang] || MATCH_I18N.tabChandran.en}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelfResultTab('guru')}
+              className={`pb-2.5 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                selfResultTab === 'guru'
+                  ? 'border-amber-600 text-amber-900 font-bold'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              <Sparkles className="w-4 h-4 text-amber-600" />
+              <span>{MATCH_I18N.tabGuru[lang] || MATCH_I18N.tabGuru.en}</span>
+            </button>
           </div>
 
           {/* Tab 1: 10 Poruthams View */}
@@ -1036,6 +1077,21 @@ export default function KundliMatchmaking() {
           {/* Tab 3: Rahu-Ketu (Sarpa) Dosha & Chart View */}
           {selfResultTab === 'rahu_ketu' && (
             <RahuKetuChart matchReport={selfResult} />
+          )}
+
+          {/* Tab 4: Shashtashtagam (6/8 Rasi & Lagnam) View */}
+          {selfResultTab === 'shashtashtagam' && (
+            <ShashtashtagamMatchCard matchReport={selfResult} />
+          )}
+
+          {/* Tab 5: Chandran (Moon) Compatibility & Mental Harmony View */}
+          {selfResultTab === 'chandran' && (
+            <ChandranMatchCard matchReport={selfResult} />
+          )}
+
+          {/* Tab 6: Guru (Jupiter) Bala & Paarvai View */}
+          {selfResultTab === 'guru' && (
+            <GuruMatchCard matchReport={selfResult} />
           )}
 
           {/* Tab 3: Ashtakoota 36 Gunas View */}
@@ -1363,6 +1419,42 @@ export default function KundliMatchmaking() {
                               <Zap className="w-4 h-4 text-teal-600" />
                               <span>{MATCH_I18N.tabRahuKetu[lang] || MATCH_I18N.tabRahuKetu.en}</span>
                             </button>
+                            <button
+                              type="button"
+                              onClick={() => setReqTabs({ ...reqTabs, [req.id]: 'shashtashtagam' })}
+                              className={`pb-2.5 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                                currentTab === 'shashtashtagam'
+                                  ? 'border-[#7A1A22] text-[#7A1A22] font-bold'
+                                  : 'border-transparent text-slate-500 hover:text-slate-700'
+                              }`}
+                            >
+                              <GitCompare className="w-4 h-4 text-[#7A1A22]" />
+                              <span>{MATCH_I18N.tabShashtashtagam[lang] || MATCH_I18N.tabShashtashtagam.en}</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setReqTabs({ ...reqTabs, [req.id]: 'chandran' })}
+                              className={`pb-2.5 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                                currentTab === 'chandran'
+                                  ? 'border-indigo-700 text-indigo-900 font-bold'
+                                  : 'border-transparent text-slate-500 hover:text-slate-700'
+                              }`}
+                            >
+                              <Moon className="w-4 h-4 text-indigo-600" />
+                              <span>{MATCH_I18N.tabChandran[lang] || MATCH_I18N.tabChandran.en}</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setReqTabs({ ...reqTabs, [req.id]: 'guru' })}
+                              className={`pb-2.5 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                                currentTab === 'guru'
+                                  ? 'border-amber-600 text-amber-900 font-bold'
+                                  : 'border-transparent text-slate-500 hover:text-slate-700'
+                              }`}
+                            >
+                              <Sparkles className="w-4 h-4 text-amber-600" />
+                              <span>{MATCH_I18N.tabGuru[lang] || MATCH_I18N.tabGuru.en}</span>
+                            </button>
                           </div>
 
                           {currentTab === 'tamil' ? (
@@ -1371,6 +1463,12 @@ export default function KundliMatchmaking() {
                             <GujaDashaChart matchReport={req.matchReport} />
                           ) : currentTab === 'rahu_ketu' ? (
                             <RahuKetuChart matchReport={req.matchReport} />
+                          ) : currentTab === 'shashtashtagam' ? (
+                            <ShashtashtagamMatchCard matchReport={req.matchReport} />
+                          ) : currentTab === 'chandran' ? (
+                            <ChandranMatchCard matchReport={req.matchReport} />
+                          ) : currentTab === 'guru' ? (
+                            <GuruMatchCard matchReport={req.matchReport} />
                           ) : (
                             <div className="space-y-4">
                               {/* Score Bar */}

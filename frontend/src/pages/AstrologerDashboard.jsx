@@ -36,6 +36,7 @@ import {
   Baby,
   Moon,
   HeartHandshake,
+  GitCompare,
   Trash2,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -48,6 +49,9 @@ import RahuKetuChart from '../components/RahuKetuChart';
 import PuthrasthanamChart from '../components/PuthrasthanamChart';
 import PakshaMatchCard from '../components/PakshaMatchCard';
 import MarsVenusMatchCard from '../components/MarsVenusMatchCard';
+import ShashtashtagamMatchCard from '../components/ShashtashtagamMatchCard';
+import ChandranMatchCard from '../components/ChandranMatchCard';
+import GuruMatchCard from '../components/GuruMatchCard';
 import HoroscopeHub from '../components/HoroscopeHub';
 import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
 import HoroscopePagerView from '../components/HoroscopePagerView';
@@ -256,13 +260,13 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   const [activeClientMatchReport, setActiveClientMatchReport] = useState(null);
   const [calculatingActiveMatch, setCalculatingActiveMatch] = useState(false);
   const [activeMatchTab, setActiveMatchTab] = useState('tamil');
-  const [openMatchSections, setOpenMatchSections] = useState({ 1: true, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false });
+  const [openMatchSections, setOpenMatchSections] = useState({ 1: true, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false, 10: false });
 
   const toggleMatchSection = (num) => {
     setOpenMatchSections(prev => ({ ...prev, [num]: !prev[num] }));
   };
-  const expandAllMatchSections = () => setOpenMatchSections({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true });
-  const collapseAllMatchSections = () => setOpenMatchSections({ 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false });
+  const expandAllMatchSections = () => setOpenMatchSections({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true });
+  const collapseAllMatchSections = () => setOpenMatchSections({ 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false, 10: false });
   const jumpToMatchSection = (num) => {
     setOpenMatchSections(prev => ({ ...prev, [num]: true }));
     setTimeout(() => {
@@ -2303,7 +2307,7 @@ Shubham Bhavatu! 🙏`;
                           defaultValue=""
                           className="bg-white border border-stone-300 rounded-lg px-2.5 py-1.5 text-xs font-bold text-stone-800 focus:outline-none focus:border-[#7A1A22] w-full max-w-xs cursor-pointer"
                         >
-                          <option value="">{lang === 'ta' ? '-- 7 பிரிவுகள் (தேர்வு செய்க) --' : '-- Select Section (1 to 7) --'}</option>
+                          <option value="">{lang === 'ta' ? '-- 10 பிரிவுகள் (தேர்வு செய்க) --' : '-- Select Section (1 to 10) --'}</option>
                           <option value="1">1. {MATCH_I18N.tabTamilPorutham[lang] || MATCH_I18N.tabTamilPorutham.en}</option>
                           <option value="2">2. {MATCH_I18N.tabAshtakoota[lang] || MATCH_I18N.tabAshtakoota.en}</option>
                           <option value="3">3. {MATCH_I18N.tabGujaDasha[lang] || MATCH_I18N.tabGujaDasha.en}</option>
@@ -2311,6 +2315,9 @@ Shubham Bhavatu! 🙏`;
                           <option value="5">5. {MATCH_I18N.tabPuthrasthanam[lang] || MATCH_I18N.tabPuthrasthanam.en}</option>
                           <option value="6">6. {MATCH_I18N.tabPakshaMatch[lang] || MATCH_I18N.tabPakshaMatch.en}</option>
                           <option value="7">7. {MATCH_I18N.tabMarsVenus[lang] || MATCH_I18N.tabMarsVenus.en}</option>
+                          <option value="8">8. {MATCH_I18N.tabShashtashtagam[lang] || MATCH_I18N.tabShashtashtagam.en}</option>
+                          <option value="9">9. {MATCH_I18N.tabChandran[lang] || MATCH_I18N.tabChandran.en}</option>
+                          <option value="10">10. {MATCH_I18N.tabGuru[lang] || MATCH_I18N.tabGuru.en}</option>
                         </select>
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -2531,6 +2538,75 @@ Shubham Bhavatu! 🙏`;
                       {openMatchSections[7] && (
                         <div className="p-3.5 sm:p-4 pt-0 border-t border-amber-900/10">
                           <MarsVenusMatchCard matchReport={activeClientMatchReport} />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* SECTION 8: Shashtashtagam Analysis (6/8 Rasi & Lagnam) */}
+                    <div id="match-section-8" className="bg-white rounded-2xl border border-amber-900/15 shadow-xs overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => toggleMatchSection(8)}
+                        className="w-full p-3.5 sm:p-4 flex items-center justify-between text-left hover:bg-amber-50/50 transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-7 h-7 rounded-xl bg-amber-900/10 text-[#7A1A22] font-bold flex items-center justify-center text-xs font-mono shrink-0">8</span>
+                          <span className="text-sm font-bold text-[#7A1A22] flex items-center gap-1.5">
+                            <GitCompare className="w-4 h-4 text-[#7A1A22]" />
+                            <span>{MATCH_I18N.tabShashtashtagam[lang] || MATCH_I18N.tabShashtashtagam.en}</span>
+                          </span>
+                        </div>
+                        <span className="text-xs font-bold text-stone-500">{openMatchSections[8] ? '▲' : '▼'}</span>
+                      </button>
+                      {openMatchSections[8] && (
+                        <div className="p-3.5 sm:p-4 pt-0 border-t border-amber-900/10">
+                          <ShashtashtagamMatchCard matchReport={activeClientMatchReport} />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* SECTION 9: Chandran (Moon) Compatibility & Mental Harmony */}
+                    <div id="match-section-9" className="bg-white rounded-2xl border border-amber-900/15 shadow-xs overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => toggleMatchSection(9)}
+                        className="w-full p-3.5 sm:p-4 flex items-center justify-between text-left hover:bg-amber-50/50 transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-7 h-7 rounded-xl bg-indigo-900/10 text-indigo-800 font-bold flex items-center justify-center text-xs font-mono shrink-0">9</span>
+                          <span className="text-sm font-bold text-indigo-900 flex items-center gap-1.5">
+                            <Moon className="w-4 h-4 text-indigo-600" />
+                            <span>{MATCH_I18N.tabChandran[lang] || MATCH_I18N.tabChandran.en}</span>
+                          </span>
+                        </div>
+                        <span className="text-xs font-bold text-stone-500">{openMatchSections[9] ? '▲' : '▼'}</span>
+                      </button>
+                      {openMatchSections[9] && (
+                        <div className="p-3.5 sm:p-4 pt-0 border-t border-amber-900/10">
+                          <ChandranMatchCard matchReport={activeClientMatchReport} />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* SECTION 10: Guru (Jupiter) Bala & Paarvai Analysis */}
+                    <div id="match-section-10" className="bg-white rounded-2xl border border-amber-900/15 shadow-xs overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => toggleMatchSection(10)}
+                        className="w-full p-3.5 sm:p-4 flex items-center justify-between text-left hover:bg-amber-50/50 transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-7 h-7 rounded-xl bg-amber-900/10 text-amber-800 font-bold flex items-center justify-center text-xs font-mono shrink-0">10</span>
+                          <span className="text-sm font-bold text-amber-900 flex items-center gap-1.5">
+                            <Sparkles className="w-4 h-4 text-amber-600" />
+                            <span>{MATCH_I18N.tabGuru[lang] || MATCH_I18N.tabGuru.en}</span>
+                          </span>
+                        </div>
+                        <span className="text-xs font-bold text-stone-500">{openMatchSections[10] ? '▲' : '▼'}</span>
+                      </button>
+                      {openMatchSections[10] && (
+                        <div className="p-3.5 sm:p-4 pt-0 border-t border-amber-900/10">
+                          <GuruMatchCard matchReport={activeClientMatchReport} />
                         </div>
                       )}
                     </div>
