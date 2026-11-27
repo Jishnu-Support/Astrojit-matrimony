@@ -52,6 +52,7 @@ import MarsVenusMatchCard from '../components/MarsVenusMatchCard';
 import ShashtashtagamMatchCard from '../components/ShashtashtagamMatchCard';
 import ChandranMatchCard from '../components/ChandranMatchCard';
 import GuruMatchCard from '../components/GuruMatchCard';
+import DasaSandhiMatchCard from '../components/DasaSandhiMatchCard';
 import HoroscopeHub from '../components/HoroscopeHub';
 import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
 import HoroscopePagerView from '../components/HoroscopePagerView';
@@ -260,13 +261,13 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   const [activeClientMatchReport, setActiveClientMatchReport] = useState(null);
   const [calculatingActiveMatch, setCalculatingActiveMatch] = useState(false);
   const [activeMatchTab, setActiveMatchTab] = useState('tamil');
-  const [openMatchSections, setOpenMatchSections] = useState({ 1: true, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false, 10: false });
+  const [openMatchSections, setOpenMatchSections] = useState({ 1: true, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false, 10: false, 11: false });
 
   const toggleMatchSection = (num) => {
     setOpenMatchSections(prev => ({ ...prev, [num]: !prev[num] }));
   };
-  const expandAllMatchSections = () => setOpenMatchSections({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true });
-  const collapseAllMatchSections = () => setOpenMatchSections({ 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false, 10: false });
+  const expandAllMatchSections = () => setOpenMatchSections({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true, 11: true });
+  const collapseAllMatchSections = () => setOpenMatchSections({ 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false, 10: false, 11: false });
   const jumpToMatchSection = (num) => {
     setOpenMatchSections(prev => ({ ...prev, [num]: true }));
     setTimeout(() => {
@@ -2307,7 +2308,7 @@ Shubham Bhavatu! 🙏`;
                           defaultValue=""
                           className="bg-white border border-stone-300 rounded-lg px-2.5 py-1.5 text-xs font-bold text-stone-800 focus:outline-none focus:border-[#7A1A22] w-full max-w-xs cursor-pointer"
                         >
-                          <option value="">{lang === 'ta' ? '-- 10 பிரிவுகள் (தேர்வு செய்க) --' : '-- Select Section (1 to 10) --'}</option>
+                          <option value="">{lang === 'ta' ? '-- 11 பிரிவுகள் (தேர்வு செய்க) --' : '-- Select Section (1 to 11) --'}</option>
                           <option value="1">1. {MATCH_I18N.tabTamilPorutham[lang] || MATCH_I18N.tabTamilPorutham.en}</option>
                           <option value="2">2. {MATCH_I18N.tabAshtakoota[lang] || MATCH_I18N.tabAshtakoota.en}</option>
                           <option value="3">3. {MATCH_I18N.tabGujaDasha[lang] || MATCH_I18N.tabGujaDasha.en}</option>
@@ -2318,6 +2319,7 @@ Shubham Bhavatu! 🙏`;
                           <option value="8">8. {MATCH_I18N.tabShashtashtagam[lang] || MATCH_I18N.tabShashtashtagam.en}</option>
                           <option value="9">9. {MATCH_I18N.tabChandran[lang] || MATCH_I18N.tabChandran.en}</option>
                           <option value="10">10. {MATCH_I18N.tabGuru[lang] || MATCH_I18N.tabGuru.en}</option>
+                          <option value="11">11. {MATCH_I18N.tabDasaSandhi[lang] || MATCH_I18N.tabDasaSandhi.en}</option>
                         </select>
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -2607,6 +2609,29 @@ Shubham Bhavatu! 🙏`;
                       {openMatchSections[10] && (
                         <div className="p-3.5 sm:p-4 pt-0 border-t border-amber-900/10">
                           <GuruMatchCard matchReport={activeClientMatchReport} />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* SECTION 11: Dasa Sandhi Porutham (தசா சந்திப் பொருத்தம்) */}
+                    <div id="match-section-11" className="bg-white rounded-2xl border border-amber-900/15 shadow-xs overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => toggleMatchSection(11)}
+                        className="w-full p-3.5 sm:p-4 flex items-center justify-between text-left hover:bg-amber-50/50 transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-7 h-7 rounded-xl bg-amber-900/10 text-[#7A1A22] font-bold flex items-center justify-center text-xs font-mono shrink-0">11</span>
+                          <span className="text-sm font-bold text-[#7A1A22] flex items-center gap-1.5">
+                            <Clock className="w-4 h-4 text-[#7A1A22]" />
+                            <span>{MATCH_I18N.tabDasaSandhi[lang] || MATCH_I18N.tabDasaSandhi.en}</span>
+                          </span>
+                        </div>
+                        <span className="text-xs font-bold text-stone-500">{openMatchSections[11] ? '▲' : '▼'}</span>
+                      </button>
+                      {openMatchSections[11] && (
+                        <div className="p-3.5 sm:p-4 pt-0 border-t border-amber-900/10">
+                          <DasaSandhiMatchCard matchReport={activeClientMatchReport} />
                         </div>
                       )}
                     </div>

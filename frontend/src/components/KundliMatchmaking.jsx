@@ -33,6 +33,7 @@ import RahuKetuChart from './RahuKetuChart';
 import ShashtashtagamMatchCard from './ShashtashtagamMatchCard';
 import ChandranMatchCard from './ChandranMatchCard';
 import GuruMatchCard from './GuruMatchCard';
+import DasaSandhiMatchCard from './DasaSandhiMatchCard';
 import { MATCH_I18N, ASHTAKOOTA_I18N, getMatchText } from '../matchmakingI18n';
 import { GEO_DATA, lookupCoordinates } from '../data/geoCoordinates';
 
@@ -1062,6 +1063,18 @@ export default function KundliMatchmaking() {
               <Sparkles className="w-4 h-4 text-amber-600" />
               <span>{MATCH_I18N.tabGuru[lang] || MATCH_I18N.tabGuru.en}</span>
             </button>
+            <button
+              type="button"
+              onClick={() => setSelfResultTab('dasa_sandhi')}
+              className={`pb-2.5 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                selfResultTab === 'dasa_sandhi'
+                  ? 'border-[#7A1A22] text-[#7A1A22] font-bold'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              <Clock className="w-4 h-4 text-[#7A1A22]" />
+              <span>{MATCH_I18N.tabDasaSandhi[lang] || MATCH_I18N.tabDasaSandhi.en}</span>
+            </button>
           </div>
 
           {/* Tab 1: 10 Poruthams View */}
@@ -1092,6 +1105,11 @@ export default function KundliMatchmaking() {
           {/* Tab 6: Guru (Jupiter) Bala & Paarvai View */}
           {selfResultTab === 'guru' && (
             <GuruMatchCard matchReport={selfResult} />
+          )}
+
+          {/* Tab 7: Dasa Sandhi Porutham (Transition Overlap Scan) View */}
+          {selfResultTab === 'dasa_sandhi' && (
+            <DasaSandhiMatchCard matchReport={selfResult} />
           )}
 
           {/* Tab 3: Ashtakoota 36 Gunas View */}
@@ -1455,6 +1473,18 @@ export default function KundliMatchmaking() {
                               <Sparkles className="w-4 h-4 text-amber-600" />
                               <span>{MATCH_I18N.tabGuru[lang] || MATCH_I18N.tabGuru.en}</span>
                             </button>
+                            <button
+                              type="button"
+                              onClick={() => setReqTabs({ ...reqTabs, [req.id]: 'dasa_sandhi' })}
+                              className={`pb-2.5 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                                currentTab === 'dasa_sandhi'
+                                  ? 'border-[#7A1A22] text-[#7A1A22] font-bold'
+                                  : 'border-transparent text-slate-500 hover:text-slate-700'
+                              }`}
+                            >
+                              <Clock className="w-4 h-4 text-[#7A1A22]" />
+                              <span>{MATCH_I18N.tabDasaSandhi[lang] || MATCH_I18N.tabDasaSandhi.en}</span>
+                            </button>
                           </div>
 
                           {currentTab === 'tamil' ? (
@@ -1469,6 +1499,8 @@ export default function KundliMatchmaking() {
                             <ChandranMatchCard matchReport={req.matchReport} />
                           ) : currentTab === 'guru' ? (
                             <GuruMatchCard matchReport={req.matchReport} />
+                          ) : currentTab === 'dasa_sandhi' ? (
+                            <DasaSandhiMatchCard matchReport={req.matchReport} />
                           ) : (
                             <div className="space-y-4">
                               {/* Score Bar */}

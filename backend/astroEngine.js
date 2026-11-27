@@ -2724,6 +2724,271 @@ function calculateGuruMatchAnalysis(boyInput = {}, girlInput = {}) {
 }
 
 /**
+ * Section 11: Dasa Sandhi Porutham (தசா சந்திப் பொருத்தம்) — Full Mahadasha & Bhukti Transition Scan
+ */
+const VIMSHOTTARI_LORDS = [
+  { id: 'ketu', nameEn: 'Ketu', nameTa: 'கேது', years: 7, nature: 'malefic' },
+  { id: 'venus', nameEn: 'Venus', nameTa: 'சுக்கிரன்', years: 20, nature: 'benefic' },
+  { id: 'sun', nameEn: 'Sun', nameTa: 'சூரியன்', years: 6, nature: 'neutral' },
+  { id: 'moon', nameEn: 'Moon', nameTa: 'சந்திரன்', years: 10, nature: 'benefic' },
+  { id: 'mars', nameEn: 'Mars', nameTa: 'செவ்வாய்', years: 7, nature: 'malefic' },
+  { id: 'rahu', nameEn: 'Rahu', nameTa: 'ராகு', years: 18, nature: 'malefic' },
+  { id: 'jupiter', nameEn: 'Jupiter', nameTa: 'குரு', years: 16, nature: 'benefic' },
+  { id: 'saturn', nameEn: 'Saturn', nameTa: 'சனி', years: 19, nature: 'malefic' },
+  { id: 'mercury', nameEn: 'Mercury', nameTa: 'புதன்', years: 17, nature: 'benefic' },
+];
+
+function yearDecToStr(yearDec) {
+  const y = Math.floor(yearDec);
+  const remMonths = (yearDec - y) * 12;
+  const m = Math.max(1, Math.min(12, Math.floor(remMonths) + 1));
+  const remDays = (remMonths - (m - 1)) * 30;
+  const d = Math.max(1, Math.min(28, Math.floor(remDays) + 1));
+  return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+}
+
+function formatYearMonthGap(months) {
+  if (months < 12) return `${months}m`;
+  const y = Math.floor(months / 12);
+  const m = months % 12;
+  return m > 0 ? `${y}y ${m}m` : `${y}y`;
+}
+
+function buildPersonDasaSandhiProfile(grahas, nowYear) {
+  const moonLon = normalizeDeg(grahas.longitudes.moon);
+  const nakSpan = 40 / 3;
+  const nakIdx = Math.floor(moonLon / nakSpan) % 27;
+  const startIdx = nakIdx % 9;
+  const degInsideNak = moonLon % nakSpan;
+  const remFrac = Math.max(0.01, Math.min(0.99, 1 - degInsideNak / nakSpan));
+  const birthLord = VIMSHOTTARI_LORDS[startIdx];
+  const birthBalYears = remFrac * birthLord.years;
+
+  const birthDateYear = grahas.birthYear + (grahas.birthMonth - 1) / 12.0 + (grahas.birthDay - 1) / 365.25;
+  const periods = [];
+  let cursorYear = birthDateYear;
+  let cursorAge = 0;
+
+  // Build 12 successive Mahadashas (>120 years coverage)
+  for (let i = 0; i < 12; i++) {
+    const idx = (startIdx + i) % 9;
+    const lord = VIMSHOTTARI_LORDS[idx];
+    const duration = i === 0 ? birthBalYears : lord.years;
+    const startDateYear = cursorYear;
+    const endDateYear = cursorYear + duration;
+    periods.push({
+      seqIdx: i,
+      lordIdx: idx,
+      lordId: lord.id,
+      lord: lord.nameEn,
+      lordTa: lord.nameTa,
+      nature: lord.nature,
+      fullYears: lord.years,
+      durationYears: Number(duration.toFixed(2)),
+      startAge: Number(cursorAge.toFixed(1)),
+      endAge: Number((cursorAge + duration).toFixed(1)),
+      startDateYear,
+      endDateYear,
+      startDate: yearDecToStr(startDateYear),
+      endDate: yearDecToStr(endDateYear),
+    });
+    cursorYear = endDateYear;
+    cursorAge += duration;
+  }
+
+  const runningIdx = periods.findIndex((p) => p.startDateYear <= nowYear && p.endDateYear > nowYear);
+  const curIdx = runningIdx >= 0 ? runningIdx : 0;
+  const currentDasha = periods[curIdx];
+  const nextDasha = periods[curIdx + 1] || periods[curIdx];
+
+  // Compute current running Anthardasha (Bhukti) inside currentDasha
+  const fullDashaStartYear = currentDasha.seqIdx === 0
+    ? currentDasha.endDateYear - currentDasha.fullYears
+    : currentDasha.startDateYear;
+  let bhuktiCursor = fullDashaStartYear;
+  let currentBhukti = { lord: currentDasha.lord, lordTa: currentDasha.lordTa, endDate: currentDasha.endDate };
+  for (let b = 0; b < 9; b++) {
+    const bLord = VIMSHOTTARI_LORDS[(currentDasha.lordIdx + b) % 9];
+    const bDur = (currentDasha.fullYears * bLord.years) / 120.0;
+    const bEnd = bhuktiCursor + bDur;
+    if (nowYear >= bhuktiCursor && nowYear < bEnd) {
+      currentBhukti = {
+        lordId: bLord.id,
+        lord: bLord.nameEn,
+        lordTa: bLord.nameTa,
+        startDate: yearDecToStr(bhuktiCursor),
+        endDate: yearDecToStr(bEnd),
+        isLastBhukti: b === 8
+      };
+      break;
+    }
+    bhuktiCursor = bEnd;
+  }
+
+  const yearsRemaining = Math.max(0, currentDasha.endDateYear - nowYear);
+  const monthsRemaining = Math.round(yearsRemaining * 12);
+  const inDashaChidram = yearsRemaining <= 0.75 || currentBhukti.isLastBhukti;
+
+  // Upcoming Mahadasha transitions over next 45 years (plus recent -0.5 yr)
+  const transitions = [];
+  for (let i = curIdx; i < periods.length - 1; i++) {
+    const fromD = periods[i];
+    const toD = periods[i + 1];
+    if (fromD.endDateYear >= nowYear - 0.5 && fromD.endDateYear <= nowYear + 45) {
+      transitions.push({
+        fromId: fromD.lordId,
+        fromEn: fromD.lord,
+        fromTa: fromD.lordTa,
+        fromNature: fromD.nature,
+        toId: toD.lordId,
+        toEn: toD.lord,
+        toTa: toD.lordTa,
+        toNature: toD.nature,
+        dateYear: fromD.endDateYear,
+        dateStr: fromD.endDate,
+        ageAtTransition: fromD.endAge
+      });
+    }
+  }
+
+  const bY = Math.floor(birthBalYears);
+  const bM = Math.floor((birthBalYears - bY) * 12);
+  const bD = Math.round(((birthBalYears - bY) * 12 - bM) * 30);
+
+  return {
+    starEn: NAKSHATRAS[nakIdx]?.name || 'Ashwini',
+    starTa: TAMIL_STARS[nakIdx]?.tamil || 'அசுவினி',
+    birthBalanceEn: `${birthLord.nameEn} (${bY}y ${bM}m ${bD}d)`,
+    birthBalanceTa: `${birthLord.nameTa} (${bY}வ ${bM}மா ${bD}நா)`,
+    currentDasha: {
+      lordId: currentDasha.lordId,
+      lord: currentDasha.lord,
+      lordTa: currentDasha.lordTa,
+      startDate: currentDasha.startDate,
+      endDate: currentDasha.endDate,
+      endAge: currentDasha.endAge,
+      monthsRemaining
+    },
+    currentBhukti,
+    nextDasha: {
+      lord: nextDasha.lord,
+      lordTa: nextDasha.lordTa,
+      startDate: nextDasha.startDate
+    },
+    inDashaChidram,
+    transitions
+  };
+}
+
+function calculateDasaSandhiAnalysis(boyInput = {}, girlInput = {}) {
+  const now = new Date();
+  const nowYear = now.getFullYear() + now.getMonth() / 12.0 + (now.getDate() - 1) / 365.25;
+
+  const boyGrahas = computePersonGrahas(boyInput);
+  const girlGrahas = computePersonGrahas(girlInput);
+
+  const boy = buildPersonDasaSandhiProfile(boyGrahas, nowYear);
+  const girl = buildPersonDasaSandhiProfile(girlGrahas, nowYear);
+
+  // Scan every Bride x Groom transition pair within 18 months (1.5 years)
+  const collisions = [];
+  girl.transitions.forEach((gTr) => {
+    boy.transitions.forEach((bTr) => {
+      const gapYears = Math.abs(gTr.dateYear - bTr.dateYear);
+      if (gapYears <= 1.5) {
+        const gapMonths = Math.round(gapYears * 12);
+        const avgYear = (gTr.dateYear + bTr.dateYear) / 2;
+        const yearsAway = Math.max(0, Number((avgYear - nowYear).toFixed(1)));
+        const isBeneficPair = gTr.toNature === 'benefic' && bTr.toNature === 'benefic';
+        const isMaleficPair = gTr.toNature === 'malefic' || bTr.toNature === 'malefic';
+
+        let severity = 'moderate';
+        let severityEn = 'Near-Junction Watch (13–18m)';
+        let severityTa = 'கவனிக்க வேண்டிய இடைவெளி (13–18 மாதம்)';
+        if (gapMonths <= 6) {
+          severity = isBeneficPair ? 'moderate' : 'critical';
+          severityEn = isBeneficPair ? 'Benefic Sandhi (≤ 6m Gap)' : 'Severe Dasa Sandhi (≤ 6m Gap)';
+          severityTa = isBeneficPair ? 'சுப தசா சந்தி (≤ 6 மாதம்)' : 'தீவிர தசா சந்தி (≤ 6 மாத இடைவெளி)';
+        } else if (gapMonths <= 12) {
+          severity = isBeneficPair ? 'moderate' : 'high';
+          severityEn = isBeneficPair ? 'Mild Sandhi (7–12m, Benefic)' : 'Active Dasa Sandhi (7–12m Gap)';
+          severityTa = isBeneficPair ? 'மிதமான சுப சந்தி (7–12 மாதம்)' : 'தசா சந்தி தோஷம் (7–12 மாதம்)';
+        }
+
+        collisions.push({
+          id: `${gTr.dateStr}_${bTr.dateStr}`,
+          approxYear: Math.round(avgYear),
+          yearsAway,
+          gapMonths,
+          gapLabel: formatYearMonthGap(gapMonths),
+          girlTransition: gTr,
+          boyTransition: bTr,
+          isBeneficPair,
+          isMaleficPair,
+          severity,
+          severityEn,
+          severityTa
+        });
+      }
+    });
+  });
+
+  collisions.sort((a, b) => a.approxYear - b.approxYear);
+
+  const criticalCount = collisions.filter((c) => c.severity === 'critical' || c.severity === 'high').length;
+  const nearCritical = collisions.some((c) => (c.severity === 'critical' || c.severity === 'high') && c.yearsAway <= 15);
+  const anyChidram = boy.inDashaChidram || girl.inDashaChidram;
+
+  let overallStatus = 'clear';
+  let statusLabelEn = 'Porunthum — No Simultaneous Dasa Sandhi';
+  let statusLabelTa = 'பொருந்தும் — தசா சந்தி தோஷம் இல்லை';
+  let score = 92;
+  let verdictEn = '';
+  let verdictTa = '';
+
+  if (nearCritical || criticalCount >= 2) {
+    overallStatus = 'sandhi';
+    statusLabelEn = 'Dasa Sandhi Present — Timing & Shanti Advised';
+    statusLabelTa = 'தசா சந்தி உள்ளது — தசா சந்தி சாந்தி & பரிகாரம் தேவை';
+    score = Math.max(36, 56 - criticalCount * 8 - (anyChidram ? 6 : 0));
+    verdictEn = `Detected ${collisions.length} Mahadasha transition overlap(s) within 18 months (closest ${collisions[0].gapMonths}m apart around ${collisions[0].approxYear}). Classical Dasa Sandhi Shanti & Mrityunjaya Homam before wedding are recommended.`;
+    verdictTa = `இருவரின் மகா தசை மாற்றங்களும் 18 மாத இடைவெளிக்குள் (${collisions[0].approxYear}-ல் ${collisions[0].gapMonths} மாத இடைவெளியில்) சந்திக்கின்றன. திருமணத்திற்கு முன் தசா சந்தி சாந்தி & மிருத்யுஞ்சய ஹோமம் செய்வது உத்தமம்.`;
+  } else if (collisions.length > 0 || anyChidram) {
+    overallStatus = 'watch';
+    statusLabelEn = 'Madhyamam — Mild / Distant Sandhi Watch';
+    statusLabelTa = 'மத்திமம் — எளிய தசா சந்தி கவனம்';
+    score = anyChidram && collisions.length === 0 ? 74 : 68;
+    verdictEn = collisions.length > 0
+      ? `Minor or benefic-cushioned transition proximity detected around ${collisions[0].approxYear} (${collisions[0].gapMonths}m apart). Manageable with simple Navagraha prayer.`
+      : 'No simultaneous 45-year Mahadasha collision detected; one partner is near Dasha Chidram (final Bhukti), so fixing auspicious Muhurat after transition brings added peace.';
+    verdictTa = collisions.length > 0
+      ? `${collisions[0].approxYear}-ம் ஆண்டில் சுப அல்லது மிதமான தசா சந்திப்பு (${collisions[0].gapMonths} மாதம்) உள்ளது; எளிய நவக்கிரக வழிபாட்டால் சமநிலை பெறும்.`
+      : '45 ஆண்டுகளில் ஒரே நேரத்தில் தசா சந்திப்பு இல்லை; ஒருவர் தசா சித்ர காலத்தில் இருப்பதால் சுப முகூர்த்தம் பார்த்து திருமணம் நடத்துவது சிறப்பு.';
+  } else {
+    overallStatus = 'clear';
+    statusLabelEn = 'Porunthum — No Simultaneous Dasa Sandhi';
+    statusLabelTa = 'பொருந்தும் — தசா சந்தி தோஷம் இல்லை';
+    score = 94;
+    verdictEn = 'All upcoming Mahadasha transitions over the next 45 years are cleanly spaced (>18 months apart) — Auspicious Dasa Sandhi Porutham!';
+    verdictTa = 'அடுத்த 45 ஆண்டுகளில் இருவரின் மகா தசை மாற்றங்களும் 18 மாதங்களுக்கு மேல் இடைவெளியில் அமைவதால் தசா சந்திப் பொருத்தம் உத்தமமாக உள்ளது.';
+  }
+
+  return {
+    boy,
+    girl,
+    collisions,
+    criticalCount,
+    anyChidram,
+    overallStatus,
+    statusLabelEn,
+    statusLabelTa,
+    score,
+    verdictEn,
+    verdictTa
+  };
+}
+
+/**
  * 36 Gunas Ashtakoota Matchmaking
  */
 function calculateKundliMatch(boyBirth, girlBirth) {
@@ -2784,6 +3049,7 @@ function calculateKundliMatch(boyBirth, girlBirth) {
   const shashtashtagamAnalysis = calculateShashtashtagamAnalysis(boyBirth, girlBirth);
   const chandranAnalysis = calculateChandranMatchAnalysis(boyBirth, girlBirth);
   const guruAnalysis = calculateGuruMatchAnalysis(boyBirth, girlBirth);
+  const dasaSandhiAnalysis = calculateDasaSandhiAnalysis(boyBirth, girlBirth);
 
   return {
     boy: boyBirth,
@@ -2808,7 +3074,8 @@ function calculateKundliMatch(boyBirth, girlBirth) {
     marsVenusAnalysis: marsVenusAnalysis,
     shashtashtagamAnalysis: shashtashtagamAnalysis,
     chandranAnalysis: chandranAnalysis,
-    guruAnalysis: guruAnalysis
+    guruAnalysis: guruAnalysis,
+    dasaSandhiAnalysis: dasaSandhiAnalysis
   };
 }
 
@@ -3148,5 +3415,6 @@ module.exports = {
   calculateShashtashtagamAnalysis,
   calculateChandranMatchAnalysis,
   calculateGuruMatchAnalysis,
+  calculateDasaSandhiAnalysis,
   getDailyPanchangam,
 };
