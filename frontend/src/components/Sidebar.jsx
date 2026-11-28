@@ -45,7 +45,7 @@ export default function Sidebar({
           { id: 'horoscope', label: tr('Horoscope', 'ஜாதகம்'), icon: Compass, badge: 'Drik' },
           { id: 'vendors', label: tr('Certified Vendors', 'வணிகர்கள்'), icon: Store },
           { id: 'products', label: tr('Marketplace Inventory', 'சந்தை இருப்பு'), icon: ShoppingBag },
-          { id: 'matrimony', label: tr('Matrimony Hub', 'திருமண மையம்'), icon: HeartHandshake, badge: 'Gov', isMatrimonyTab: true },
+          { id: 'matrimony', label: tr('Matrimony Hub', 'திருமண மையம்'), icon: HeartHandshake, isMatrimonyTab: true },
         ];
         if (isSuperAdmin) {
           companyModules.splice(1, 0, {
