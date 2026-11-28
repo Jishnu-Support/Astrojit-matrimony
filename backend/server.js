@@ -46,18 +46,103 @@ function clean10DigitMobile(raw) {
   return digits.slice(0, 10);
 }
 
+// Company Multi-Admin Helpers
+function getCompanyAdmins(db) {
+  if (Array.isArray(db.companyAdmins) && db.companyAdmins.length > 0) {
+    return db.companyAdmins;
+  }
+  return db.company ? [{ id: 'company-jit', adminLevel: 'super_admin', isPrimaryRoot: true, status: 'active', ...db.company }] : [];
+}
+
+function findCompanyAdmin(db, identifier) {
+  if (!identifier) return null;
+  const raw = String(identifier).trim();
+  const lower = raw.toLowerCase();
+  const cleanMob = clean10DigitMobile(raw);
+  const admins = getCompanyAdmins(db);
+
+  const direct = admins.find((a) => {
+    if (!a) return false;
+    const aUser = String(a.username || '').trim().toLowerCase();
+    const aMob = String(a.mobile || '').trim();
+    const aEmail = String(a.email || '').trim().toLowerCase();
+    const aCleanMob = clean10DigitMobile(aMob);
+    return (
+      a.id === raw ||
+      (aUser && aUser === lower) ||
+      (aMob && aMob.toLowerCase() === lower) ||
+      (aEmail && aEmail === lower) ||
+      (cleanMob && cleanMob.length === 10 && aCleanMob === cleanMob)
+    );
+  });
+  if (direct) return direct;
+
+  if (lower === 'jit_admin' || lower === 'admin') {
+    return admins.find((a) => a.isPrimaryRoot || a.id === 'company-jit') || admins[0] || null;
+  }
+  return null;
+}
+
+function sanitizeCompanyAdmin(admin = {}) {
+  const { passwordHash, ...safe } = admin;
+  const adminLevel = admin.adminLevel === 'admin' ? 'admin' : 'super_admin';
+  return {
+    ...safe,
+    id: admin.id || 'company-jit',
+    name: admin.name || 'Astrojit Technologies (JIT)',
+    username: admin.username || admin.mobile || 'jit_admin',
+    mobile: admin.mobile || admin.username || 'jit_admin',
+    email: admin.email || '',
+    role: 'company',
+    adminLevel,
+    isSuperAdmin: adminLevel === 'super_admin',
+    isPrimaryRoot: Boolean(admin.isPrimaryRoot || admin.id === 'company-jit'),
+    status: admin.status === 'disabled' ? 'disabled' : 'active',
+  };
+}
+
+function resolveCompanyActor(db, jwtUser) {
+  if (!jwtUser || jwtUser.role !== 'company') return null;
+  return (
+    findCompanyAdmin(db, jwtUser.id) ||
+    findCompanyAdmin(db, jwtUser.username) ||
+    findCompanyAdmin(db, jwtUser.mobile) ||
+    null
+  );
+}
+
+function requireCompanyAccess(req, res, { superAdminOnly = false } = {}) {
+  if (!req.user || req.user.role !== 'company') {
+    res.status(403).json({ error: 'Access denied' });
+    return null;
+  }
+  const db = readDb();
+  const admin = resolveCompanyActor(db, req.user);
+  if (!admin || admin.status === 'disabled') {
+    res.status(403).json({ error: 'Company admin account is inactive or removed.' });
+    return null;
+  }
+  const level = admin.adminLevel === 'admin' ? 'admin' : 'super_admin';
+  if (superAdminOnly && level !== 'super_admin') {
+    res.status(403).json({ error: 'Super Admin privileges required for this action.' });
+    return null;
+  }
+  return { db, admin };
+}
+
 // Helper to sign JWT
 function generateToken(user, role) {
-  return jwt.sign(
-    {
-      id: user.id || 'company-admin',
-      mobile: user.mobile,
-      role: role,
-      name: user.name || user.shopName || user.companyName,
-    },
-    JWT_SECRET,
-    { expiresIn: '7d' }
-  );
+  const payload = {
+    id: user.id || 'company-jit',
+    mobile: user.mobile || user.username,
+    role: role,
+    name: user.name || user.shopName || user.companyName,
+  };
+  if (role === 'company') {
+    payload.username = user.username || user.mobile || 'jit_admin';
+    payload.adminLevel = user.adminLevel === 'admin' ? 'admin' : 'super_admin';
+  }
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
 }
 
 // Middleware to authenticate JWT
@@ -203,20 +288,13 @@ app.post('/api/auth/login-otp/send', (req, res) => {
       return res.status(400).json({ error: 'Please enter your registered mobile number / username.' });
     }
 
-    const isCompany = role === 'company' || mobile.trim() === 'jit_admin' || mobile.trim() === 'admin';
-    const cleanMobile = isCompany ? mobile.trim() : clean10DigitMobile(mobile);
     const db = readDb();
+    const isCompany = role === 'company' || Boolean(findCompanyAdmin(db, mobile));
+    const cleanMobile = isCompany ? mobile.trim() : clean10DigitMobile(mobile);
 
     let account = null;
     if (isCompany) {
-      if (
-        cleanMobile === db.company.username ||
-        cleanMobile === db.company.mobile ||
-        cleanMobile === 'jit_admin' ||
-        cleanMobile === 'admin'
-      ) {
-        account = db.company;
-      }
+      account = findCompanyAdmin(db, cleanMobile);
     } else if (role === 'client') {
       account = db.clients.find((c) => clean10DigitMobile(c.mobile) === cleanMobile || clean10DigitMobile(c.username) === cleanMobile);
     } else if (role === 'astrologer') {
@@ -257,7 +335,8 @@ app.post('/api/auth/login-otp/verify', (req, res) => {
       return res.status(400).json({ error: 'Mobile number / username and OTP are required.' });
     }
 
-    const isCompany = role === 'company' || mobile.trim() === 'jit_admin' || mobile.trim() === 'admin';
+    const db = readDb();
+    const isCompany = role === 'company' || Boolean(findCompanyAdmin(db, mobile));
     const cleanMobile = isCompany ? mobile.trim() : clean10DigitMobile(mobile);
     const cleanOtp = otp.trim();
     const record = loginOtpStore.get(cleanMobile);
@@ -271,28 +350,17 @@ app.post('/api/auth/login-otp/verify', (req, res) => {
       return res.status(400).json({ error: 'Invalid or expired OTP code. Please try again.' });
     }
 
-    const db = readDb();
-
     if (isCompany) {
-      const company = db.company;
-      if (
-        cleanMobile === company.username ||
-        cleanMobile === company.mobile ||
-        cleanMobile === 'jit_admin' ||
-        cleanMobile === 'admin'
-      ) {
-        const token = generateToken(company, 'company');
+      const companyAdmin = findCompanyAdmin(db, cleanMobile);
+      if (companyAdmin) {
+        if (companyAdmin.status === 'disabled') {
+          return res.status(403).json({ error: 'This company admin account is disabled. Contact a Super Admin.' });
+        }
+        const token = generateToken(companyAdmin, 'company');
         return res.json({
-          message: 'Company Admin login successful via OTP',
+          message: `${companyAdmin.adminLevel === 'super_admin' ? 'Company Super Admin' : 'Company Admin'} login successful via OTP`,
           token,
-          user: {
-            id: 'company-jit',
-            name: company.name,
-            username: company.username || 'jit_admin',
-            mobile: company.mobile || 'jit_admin',
-            email: company.email,
-            role: 'company',
-          },
+          user: sanitizeCompanyAdmin(companyAdmin),
         });
       }
     }
@@ -599,7 +667,8 @@ app.post('/api/auth/login', (req, res) => {
   try {
     let { role, mobile, username, password } = req.body;
     const rawMobile = (mobile || username || '').trim();
-    const isCompany = role === 'company' || rawMobile === 'jit_admin' || rawMobile === 'admin';
+    const db = readDb();
+    const isCompany = role === 'company' || Boolean(findCompanyAdmin(db, rawMobile));
     const cleanMobile = isCompany ? rawMobile : clean10DigitMobile(rawMobile);
 
     if (!role && isCompany) {
@@ -610,7 +679,6 @@ app.post('/api/auth/login', (req, res) => {
       return res.status(400).json({ error: 'Role, Mobile Number/Username, and Password are required.' });
     }
 
-    const db = readDb();
     const cleanPwd = (password || '').trim();
     const loginOtpRecord = loginOtpStore.get(cleanMobile);
     const isOtpMatch =
@@ -619,31 +687,21 @@ app.post('/api/auth/login', (req, res) => {
       cleanPwd === '1234';
 
     if (role === 'company') {
-      const company = db.company;
-      if (
-        cleanMobile === company.username ||
-        cleanMobile === company.mobile ||
-        cleanMobile === company.email ||
-        cleanMobile === 'jit_admin' ||
-        cleanMobile === 'admin'
-      ) {
-        const isMatch = bcrypt.compareSync(password, company.passwordHash) || isOtpMatch;
+      const companyAdmin = findCompanyAdmin(db, cleanMobile);
+      if (companyAdmin) {
+        if (companyAdmin.status === 'disabled') {
+          return res.status(403).json({ error: 'This company admin account is disabled. Contact a Super Admin.' });
+        }
+        const isMatch = bcrypt.compareSync(password, companyAdmin.passwordHash) || isOtpMatch;
         if (!isMatch) {
           return res.status(401).json({ error: 'Invalid username and password.' });
         }
 
-        const token = generateToken(company, 'company');
+        const token = generateToken(companyAdmin, 'company');
         return res.json({
-          message: 'Company Admin login successful',
+          message: `${companyAdmin.adminLevel === 'super_admin' ? 'Company Super Admin' : 'Company Admin'} login successful`,
           token,
-          user: {
-            id: 'company-jit',
-            name: company.name,
-            username: company.username || 'jit_admin',
-            mobile: company.mobile || 'jit_admin',
-            email: company.email,
-            role: 'company',
-          },
+          user: sanitizeCompanyAdmin(companyAdmin),
         });
       }
       return res.status(401).json({ error: 'Invalid username and password.' });
@@ -735,15 +793,13 @@ app.post('/api/auth/forgot-password/verify', (req, res) => {
       return res.status(400).json({ error: 'Mobile number is required for password recovery.' });
     }
 
-    const isCompany = role === 'company' || mobile.trim() === 'jit_admin' || mobile.trim() === 'admin';
-    const cleanMobile = isCompany ? mobile.trim() : clean10DigitMobile(mobile);
     const db = readDb();
+    const isCompany = role === 'company' || Boolean(findCompanyAdmin(db, mobile));
+    const cleanMobile = isCompany ? mobile.trim() : clean10DigitMobile(mobile);
     let account = null;
 
     if (isCompany) {
-      if (cleanMobile === db.company.mobile || cleanMobile === 'admin' || cleanMobile === db.company.username || cleanMobile === db.company.email) {
-        account = db.company;
-      }
+      account = findCompanyAdmin(db, cleanMobile);
     } else if (role === 'client') {
       account = db.clients.find((c) => clean10DigitMobile(c.mobile) === cleanMobile || clean10DigitMobile(c.username) === cleanMobile);
     } else if (role === 'astrologer') {
@@ -795,7 +851,8 @@ app.post('/api/auth/forgot-password/reset', (req, res) => {
       return res.status(400).json({ error: 'New password must be at least 6 characters long.' });
     }
 
-    const isCompany = role === 'company' || mobile.trim() === 'jit_admin' || mobile.trim() === 'admin';
+    const db = readDb();
+    const isCompany = role === 'company' || Boolean(findCompanyAdmin(db, mobile));
     const cleanMobile = isCompany ? mobile.trim() : clean10DigitMobile(mobile);
     const cleanOtp = (otp || '').trim();
 
@@ -814,14 +871,20 @@ app.post('/api/auth/forgot-password/reset', (req, res) => {
     // OTP is valid — consume it (one-time use)
     forgotPasswordOtpStore.delete(cleanMobile);
 
-    const db = readDb();
     const salt = bcrypt.genSaltSync(8);
     const newPasswordHash = bcrypt.hashSync(newPassword, salt);
     let updated = false;
 
-    if (isCompany) {
-      db.company.passwordHash = newPasswordHash;
-      updated = true;
+    if (isCompany || role === 'company') {
+      const targetAdmin = findCompanyAdmin(db, cleanMobile);
+      if (targetAdmin) {
+        targetAdmin.passwordHash = newPasswordHash;
+        targetAdmin.passwordUpdatedAt = new Date().toISOString();
+        if (targetAdmin.isPrimaryRoot || targetAdmin.id === 'company-jit') {
+          db.company.passwordHash = newPasswordHash;
+        }
+        updated = true;
+      }
     } else if (role === 'client') {
       const idx = db.clients.findIndex((c) => clean10DigitMobile(c.mobile) === cleanMobile || clean10DigitMobile(c.username) === cleanMobile);
       if (idx !== -1) {
@@ -840,9 +903,6 @@ app.post('/api/auth/forgot-password/reset', (req, res) => {
         db.vendors[idx].passwordHash = newPasswordHash;
         updated = true;
       }
-    } else if (role === 'company') {
-      db.company.passwordHash = newPasswordHash;
-      updated = true;
     }
 
     if (!updated) {
@@ -866,23 +926,11 @@ app.get('/api/auth/me', authenticate, (req, res) => {
   const { role, mobile } = req.user;
 
   if (role === 'company') {
-    return res.json({
-      user: {
-        id: 'company-jit',
-        name: db.company.name,
-        mobile: db.company.mobile,
-        email: db.company.email,
-        fatherName: db.company.fatherName || '',
-        motherName: db.company.motherName || '',
-        dob: db.company.dob || '',
-        dobTime: db.company.dobTime || '',
-        dobPlace: db.company.dobPlace || '',
-        city: db.company.city || '',
-        state: db.company.state || '',
-        country: db.company.country || 'India',
-        role: 'company',
-      },
-    });
+    const admin = resolveCompanyActor(db, req.user);
+    if (!admin || admin.status === 'disabled') {
+      return res.status(401).json({ error: 'Company admin account not active' });
+    }
+    return res.json({ user: sanitizeCompanyAdmin(admin) });
   }
 
   if (role === 'client') {
@@ -996,11 +1044,19 @@ app.put('/api/user/profile', authenticate, (req, res) => {
     }
 
     if (role === 'company') {
+      const admin = resolveCompanyActor(db, req.user);
+      if (!admin) return res.status(404).json({ error: 'Company admin account not found' });
       ['name', 'email', 'fatherName', 'motherName', 'dob', 'dobTime', 'dobPlace', 'city', 'state', 'country', 'caste', 'gotra', 'religion'].forEach(field => {
-        if (updates[field] !== undefined) db.company[field] = updates[field];
+        if (updates[field] !== undefined) {
+          admin[field] = updates[field];
+          if (admin.isPrimaryRoot || admin.id === 'company-jit') {
+            db.company[field] = updates[field];
+          }
+        }
       });
+      admin.updatedAt = new Date().toISOString();
       writeDb(db);
-      return res.json({ message: 'Company settings updated', user: { ...db.company, role: 'company' } });
+      return res.json({ message: 'Company settings updated', user: sanitizeCompanyAdmin(admin) });
     }
 
     return res.status(400).json({ error: 'Unsupported role' });
@@ -1028,7 +1084,7 @@ app.post('/api/user/change-password', authenticate, (req, res) => {
     if (role === 'client') target = db.clients.find(c => c.mobile === mobile || c.id === req.user.id);
     else if (role === 'astrologer') target = db.astrologers.find(a => a.mobile === mobile || a.id === req.user.id);
     else if (role === 'vendor') target = db.vendors.find(v => v.mobile === mobile || v.id === req.user.id);
-    else if (role === 'company') target = db.company;
+    else if (role === 'company') target = resolveCompanyActor(db, req.user);
 
     if (!target) return res.status(404).json({ error: 'User record not found' });
 
@@ -1040,6 +1096,9 @@ app.post('/api/user/change-password', authenticate, (req, res) => {
 
     target.passwordHash = bcrypt.hashSync(newPassword, 8);
     target.passwordUpdatedAt = new Date().toISOString();
+    if (role === 'company' && (target.isPrimaryRoot || target.id === 'company-jit')) {
+      db.company.passwordHash = target.passwordHash;
+    }
     writeDb(db);
 
     return res.json({ message: 'Password updated successfully!' });
@@ -1060,7 +1119,7 @@ app.put('/api/user/settings', authenticate, (req, res) => {
     if (role === 'client') target = db.clients.find(c => c.mobile === mobile || c.id === req.user.id);
     else if (role === 'astrologer') target = db.astrologers.find(a => a.mobile === mobile || a.id === req.user.id);
     else if (role === 'vendor') target = db.vendors.find(v => v.mobile === mobile || v.id === req.user.id);
-    else if (role === 'company') target = db.company;
+    else if (role === 'company') target = resolveCompanyActor(db, req.user);
 
     if (!target) return res.status(404).json({ error: 'User record not found' });
 
@@ -2546,13 +2605,18 @@ app.get('/api/marketplace/products', (req, res) => {
 });
 
 // --------------------------------------------------------------------------
-// 8. COMPANY (JIT) ADMIN SUPERVISION
+// 8. COMPANY (JIT) ADMIN & SUPER ADMIN SUPERVISION
 // --------------------------------------------------------------------------
 
 app.get('/api/company/overview', authenticate, (req, res) => {
   try {
-    if (req.user.role !== 'company') return res.status(403).json({ error: 'Access denied' });
-    const db = readDb();
+    const authCtx = requireCompanyAccess(req, res);
+    if (!authCtx) return;
+    const { db } = authCtx;
+
+    const admins = getCompanyAdmins(db);
+    const totalSuperAdmins = admins.filter((a) => a.adminLevel === 'super_admin' && a.status !== 'disabled').length;
+    const totalAdmins = admins.filter((a) => a.adminLevel === 'admin' && a.status !== 'disabled').length;
 
     const individualAstros = db.astrologers.filter((a) => a.type === 'individual').length;
     const companyAstros = db.astrologers.filter((a) => a.type === 'company').length;
@@ -2574,6 +2638,8 @@ app.get('/api/company/overview', authenticate, (req, res) => {
         totalMatrimonyProfiles: (db.matrimonyProfiles || []).length,
         verifiedMatrimonyProfiles: (db.matrimonyProfiles || []).filter((p) => p.account?.isVerified || p.isVerified).length,
         totalMatrimonyInterests: (db.matrimonyInterests || []).length,
+        totalSuperAdmins,
+        totalAdmins,
       },
       recentConsultations: db.consultations.slice(-5).reverse(),
       recentClients: db.clients.slice(-5).reverse().map((c) => {
@@ -2586,26 +2652,216 @@ app.get('/api/company/overview', authenticate, (req, res) => {
   }
 });
 
+// List all Company Super Admins & Admins (Super Admin only)
+app.get('/api/company/admins', authenticate, (req, res) => {
+  try {
+    const authCtx = requireCompanyAccess(req, res, { superAdminOnly: true });
+    if (!authCtx) return;
+    const { db } = authCtx;
+    return res.json(getCompanyAdmins(db).map(sanitizeCompanyAdmin));
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to load company admins' });
+  }
+});
+
+// Create a new Company Super Admin or Admin (Super Admin only)
+app.post('/api/company/admins', authenticate, (req, res) => {
+  try {
+    const authCtx = requireCompanyAccess(req, res, { superAdminOnly: true });
+    if (!authCtx) return;
+    const { db, admin: actor } = authCtx;
+
+    const { name, username, mobile, email, password, adminLevel = 'admin' } = req.body;
+    const cleanUsername = String(username || '').trim().toLowerCase();
+    const cleanName = String(name || '').trim();
+    const cleanMobile = mobile ? (clean10DigitMobile(mobile) || String(mobile).trim()) : '';
+    const cleanEmail = email ? String(email).trim().toLowerCase() : '';
+    const level = adminLevel === 'super_admin' ? 'super_admin' : 'admin';
+
+    if (!cleanName || !cleanUsername) {
+      return res.status(400).json({ error: 'Full Name and Username are required.' });
+    }
+    if (!/^[a-z0-9_.-]{3,32}$/.test(cleanUsername)) {
+      return res.status(400).json({ error: 'Username must be 3-32 characters (letters, numbers, _, ., -).' });
+    }
+    if (!password || String(password).length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters long.' });
+    }
+
+    if (!Array.isArray(db.companyAdmins)) db.companyAdmins = getCompanyAdmins(db);
+
+    const conflict = db.companyAdmins.find((a) => {
+      const aUser = String(a.username || '').trim().toLowerCase();
+      const aMob = clean10DigitMobile(a.mobile || '');
+      const aEmail = String(a.email || '').trim().toLowerCase();
+      return (
+        aUser === cleanUsername ||
+        (cleanMobile && cleanMobile.length === 10 && aMob === cleanMobile) ||
+        (cleanEmail && aEmail === cleanEmail)
+      );
+    });
+    if (conflict) {
+      return res.status(400).json({ error: 'An admin with this username, mobile, or email already exists.' });
+    }
+
+    const newAdmin = {
+      id: `company-admin-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      name: cleanName,
+      username: cleanUsername,
+      mobile: cleanMobile || cleanUsername,
+      email: cleanEmail,
+      role: 'company',
+      adminLevel: level,
+      isPrimaryRoot: false,
+      status: 'active',
+      passwordHash: bcrypt.hashSync(String(password), 8),
+      createdBy: actor.username || actor.name || 'super_admin',
+      createdAt: new Date().toISOString(),
+    };
+
+    db.companyAdmins.push(newAdmin);
+    writeDb(db);
+
+    return res.status(201).json({
+      message: `${level === 'super_admin' ? 'Super Admin' : 'Company Admin'} created successfully.`,
+      admin: sanitizeCompanyAdmin(newAdmin),
+    });
+  } catch (error) {
+    console.error('Create company admin error:', error);
+    return res.status(500).json({ error: 'Failed to create company admin' });
+  }
+});
+
+// Update Company Super Admin or Admin (promote/demote, activate/disable, edit details, reset password)
+app.put('/api/company/admins/:id', authenticate, (req, res) => {
+  try {
+    const authCtx = requireCompanyAccess(req, res, { superAdminOnly: true });
+    if (!authCtx) return;
+    const { db, admin: actor } = authCtx;
+    const { id } = req.params;
+
+    if (!Array.isArray(db.companyAdmins)) db.companyAdmins = getCompanyAdmins(db);
+    const idx = db.companyAdmins.findIndex((a) => a.id === id);
+    if (idx === -1) return res.status(404).json({ error: 'Admin account not found.' });
+
+    const target = db.companyAdmins[idx];
+    const { name, mobile, email, adminLevel, status, password } = req.body;
+
+    if (target.isPrimaryRoot || target.id === 'company-jit') {
+      if (adminLevel && adminLevel !== 'super_admin') {
+        return res.status(400).json({ error: 'Cannot demote the primary root Super Admin (jit_admin).' });
+      }
+      if (status && status !== 'active') {
+        return res.status(400).json({ error: 'Cannot disable the primary root Super Admin (jit_admin).' });
+      }
+    }
+
+    if (target.id === actor.id) {
+      if (adminLevel && adminLevel !== 'super_admin') {
+        return res.status(400).json({ error: 'You cannot demote your own Super Admin role.' });
+      }
+      if (status && status !== 'active') {
+        return res.status(400).json({ error: 'You cannot disable your own active session account.' });
+      }
+    }
+
+    if (name !== undefined && String(name).trim()) target.name = String(name).trim();
+    if (email !== undefined) {
+      const nextEmail = String(email || '').trim().toLowerCase();
+      if (nextEmail && db.companyAdmins.some((a, i) => i !== idx && String(a.email || '').toLowerCase() === nextEmail)) {
+        return res.status(400).json({ error: 'Another admin already uses this email.' });
+      }
+      target.email = nextEmail;
+    }
+    if (mobile !== undefined && !(target.isPrimaryRoot || target.id === 'company-jit')) {
+      const nextMob = clean10DigitMobile(mobile) || String(mobile || '').trim() || target.username;
+      target.mobile = nextMob;
+    }
+    if (adminLevel === 'super_admin' || adminLevel === 'admin') {
+      target.adminLevel = adminLevel;
+    }
+    if (status === 'active' || status === 'disabled') {
+      target.status = status;
+    }
+    if (password !== undefined && String(password).trim() !== '') {
+      if (String(password).length < 6) {
+        return res.status(400).json({ error: 'Password must be at least 6 characters long.' });
+      }
+      target.passwordHash = bcrypt.hashSync(String(password), 8);
+      if (target.isPrimaryRoot || target.id === 'company-jit') {
+        db.company.passwordHash = target.passwordHash;
+      }
+    }
+
+    if (target.isPrimaryRoot || target.id === 'company-jit') {
+      db.company.name = target.name;
+      db.company.email = target.email;
+    }
+
+    target.updatedAt = new Date().toISOString();
+    writeDb(db);
+
+    return res.json({
+      message: 'Company admin updated successfully.',
+      admin: sanitizeCompanyAdmin(target),
+    });
+  } catch (error) {
+    console.error('Update company admin error:', error);
+    return res.status(500).json({ error: 'Failed to update company admin' });
+  }
+});
+
+// Delete a Company Super Admin or Admin (Super Admin only)
+app.delete('/api/company/admins/:id', authenticate, (req, res) => {
+  try {
+    const authCtx = requireCompanyAccess(req, res, { superAdminOnly: true });
+    if (!authCtx) return;
+    const { db, admin: actor } = authCtx;
+    const { id } = req.params;
+
+    if (!Array.isArray(db.companyAdmins)) db.companyAdmins = getCompanyAdmins(db);
+    const target = db.companyAdmins.find((a) => a.id === id);
+    if (!target) return res.status(404).json({ error: 'Admin account not found.' });
+
+    if (target.isPrimaryRoot || target.id === 'company-jit') {
+      return res.status(400).json({ error: 'Cannot delete the primary root Super Admin (jit_admin).' });
+    }
+    if (target.id === actor.id) {
+      return res.status(400).json({ error: 'You cannot delete your own logged-in account.' });
+    }
+
+    db.companyAdmins = db.companyAdmins.filter((a) => a.id !== id);
+    writeDb(db);
+    return res.json({ message: 'Company admin removed successfully.' });
+  } catch (error) {
+    console.error('Delete company admin error:', error);
+    return res.status(500).json({ error: 'Failed to delete company admin' });
+  }
+});
+
 app.get('/api/company/clients', authenticate, (req, res) => {
-  if (req.user.role !== 'company') return res.status(403).json({ error: 'Access denied' });
-  const db = readDb();
+  const authCtx = requireCompanyAccess(req, res);
+  if (!authCtx) return;
+  const { db } = authCtx;
   res.json(db.clients.map((c) => { const { passwordHash, ...data } = c; return data; }));
 });
 
-// Company Super Admin: Delete single registered client
+// Company Super Admin ONLY: Delete single registered client
 app.delete('/api/company/clients/:id', authenticate, (req, res) => {
-  if (req.user.role !== 'company') return res.status(403).json({ error: 'Access denied' });
+  const authCtx = requireCompanyAccess(req, res, { superAdminOnly: true });
+  if (!authCtx) return;
+  const { db } = authCtx;
   const { id } = req.params;
-  const db = readDb();
   db.clients = (db.clients || []).filter(c => c.id !== id && c.mobile !== id);
   writeDb(db);
   res.json({ message: 'Client deleted successfully' });
 });
 
-// Company Super Admin: Purge all demo/junk data across all tables
+// Company Super Admin ONLY: Purge all demo/junk data across all tables
 app.post('/api/company/purge-all-data', authenticate, (req, res) => {
-  if (req.user.role !== 'company') return res.status(403).json({ error: 'Access denied' });
-  const db = readDb();
+  const authCtx = requireCompanyAccess(req, res, { superAdminOnly: true });
+  if (!authCtx) return;
+  const { db } = authCtx;
   db.clients = [];
   db.astrologers = [];
   db.vendors = [];
@@ -2620,22 +2876,29 @@ app.post('/api/company/purge-all-data', authenticate, (req, res) => {
   db.matrimonyShortlists = [];
 
   const salt = bcrypt.genSaltSync(8);
-  db.company = {
+  const rootAdmin = {
+    id: 'company-jit',
     username: 'jit_admin',
     name: 'Astrojit Technologies (JIT)',
     mobile: 'jit_admin',
     email: 'admin@astrojit.com',
     role: 'company',
+    adminLevel: 'super_admin',
+    isPrimaryRoot: true,
+    status: 'active',
     passwordHash: bcrypt.hashSync('Jishnuinfotech@123', salt),
   };
+  db.company = { ...rootAdmin };
+  db.companyAdmins = [{ ...rootAdmin }];
 
   writeDb(db);
   res.json({ message: 'All demo and junk records permanently wiped. Only jit_admin retained.' });
 });
 
 app.get('/api/company/astrologers', authenticate, (req, res) => {
-  if (req.user.role !== 'company') return res.status(403).json({ error: 'Access denied' });
-  const db = readDb();
+  const authCtx = requireCompanyAccess(req, res);
+  if (!authCtx) return;
+  const { db } = authCtx;
   const safeAstros = db.astrologers.map((a) => {
     const { passwordHash, ...data } = a;
     const referredCount = db.clients.filter(
@@ -2647,8 +2910,9 @@ app.get('/api/company/astrologers', authenticate, (req, res) => {
 });
 
 app.get('/api/company/vendors', authenticate, (req, res) => {
-  if (req.user.role !== 'company') return res.status(403).json({ error: 'Access denied' });
-  const db = readDb();
+  const authCtx = requireCompanyAccess(req, res);
+  if (!authCtx) return;
+  const { db } = authCtx;
   res.json(db.vendors.map((v) => {
     const { passwordHash, ...data } = v;
     const prodCount = db.products.filter((p) => p.vendorId === v.id).length;
@@ -2657,24 +2921,27 @@ app.get('/api/company/vendors', authenticate, (req, res) => {
 });
 
 app.get('/api/company/products', authenticate, (req, res) => {
-  if (req.user.role !== 'company') return res.status(403).json({ error: 'Access denied' });
-  const db = readDb();
+  const authCtx = requireCompanyAccess(req, res);
+  if (!authCtx) return;
+  const { db } = authCtx;
   res.json(db.products);
 });
 
-// Company Super Admin: Matrimony Profiles Management
+// Company Admin & Super Admin: Matrimony Profiles Management
 app.get('/api/company/matrimony', authenticate, (req, res) => {
-  if (req.user.role !== 'company') return res.status(403).json({ error: 'Access denied' });
-  const db = readDb();
+  const authCtx = requireCompanyAccess(req, res);
+  if (!authCtx) return;
+  const { db } = authCtx;
   res.json(db.matrimonyProfiles || []);
 });
 
-// Company Super Admin: Toggle Matrimony Profile Verification (Blue Tick)
+// Company Admin & Super Admin: Toggle Matrimony Profile Verification (Blue Tick)
 app.put('/api/company/matrimony/:id/verify', authenticate, (req, res) => {
-  if (req.user.role !== 'company') return res.status(403).json({ error: 'Access denied' });
+  const authCtx = requireCompanyAccess(req, res);
+  if (!authCtx) return;
+  const { db } = authCtx;
   const { id } = req.params;
   const { isVerified } = req.body;
-  const db = readDb();
   const profile = (db.matrimonyProfiles || []).find((p) => p.id === id);
   if (!profile) return res.status(404).json({ error: 'Matrimony profile not found' });
 
@@ -2687,11 +2954,12 @@ app.put('/api/company/matrimony/:id/verify', authenticate, (req, res) => {
   res.json({ message: 'Profile verification status updated successfully', profile });
 });
 
-// Company Super Admin: Remove Matrimony Profile
+// Company Super Admin ONLY: Remove Matrimony Profile
 app.delete('/api/company/matrimony/:id', authenticate, (req, res) => {
-  if (req.user.role !== 'company') return res.status(403).json({ error: 'Access denied' });
+  const authCtx = requireCompanyAccess(req, res, { superAdminOnly: true });
+  if (!authCtx) return;
+  const { db } = authCtx;
   const { id } = req.params;
-  const db = readDb();
   const initialLen = (db.matrimonyProfiles || []).length;
   db.matrimonyProfiles = (db.matrimonyProfiles || []).filter((p) => p.id !== id);
   if (db.matrimonyProfiles.length === initialLen) {
@@ -2786,25 +3054,8 @@ app.get('/api/matrimony/autofill-sources', (req, res) => {
         const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
         client = db.clients.find(c => c.id === decoded.id || c.mobile === decoded.mobile);
         if (!client && decoded.role === 'company') {
-          client = {
-            id: 'company-jit',
-            name: db.company.name,
-            mobile: db.company.mobile,
-            email: db.company.email,
-            fatherName: db.company.fatherName || '',
-            motherName: db.company.motherName || '',
-            dob: db.company.dob || '',
-            dobTime: db.company.dobTime || '',
-            dobPlace: db.company.dobPlace || '',
-            country: db.company.country || 'India',
-            state: db.company.state || '',
-            city: db.company.city || '',
-            caste: db.company.caste || '',
-            gotra: db.company.gotra || '',
-            religion: db.company.religion || 'Hindu',
-            lat: db.company.lat,
-            lon: db.company.lon,
-          };
+          const admin = resolveCompanyActor(db, decoded);
+          if (admin) client = sanitizeCompanyAdmin(admin);
         }
       } catch (e) {
         // ignore token error

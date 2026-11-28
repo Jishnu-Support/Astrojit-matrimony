@@ -234,7 +234,7 @@ export default function Login({ onSwitchToRegister }) {
               </h3>
               <span className="text-[10px] text-slate-500 dark:text-amber-300 font-bold bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-900/40">
                 {selectedRole === 'company'
-                  ? tr('Username = jit_admin', 'பயனர்பெயர் = jit_admin')
+                  ? tr('Super Admin / Admin ID', 'சூப்பர் அட்மின் / அட்மின் ID')
                   : tr('Username = Mobile Number', 'பயனர்பெயர் = மொபைல் எண்')}
               </span>
             </div>
@@ -267,7 +267,7 @@ export default function Login({ onSwitchToRegister }) {
               <div>
                 <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1 text-[11px]">
                   {selectedRole === 'company'
-                    ? tr('Username (jit_admin) *', 'பயனர்பெயர் (jit_admin) *')
+                    ? tr('Admin Username / Mobile *', 'அட்மின் பயனர்பெயர் / மொபைல் *')
                     : tr('Mobile Number (Username) *', 'மொபைல் எண் (பயனர்பெயர்) *')}
                 </label>
                 {selectedRole === 'company' ? (
@@ -278,7 +278,7 @@ export default function Login({ onSwitchToRegister }) {
                       required
                       value={mobile}
                       onChange={(e) => setMobile(e.target.value)}
-                      placeholder="jit_admin"
+                      placeholder={tr('Username or mobile (e.g. jit_admin)', 'பயனர்பெயர் அல்லது மொபைல் (jit_admin)')}
                       className="w-full bg-slate-50 dark:bg-stone-900 border border-slate-300 dark:border-stone-700 rounded-xl pl-9 pr-3 py-2 text-slate-900 dark:text-stone-100 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium text-xs"
                     />
                   </div>

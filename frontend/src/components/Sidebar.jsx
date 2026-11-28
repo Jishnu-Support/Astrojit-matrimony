@@ -36,9 +36,10 @@ export default function Sidebar({
   // Define modules according to user role
   const getModules = () => {
     switch (role) {
-      case 'company':
-        return [
-          { id: 'overview', label: tr('System Overview', 'கணினி கண்ணோட்டம்'), icon: Shield, badge: 'HQ' },
+      case 'company': {
+        const isSuperAdmin = user?.adminLevel !== 'admin';
+        const companyModules = [
+          { id: 'overview', label: tr('System Overview', 'கணினி கண்ணோட்டம்'), icon: Shield, badge: isSuperAdmin ? 'Super' : 'Admin' },
           { id: 'clients', label: tr('All Clients', 'வாடிக்கையாளர்கள்'), icon: Users },
           { id: 'astrologers', label: tr('Astrologer Network', 'ஜோதிடர்கள்'), icon: Compass },
           { id: 'horoscope', label: tr('Horoscope', 'ஜாதகம்'), icon: Compass, badge: 'Drik' },
@@ -46,6 +47,16 @@ export default function Sidebar({
           { id: 'products', label: tr('Marketplace Inventory', 'சந்தை இருப்பு'), icon: ShoppingBag },
           { id: 'matrimony', label: tr('Matrimony Hub', 'திருமண மையம்'), icon: HeartHandshake, badge: 'Gov', isMatrimonyTab: true },
         ];
+        if (isSuperAdmin) {
+          companyModules.splice(1, 0, {
+            id: 'admins',
+            label: tr('Admins & Super Admins', 'நிர்வாகிகள்'),
+            icon: ShieldCheck,
+            badge: 'RBAC'
+          });
+        }
+        return companyModules;
+      }
       case 'astrologer':
         return [
           { id: 'appointments', label: tr('Consultations & Slots', 'ஆலோசனை முன்பதிவுகள்'), icon: Clock },

@@ -119,8 +119,12 @@ export const API = {
     return apiRequest(`/marketplace/products${params ? `?${params}` : ''}`, 'GET');
   },
 
-  // Company (JIT Admin)
+  // Company (JIT Super Admins & Admins)
   getCompanyOverview: () => apiRequest('/company/overview', 'GET'),
+  getCompanyAdmins: () => apiRequest('/company/admins', 'GET'),
+  createCompanyAdmin: (data) => apiRequest('/company/admins', 'POST', data),
+  updateCompanyAdmin: (id, data) => apiRequest(`/company/admins/${id}`, 'PUT', data),
+  deleteCompanyAdmin: (id) => apiRequest(`/company/admins/${id}`, 'DELETE'),
   getCompanyClients: () => apiRequest('/company/clients', 'GET'),
   deleteCompanyClient: (id) => apiRequest(`/company/clients/${id}`, 'DELETE'),
   purgeAllCompanyData: () => apiRequest('/company/purge-all-data', 'POST'),

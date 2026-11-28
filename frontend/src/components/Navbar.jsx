@@ -14,7 +14,14 @@ export default function Navbar({ activeTab, setActiveTab, onOpenMatrimony, onTog
   const getRoleBadge = () => {
     switch (role) {
       case 'company':
-        return { label: t('roleCompanyAdmin'), bg: 'bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800/50' };
+        return {
+          label: user?.adminLevel === 'admin'
+            ? (lang === 'ta' ? 'நிறுவன நிர்வாகி' : 'Company Admin')
+            : (lang === 'ta' ? 'சூப்பர் அட்மின்' : 'Super Admin'),
+          bg: user?.adminLevel === 'admin'
+            ? 'bg-indigo-50 dark:bg-indigo-950/35 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/50'
+            : 'bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800/50'
+        };
       case 'astrologer':
         return { label: t('roleAstrologerPortal'), bg: 'bg-indigo-50 dark:bg-indigo-950/35 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800/50' };
       case 'vendor':

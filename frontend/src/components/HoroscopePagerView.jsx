@@ -548,7 +548,7 @@ export default function HoroscopePagerView({ initialBirthData, astrologerProfile
   };
 
   return (
-    <div className={`min-h-screen ${isDark ? 'dark bg-[#181412] text-stone-100' : 'bg-[#FAF6EF] text-stone-900'} p-2 sm:p-5 font-serif transition-colors duration-200`}>
+    <div className={`min-h-screen ${isDark ? 'dark bg-transparent text-stone-100' : 'bg-[#FAF6EF] text-stone-900'} p-2 sm:p-5 font-serif transition-colors duration-200`}>
       <div className="max-w-5xl mx-auto space-y-4">
         {/* TOP CONTROL BAR (Screen Only - Hidden on Print) */}
         <div className="bg-white dark:bg-stone-900 border border-amber-900/15 dark:border-stone-800 rounded-2xl p-3 sm:p-4 shadow-xs flex flex-wrap items-center justify-between gap-3 no-print">

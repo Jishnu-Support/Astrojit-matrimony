@@ -2,15 +2,19 @@ import React, { useState, useEffect } from 'react';
 import {
   Shield, Users, Compass, Store, ShoppingBag, FileText, Search, Sparkles,
   Building2, UserCheck, CheckCircle2, Heart, ShieldCheck, Trash2, Eye, X,
-  Filter, Phone, MapPin, Briefcase, GraduationCap, Calendar, Award
+  Filter, Phone, MapPin, Briefcase, GraduationCap, Calendar, Award,
+  UserPlus, Key, Lock, Unlock, Crown, Edit3
 } from 'lucide-react';
 import { API } from '../api';
+import { useAuth } from '../context/AuthContext';
 import { useLang } from '../i18n';
 import HoroscopeHub from '../components/HoroscopeHub';
 import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
 import HoroscopePagerView from '../components/HoroscopePagerView';
 
 export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
+  const { user } = useAuth();
+  const isSuperAdmin = user?.adminLevel !== 'admin';
   const { lang, t } = useLang();
   const [internalTab, setInternalTab] = useState('overview');
   const activeTab = propTab || internalTab;
@@ -24,6 +28,26 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
   const [vendors, setVendors] = useState([]);
   const [products, setProducts] = useState([]);
   const [matrimonyProfiles, setMatrimonyProfiles] = useState([]);
+  const [companyAdmins, setCompanyAdmins] = useState([]);
+  const [adminForm, setAdminForm] = useState({
+    name: '',
+    username: '',
+    mobile: '',
+    email: '',
+    password: '',
+    adminLevel: 'admin',
+  });
+  const [savingAdmin, setSavingAdmin] = useState(false);
+  const [adminErrorMsg, setAdminErrorMsg] = useState('');
+  const [editingAdmin, setEditingAdmin] = useState(null);
+  const [editAdminForm, setEditAdminForm] = useState({
+    name: '',
+    mobile: '',
+    email: '',
+    adminLevel: 'admin',
+    status: 'active',
+    password: '',
+  });
   const [matrimonySearch, setMatrimonySearch] = useState('');
   const [matrimonyFilter, setMatrimonyFilter] = useState('all');
   const [selectedMatrimonyProfile, setSelectedMatrimonyProfile] = useState(null);
@@ -47,19 +71,21 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
 
   useEffect(() => {
     loadAllCompanyData();
-  }, []);
+  }, [isSuperAdmin]);
 
   const loadAllCompanyData = async () => {
     setLoading(true);
     try {
-      const [ovData, clData, astData, venData, prodData, matData] = await Promise.all([
+      const requests = [
         API.getCompanyOverview(),
         API.getCompanyClients(),
         API.getCompanyAstrologers(),
         API.getCompanyVendors(),
         API.getCompanyProducts(),
         API.getCompanyMatrimonyProfiles(),
-      ]);
+        isSuperAdmin ? API.getCompanyAdmins() : Promise.resolve([]),
+      ];
+      const [ovData, clData, astData, venData, prodData, matData, adminsData] = await Promise.all(requests);
 
       setOverview(ovData);
       setClients(clData);
@@ -67,10 +93,93 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
       setVendors(venData);
       setProducts(prodData);
       setMatrimonyProfiles(matData || []);
+      setCompanyAdmins(Array.isArray(adminsData) ? adminsData : []);
     } catch (err) {
       console.error('Error loading company data:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCreateAdmin = async (e) => {
+    e.preventDefault();
+    setAdminErrorMsg('');
+    setSavingAdmin(true);
+    try {
+      const res = await API.createCompanyAdmin(adminForm);
+      if (res?.admin) {
+        setCompanyAdmins((prev) => [...prev, res.admin]);
+      }
+      setAdminForm({ name: '', username: '', mobile: '', email: '', password: '', adminLevel: 'admin' });
+      setActionSuccessMsg(res?.message || tr('Admin account created successfully.', 'நிர்வாகி கணக்கு உருவாக்கப்பட்டது.'));
+      setTimeout(() => setActionSuccessMsg(''), 3500);
+    } catch (err) {
+      setAdminErrorMsg(err.message || 'Failed to create admin');
+    } finally {
+      setSavingAdmin(false);
+    }
+  };
+
+  const handleQuickUpdateAdmin = async (adminId, updates, successText) => {
+    setAdminErrorMsg('');
+    try {
+      const res = await API.updateCompanyAdmin(adminId, updates);
+      if (res?.admin) {
+        setCompanyAdmins((prev) => prev.map((a) => (a.id === adminId ? res.admin : a)));
+      }
+      setActionSuccessMsg(successText || res?.message || tr('Admin updated.', 'நிர்வாகி புதுப்பிக்கப்பட்டார்.'));
+      setTimeout(() => setActionSuccessMsg(''), 3000);
+    } catch (err) {
+      setAdminErrorMsg(err.message || 'Update failed');
+    }
+  };
+
+  const handleSaveEditedAdmin = async (e) => {
+    e.preventDefault();
+    if (!editingAdmin) return;
+    setSavingAdmin(true);
+    setAdminErrorMsg('');
+    try {
+      const payload = {
+        name: editAdminForm.name,
+        email: editAdminForm.email,
+        mobile: editAdminForm.mobile,
+        adminLevel: editAdminForm.adminLevel,
+        status: editAdminForm.status,
+      };
+      if (editAdminForm.password.trim()) {
+        payload.password = editAdminForm.password.trim();
+      }
+      const res = await API.updateCompanyAdmin(editingAdmin.id, payload);
+      if (res?.admin) {
+        setCompanyAdmins((prev) => prev.map((a) => (a.id === editingAdmin.id ? res.admin : a)));
+      }
+      setEditingAdmin(null);
+      setActionSuccessMsg(res?.message || tr('Admin details updated.', 'நிர்வாகி விவரம் புதுப்பிக்கப்பட்டது.'));
+      setTimeout(() => setActionSuccessMsg(''), 3000);
+    } catch (err) {
+      setAdminErrorMsg(err.message || 'Failed to update admin');
+    } finally {
+      setSavingAdmin(false);
+    }
+  };
+
+  const handleDeleteAdmin = async (admin) => {
+    const ok = window.confirm(
+      tr(
+        `Remove ${admin.name} (${admin.username}) from Company access?`,
+        `${admin.name} (${admin.username}) கணக்கை நீக்க விரும்புகிறீர்களா?`
+      )
+    );
+    if (!ok) return;
+    setAdminErrorMsg('');
+    try {
+      await API.deleteCompanyAdmin(admin.id);
+      setCompanyAdmins((prev) => prev.filter((a) => a.id !== admin.id));
+      setActionSuccessMsg(tr('Admin account removed.', 'நிர்வாகி கணக்கு நீக்கப்பட்டது.'));
+      setTimeout(() => setActionSuccessMsg(''), 3000);
+    } catch (err) {
+      setAdminErrorMsg(err.message || 'Failed to remove admin');
     }
   };
 
@@ -158,12 +267,17 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
       <div className="bg-white dark:bg-[#1E1815] border border-rose-200/80 dark:border-rose-800/50 rounded-2xl p-4 sm:p-6 shadow-xs relative overflow-hidden">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
           <div>
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800/50 flex items-center gap-1">
-                <Shield className="w-3.5 h-3.5 text-rose-600" /> {t('superAdminPortal')}
+            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+              <span className={`text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full border flex items-center gap-1 ${
+                isSuperAdmin
+                  ? 'bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800/50'
+                  : 'bg-indigo-50 dark:bg-indigo-950/35 text-indigo-800 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/50'
+              }`}>
+                {isSuperAdmin ? <Crown className="w-3.5 h-3.5 text-amber-500" /> : <Shield className="w-3.5 h-3.5 text-indigo-500" />}
+                {isSuperAdmin ? t('superAdminPortal') : tr('Company Admin Portal', 'நிறுவன நிர்வாகி தளம்')}
               </span>
               <span className="text-[10px] sm:text-xs text-slate-600 dark:text-stone-400 bg-slate-100 dark:bg-stone-800/80 px-2.5 py-0.5 rounded-full">
-                {t('centralizedGovernance')}
+                {user?.name || t('centralizedGovernance')}
               </span>
             </div>
 
@@ -197,6 +311,19 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
           >
             {t('tabOverview')}
           </button>
+          {isSuperAdmin && (
+            <button
+              onClick={() => { setActiveTab('admins'); setSelectedClientMobile(null); }}
+              className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                activeTab === 'admins'
+                  ? 'bg-rose-600 text-white shadow-xs'
+                  : 'bg-slate-100 dark:bg-stone-800/80 text-slate-700 dark:text-stone-300 hover:bg-slate-200 dark:hover:bg-stone-700'
+              }`}
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
+              <span>{tr('Admins & Super Admins', 'நிர்வாகிகள்')} ({companyAdmins.length})</span>
+            </button>
+          )}
           <button
             onClick={() => { setActiveTab('clients'); setSelectedClientMobile(null); }}
             className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
@@ -326,6 +453,33 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
                   <div className="text-2xl font-black text-rose-700 dark:text-rose-400 mt-0.5">{overview.metrics.totalConsultations}</div>
                   <span className="text-[11px] text-slate-400">Remedial records</span>
                 </div>
+              </div>
+
+              {/* Company Governance Team Summary Card */}
+              <div className="bg-white dark:bg-[#1E1815] border border-indigo-200/80 dark:border-indigo-800/40 rounded-2xl p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/50 flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-5 h-5 text-rose-600 dark:text-amber-400" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs sm:text-sm font-black text-slate-900 dark:text-stone-100">
+                      {tr('Company Governance Hierarchy', 'நிறுவன நிர்வாகக் குழு')}
+                    </h4>
+                    <p className="text-[11px] text-slate-500 dark:text-stone-400">
+                      <strong className="text-amber-700 dark:text-amber-300">{overview.metrics.totalSuperAdmins || 1}</strong> {tr('Super Admins', 'சூப்பர் அட்மின்கள்')} •{' '}
+                      <strong className="text-indigo-700 dark:text-indigo-300">{overview.metrics.totalAdmins || 0}</strong> {tr('Company Admins', 'நிறுவன நிர்வாகிகள்')}
+                    </p>
+                  </div>
+                </div>
+                {isSuperAdmin && (
+                  <button
+                    onClick={() => setActiveTab('admins')}
+                    className="bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5 self-start sm:self-auto"
+                  >
+                    <UserPlus className="w-3.5 h-3.5" />
+                    <span>{tr('Manage Super Admins & Admins', 'நிர்வாகிகளை நிர்வகி')}</span>
+                  </button>
+                )}
               </div>
 
               {/* Recent Consultations Log */}
@@ -512,13 +666,15 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
                                   >
                                     Inspect Profile
                                   </button>
-                                  <button
-                                    onClick={() => handleDeleteClient(c.id || c.mobile, c.name)}
-                                    className="bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-600 hover:text-white text-rose-700 dark:text-rose-400 border border-rose-300 dark:border-rose-700/60 text-xs px-2 py-1 rounded-lg font-bold transition-all cursor-pointer"
-                                    title="Delete Client"
-                                  >
-                                    Delete
-                                  </button>
+                                  {isSuperAdmin && (
+                                    <button
+                                      onClick={() => handleDeleteClient(c.id || c.mobile, c.name)}
+                                      className="bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-600 hover:text-white text-rose-700 dark:text-rose-400 border border-rose-300 dark:border-rose-700/60 text-xs px-2 py-1 rounded-lg font-bold transition-all cursor-pointer"
+                                      title="Delete Client"
+                                    >
+                                      Delete
+                                    </button>
+                                  )}
                                 </div>
                               </td>
                             </tr>
@@ -920,13 +1076,15 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
                                   >
                                     <Eye className="w-4 h-4" />
                                   </button>
-                                  <button
-                                    onClick={() => handleDeleteMatrimony(p.id, displayName)}
-                                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                                    title={tr('Delete Profile', 'சுயவிவரத்தை நீக்கு')}
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </button>
+                                  {isSuperAdmin && (
+                                    <button
+                                      onClick={() => handleDeleteMatrimony(p.id, displayName)}
+                                      className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                                      title={tr('Delete Profile', 'சுயவிவரத்தை நீக்கு')}
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  )}
                                 </div>
                               </td>
                             </tr>
@@ -1083,6 +1241,445 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
               )}
             </div>
           )}
+          {/* TAB 1B: SUPER ADMINS & COMPANY ADMINS MANAGEMENT (SUPER ADMIN ONLY) */}
+          {activeTab === 'admins' && (
+            isSuperAdmin ? (
+              <div className="space-y-4 sm:space-y-6">
+                {/* Summary Tiles */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="bg-white dark:bg-[#1E1815] border border-rose-200 dark:border-rose-800/50 rounded-xl p-4 shadow-2xs">
+                    <span className="text-[10px] text-rose-700 dark:text-amber-300 uppercase font-black tracking-wider flex items-center gap-1.5">
+                      <Crown className="w-3.5 h-3.5 text-amber-500" />
+                      {tr('Super Admins', 'சூப்பர் அட்மின்கள்')}
+                    </span>
+                    <div className="text-2xl font-black text-slate-900 dark:text-stone-100 mt-1">
+                      {companyAdmins.filter((a) => a.adminLevel === 'super_admin').length}
+                    </div>
+                    <span className="text-[11px] text-slate-500 dark:text-stone-400">
+                      {tr('Full governance, RBAC & delete authority', 'முழு அதிகாரம் & நிர்வாகிகள் மேலாண்மை')}
+                    </span>
+                  </div>
+
+                  <div className="bg-white dark:bg-[#1E1815] border border-indigo-200 dark:border-indigo-800/50 rounded-xl p-4 shadow-2xs">
+                    <span className="text-[10px] text-indigo-700 dark:text-indigo-300 uppercase font-black tracking-wider flex items-center gap-1.5">
+                      <Shield className="w-3.5 h-3.5 text-indigo-500" />
+                      {tr('Company Admins', 'நிறுவன நிர்வாகிகள்')}
+                    </span>
+                    <div className="text-2xl font-black text-slate-900 dark:text-stone-100 mt-1">
+                      {companyAdmins.filter((a) => a.adminLevel === 'admin').length}
+                    </div>
+                    <span className="text-[11px] text-slate-500 dark:text-stone-400">
+                      {tr('Supervise clients, astrologers, vendors & matrimony', 'செயல்பாட்டு மேற்பார்வை & சரிபார்ப்பு')}
+                    </span>
+                  </div>
+
+                  <div className="bg-white dark:bg-[#1E1815] border border-emerald-200 dark:border-emerald-800/50 rounded-xl p-4 shadow-2xs">
+                    <span className="text-[10px] text-emerald-700 dark:text-emerald-300 uppercase font-black tracking-wider flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                      {tr('Active Accounts', 'செயலில் உள்ள கணக்குகள்')}
+                    </span>
+                    <div className="text-2xl font-black text-slate-900 dark:text-stone-100 mt-1">
+                      {companyAdmins.filter((a) => a.status !== 'disabled').length} / {companyAdmins.length}
+                    </div>
+                    <span className="text-[11px] text-slate-500 dark:text-stone-400">
+                      {tr('Currently enabled for Company Portal login', 'உள்நுழைவுக்கு அனுமதிக்கப்பட்டவர்கள்')}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Add New Super Admin / Admin Form */}
+                <form
+                  onSubmit={handleCreateAdmin}
+                  className="bg-white dark:bg-[#1E1815] border border-slate-200 dark:border-stone-700 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-stone-800 pb-3">
+                    <div>
+                      <h3 className="text-sm font-black text-slate-900 dark:text-stone-100 flex items-center gap-2">
+                        <UserPlus className="w-4 h-4 text-rose-600 dark:text-amber-400" />
+                        <span>{tr('Add Super Admin or Company Admin', 'புதிய சூப்பர் அட்மின் அல்லது அட்மின் சேர்க்கவும்')}</span>
+                      </h3>
+                      <p className="text-[11px] text-slate-500 dark:text-stone-400 mt-0.5">
+                        {tr(
+                          'All created accounts sign in through the Company (JIT) tab using their username, mobile number, or email.',
+                          'உருவாக்கப்படும் கணக்குகள் அனைத்தும் Company (JIT) பிரிவில் பயனர்பெயர் அல்லது மொபைல் எண் மூலம் உள்நுழையலாம்.'
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  {adminErrorMsg && (
+                    <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs px-3 py-2 rounded-xl font-semibold">
+                      {adminErrorMsg}
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                    <div>
+                      <label className="block font-bold text-slate-700 dark:text-stone-300 mb-1">
+                        {tr('Full Name *', 'முழுப் பெயர் *')}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={adminForm.name}
+                        onChange={(e) => setAdminForm({ ...adminForm, name: e.target.value })}
+                        placeholder="e.g. Priya Sharma"
+                        className="w-full bg-slate-50 dark:bg-[#1A1513] border border-slate-300 dark:border-stone-700 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-bold text-slate-700 dark:text-stone-300 mb-1">
+                        {tr('Login Username *', 'பயனர்பெயர் *')}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={adminForm.username}
+                        onChange={(e) => setAdminForm({ ...adminForm, username: e.target.value.toLowerCase().replace(/[^a-z0-9_.-]/g, '') })}
+                        placeholder="e.g. priya_super or ops_admin"
+                        className="w-full bg-slate-50 dark:bg-[#1A1513] border border-slate-300 dark:border-stone-700 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 font-mono focus:outline-none focus:ring-2 focus:ring-rose-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-bold text-slate-700 dark:text-stone-300 mb-1">
+                        {tr('Access Tier (Role) *', 'அதிகார நிலை *')}
+                      </label>
+                      <select
+                        value={adminForm.adminLevel}
+                        onChange={(e) => setAdminForm({ ...adminForm, adminLevel: e.target.value })}
+                        className="w-full bg-slate-50 dark:bg-[#1A1513] border border-slate-300 dark:border-stone-700 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 font-semibold focus:outline-none focus:ring-2 focus:ring-rose-500"
+                      >
+                        <option value="admin">{tr('Company Admin (Operations & Verification)', 'Company Admin (செயல்பாடுகள்)')}</option>
+                        <option value="super_admin">{tr('Super Admin (Full Governance & Team Control)', 'Super Admin (முழு அதிகாரம்)')}</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block font-bold text-slate-700 dark:text-stone-300 mb-1">
+                        {tr('Mobile Number (Optional)', 'மொபைல் எண் (விருப்பம்)')}
+                      </label>
+                      <input
+                        type="text"
+                        value={adminForm.mobile}
+                        onChange={(e) => setAdminForm({ ...adminForm, mobile: e.target.value })}
+                        placeholder="10-digit mobile"
+                        className="w-full bg-slate-50 dark:bg-[#1A1513] border border-slate-300 dark:border-stone-700 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 font-mono focus:outline-none focus:ring-2 focus:ring-rose-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-bold text-slate-700 dark:text-stone-300 mb-1">
+                        {tr('Email Address (Optional)', 'மின்னஞ்சல் (விருப்பம்)')}
+                      </label>
+                      <input
+                        type="email"
+                        value={adminForm.email}
+                        onChange={(e) => setAdminForm({ ...adminForm, email: e.target.value })}
+                        placeholder="admin@astrojit.com"
+                        className="w-full bg-slate-50 dark:bg-[#1A1513] border border-slate-300 dark:border-stone-700 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-bold text-slate-700 dark:text-stone-300 mb-1">
+                        {tr('Initial Password *', 'கடவுச்சொல் *')}
+                      </label>
+                      <input
+                        type="password"
+                        required
+                        minLength={6}
+                        value={adminForm.password}
+                        onChange={(e) => setAdminForm({ ...adminForm, password: e.target.value })}
+                        placeholder="Min 6 characters"
+                        className="w-full bg-slate-50 dark:bg-[#1A1513] border border-slate-300 dark:border-stone-700 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      disabled={savingAdmin}
+                      className="bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white text-xs font-bold px-5 py-2 rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5 disabled:opacity-60"
+                    >
+                      <UserPlus className="w-3.5 h-3.5" />
+                      <span>{savingAdmin ? tr('Creating...', 'உருவாக்குகிறது...') : tr('Create Company Account', 'நிர்வாகி கணக்கை உருவாக்கு')}</span>
+                    </button>
+                  </div>
+                </form>
+
+                {/* Company Admins & Super Admins Table */}
+                <div className="bg-white dark:bg-[#1E1815] border border-slate-200 dark:border-stone-700 rounded-2xl p-4 sm:p-6 shadow-xs space-y-3">
+                  <div className="flex items-center justify-between border-b border-slate-100 dark:border-stone-800 pb-2.5">
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-stone-100">
+                      {tr('Company Super Admins & Admins Directory', 'நிறுவன சூப்பர் அட்மின் & அட்மின் பட்டியல்')} ({companyAdmins.length})
+                    </h3>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs min-w-[720px]">
+                      <thead>
+                        <tr className="border-b border-slate-200 dark:border-stone-700 text-slate-500 dark:text-stone-400 font-semibold">
+                          <th className="py-2 px-2.5">Name</th>
+                          <th className="py-2 px-2.5">Username</th>
+                          <th className="py-2 px-2.5">Mobile / Email</th>
+                          <th className="py-2 px-2.5">Role Tier</th>
+                          <th className="py-2 px-2.5">Status</th>
+                          <th className="py-2 px-2.5 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-stone-800">
+                        {companyAdmins.map((adm) => {
+                          const isSelf = adm.id === user?.id;
+                          const isRoot = Boolean(adm.isPrimaryRoot || adm.id === 'company-jit');
+                          const isAdmSuper = adm.adminLevel === 'super_admin';
+                          const isDisabled = adm.status === 'disabled';
+
+                          return (
+                            <tr key={adm.id} className="hover:bg-slate-50/70 dark:hover:bg-stone-800/40">
+                              <td className="py-2.5 px-2.5">
+                                <div className="font-bold text-slate-900 dark:text-stone-100 flex items-center gap-1.5 flex-wrap">
+                                  <span>{adm.name}</span>
+                                  {isRoot && (
+                                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60 font-bold">
+                                      Root
+                                    </span>
+                                  )}
+                                  {isSelf && (
+                                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 font-bold">
+                                      You
+                                    </span>
+                                  )}
+                                </div>
+                                {adm.createdBy && (
+                                  <span className="text-[10px] text-slate-400">Added by {adm.createdBy}</span>
+                                )}
+                              </td>
+                              <td className="py-2.5 px-2.5 font-mono font-bold text-indigo-700 dark:text-indigo-300">
+                                {adm.username}
+                              </td>
+                              <td className="py-2.5 px-2.5 text-slate-600 dark:text-stone-300">
+                                <div className="font-mono">{adm.mobile || '—'}</div>
+                                {adm.email && <div className="text-[10px] text-slate-400">{adm.email}</div>}
+                              </td>
+                              <td className="py-2.5 px-2.5">
+                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold border ${
+                                  isAdmSuper
+                                    ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-700/60'
+                                    : 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-800 dark:text-indigo-300 border-indigo-200 dark:border-indigo-700/60'
+                                }`}>
+                                  {isAdmSuper ? <Crown className="w-3 h-3 text-amber-500" /> : <Shield className="w-3 h-3 text-indigo-500" />}
+                                  <span>{isAdmSuper ? 'Super Admin' : 'Admin'}</span>
+                                </span>
+                              </td>
+                              <td className="py-2.5 px-2.5">
+                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                                  isDisabled
+                                    ? 'bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-400'
+                                    : 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
+                                }`}>
+                                  {isDisabled ? 'Disabled' : 'Active'}
+                                </span>
+                              </td>
+                              <td className="py-2.5 px-2.5 text-right">
+                                <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                                  {!isRoot && !isSelf && (
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        handleQuickUpdateAdmin(
+                                          adm.id,
+                                          { adminLevel: isAdmSuper ? 'admin' : 'super_admin' },
+                                          `${adm.name} switched to ${isAdmSuper ? 'Admin' : 'Super Admin'}.`
+                                        )
+                                      }
+                                      className="px-2 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700/60 font-bold text-[11px] cursor-pointer"
+                                      title={isAdmSuper ? 'Demote to Admin' : 'Promote to Super Admin'}
+                                    >
+                                      {isAdmSuper ? 'Make Admin' : 'Make Super Admin'}
+                                    </button>
+                                  )}
+
+                                  {!isRoot && !isSelf && (
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        handleQuickUpdateAdmin(
+                                          adm.id,
+                                          { status: isDisabled ? 'active' : 'disabled' },
+                                          `${adm.name} is now ${isDisabled ? 'Active' : 'Disabled'}.`
+                                        )
+                                      }
+                                      className={`px-2 py-1 rounded-lg border font-bold text-[11px] cursor-pointer flex items-center gap-1 ${
+                                        isDisabled
+                                          ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700/60'
+                                          : 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-700/60'
+                                      }`}
+                                      title={isDisabled ? 'Enable login' : 'Disable login'}
+                                    >
+                                      {isDisabled ? <Unlock className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
+                                      <span>{isDisabled ? 'Enable' : 'Disable'}</span>
+                                    </button>
+                                  )}
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setEditingAdmin(adm);
+                                      setEditAdminForm({
+                                        name: adm.name || '',
+                                        mobile: adm.mobile || '',
+                                        email: adm.email || '',
+                                        adminLevel: adm.adminLevel || 'admin',
+                                        status: adm.status || 'active',
+                                        password: '',
+                                      });
+                                    }}
+                                    className="px-2 py-1 rounded-lg bg-slate-100 dark:bg-stone-800 hover:bg-slate-200 text-slate-700 dark:text-stone-200 border border-slate-200 dark:border-stone-700 font-bold text-[11px] cursor-pointer flex items-center gap-1"
+                                    title="Edit details or reset password"
+                                  >
+                                    <Edit3 className="w-3 h-3" />
+                                    <span>Edit</span>
+                                  </button>
+
+                                  {!isRoot && !isSelf && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleDeleteAdmin(adm)}
+                                      className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/35 hover:bg-rose-600 hover:text-white text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-700/60 cursor-pointer"
+                                      title="Delete Admin"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white dark:bg-[#1E1815] border border-rose-200 dark:border-rose-800/50 rounded-2xl p-6 text-center text-xs text-rose-700 dark:text-rose-300 font-semibold">
+                {tr('Super Admin privileges required to manage Company Admins & Super Admins.', 'நிர்வாகிகளை நிர்வகிக்க சூப்பர் அட்மின் அனுமதி தேவை.')}
+              </div>
+            )
+          )}
+
+          {editingAdmin && (
+            <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+              <form
+                onSubmit={handleSaveEditedAdmin}
+                className="bg-white dark:bg-[#1E1815] border border-slate-200 dark:border-stone-700 rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-3 text-xs"
+              >
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-stone-800 pb-2.5">
+                  <h3 className="font-black text-sm text-slate-900 dark:text-stone-100 flex items-center gap-2">
+                    <Key className="w-4 h-4 text-rose-600 dark:text-amber-400" />
+                    <span>Edit Admin: {editingAdmin.username}</span>
+                  </h3>
+                  <button type="button" onClick={() => setEditingAdmin(null)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="space-y-2.5">
+                  <div>
+                    <label className="block font-bold mb-1 text-slate-700 dark:text-stone-300">Full Name</label>
+                    <input
+                      type="text"
+                      required
+                      value={editAdminForm.name}
+                      onChange={(e) => setEditAdminForm({ ...editAdminForm, name: e.target.value })}
+                      className="w-full bg-slate-50 dark:bg-[#1A1513] border border-slate-300 dark:border-stone-700 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block font-bold mb-1 text-slate-700 dark:text-stone-300">Mobile</label>
+                      <input
+                        type="text"
+                        disabled={Boolean(editingAdmin.isPrimaryRoot || editingAdmin.id === 'company-jit')}
+                        value={editAdminForm.mobile}
+                        onChange={(e) => setEditAdminForm({ ...editAdminForm, mobile: e.target.value })}
+                        className="w-full bg-slate-50 dark:bg-[#1A1513] border border-slate-300 dark:border-stone-700 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 disabled:opacity-60"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-bold mb-1 text-slate-700 dark:text-stone-300">Email</label>
+                      <input
+                        type="email"
+                        value={editAdminForm.email}
+                        onChange={(e) => setEditAdminForm({ ...editAdminForm, email: e.target.value })}
+                        className="w-full bg-slate-50 dark:bg-[#1A1513] border border-slate-300 dark:border-stone-700 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block font-bold mb-1 text-slate-700 dark:text-stone-300">Role Tier</label>
+                      <select
+                        disabled={Boolean(editingAdmin.isPrimaryRoot || editingAdmin.id === 'company-jit' || editingAdmin.id === user?.id)}
+                        value={editAdminForm.adminLevel}
+                        onChange={(e) => setEditAdminForm({ ...editAdminForm, adminLevel: e.target.value })}
+                        className="w-full bg-slate-50 dark:bg-[#1A1513] border border-slate-300 dark:border-stone-700 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 disabled:opacity-60"
+                      >
+                        <option value="admin">Company Admin</option>
+                        <option value="super_admin">Super Admin</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block font-bold mb-1 text-slate-700 dark:text-stone-300">Status</label>
+                      <select
+                        disabled={Boolean(editingAdmin.isPrimaryRoot || editingAdmin.id === 'company-jit' || editingAdmin.id === user?.id)}
+                        value={editAdminForm.status}
+                        onChange={(e) => setEditAdminForm({ ...editAdminForm, status: e.target.value })}
+                        className="w-full bg-slate-50 dark:bg-[#1A1513] border border-slate-300 dark:border-stone-700 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 disabled:opacity-60"
+                      >
+                        <option value="active">Active</option>
+                        <option value="disabled">Disabled</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block font-bold mb-1 text-slate-700 dark:text-stone-300">New Password (Optional)</label>
+                    <input
+                      type="password"
+                      minLength={6}
+                      value={editAdminForm.password}
+                      onChange={(e) => setEditAdminForm({ ...editAdminForm, password: e.target.value })}
+                      placeholder="Leave blank to keep existing password"
+                      className="w-full bg-slate-50 dark:bg-[#1A1513] border border-slate-300 dark:border-stone-700 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditingAdmin(null)}
+                    className="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-stone-700 font-bold text-slate-700 dark:text-stone-300 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={savingAdmin}
+                    className="px-4 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold cursor-pointer disabled:opacity-60"
+                  >
+                    {savingAdmin ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
         </>
       )}
     </div>

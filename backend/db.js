@@ -21,19 +21,27 @@ if (!fs.existsSync(DATA_DIR)) {
   }
 }
 
-// Initial DB Schema (Production - Strictly only jit_admin, no demo data)
+const defaultCompanyAdmin = {
+  id: 'company-jit',
+  username: 'jit_admin',
+  name: 'Astrojit Technologies (JIT)',
+  mobile: 'jit_admin',
+  email: 'admin@astrojit.com',
+  role: 'company',
+  adminLevel: 'super_admin',
+  isPrimaryRoot: true,
+  status: 'active',
+  passwordHash: bcrypt.hashSync('Jishnuinfotech@123', 8),
+  createdBy: 'system',
+};
+
+// Initial DB Schema (Production - Strictly only jit_admin root super admin, no demo data)
 const defaultDb = {
   clients: [],
   astrologers: [],
   vendors: [],
-  company: {
-    username: 'jit_admin',
-    name: 'Astrojit Technologies (JIT)',
-    mobile: 'jit_admin',
-    email: 'admin@astrojit.com',
-    role: 'company',
-    passwordHash: bcrypt.hashSync('Jishnuinfotech@123', 8),
-  },
+  company: { ...defaultCompanyAdmin },
+  companyAdmins: [{ ...defaultCompanyAdmin }],
   products: [],
   consultations: [],
   matchmakingRequests: [],
@@ -47,6 +55,7 @@ const defaultDb = {
 
 const COLLECTIONS = [
   'company',
+  'companyAdmins',
   'clients',
   'astrologers',
   'vendors',
@@ -274,16 +283,9 @@ function seedInitialData() {
   const db = readDb();
   let modified = false;
 
-  // 1. Enforce Company Admin credentials: jit_admin / Jishnuinfotech@123
+  // 1. Enforce root Company Super Admin credentials: jit_admin / Jishnuinfotech@123
   if (!db.company) {
-    db.company = {
-      username: 'jit_admin',
-      name: 'Astrojit Technologies (JIT)',
-      mobile: 'jit_admin',
-      email: 'admin@astrojit.com',
-      role: 'company',
-      passwordHash: bcrypt.hashSync('Jishnuinfotech@123', 8),
-    };
+    db.company = { ...defaultCompanyAdmin };
     modified = true;
   } else {
     if (db.company.username !== 'jit_admin') {
@@ -295,9 +297,68 @@ function seedInitialData() {
       db.company.passwordHash = bcrypt.hashSync('Jishnuinfotech@123', 8);
       modified = true;
     }
+    if (db.company.adminLevel !== 'super_admin' || !db.company.id || !db.company.isPrimaryRoot) {
+      db.company.id = 'company-jit';
+      db.company.adminLevel = 'super_admin';
+      db.company.isPrimaryRoot = true;
+      db.company.status = 'active';
+      modified = true;
+    }
   }
 
-  // 2. Ensure all collections exist as arrays
+  // 2. Ensure companyAdmins collection exists and contains primary root super admin
+  if (!Array.isArray(db.companyAdmins)) {
+    db.companyAdmins = [];
+    modified = true;
+  }
+
+  const rootIdx = db.companyAdmins.findIndex(
+    (a) => a && (a.id === 'company-jit' || a.isPrimaryRoot || String(a.username || '').toLowerCase() === 'jit_admin')
+  );
+  if (rootIdx === -1) {
+    db.companyAdmins.unshift({
+      ...db.company,
+      id: 'company-jit',
+      role: 'company',
+      adminLevel: 'super_admin',
+      isPrimaryRoot: true,
+      status: 'active',
+      createdAt: db.company.createdAt || new Date().toISOString(),
+    });
+    modified = true;
+  } else {
+    const existingRoot = db.companyAdmins[rootIdx];
+    const mergedRoot = {
+      ...db.company,
+      ...existingRoot,
+      id: 'company-jit',
+      username: 'jit_admin',
+      mobile: 'jit_admin',
+      role: 'company',
+      adminLevel: 'super_admin',
+      isPrimaryRoot: true,
+      status: 'active',
+      passwordHash: db.company.passwordHash,
+    };
+    if (JSON.stringify(existingRoot) !== JSON.stringify(mergedRoot)) {
+      db.companyAdmins[rootIdx] = mergedRoot;
+      modified = true;
+    }
+  }
+
+  // Normalize any other admin entries missing defaults
+  db.companyAdmins = db.companyAdmins.map((a, idx) => {
+    const level = a.adminLevel === 'super_admin' ? 'super_admin' : 'admin';
+    const normStatus = a.status === 'disabled' ? 'disabled' : 'active';
+    const nextId = a.id || `company-admin-${idx + 1}`;
+    if (a.role !== 'company' || a.adminLevel !== level || a.status !== normStatus || a.id !== nextId) {
+      modified = true;
+      return { ...a, id: nextId, role: 'company', adminLevel: level, status: normStatus };
+    }
+    return a;
+  });
+
+  // 3. Ensure all collections exist as arrays
   for (const col of COLLECTIONS) {
     if (col !== 'company' && !Array.isArray(db[col])) {
       db[col] = [];

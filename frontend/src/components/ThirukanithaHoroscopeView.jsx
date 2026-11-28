@@ -399,8 +399,8 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-200 font-serif p-3 sm:p-6 print:p-0 ${
-        isDark ? 'bg-[#181412] text-[#E8DFD8]' : 'bg-[#FAF6EF] text-[#2C241E]'
+      className={`min-h-screen transition-colors duration-200 font-serif p-1 sm:p-2 print:p-0 ${
+        isDark ? 'bg-transparent text-[#E8DFD8]' : 'bg-[#FAF6EF] text-[#2C241E]'
       }`}
       style={{
         fontFamily: isTamil ? "'Noto Serif Tamil', 'Source Serif 4', Georgia, serif" : "'Source Serif 4', Georgia, serif"
