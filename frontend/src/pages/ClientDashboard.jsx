@@ -405,20 +405,20 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
       {/* Tab 4: Marketplace */}
       {activeTab === 'marketplace' && (
         <div className="space-y-4 sm:space-y-6">
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs">
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <div className="bg-white dark:bg-[#1E1815] border border-slate-200 dark:border-stone-700 rounded-2xl p-4 sm:p-5 shadow-xs">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-stone-100 mb-1 flex items-center gap-2">
               <ShoppingBag className="w-5 h-5 text-amber-600" />
               {t('marketplaceTitle')}
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 dark:text-stone-400">
               {t('marketplaceSubtitle')}
             </p>
           </div>
 
           {loadingProducts ? (
-            <div className="p-10 text-center bg-white rounded-2xl border border-slate-200">
+            <div className="p-10 text-center bg-white dark:bg-[#1E1815] rounded-2xl border border-slate-200 dark:border-stone-700">
               <Sparkles className="w-8 h-8 text-amber-500 mx-auto animate-spin mb-3" />
-              <p className="text-slate-500 text-xs">{t('loadingDivineItems')}</p>
+              <p className="text-slate-500 dark:text-stone-400 text-xs">{t('loadingDivineItems')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -431,9 +431,9 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
                 return (
                   <div
                     key={item.id}
-                    className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs flex flex-col hover:border-amber-400 hover:shadow-xs transition-all group"
+                    className="bg-white dark:bg-[#1E1815] border border-slate-200 dark:border-stone-700 rounded-2xl overflow-hidden shadow-2xs flex flex-col hover:border-amber-400 hover:shadow-xs transition-all group"
                   >
-                    <div className="h-40 bg-slate-100 relative overflow-hidden">
+                    <div className="h-40 bg-slate-100 dark:bg-stone-800/80 relative overflow-hidden">
                       <img
                         src={item.imageUrl}
                         alt={locItem.title}
@@ -446,7 +446,7 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
                           {locType}
                         </span>
                       </div>
-                      <div className="absolute bottom-2 right-2 bg-white/95 text-slate-900 font-black text-sm px-2.5 py-0.5 rounded-lg shadow-xs border border-slate-200">
+                      <div className="absolute bottom-2 right-2 bg-white/95 dark:bg-[#1E1815]/95 text-slate-900 dark:text-stone-100 font-black text-sm px-2.5 py-0.5 rounded-lg shadow-xs border border-slate-200 dark:border-stone-700">
                         ₹{item.price.toLocaleString('en-IN')}
                       </div>
                     </div>
@@ -454,19 +454,19 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
                     <div className="p-3.5 flex-1 flex flex-col justify-between">
                       <div>
                         <span className="text-[10px] text-slate-400 uppercase font-bold block">{locCategory}</span>
-                        <h4 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-amber-700 transition-colors mt-0.5">
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-stone-100 group-hover:text-amber-700 transition-colors mt-0.5">
                           {locItem.title}
                         </h4>
-                        <p className="text-xs text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">{locItem.description}</p>
+                        <p className="text-xs text-slate-500 dark:text-stone-400 mt-1.5 line-clamp-2 leading-relaxed">{locItem.description}</p>
                       </div>
 
-                      <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
-                        <span className="text-[11px] text-slate-500 truncate max-w-[130px]">
-                          {t('byVendor')} <span className="text-slate-700 font-semibold">{item.vendorName}</span>
+                      <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-stone-800 flex items-center justify-between text-xs">
+                        <span className="text-[11px] text-slate-500 dark:text-stone-400 truncate max-w-[130px]">
+                          {t('byVendor')} <span className="text-slate-700 dark:text-stone-300 font-semibold">{item.vendorName}</span>
                         </span>
                         <button
                           onClick={() => alert(`Inquiry recorded for "${locItem.title}". The vendor has been notified.`)}
-                          className="bg-amber-50 hover:bg-amber-500 hover:text-slate-950 text-amber-800 border border-amber-300 text-xs px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer"
+                          className="bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-500 hover:text-slate-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60 text-xs px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer"
                         >
                           {t('orderBookBtn')}
                         </button>
@@ -484,12 +484,12 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
       {activeTab === 'appointments' && (
         <div className="space-y-6">
           {/* Header Action Strip */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div className="bg-white dark:bg-[#1E1815] border border-slate-200 dark:border-stone-700 rounded-2xl p-4 sm:p-6 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+              <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-stone-100 flex items-center gap-2">
                 <Clock className="w-5 h-5 text-amber-600" /> {t('consultationsTrackerTitle')}
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-stone-400">
                 {t('consultationsTrackerSubtitle')}
               </p>
             </div>
@@ -503,19 +503,19 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
           </div>
 
           {/* Section 1: Upcoming / Confirmed Appointments */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h4 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+          <div className="bg-white dark:bg-[#1E1815] border border-slate-200 dark:border-stone-700 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-stone-800 pb-3">
+              <h4 className="font-bold text-slate-900 dark:text-stone-100 text-sm flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-indigo-600" />
                 {t('upcomingConsultations')} ({appointments.filter((a) => a.status !== 'Completed').length})
               </h4>
-              <span className="text-[11px] text-slate-500">
+              <span className="text-[11px] text-slate-500 dark:text-stone-400">
                 {t('activeBookingsLabel')}
               </span>
             </div>
 
             {appointments.filter((a) => a.status !== 'Completed').length === 0 ? (
-              <div className="text-center py-8 text-slate-400 text-xs bg-slate-50 rounded-xl border border-dashed border-slate-200">
+              <div className="text-center py-8 text-slate-400 text-xs bg-slate-50 dark:bg-stone-900/70 rounded-xl border border-dashed border-slate-200 dark:border-stone-700">
                 {t('noUpcomingApts')}
               </div>
             ) : (
@@ -525,20 +525,20 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
                   .map((apt) => (
                     <div
                       key={apt.id}
-                      className="bg-gradient-to-br from-amber-50/40 via-white to-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl shadow-xs space-y-3"
+                      className="bg-gradient-to-br from-amber-50/40 via-white to-slate-50 border border-slate-200 dark:border-stone-700 p-4 sm:p-5 rounded-2xl shadow-xs space-y-3"
                     >
                       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                         <div>
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-bold text-sm text-slate-900">
+                            <span className="font-bold text-sm text-slate-900 dark:text-stone-100">
                               {apt.memberAstrologerName
                                 ? `${apt.memberAstrologerName} (${apt.astrologerName})`
                                 : apt.astrologerName}
                             </span>
-                            <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full border border-emerald-300">
+                            <span className="text-[10px] bg-emerald-100 dark:bg-emerald-900/45 text-emerald-800 dark:text-emerald-300 font-bold px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-700/60">
                               ● {getLocalizedStatus(apt.status)}
                             </span>
-                            <span className="text-[10px] bg-indigo-50 text-indigo-700 font-bold px-2 py-0.5 rounded-full border border-indigo-200 uppercase">
+                            <span className="text-[10px] bg-indigo-50 dark:bg-indigo-950/35 text-indigo-700 dark:text-indigo-400 font-bold px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800/50 uppercase">
                               {apt.appointmentType === 'offline'
                                 ? '🏛️ ' + t('offline')
                                 : apt.appointmentType === 'chat'
@@ -546,25 +546,25 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
                                 : '📹 ' + t('online')}
                             </span>
                           </div>
-                          <span className="text-[11px] font-semibold text-amber-800 mt-0.5 block">
+                          <span className="text-[11px] font-semibold text-amber-800 dark:text-amber-300 mt-0.5 block">
                             {t('topicQueryAreaLabel')}: {getLocalizedQueryArea(apt.queryArea || apt.consultationTopic)}
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-2 text-xs font-bold text-slate-700 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shrink-0">
+                        <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-stone-300 bg-white dark:bg-[#1E1815] px-3 py-1.5 rounded-xl border border-slate-200 dark:border-stone-700 shrink-0">
                           <span>📅 {apt.date}</span>
                           <span>•</span>
-                          <span className="text-amber-700">⏰ {apt.slotTime}</span>
+                          <span className="text-amber-700 dark:text-amber-400">⏰ {apt.slotTime}</span>
                         </div>
                       </div>
 
                       {/* Client's Query Asked */}
                       {apt.clientQuery && (
-                        <div className="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl text-xs space-y-0.5">
-                          <span className="font-bold text-amber-950 text-[11px] block">
+                        <div className="p-3 bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/50 rounded-xl text-xs space-y-0.5">
+                          <span className="font-bold text-amber-950 dark:text-amber-200 text-[11px] block">
                             {t('yourQueryToAstrologer')}
                           </span>
-                          <p className="text-slate-700 italic leading-relaxed">
+                          <p className="text-slate-700 dark:text-stone-300 italic leading-relaxed">
                             "{getLocalizedAppointmentContent(apt).clientQuery || apt.clientQuery}"
                           </p>
                         </div>
@@ -572,10 +572,10 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
 
                       {/* Offline office address if applicable */}
                       {apt.appointmentType === 'offline' && apt.officeAddress && (
-                        <div className="p-2.5 bg-slate-100/80 border border-slate-200 rounded-xl flex items-start gap-2 text-xs text-slate-700">
+                        <div className="p-2.5 bg-slate-100/80 dark:bg-stone-800/80 border border-slate-200 dark:border-stone-700 rounded-xl flex items-start gap-2 text-xs text-slate-700 dark:text-stone-300">
                           <MapPin className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                           <div>
-                            <span className="font-bold text-slate-900 block">{t('chamberVenue')}</span>
+                            <span className="font-bold text-slate-900 dark:text-stone-100 block">{t('chamberVenue')}</span>
                             <span>{apt.officeAddress}</span>
                           </div>
                         </div>
@@ -618,24 +618,24 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
           </div>
 
           {/* Section 2: Previous Meetings, Resolutions & Prescribed Remedies */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-100 pb-3">
+          <div className="bg-white dark:bg-[#1E1815] border border-slate-200 dark:border-stone-700 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-100 dark:border-stone-800 pb-3">
               <div>
-                <h4 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <h4 className="font-bold text-slate-900 dark:text-stone-100 text-sm flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   {t('previousMeetingsTitle')} ({appointments.filter((a) => a.status === 'Completed').length})
                 </h4>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-stone-400">
                   {t('archivedGuidanceSubtitle')}
                 </p>
               </div>
-              <div className="bg-slate-100 text-slate-700 text-[10px] font-bold px-2.5 py-1 rounded-full border border-slate-200 flex items-center gap-1 shrink-0">
-                <Lock className="w-3 h-3 text-slate-500" /> {t('strictlyPrivateBadge')}
+              <div className="bg-slate-100 dark:bg-stone-800/80 text-slate-700 dark:text-stone-300 text-[10px] font-bold px-2.5 py-1 rounded-full border border-slate-200 dark:border-stone-700 flex items-center gap-1 shrink-0">
+                <Lock className="w-3 h-3 text-slate-500 dark:text-stone-400" /> {t('strictlyPrivateBadge')}
               </div>
             </div>
 
             {appointments.filter((a) => a.status === 'Completed').length === 0 ? (
-              <div className="text-center py-8 text-slate-400 text-xs bg-slate-50 rounded-xl border border-dashed border-slate-200">
+              <div className="text-center py-8 text-slate-400 text-xs bg-slate-50 dark:bg-stone-900/70 rounded-xl border border-dashed border-slate-200 dark:border-stone-700">
                 {t('noCompletedRecords')}
               </div>
             ) : (
@@ -652,64 +652,64 @@ export default function ClientDashboard({ activeTab: propTab, onTabChange }) {
                     return (
                       <div
                         key={apt.id}
-                        className="border-2 border-amber-200/90 rounded-2xl p-4 sm:p-5 bg-gradient-to-br from-amber-50/30 via-white to-orange-50/20 shadow-xs space-y-3.5"
+                        className="border-2 border-amber-200/90 dark:border-amber-800/50 rounded-2xl p-4 sm:p-5 bg-gradient-to-br from-amber-50/30 via-white to-orange-50/20 shadow-xs space-y-3.5"
                       >
                         {/* Top Header */}
-                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-amber-100 pb-2.5">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-amber-100 dark:border-amber-900/40 pb-2.5">
                           <div>
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="font-bold text-sm text-slate-900">
+                              <span className="font-bold text-sm text-slate-900 dark:text-stone-100">
                                 {apt.memberAstrologerName
                                   ? `${apt.memberAstrologerName} (${apt.astrologerName})`
                                   : apt.astrologerName}
                               </span>
-                              <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full border border-emerald-300 flex items-center gap-1">
+                              <span className="text-[10px] bg-emerald-100 dark:bg-emerald-900/45 text-emerald-800 dark:text-emerald-300 font-bold px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-700/60 flex items-center gap-1">
                                 <CheckCircle2 className="w-2.5 h-2.5" /> {t('completedVerifiedBadge')}
                               </span>
-                              <span className="text-[10px] bg-slate-100 text-slate-700 font-semibold px-2 py-0.5 rounded-full border border-slate-200 uppercase">
+                              <span className="text-[10px] bg-slate-100 dark:bg-stone-800/80 text-slate-700 dark:text-stone-300 font-semibold px-2 py-0.5 rounded-full border border-slate-200 dark:border-stone-700 uppercase">
                                 {locType}
                               </span>
                             </div>
-                            <span className="text-[11px] text-amber-800 font-bold mt-0.5 block">
+                            <span className="text-[11px] text-amber-800 dark:text-amber-300 font-bold mt-0.5 block">
                               {t('topicQueryAreaLabel')}: {getLocalizedQueryArea(apt.queryArea || apt.consultationTopic)}
                             </span>
                           </div>
 
-                          <div className="text-xs text-slate-500 font-medium">
-                            📅 {t('conductedOn')} <strong className="text-slate-800">{apt.date} ({apt.slotTime})</strong>
+                          <div className="text-xs text-slate-500 dark:text-stone-400 font-medium">
+                            📅 {t('conductedOn')} <strong className="text-slate-800 dark:text-stone-200">{apt.date} ({apt.slotTime})</strong>
                           </div>
                         </div>
 
                         {/* 1. Client's Query Asked */}
-                        <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
-                          <span className="font-bold text-slate-800 text-[11px] flex items-center gap-1.5">
+                        <div className="p-3 bg-slate-50 dark:bg-stone-900/70 border border-slate-200 dark:border-stone-700 rounded-xl text-xs space-y-1">
+                          <span className="font-bold text-slate-800 dark:text-stone-200 text-[11px] flex items-center gap-1.5">
                             <User className="w-3.5 h-3.5 text-indigo-600" />
                             {t('yourQueryToAstrologer')}
                           </span>
-                          <p className="text-slate-700 italic pl-5 leading-relaxed">
+                          <p className="text-slate-700 dark:text-stone-300 italic pl-5 leading-relaxed">
                             "{locApt.clientQuery || apt.consultationTopic || (lang === 'ta' ? 'பொது ஜாதக கணிப்பு' : 'General Horoscope Analysis')}"
                           </p>
                         </div>
 
                         {/* 2. Astrologer's Answer & Resolution */}
-                        <div className="p-3.5 bg-indigo-50/60 border border-indigo-200 rounded-xl text-xs space-y-1.5">
-                          <span className="font-bold text-indigo-950 text-[11px] flex items-center gap-1.5">
+                        <div className="p-3.5 bg-indigo-50/60 dark:bg-indigo-950/35 border border-indigo-200 dark:border-indigo-800/50 rounded-xl text-xs space-y-1.5">
+                          <span className="font-bold text-indigo-950 dark:text-indigo-200 text-[11px] flex items-center gap-1.5">
                             <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
                             {t('astrologerAnswerHeading')}
                           </span>
-                          <p className="text-slate-800 pl-5 leading-relaxed whitespace-pre-line font-medium">
+                          <p className="text-slate-800 dark:text-stone-200 pl-5 leading-relaxed whitespace-pre-line font-medium">
                             {locApt.astrologerAnswer || (lang === 'ta' ? 'ஆலோசனை நிறைவு பெற்றது. ஜோதிட வழிகாட்டுதல் வழங்கப்பட்டது.' : 'Consultation conducted. Planetary guidance delivered.')}
                           </p>
                         </div>
 
                         {/* 3. Prescribed Vedic Remedies */}
                         {locApt.prescribedRemedies && (
-                          <div className="p-3.5 bg-amber-50/80 border border-amber-200 rounded-xl text-xs space-y-1.5">
-                            <span className="font-bold text-amber-950 text-[11px] flex items-center gap-1.5">
-                              <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
+                          <div className="p-3.5 bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-xl text-xs space-y-1.5">
+                            <span className="font-bold text-amber-950 dark:text-amber-200 text-[11px] flex items-center gap-1.5">
+                              <ShieldCheck className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
                               {t('prescribedRemediesHeading')}
                             </span>
-                            <p className="text-amber-950 pl-5 leading-relaxed whitespace-pre-line">
+                            <p className="text-amber-950 dark:text-amber-200 pl-5 leading-relaxed whitespace-pre-line">
                               {locApt.prescribedRemedies}
                             </p>
                           </div>

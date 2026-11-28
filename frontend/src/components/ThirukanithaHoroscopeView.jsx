@@ -285,19 +285,6 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
     });
   }, [form, gocharaDate]);
 
-  const handlePrint = () => {
-    // If all sections are collapsed, auto-expand so the full horoscope prints!
-    const openCount = Object.values(openSections).filter(Boolean).length;
-    if (openCount === 0) {
-      expandAllSections();
-      setTimeout(() => {
-        window.print();
-      }, 350);
-      return;
-    }
-    window.print();
-  };
-
   // Labels Dictionary
   const T = {
     title: isTamil ? 'திருக்கணித பஞ்சாங்க ஜாதகம்' : 'Thirukanitha Vedic Horoscope',
@@ -402,7 +389,6 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
     bhuktiPriorToBirth: isTamil ? 'பிறப்பிற்கு முன் முடிந்தது' : 'Prior to Birth',
     completedStatus: isTamil ? 'முடிந்தது' : 'Completed',
     upcomingStatus: isTamil ? 'எதிர்காலம்' : 'Upcoming',
-    printPdf: isTamil ? 'அச்சு / PDF சேமிக்க' : 'Save as PDF / Print',
     close: isTamil ? 'மூடுக' : 'Close',
     darkToggle: isTamil ? (theme === 'dark' ? '☀️ பகல் முறை' : '🌙 இரவு முறை') : (theme === 'dark' ? '☀️ Light' : '🌙 Dark'),
     expandState: isTamil ? 'விரிவாக்கப்பட்டது' : 'Expanded',
@@ -500,16 +486,6 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
             >
               <span>▲</span>
               <span>{isTamil ? 'அனைத்தும் சுருக்கு' : 'Collapse All'}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#7A1A22] to-[#99222C] text-amber-100 hover:from-[#5C1017] hover:to-[#7A1A22] text-xs font-bold shadow-md shadow-red-950/20 transition-all cursor-pointer flex items-center gap-1"
-              title="Print Horoscope"
-            >
-              <span>🖨️</span>
-              <span>{isTamil ? 'அச்சு' : 'Print'}</span>
             </button>
 
             {onClose && (
@@ -3280,15 +3256,21 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     {/* Chart Center */}
                     <div
                       style={{ gridRow: '2 / span 2', gridColumn: '2 / span 2' }}
-                      className="border border-amber-900/20 dark:border-amber-700/40 p-2 flex flex-col items-center justify-center text-center bg-amber-100/50 dark:bg-amber-950/30"
+                      className="relative overflow-hidden border border-amber-900/20 dark:border-amber-700/40 p-2 flex flex-col items-center justify-center text-center bg-amber-100/50 dark:bg-amber-950/30"
                     >
-                      <div className="text-xs font-bold text-[#7A1A22] dark:text-[#E8838B]">
+                      <img
+                        src="/sri-yantra-center.png"
+                        alt=""
+                        aria-hidden="true"
+                        className="pointer-events-none select-none absolute inset-0 m-auto w-[84%] h-[84%] object-contain opacity-[0.13] dark:opacity-[0.18]"
+                      />
+                      <div className="relative z-10 text-xs font-bold text-[#7A1A22] dark:text-[#E8838B]">
                         {isTamil ? 'கோச்சார நிலை' : 'Planetary Transit'}
                       </div>
-                      <div className="text-[10px] text-stone-600 dark:text-stone-400 mt-0.5 font-mono">
+                      <div className="relative z-10 text-[10px] text-stone-600 dark:text-stone-400 mt-0.5 font-mono">
                         {horoscope.gocharam.transitDateFormatted}
                       </div>
-                      <div className="text-[9px] text-stone-500 mt-1">
+                      <div className="relative z-10 text-[9px] text-stone-500 mt-1">
                         {isTamil ? 'சந்திரன் = ஜென்ம ராசி | லக்னம் = ஜென்ம லக்னம்' : 'Moon = Janma Rasi | Lagna = Janma Lagna'}
                       </div>
                     </div>
@@ -7211,17 +7193,20 @@ function SouthIndianChartGrid({ chartData, isTamil, centerTitle, centerSub }) {
               return (
                 <div
                   key="center"
-                  className="col-span-2 row-span-2 border border-amber-900/30 flex flex-col items-center justify-center p-2 text-center bg-[#FAF6EF]/60 dark:bg-[#15110F]/60"
+                  className="col-span-2 row-span-2 relative overflow-hidden border border-amber-900/30 flex flex-col items-center justify-center p-2 text-center bg-[#FAF6EF]/60 dark:bg-[#15110F]/60"
                 >
-                  <span className="text-xs uppercase font-black tracking-wider text-[#7A1A22] dark:text-amber-400">
+                  <img
+                    src="/sri-yantra-center.png"
+                    alt=""
+                    aria-hidden="true"
+                    className="pointer-events-none select-none absolute inset-0 m-auto w-[84%] h-[84%] object-contain opacity-[0.13] dark:opacity-[0.18]"
+                  />
+                  <span className="relative z-10 text-xs uppercase font-black tracking-wider text-[#7A1A22] dark:text-amber-400">
                     {centerTitle}
                   </span>
                   {centerSub && (
-                    <span className="text-[10px] text-stone-500 font-medium mt-0.5">{centerSub}</span>
+                    <span className="relative z-10 text-[10px] text-stone-500 font-medium mt-0.5">{centerSub}</span>
                   )}
-                  <span className="text-xs text-amber-700 dark:text-amber-300 font-mono mt-1">
-                    ☸
-                  </span>
                 </div>
               );
             }
@@ -7300,12 +7285,18 @@ function SarvashtakavargaChartGrid({ ashtakavarga, lagnaRasi, isTamil, T }) {
               return (
                 <div
                   key="center"
-                  className="col-span-2 row-span-2 border border-amber-900/30 flex flex-col items-center justify-center p-2.5 text-center bg-[#FAF6EF]/90 dark:bg-[#15110F]/90 space-y-1"
+                  className="col-span-2 row-span-2 relative overflow-hidden border border-amber-900/30 flex flex-col items-center justify-center p-2.5 text-center bg-[#FAF6EF]/90 dark:bg-[#15110F]/90 space-y-1"
                 >
-                  <span className="text-[11px] uppercase font-black tracking-wider text-[#7A1A22] dark:text-amber-400">
+                  <img
+                    src="/sri-yantra-center.png"
+                    alt=""
+                    aria-hidden="true"
+                    className="pointer-events-none select-none absolute inset-0 m-auto w-[84%] h-[84%] object-contain opacity-[0.12] dark:opacity-[0.18]"
+                  />
+                  <span className="relative z-10 text-[11px] uppercase font-black tracking-wider text-[#7A1A22] dark:text-amber-400">
                     {isTamil ? 'சர்வாஷ்டகவர்க்கம்' : 'Sarvashtakavarga'}
                   </span>
-                  <div className="flex items-baseline gap-1 my-0.5">
+                  <div className="relative z-10 flex items-baseline gap-1 my-0.5">
                     <span className="text-2xl sm:text-3xl font-black font-mono text-[#7A1A22] dark:text-amber-200">
                       {ashtakavarga.grandTotal}
                     </span>
@@ -7313,7 +7304,7 @@ function SarvashtakavargaChartGrid({ ashtakavarga, lagnaRasi, isTamil, T }) {
                       {isTamil ? 'பரல்கள்' : 'Bindus'}
                     </span>
                   </div>
-                  <div className="text-[10px] text-stone-600 dark:text-stone-300 border-t border-amber-900/20 pt-1 w-full flex justify-around">
+                  <div className="relative z-10 text-[10px] text-stone-600 dark:text-stone-300 border-t border-amber-900/20 pt-1 w-full flex justify-around">
                     <span className="text-emerald-700 dark:text-emerald-400 font-bold">
                       {isTamil ? 'வரவு' : 'In'}: {varavinam}
                     </span>
@@ -7321,7 +7312,7 @@ function SarvashtakavargaChartGrid({ ashtakavarga, lagnaRasi, isTamil, T }) {
                       {isTamil ? 'செலவு' : 'Out'}: {selavinam}
                     </span>
                   </div>
-                  <div className="text-[9px] text-stone-500 dark:text-stone-400">
+                  <div className="relative z-10 text-[9px] text-stone-500 dark:text-stone-400">
                     {isTamil ? 'சராசரி' : 'Avg'}: 28.1 / {isTamil ? 'ராசி' : 'sign'}
                   </div>
                 </div>

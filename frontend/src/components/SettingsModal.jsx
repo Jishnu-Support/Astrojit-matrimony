@@ -84,7 +84,7 @@ export default function SettingsModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-white rounded-3xl max-w-xl w-full border border-slate-200 shadow-2xl overflow-hidden my-6 flex flex-col max-h-[85vh]">
+      <div className="bg-white dark:bg-[#1E1815] rounded-3xl max-w-xl w-full border border-slate-200 dark:border-stone-700 shadow-2xl overflow-hidden my-6 flex flex-col max-h-[85vh]">
         
         {/* Header */}
         <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-amber-950 text-white p-4 sm:p-5 flex justify-between items-center shrink-0">
@@ -141,14 +141,14 @@ export default function SettingsModal({ isOpen, onClose }) {
         {/* Content Area */}
         <div className="p-4 sm:p-6 overflow-y-auto space-y-4 text-xs flex-1">
           {successMsg && (
-            <div className="bg-emerald-50 border border-emerald-300 text-emerald-800 p-3 rounded-xl flex items-center gap-2">
+            <div className="bg-emerald-50 dark:bg-emerald-950/35 border border-emerald-300 dark:border-emerald-700/60 text-emerald-800 dark:text-emerald-300 p-3 rounded-xl flex items-center gap-2">
               <Check className="w-4 h-4 text-emerald-600 shrink-0" />
               <span className="font-bold">{successMsg}</span>
             </div>
           )}
 
           {errorMsg && (
-            <div className="bg-rose-50 border border-rose-200 text-rose-700 p-3 rounded-xl flex items-center gap-2">
+            <div className="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/50 text-rose-700 dark:text-rose-400 p-3 rounded-xl flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{errorMsg}</span>
             </div>
@@ -157,7 +157,7 @@ export default function SettingsModal({ isOpen, onClose }) {
           {/* TAB 1: LANGUAGE */}
           {activeTab === 'language' && (
             <div className="space-y-3">
-              <p className="text-slate-500 font-medium text-[11px]">
+              <p className="text-slate-500 dark:text-stone-400 font-medium text-[11px]">
                 {tr(
                   'Select your preferred UI language. AstroJit provides 100% pure unilingual localization without English mixing.',
                   'தங்களுக்கு விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும். அஸ்ட்ரோஜித் தளம் முழுவதும் தூய தமிழில் இயங்கும்.'
@@ -177,13 +177,13 @@ export default function SettingsModal({ isOpen, onClose }) {
                       }}
                       className={`p-3 rounded-2xl border text-left flex items-center justify-between transition-all cursor-pointer ${
                         isSelected
-                          ? 'border-amber-500 bg-amber-50/80 shadow-xs ring-1 ring-amber-400'
-                          : 'border-slate-200 hover:bg-slate-50'
+                          ? 'border-amber-500 bg-amber-50/80 dark:bg-amber-950/30 shadow-xs ring-1 ring-amber-400'
+                          : 'border-slate-200 dark:border-stone-700 hover:bg-slate-50 dark:hover:bg-stone-800'
                       }`}
                     >
                       <div>
-                        <strong className="text-slate-900 text-xs block">{l.native}</strong>
-                        <span className="text-[10px] text-slate-500">{l.name}</span>
+                        <strong className="text-slate-900 dark:text-stone-100 text-xs block">{l.native}</strong>
+                        <span className="text-[10px] text-slate-500 dark:text-stone-400">{l.name}</span>
                       </div>
                       {isSelected ? (
                         <CheckCircle2 className="w-4 h-4 text-amber-600 shrink-0" />
@@ -211,12 +211,12 @@ export default function SettingsModal({ isOpen, onClose }) {
                   onClick={() => setTheme('light')}
                   className={`p-4 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between gap-3 ${
                     !isDark
-                      ? 'border-amber-600 bg-amber-50/70 shadow-md ring-2 ring-amber-500/20'
+                      ? 'border-amber-600 bg-amber-50/70 dark:bg-amber-950/30 shadow-md ring-2 ring-amber-500/20'
                       : 'border-slate-200 dark:border-stone-700 bg-white dark:bg-stone-800 hover:border-slate-300'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shadow-xs">
+                    <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 flex items-center justify-center shadow-xs">
                       <Sun className="w-5 h-5 text-amber-600" />
                     </div>
                     {!isDark && <CheckCircle2 className="w-5 h-5 text-amber-600" />}
@@ -258,7 +258,7 @@ export default function SettingsModal({ isOpen, onClose }) {
           {/* TAB 2: NOTIFICATIONS */}
           {activeTab === 'notifications' && (
             <div className="space-y-3">
-              <p className="text-slate-500 font-medium text-[11px]">
+              <p className="text-slate-500 dark:text-stone-400 font-medium text-[11px]">
                 {tr(
                   'Manage automated alerts, WhatsApp panchangam deliveries, and Vivaha matchmaking notifications.',
                   'வாட்ஸ்அப் பஞ்சாங்கம் மற்றும் திருமணப் பொருத்த அறிவிப்புகளை கட்டுப்படுத்தவும்.'
@@ -297,18 +297,18 @@ export default function SettingsModal({ isOpen, onClose }) {
                     <div
                       key={item.key}
                       onClick={() => handleToggleNotification(item.key)}
-                      className="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/60 hover:bg-slate-100/60 transition-colors flex items-start justify-between gap-3 cursor-pointer"
+                      className="p-3.5 rounded-2xl border border-slate-200 dark:border-stone-700 bg-slate-50/60 dark:bg-stone-900/70 hover:bg-slate-100/60 transition-colors flex items-start justify-between gap-3 cursor-pointer"
                     >
                       <div className="flex items-start gap-2.5">
                         <span className="text-lg">{item.icon}</span>
                         <div>
-                          <strong className="text-slate-900 text-xs block">{item.title}</strong>
-                          <p className="text-[11px] text-slate-500 leading-relaxed mt-0.5">{item.desc}</p>
+                          <strong className="text-slate-900 dark:text-stone-100 text-xs block">{item.title}</strong>
+                          <p className="text-[11px] text-slate-500 dark:text-stone-400 leading-relaxed mt-0.5">{item.desc}</p>
                         </div>
                       </div>
 
                       <div className={`w-9 h-5 rounded-full p-0.5 transition-colors shrink-0 mt-0.5 ${isChecked ? 'bg-amber-600' : 'bg-slate-300'}`}>
-                        <div className={`w-4 h-4 rounded-full bg-white transition-transform ${isChecked ? 'translate-x-4' : 'translate-x-0'}`} />
+                        <div className={`w-4 h-4 rounded-full bg-white dark:bg-[#1E1815] transition-transform ${isChecked ? 'translate-x-4' : 'translate-x-0'}`} />
                       </div>
                     </div>
                   );
@@ -320,7 +320,7 @@ export default function SettingsModal({ isOpen, onClose }) {
           {/* TAB 3: PASSWORD & SECURITY */}
           {activeTab === 'security' && (
             <form onSubmit={handlePasswordSubmit} className="space-y-3.5">
-              <p className="text-slate-500 font-medium text-[11px]">
+              <p className="text-slate-500 dark:text-stone-400 font-medium text-[11px]">
                 {tr(
                   'Change your account password securely. Use at least 6 characters with letters and numbers.',
                   'உங்கள் கணக்கின் கடவுச்சொல்லை மாற்றவும். குறைந்தபட்சம் 6 எழுத்துகள் இருக்க வேண்டும்.'
@@ -328,7 +328,7 @@ export default function SettingsModal({ isOpen, onClose }) {
               </p>
 
               <div>
-                <label className="text-slate-700 font-bold block mb-1">
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">
                   {tr('Current Password *', 'தற்போதைய கடவுச்சொல் *')}
                 </label>
                 <input
@@ -336,13 +336,13 @@ export default function SettingsModal({ isOpen, onClose }) {
                   required
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-hidden focus:border-amber-500 font-medium"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-stone-100 focus:outline-hidden focus:border-amber-500 font-medium"
                   placeholder="••••••••"
                 />
               </div>
 
               <div>
-                <label className="text-slate-700 font-bold block mb-1">
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">
                   {tr('New Password *', 'புதிய கடவுச்சொல் *')}
                 </label>
                 <input
@@ -350,13 +350,13 @@ export default function SettingsModal({ isOpen, onClose }) {
                   required
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-hidden focus:border-amber-500 font-medium"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-stone-100 focus:outline-hidden focus:border-amber-500 font-medium"
                   placeholder="At least 6 characters"
                 />
               </div>
 
               <div>
-                <label className="text-slate-700 font-bold block mb-1">
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">
                   {tr('Confirm New Password *', 'புதிய கடவுச்சொல்லை உறுதிப்படுத்தவும் *')}
                 </label>
                 <input
@@ -364,7 +364,7 @@ export default function SettingsModal({ isOpen, onClose }) {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-hidden focus:border-amber-500 font-medium"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-stone-100 focus:outline-hidden focus:border-amber-500 font-medium"
                   placeholder="Re-enter new password"
                 />
               </div>
@@ -384,18 +384,18 @@ export default function SettingsModal({ isOpen, onClose }) {
 
           {/* TAB 4: ABOUT & SYSTEM INFO */}
           {activeTab === 'about' && (
-            <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-              <div className="flex items-center gap-3 border-b border-slate-200 pb-3">
+            <div className="space-y-3 bg-slate-50 dark:bg-stone-900/70 p-4 rounded-2xl border border-slate-200 dark:border-stone-700">
+              <div className="flex items-center gap-3 border-b border-slate-200 dark:border-stone-700 pb-3">
                 <div className="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center text-lg shadow-sm">
                   🕉️
                 </div>
                 <div>
-                  <h4 className="font-black text-slate-900 text-sm">AstroJit Enterprise Platform</h4>
-                  <p className="text-[11px] text-slate-500">Version 2.4.0 (Production Build)</p>
+                  <h4 className="font-black text-slate-900 dark:text-stone-100 text-sm">AstroJit Enterprise Platform</h4>
+                  <p className="text-[11px] text-slate-500 dark:text-stone-400">Version 2.4.0 (Production Build)</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-700 pt-1">
+              <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-700 dark:text-stone-300 pt-1">
                 <div>
                   <span className="text-slate-400 block">Vedic Engine:</span>
                   <strong>Thirukanitha & Lahiri Ayanamsa</strong>
@@ -406,7 +406,7 @@ export default function SettingsModal({ isOpen, onClose }) {
                 </div>
                 <div>
                   <span className="text-slate-400 block">API Server:</span>
-                  <span className="font-mono text-emerald-700 font-bold">Online (Port 5000)</span>
+                  <span className="font-mono text-emerald-700 dark:text-emerald-400 font-bold">Online (Port 5000)</span>
                 </div>
                 <div>
                   <span className="text-slate-400 block">Client Version:</span>
@@ -414,7 +414,7 @@ export default function SettingsModal({ isOpen, onClose }) {
                 </div>
               </div>
 
-              <div className="pt-2 text-[10px] text-slate-400 text-center border-t border-slate-200">
+              <div className="pt-2 text-[10px] text-slate-400 text-center border-t border-slate-200 dark:border-stone-700">
                 © 2026 Astrojit Technologies Private Limited. All Vedic calculation rights reserved.
               </div>
             </div>

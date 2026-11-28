@@ -42,18 +42,18 @@ export default function KundliChart({ houseMap = {}, planets = [], lagnaSignName
   };
 
   return (
-    <div className="bg-white border border-amber-200/80 rounded-2xl p-3.5 sm:p-5 shadow-sm">
+    <div className="bg-white dark:bg-[#1E1815] border border-amber-200/80 dark:border-amber-800/50 rounded-2xl p-3.5 sm:p-5 shadow-sm">
       {/* Chart Style Switcher Header */}
-      <div className="flex items-center justify-between mb-3 border-b border-amber-100 pb-2.5">
-        <h4 className="text-amber-800 font-bold text-xs sm:text-sm tracking-wide flex items-center gap-1.5">
+      <div className="flex items-center justify-between mb-3 border-b border-amber-100 dark:border-amber-900/40 pb-2.5">
+        <h4 className="text-amber-800 dark:text-amber-300 font-bold text-xs sm:text-sm tracking-wide flex items-center gap-1.5">
           <Compass className="w-4 h-4 text-amber-600" /> Janma Kundli Chart
         </h4>
 
-        <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs">
+        <div className="flex items-center bg-slate-100 dark:bg-stone-800/80 p-0.5 rounded-lg border border-slate-200 dark:border-stone-700 text-xs">
           <button
             onClick={() => setChartStyle('north')}
             className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer font-semibold ${
-              chartStyle === 'north' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              chartStyle === 'north' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-600 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100'
             }`}
           >
             North Indian
@@ -61,7 +61,7 @@ export default function KundliChart({ houseMap = {}, planets = [], lagnaSignName
           <button
             onClick={() => setChartStyle('south')}
             className={`px-2.5 py-1 rounded-md transition-colors cursor-pointer font-semibold ${
-              chartStyle === 'south' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              chartStyle === 'south' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-600 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100'
             }`}
           >
             South Indian
@@ -137,11 +137,17 @@ export default function KundliChart({ houseMap = {}, planets = [], lagnaSignName
       {/* SOUTH INDIAN SQUARE CHART */}
       {chartStyle === 'south' && (
         <div className="relative w-full max-w-[380px] sm:max-w-[420px] mx-auto aspect-square">
-          <div className="w-full h-full grid grid-cols-4 grid-rows-4 border-2 border-amber-500 bg-white shadow-xs">
-            <div className="col-start-2 col-span-2 row-start-2 row-span-2 border border-amber-200 flex flex-col items-center justify-center p-2 text-center bg-amber-50/50">
-              <span className="text-amber-800 font-bold text-xs uppercase tracking-wider">South Indian</span>
-              <span className="text-[10px] text-slate-500 mt-0.5">Fixed Signs</span>
-              <span className="text-[10px] text-emerald-700 mt-0.5 font-bold">Lagna: {lagnaSignName}</span>
+          <div className="w-full h-full grid grid-cols-4 grid-rows-4 border-2 border-amber-500 bg-white dark:bg-[#1E1815] shadow-xs">
+            <div className="col-start-2 col-span-2 row-start-2 row-span-2 relative overflow-hidden border border-amber-200 dark:border-amber-800/50 flex flex-col items-center justify-center p-2 text-center bg-amber-50/50 dark:bg-amber-950/30">
+              <img
+                src="/sri-yantra-center.png"
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none select-none absolute inset-0 m-auto w-[84%] h-[84%] object-contain opacity-[0.13] dark:opacity-[0.18]"
+              />
+              <span className="relative z-10 text-amber-800 dark:text-amber-300 font-bold text-xs uppercase tracking-wider">South Indian</span>
+              <span className="relative z-10 text-[10px] text-slate-500 dark:text-stone-400 mt-0.5">Fixed Signs</span>
+              <span className="relative z-10 text-[10px] text-emerald-700 dark:text-emerald-400 mt-0.5 font-bold">Lagna: {lagnaSignName}</span>
             </div>
 
             {southIndianSigns.map((sign, idx) => {
@@ -150,15 +156,15 @@ export default function KundliChart({ houseMap = {}, planets = [], lagnaSignName
                 <div
                   key={idx}
                   style={{ gridColumnStart: sign.col, gridRowStart: sign.row }}
-                  className="border border-amber-200 p-1 flex flex-col justify-between text-[10px] bg-white overflow-hidden"
+                  className="border border-amber-200 dark:border-amber-800/50 p-1 flex flex-col justify-between text-[10px] bg-white dark:bg-[#1E1815] overflow-hidden"
                 >
                   <span className="text-slate-400 font-semibold text-[9px] truncate">
                     {sign.name.split(' ')[0]}
                   </span>
-                  <div className="font-bold text-slate-800 text-[10px] leading-tight flex flex-wrap gap-0.5">
+                  <div className="font-bold text-slate-800 dark:text-stone-200 text-[10px] leading-tight flex flex-wrap gap-0.5">
                     {inSignPlanets.length > 0 ? (
                       inSignPlanets.map((p, pIdx) => (
-                        <span key={pIdx} className={p.includes('ASC') ? 'text-amber-700 font-black' : 'text-slate-900 font-semibold'}>
+                        <span key={pIdx} className={p.includes('ASC') ? 'text-amber-700 dark:text-amber-400 font-black' : 'text-slate-900 dark:text-stone-100 font-semibold'}>
                           {p}
                         </span>
                       ))
@@ -173,8 +179,8 @@ export default function KundliChart({ houseMap = {}, planets = [], lagnaSignName
         </div>
       )}
 
-      <div className="mt-3 text-center text-[11px] sm:text-xs text-slate-500">
-        <span className="text-amber-700 font-bold">Lagna:</span> {lagnaSignName} • Style: {chartStyle === 'north' ? 'North Indian Diamond' : 'South Indian Box'}
+      <div className="mt-3 text-center text-[11px] sm:text-xs text-slate-500 dark:text-stone-400">
+        <span className="text-amber-700 dark:text-amber-400 font-bold">Lagna:</span> {lagnaSignName} • Style: {chartStyle === 'north' ? 'North Indian Diamond' : 'South Indian Box'}
       </div>
     </div>
   );

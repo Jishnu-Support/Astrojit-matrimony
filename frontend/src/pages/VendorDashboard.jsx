@@ -74,22 +74,22 @@ export default function VendorDashboard({ activeTab: propTab, onTabChange }) {
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Vendor Profile Header */}
-      <div className="bg-white border border-emerald-200/80 rounded-2xl p-4 sm:p-6 shadow-xs relative overflow-hidden">
+      <div className="bg-white dark:bg-[#1E1815] border border-emerald-200/80 dark:border-emerald-800/50 rounded-2xl p-4 sm:p-6 shadow-xs relative overflow-hidden">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-1.5">
-              <span className="text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1">
+              <span className="text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/35 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50 flex items-center gap-1">
                 <Store className="w-3.5 h-3.5 text-emerald-600" /> {t('certifiedVendor')}
               </span>
-              <span className="text-[10px] sm:text-xs text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full">
+              <span className="text-[10px] sm:text-xs text-slate-600 dark:text-stone-400 bg-slate-100 dark:bg-stone-800/80 px-2.5 py-0.5 rounded-full">
                 {t('gstLabel')}: {user?.gstNumber || 'MSME Reg.'}
               </span>
             </div>
 
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900">{user?.shopName}</h1>
-            <p className="text-xs text-slate-600 mt-0.5">{t('proprietorLabel')}: <strong>{user?.contactPerson}</strong></p>
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-stone-100">{user?.shopName}</h1>
+            <p className="text-xs text-slate-600 dark:text-stone-400 mt-0.5">{t('proprietorLabel')}: <strong>{user?.contactPerson}</strong></p>
 
-            <p className="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-2 sm:gap-3">
+            <p className="text-xs text-slate-500 dark:text-stone-400 mt-1 flex flex-wrap items-center gap-2 sm:gap-3">
               <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5 text-slate-400" /> {user?.mobile}</span>
               <span>•</span>
               <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-slate-400" /> {user?.city}, {user?.state}</span>
@@ -109,27 +109,27 @@ export default function VendorDashboard({ activeTab: propTab, onTabChange }) {
 
       {/* Metrics Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-2xs">
-          <span className="text-[11px] text-slate-500 uppercase font-bold">Total Catalog</span>
-          <div className="text-2xl font-black text-slate-900 mt-0.5">{products.length} Items</div>
+        <div className="bg-white dark:bg-[#1E1815] border border-slate-200 dark:border-stone-700 rounded-xl p-3.5 shadow-2xs">
+          <span className="text-[11px] text-slate-500 dark:text-stone-400 uppercase font-bold">Total Catalog</span>
+          <div className="text-2xl font-black text-slate-900 dark:text-stone-100 mt-0.5">{products.length} Items</div>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-2xs">
-          <span className="text-[11px] text-slate-500 uppercase font-bold">Puja Samagri & Gems</span>
-          <div className="text-2xl font-black text-amber-700 mt-0.5">
+        <div className="bg-white dark:bg-[#1E1815] border border-slate-200 dark:border-stone-700 rounded-xl p-3.5 shadow-2xs">
+          <span className="text-[11px] text-slate-500 dark:text-stone-400 uppercase font-bold">Puja Samagri & Gems</span>
+          <div className="text-2xl font-black text-amber-700 dark:text-amber-400 mt-0.5">
             {products.filter((p) => p.type === 'Product').length}
           </div>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-2xs">
-          <span className="text-[11px] text-slate-500 uppercase font-bold">Ritual Services</span>
-          <div className="text-2xl font-black text-indigo-700 mt-0.5">
+        <div className="bg-white dark:bg-[#1E1815] border border-slate-200 dark:border-stone-700 rounded-xl p-3.5 shadow-2xs">
+          <span className="text-[11px] text-slate-500 dark:text-stone-400 uppercase font-bold">Ritual Services</span>
+          <div className="text-2xl font-black text-indigo-700 dark:text-indigo-400 mt-0.5">
             {products.filter((p) => p.type === 'Service').length}
           </div>
         </div>
       </div>
 
       {/* Product & Service Listings */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
-        <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center justify-between border-b border-slate-100 pb-3">
+      <div className="bg-white dark:bg-[#1E1815] border border-slate-200 dark:border-stone-700 rounded-2xl p-4 sm:p-6 shadow-xs space-y-4">
+        <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-stone-100 flex items-center justify-between border-b border-slate-100 dark:border-stone-800 pb-3">
           <span>Active Marketplace Listings</span>
           <span className="text-xs text-slate-400 font-normal">Visible to clients across India</span>
         </h3>
@@ -145,9 +145,9 @@ export default function VendorDashboard({ activeTab: propTab, onTabChange }) {
             {products.map((item) => (
               <div
                 key={item.id}
-                className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden flex flex-col justify-between hover:border-slate-300 transition-all"
+                className="bg-slate-50 dark:bg-stone-900/70 border border-slate-200 dark:border-stone-700 rounded-xl overflow-hidden flex flex-col justify-between hover:border-slate-300 transition-all"
               >
-                <div className="h-36 bg-slate-100 relative">
+                <div className="h-36 bg-slate-100 dark:bg-stone-800/80 relative">
                   <img
                     src={item.imageUrl}
                     alt={item.title}
@@ -158,21 +158,21 @@ export default function VendorDashboard({ activeTab: propTab, onTabChange }) {
                   }`}>
                     {item.type}
                   </span>
-                  <span className="absolute bottom-2 right-2 bg-white/95 font-bold text-slate-900 text-xs px-2 py-0.5 rounded shadow-2xs border border-slate-200">
+                  <span className="absolute bottom-2 right-2 bg-white/95 dark:bg-[#1E1815]/95 font-bold text-slate-900 dark:text-stone-100 text-xs px-2 py-0.5 rounded shadow-2xs border border-slate-200 dark:border-stone-700">
                     ₹{item.price.toLocaleString('en-IN')}
                   </span>
                 </div>
 
                 <div className="p-3.5 flex-1 flex flex-col justify-between">
                   <div>
-                    <span className="text-[10px] text-slate-500 uppercase font-bold">{item.category}</span>
-                    <h4 className="text-xs sm:text-sm font-bold text-slate-900 mt-0.5">{item.title}</h4>
-                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">{item.description}</p>
+                    <span className="text-[10px] text-slate-500 dark:text-stone-400 uppercase font-bold">{item.category}</span>
+                    <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-stone-100 mt-0.5">{item.title}</h4>
+                    <p className="text-xs text-slate-500 dark:text-stone-400 mt-1 line-clamp-2">{item.description}</p>
                   </div>
 
-                  <div className="mt-3 pt-2 border-t border-slate-200 flex items-center justify-between text-xs">
-                    <span className="text-slate-600">
-                      Stock: <strong className="text-emerald-700">{item.stockCount} units</strong>
+                  <div className="mt-3 pt-2 border-t border-slate-200 dark:border-stone-700 flex items-center justify-between text-xs">
+                    <span className="text-slate-600 dark:text-stone-400">
+                      Stock: <strong className="text-emerald-700 dark:text-emerald-400">{item.stockCount} units</strong>
                     </span>
                     <button
                       onClick={() => handleDelete(item.id)}
@@ -192,30 +192,30 @@ export default function VendorDashboard({ activeTab: propTab, onTabChange }) {
       {/* Add Item Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-xl my-6">
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-0.5">List New Product or Service</h3>
-            <p className="text-xs text-slate-500 mb-4">
+          <div className="bg-white dark:bg-[#1E1815] border border-slate-200 dark:border-stone-700 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-xl my-6">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-stone-100 mb-0.5">List New Product or Service</h3>
+            <p className="text-xs text-slate-500 dark:text-stone-400 mb-4">
               Add spiritual items, puja kits, genuine gemstones, or sacred homam bookings.
             </p>
 
             <form onSubmit={handleAddProduct} className="space-y-3.5 text-xs">
               <div>
-                <label className="text-slate-700 font-bold block mb-1">Title / Name *</label>
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Title / Name *</label>
                 <input
                   type="text"
                   name="title"
                   required
                   placeholder="e.g. Certified 5-Mukhi Rudraksha / Navagraha Shanti Homam"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
-                  <label className="text-slate-700 font-bold block mb-1">Type *</label>
+                  <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Type *</label>
                   <select
                     name="type"
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-emerald-500"
                   >
                     <option value="Product">Physical Product</option>
                     <option value="Service">Ritual / Pooja Service</option>
@@ -223,10 +223,10 @@ export default function VendorDashboard({ activeTab: propTab, onTabChange }) {
                 </div>
 
                 <div>
-                  <label className="text-slate-700 font-bold block mb-1">Category *</label>
+                  <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Category *</label>
                   <select
                     name="category"
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-emerald-500"
                   >
                     <option value="Puja Samagri">Puja Samagri & Kits</option>
                     <option value="Rudraksha & Gemstones">Rudraksha & Gemstones</option>
@@ -239,54 +239,54 @@ export default function VendorDashboard({ activeTab: propTab, onTabChange }) {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
-                  <label className="text-slate-700 font-bold block mb-1">Price (₹ INR) *</label>
+                  <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Price (₹ INR) *</label>
                   <input
                     type="number"
                     name="price"
                     required
                     min="1"
                     placeholder="e.g. 1500"
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="text-slate-700 font-bold block mb-1">Available Quantity / Slots</label>
+                  <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Available Quantity / Slots</label>
                   <input
                     type="number"
                     name="stockCount"
                     defaultValue={50}
                     min="1"
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-slate-700 font-bold block mb-1">Image URL</label>
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Image URL</label>
                 <input
                   type="url"
                   name="imageUrl"
                   placeholder="https://... (or leave blank for default image)"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div>
-                <label className="text-slate-700 font-bold block mb-1">Description</label>
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Description</label>
                 <textarea
                   name="description"
                   rows={2}
                   placeholder="Source details, energization rituals, benefits..."
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-emerald-500"
                 ></textarea>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-stone-800">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-stone-800/80 text-slate-700 dark:text-stone-300 hover:bg-slate-200 dark:hover:bg-stone-700 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>

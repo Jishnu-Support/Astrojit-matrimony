@@ -61,7 +61,7 @@ export default function TamilPoruthamCard({ matchReport }) {
   const getStatusBadge = (status) => {
     if (status === 'Uttamam') {
       return (
-        <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full text-[11px] border border-emerald-300">
+        <span className="inline-flex items-center gap-1 bg-emerald-100 dark:bg-emerald-900/45 text-emerald-800 dark:text-emerald-300 font-bold px-2 py-0.5 rounded-full text-[11px] border border-emerald-300 dark:border-emerald-700/60">
           <CheckCircle2 className="w-3 h-3 text-emerald-600" />
           <span>{MATCH_I18N.statusUttamam[lang] || MATCH_I18N.statusUttamam.en}</span>
         </span>
@@ -69,14 +69,14 @@ export default function TamilPoruthamCard({ matchReport }) {
     }
     if (status === 'Madhyamam') {
       return (
-        <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded-full text-[11px] border border-amber-300">
+        <span className="inline-flex items-center gap-1 bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-300 font-bold px-2 py-0.5 rounded-full text-[11px] border border-amber-300 dark:border-amber-700/60">
           <AlertTriangle className="w-3 h-3 text-amber-600" />
           <span>{MATCH_I18N.statusMadhyamam[lang] || MATCH_I18N.statusMadhyamam.en}</span>
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 bg-rose-100 text-rose-800 font-bold px-2 py-0.5 rounded-full text-[11px] border border-rose-300">
+      <span className="inline-flex items-center gap-1 bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-300 font-bold px-2 py-0.5 rounded-full text-[11px] border border-rose-300 dark:border-rose-700/60">
         <XCircle className="w-3 h-3 text-rose-600" />
         <span>{MATCH_I18N.statusPorunthathu[lang] || MATCH_I18N.statusPorunthathu.en}</span>
       </span>
@@ -207,28 +207,28 @@ export default function TamilPoruthamCard({ matchReport }) {
       <div
         className={`p-4 sm:p-5 rounded-2xl border transition-all ${
           totalScore >= 7
-            ? 'bg-gradient-to-r from-emerald-50 via-teal-50 to-green-50 border-emerald-300 shadow-xs'
+            ? 'bg-gradient-to-r from-emerald-50 via-teal-50 to-green-50 dark:from-emerald-950/60 dark:via-teal-950/45 dark:to-slate-900/80 border-emerald-300 dark:border-emerald-700/60 shadow-xs'
             : totalScore >= 5
-            ? 'bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 border-amber-300 shadow-xs'
-            : 'bg-gradient-to-r from-rose-50 via-red-50 to-orange-50 border-rose-300 shadow-xs'
+            ? 'bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950/55 dark:via-indigo-950/55 dark:to-slate-900/85 border-amber-300 dark:border-amber-700/60 shadow-xs'
+            : 'bg-gradient-to-r from-rose-50 via-red-50 to-orange-50 dark:from-rose-950/55 dark:via-indigo-950/50 dark:to-slate-900/85 border-rose-300 dark:border-rose-700/60 shadow-xs'
         }`}
       >
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[10px] uppercase font-black tracking-wider px-2 py-0.5 rounded-full bg-white/80 border border-slate-200 text-slate-700">
+              <span className="text-[10px] uppercase font-black tracking-wider px-2 py-0.5 rounded-full bg-white/80 dark:bg-[#1E1815]/80 border border-slate-200 dark:border-stone-700 text-slate-700 dark:text-stone-300">
                 {MATCH_I18N.panchangTitle[lang] || MATCH_I18N.panchangTitle.en}
               </span>
-              <span className="text-[10px] font-bold text-slate-500">
+              <span className="text-[10px] font-bold text-slate-500 dark:text-stone-400">
                 {MATCH_I18N.primary10Badge[lang] || MATCH_I18N.primary10Badge.en}
               </span>
             </div>
-            <h3 className="text-base sm:text-lg font-black text-slate-900 mt-1">
+            <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-stone-100 mt-1">
               {getOverallVerdict()}
             </h3>
           </div>
 
-          <div className="flex items-center gap-3 self-stretch sm:self-center justify-between sm:justify-end bg-white/90 px-4 py-2 rounded-xl border border-slate-200/80 shadow-xs">
+          <div className="flex items-center gap-3 self-stretch sm:self-center justify-between sm:justify-end bg-white/90 dark:bg-[#1E1815]/90 px-4 py-2 rounded-xl border border-slate-200/80 dark:border-stone-700 shadow-xs">
             <Award
               className={`w-6 h-6 shrink-0 ${
                 totalScore >= 7
@@ -239,10 +239,10 @@ export default function TamilPoruthamCard({ matchReport }) {
               }`}
             />
             <div className="text-right">
-              <div className="text-2xl font-black text-slate-900">
+              <div className="text-2xl font-black text-slate-900 dark:text-stone-100">
                 {totalScore} <span className="text-sm text-slate-400 font-semibold">/ {maxScore}</span>
               </div>
-              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+              <div className="text-[10px] font-bold text-slate-500 dark:text-stone-400 uppercase tracking-wider">
                 {MATCH_I18N.scoreBadgeLabel[lang] || MATCH_I18N.scoreBadgeLabel.en}
               </div>
             </div>
@@ -252,18 +252,18 @@ export default function TamilPoruthamCard({ matchReport }) {
 
       {/* 2. Critical Alert Banners (Rajju Aroha/Avaroha & Subha Shashtashtakam) */}
       {rajjuAnalysis?.isArohaAvarohaException && (
-        <div className="p-3.5 bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 border-2 border-emerald-400 rounded-xl flex items-start gap-3">
+        <div className="p-3.5 bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950/55 dark:via-teal-950/45 dark:to-slate-900/80 border-2 border-emerald-400 dark:border-emerald-600/60 rounded-xl flex items-start gap-3">
           <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
           <div className="text-xs space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <strong className="text-emerald-950 font-bold text-xs sm:text-sm">
+              <strong className="text-emerald-950 dark:text-emerald-200 font-bold text-xs sm:text-sm">
                 {MATCH_I18N.arohaAvarohaExemptionHeading[lang] || MATCH_I18N.arohaAvarohaExemptionHeading.en}
               </strong>
               <span className="bg-emerald-600 text-white font-bold px-2 py-0.2 rounded-full text-[10px]">
                 {MATCH_I18N.arohaAvarohaBadge[lang] || MATCH_I18N.arohaAvarohaBadge.en}
               </span>
             </div>
-            <p className="text-emerald-900 leading-relaxed">
+            <p className="text-emerald-900 dark:text-emerald-300 leading-relaxed">
               {getArohaBannerText()}
             </p>
           </div>
@@ -271,13 +271,13 @@ export default function TamilPoruthamCard({ matchReport }) {
       )}
 
       {rajjuAnalysis?.hasDosha && !rajjuAnalysis.isArohaAvarohaException && (
-        <div className="p-3.5 bg-rose-50 border-2 border-rose-300 rounded-xl flex items-start gap-3">
+        <div className="p-3.5 bg-rose-50 dark:bg-rose-950/30 border-2 border-rose-300 dark:border-rose-700/60 rounded-xl flex items-start gap-3">
           <ShieldAlert className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
           <div className="text-xs space-y-1">
-            <strong className="text-rose-950 font-bold text-xs sm:text-sm">
+            <strong className="text-rose-950 dark:text-rose-200 font-bold text-xs sm:text-sm">
               {MATCH_I18N.rajjuDoshaWarning[lang] || MATCH_I18N.rajjuDoshaWarning.en}: {translateEntity('rajjuLimbs', rajjuAnalysis.limbAfflicted, lang)}
             </strong>
-            <p className="text-rose-800 leading-relaxed">
+            <p className="text-rose-800 dark:text-rose-300 leading-relaxed">
               {lang === 'kn'
                 ? 'ಇಬ್ಬರಿಗೂ ಒಂದೇ ರಜ್ಜು ಹಾಗೂ ಒಂದೇ ಚಲನೆ ಇರುವುದರಿಂದ ರಜ್ಜು ದೋಷವಿದೆ. ದಯವಿಟ್ಟು ಪರಿಣಿತ ಜ್ಯೋತಿಷಿಗಳ ಸಮಾಲೋಚನೆ ಮತ್ತು ಪರಿಹಾರ ಪಡೆಯಿರಿ.'
                 : lang === 'ta'
@@ -291,9 +291,9 @@ export default function TamilPoruthamCard({ matchReport }) {
       )}
 
       {subhaShashtashtakam?.isSubhaShashtashtakam && (
-        <div className="p-3 bg-indigo-50/80 border border-indigo-200 rounded-xl flex items-start gap-2.5">
+        <div className="p-3 bg-indigo-50/80 dark:bg-indigo-950/35 border border-indigo-200 dark:border-indigo-800/50 rounded-xl flex items-start gap-2.5">
           <Sparkles className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-          <div className="text-xs text-indigo-950">
+          <div className="text-xs text-indigo-950 dark:text-indigo-200">
             <strong className="font-bold">
               {MATCH_I18N.subhaShashtashtakamHeading[lang] || MATCH_I18N.subhaShashtashtakamHeading.en}:
             </strong>{' '}
@@ -311,74 +311,74 @@ export default function TamilPoruthamCard({ matchReport }) {
       )}
 
       {/* 3. Constellation & Biological Attributes Grid */}
-      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 sm:p-4 space-y-2.5">
-        <h4 className="font-bold text-slate-800 text-xs flex items-center gap-1.5 border-b border-slate-200 pb-1.5">
+      <div className="bg-slate-50 dark:bg-stone-900/70 border border-slate-200 dark:border-stone-700 rounded-2xl p-3.5 sm:p-4 space-y-2.5">
+        <h4 className="font-bold text-slate-800 dark:text-stone-200 text-xs flex items-center gap-1.5 border-b border-slate-200 dark:border-stone-700 pb-1.5">
           <Compass className="w-3.5 h-3.5 text-amber-600" />
           {MATCH_I18N.attributesHeading[lang] || MATCH_I18N.attributesHeading.en}
         </h4>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px]">
           {/* Bride attributes (Female - Left Side Default) */}
-          <div className="bg-white p-3 rounded-xl border border-rose-100 shadow-2xs space-y-1.5">
-            <div className="font-bold text-rose-900 flex flex-wrap justify-between items-center gap-1 border-b border-rose-50 pb-1">
+          <div className="bg-white dark:bg-[#1E1815] p-3 rounded-xl border border-rose-100 dark:border-rose-900/40 shadow-2xs space-y-1.5">
+            <div className="font-bold text-rose-900 dark:text-rose-300 flex flex-wrap justify-between items-center gap-1 border-b border-rose-50 dark:border-rose-900/35 pb-1">
               <span>{MATCH_I18N.brideHeading[lang] || MATCH_I18N.brideHeading.en}: {girl?.name || girlDetails?.name || 'Bride'}</span>
-              <span className="text-[10px] bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded font-bold shrink-0">
+              <span className="text-[10px] bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-400 px-1.5 py-0.5 rounded font-bold shrink-0">
                 {translateEntity('nakshatras', girlDetails.star || girlDetails.nakshatra || girl?.starNakshatra || girl?.nakshatra, lang)} ({girlDetails.padam || girlDetails.pada || girl?.pada || '1'} {MATCH_I18N.attrLabels.pada[lang]})
               </span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 text-slate-600">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 text-slate-600 dark:text-stone-400">
               <div>
-                {MATCH_I18N.attrLabels.rashi[lang]}: <strong className="text-slate-800">{translateEntity('rashis', girlDetails.rasi || girlDetails.rashi || girl?.moonSign || girl?.rasi, lang)}</strong>
+                {MATCH_I18N.attrLabels.rashi[lang]}: <strong className="text-slate-800 dark:text-stone-200">{translateEntity('rashis', girlDetails.rasi || girlDetails.rashi || girl?.moonSign || girl?.rasi, lang)}</strong>
               </div>
               <div>
-                {MATCH_I18N.attrLabels.gana[lang]}: <strong className="text-slate-800">{translateEntity('ganas', girlDetails.gana, lang)}</strong>
+                {MATCH_I18N.attrLabels.gana[lang]}: <strong className="text-slate-800 dark:text-stone-200">{translateEntity('ganas', girlDetails.gana, lang)}</strong>
               </div>
               <div>
-                {MATCH_I18N.attrLabels.yoni[lang]}: <strong className="text-slate-800">{translateEntity('animals', girlDetails.animal || girlDetails.yoni, lang)} ({girlDetails.yoniSex === 'Male' ? MATCH_I18N.attrLabels.male[lang] : MATCH_I18N.attrLabels.female[lang]})</strong>
+                {MATCH_I18N.attrLabels.yoni[lang]}: <strong className="text-slate-800 dark:text-stone-200">{translateEntity('animals', girlDetails.animal || girlDetails.yoni, lang)} ({girlDetails.yoniSex === 'Male' ? MATCH_I18N.attrLabels.male[lang] : MATCH_I18N.attrLabels.female[lang]})</strong>
               </div>
               <div>
-                {MATCH_I18N.attrLabels.bird[lang]}: <strong className="text-slate-800">{translateEntity('birds', girlDetails.bird, lang)}</strong>
+                {MATCH_I18N.attrLabels.bird[lang]}: <strong className="text-slate-800 dark:text-stone-200">{translateEntity('birds', girlDetails.bird, lang)}</strong>
               </div>
               <div>
-                {MATCH_I18N.attrLabels.tree[lang]}: <strong className="text-slate-800">{translateEntity('trees', girlDetails.tree || girlDetails.vriksha, lang)} {girlDetails.milkyTree ? MATCH_I18N.attrLabels.milkyTree[lang] : ''}</strong>
+                {MATCH_I18N.attrLabels.tree[lang]}: <strong className="text-slate-800 dark:text-stone-200">{translateEntity('trees', girlDetails.tree || girlDetails.vriksha, lang)} {girlDetails.milkyTree ? MATCH_I18N.attrLabels.milkyTree[lang] : ''}</strong>
               </div>
               <div>
-                {MATCH_I18N.attrLabels.nadi[lang]}: <strong className="text-slate-800">{translateEntity('nadis', girlDetails.nadi, lang)}</strong>
+                {MATCH_I18N.attrLabels.nadi[lang]}: <strong className="text-slate-800 dark:text-stone-200">{translateEntity('nadis', girlDetails.nadi, lang)}</strong>
               </div>
-              <div className="sm:col-span-2 pt-0.5 border-t border-slate-100 text-rose-950">
+              <div className="sm:col-span-2 pt-0.5 border-t border-slate-100 dark:border-stone-800 text-rose-950 dark:text-rose-200">
                 {MATCH_I18N.attrLabels.rajju[lang]}: <strong>{translateEntity('rajjuLimbs', girlDetails.rajju, lang)}</strong> • {MATCH_I18N.attrLabels.direction[lang]}: <strong>{translateEntity('rajjuDirections', girlDetails.rajjuDirection, lang)}</strong>
               </div>
             </div>
           </div>
 
           {/* Groom attributes (Male - Right Side Default) */}
-          <div className="bg-white p-3 rounded-xl border border-indigo-100 shadow-2xs space-y-1.5">
-            <div className="font-bold text-indigo-900 flex flex-wrap justify-between items-center gap-1 border-b border-indigo-50 pb-1">
+          <div className="bg-white dark:bg-[#1E1815] p-3 rounded-xl border border-indigo-100 dark:border-indigo-900/40 shadow-2xs space-y-1.5">
+            <div className="font-bold text-indigo-900 dark:text-indigo-300 flex flex-wrap justify-between items-center gap-1 border-b border-indigo-50 dark:border-indigo-900/35 pb-1">
               <span>{MATCH_I18N.groomHeading[lang] || MATCH_I18N.groomHeading.en}: {boy?.name || boyDetails?.name || 'Groom'}</span>
-              <span className="text-[10px] bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded font-bold shrink-0">
+              <span className="text-[10px] bg-indigo-50 dark:bg-indigo-950/35 text-indigo-700 dark:text-indigo-400 px-1.5 py-0.5 rounded font-bold shrink-0">
                 {translateEntity('nakshatras', boyDetails.star || boyDetails.nakshatra || boy?.starNakshatra || boy?.nakshatra, lang)} ({boyDetails.padam || boyDetails.pada || boy?.pada || '1'} {MATCH_I18N.attrLabels.pada[lang]})
               </span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 text-slate-600">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 text-slate-600 dark:text-stone-400">
               <div>
-                {MATCH_I18N.attrLabels.rashi[lang]}: <strong className="text-slate-800">{translateEntity('rashis', boyDetails.rasi || boyDetails.rashi || boy?.moonSign || boy?.rasi, lang)}</strong>
+                {MATCH_I18N.attrLabels.rashi[lang]}: <strong className="text-slate-800 dark:text-stone-200">{translateEntity('rashis', boyDetails.rasi || boyDetails.rashi || boy?.moonSign || boy?.rasi, lang)}</strong>
               </div>
               <div>
-                {MATCH_I18N.attrLabels.gana[lang]}: <strong className="text-slate-800">{translateEntity('ganas', boyDetails.gana, lang)}</strong>
+                {MATCH_I18N.attrLabels.gana[lang]}: <strong className="text-slate-800 dark:text-stone-200">{translateEntity('ganas', boyDetails.gana, lang)}</strong>
               </div>
               <div>
-                {MATCH_I18N.attrLabels.yoni[lang]}: <strong className="text-slate-800">{translateEntity('animals', boyDetails.animal || boyDetails.yoni, lang)} ({boyDetails.yoniSex === 'Male' ? MATCH_I18N.attrLabels.male[lang] : MATCH_I18N.attrLabels.female[lang]})</strong>
+                {MATCH_I18N.attrLabels.yoni[lang]}: <strong className="text-slate-800 dark:text-stone-200">{translateEntity('animals', boyDetails.animal || boyDetails.yoni, lang)} ({boyDetails.yoniSex === 'Male' ? MATCH_I18N.attrLabels.male[lang] : MATCH_I18N.attrLabels.female[lang]})</strong>
               </div>
               <div>
-                {MATCH_I18N.attrLabels.bird[lang]}: <strong className="text-slate-800">{translateEntity('birds', boyDetails.bird, lang)}</strong>
+                {MATCH_I18N.attrLabels.bird[lang]}: <strong className="text-slate-800 dark:text-stone-200">{translateEntity('birds', boyDetails.bird, lang)}</strong>
               </div>
               <div>
-                {MATCH_I18N.attrLabels.tree[lang]}: <strong className="text-slate-800">{translateEntity('trees', boyDetails.tree || boyDetails.vriksha, lang)} {boyDetails.milkyTree ? MATCH_I18N.attrLabels.milkyTree[lang] : ''}</strong>
+                {MATCH_I18N.attrLabels.tree[lang]}: <strong className="text-slate-800 dark:text-stone-200">{translateEntity('trees', boyDetails.tree || boyDetails.vriksha, lang)} {boyDetails.milkyTree ? MATCH_I18N.attrLabels.milkyTree[lang] : ''}</strong>
               </div>
               <div>
-                {MATCH_I18N.attrLabels.nadi[lang]}: <strong className="text-slate-800">{translateEntity('nadis', boyDetails.nadi, lang)}</strong>
+                {MATCH_I18N.attrLabels.nadi[lang]}: <strong className="text-slate-800 dark:text-stone-200">{translateEntity('nadis', boyDetails.nadi, lang)}</strong>
               </div>
-              <div className="sm:col-span-2 pt-0.5 border-t border-slate-100 text-indigo-950">
+              <div className="sm:col-span-2 pt-0.5 border-t border-slate-100 dark:border-stone-800 text-indigo-950 dark:text-indigo-200">
                 {MATCH_I18N.attrLabels.rajju[lang]}: <strong>{translateEntity('rajjuLimbs', boyDetails.rajju, lang)}</strong> • {MATCH_I18N.attrLabels.direction[lang]}: <strong>{translateEntity('rajjuDirections', boyDetails.rajjuDirection, lang)}</strong>
               </div>
             </div>
@@ -387,9 +387,9 @@ export default function TamilPoruthamCard({ matchReport }) {
       </div>
 
       {/* 4. Detailed Poruthams Table */}
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
-        <div className="p-3 bg-slate-50 border-b border-slate-200 flex flex-wrap justify-between items-center gap-2">
-          <span className="font-bold text-slate-900 flex items-center gap-1.5 text-xs">
+      <div className="bg-white dark:bg-[#1E1815] border border-slate-200 dark:border-stone-700 rounded-2xl overflow-hidden shadow-xs">
+        <div className="p-3 bg-slate-50 dark:bg-stone-900/70 border-b border-slate-200 dark:border-stone-700 flex flex-wrap justify-between items-center gap-2">
+          <span className="font-bold text-slate-900 dark:text-stone-100 flex items-center gap-1.5 text-xs">
             <Heart className="w-3.5 h-3.5 text-rose-500 fill-current" />
             {MATCH_I18N.tabTamilPorutham[lang] || MATCH_I18N.tabTamilPorutham.en}
             <span className="text-[10px] text-slate-400 font-normal sm:hidden"> (Swipe ↔)</span>
@@ -397,7 +397,7 @@ export default function TamilPoruthamCard({ matchReport }) {
           <button
             type="button"
             onClick={() => setShowAllPoruthams(!showAllPoruthams)}
-            className="text-[11px] text-amber-700 hover:text-amber-800 font-semibold cursor-pointer underline"
+            className="text-[11px] text-amber-700 dark:text-amber-400 hover:text-amber-800 font-semibold cursor-pointer underline"
           >
             {showAllPoruthams
               ? MATCH_I18N.show10Btn[lang] || MATCH_I18N.show10Btn.en
@@ -408,7 +408,7 @@ export default function TamilPoruthamCard({ matchReport }) {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[520px] text-xs text-left border-collapse">
             <thead>
-              <tr className="bg-slate-100/80 text-slate-700 font-bold border-b border-slate-200">
+              <tr className="bg-slate-100/80 dark:bg-stone-800/80 text-slate-700 dark:text-stone-300 font-bold border-b border-slate-200 dark:border-stone-700">
                 <th className="py-2.5 px-3"># {MATCH_I18N.colPorutham[lang] || MATCH_I18N.colPorutham.en}</th>
                 <th className="py-2.5 px-3">{MATCH_I18N.colSignificance[lang] || MATCH_I18N.colSignificance.en}</th>
                 <th className="py-2.5 px-3 text-center">{MATCH_I18N.colStatus[lang] || MATCH_I18N.colStatus.en}</th>
@@ -416,7 +416,7 @@ export default function TamilPoruthamCard({ matchReport }) {
                 <th className="py-2.5 px-2 text-center w-8">{MATCH_I18N.colRule[lang] || MATCH_I18N.colRule.en}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-stone-800">
               {displayedPoruthams.map((item, index) => {
                 const isExpanded = expandedPorutham === index;
                 const pKey = getPoruthamKey(item.name);
@@ -427,25 +427,25 @@ export default function TamilPoruthamCard({ matchReport }) {
                 return (
                   <React.Fragment key={index}>
                     <tr
-                      className={`hover:bg-amber-50/20 cursor-pointer transition-colors ${
+                      className={`hover:bg-amber-50/20 dark:hover:bg-stone-800/70 cursor-pointer transition-colors ${
                         item.status === 'Uttamam'
-                          ? 'bg-emerald-50/10'
+                          ? 'bg-emerald-50/10 dark:bg-emerald-950/35'
                           : item.status === 'Porunthathu'
-                          ? 'bg-rose-50/10'
+                          ? 'bg-rose-50/10 dark:bg-rose-950/30'
                           : ''
                       }`}
                       onClick={() => setExpandedPorutham(isExpanded ? null : index)}
                     >
-                      <td className="py-2.5 px-3 font-bold text-slate-900">
+                      <td className="py-2.5 px-3 font-bold text-slate-900 dark:text-stone-100">
                         {localizedName}
                       </td>
-                      <td className="py-2.5 px-3 text-slate-600 max-w-xs leading-relaxed">
+                      <td className="py-2.5 px-3 text-slate-600 dark:text-stone-400 max-w-xs leading-relaxed">
                         {localizedSig}
                       </td>
                       <td className="py-2.5 px-3 text-center whitespace-nowrap">
                         {getStatusBadge(item.status)}
                       </td>
-                      <td className="py-2.5 px-3 text-center font-bold text-slate-900">
+                      <td className="py-2.5 px-3 text-center font-bold text-slate-900 dark:text-stone-100">
                         {item.points} <span className="text-slate-400 font-normal">/ {item.maxPoints}</span>
                       </td>
                       <td className="py-2.5 px-2 text-center text-slate-400">
@@ -459,14 +459,14 @@ export default function TamilPoruthamCard({ matchReport }) {
 
                     {/* Expandable row showing precise sastra rule in the selected language */}
                     {isExpanded && (
-                      <tr className="bg-amber-50/40">
+                      <tr className="bg-amber-50/40 dark:bg-amber-950/30">
                         <td colSpan={5} className="py-3 px-4 border-l-4 border-amber-500">
                           <div className="space-y-1">
-                            <span className="text-[11px] font-bold text-amber-950 flex items-center gap-1">
+                            <span className="text-[11px] font-bold text-amber-950 dark:text-amber-200 flex items-center gap-1">
                               <Info className="w-3.5 h-3.5 text-amber-600" />
                               {MATCH_I18N.ruleExplanationHeading[lang] || MATCH_I18N.ruleExplanationHeading.en}
                             </span>
-                            <p className="text-slate-800 leading-relaxed text-xs pl-4">
+                            <p className="text-slate-800 dark:text-stone-200 leading-relaxed text-xs pl-4">
                               {getLocalizedRule(item, pKey)}
                             </p>
                           </div>

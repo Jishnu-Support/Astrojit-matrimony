@@ -119,7 +119,7 @@ export default function AstrologerConsultationModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-white rounded-3xl max-w-xl w-full border border-amber-300 shadow-2xl overflow-hidden my-6">
+      <div className="bg-white dark:bg-[#1E1815] rounded-3xl max-w-xl w-full border border-amber-300 dark:border-amber-700/60 shadow-2xl overflow-hidden my-6">
         
         {/* Header */}
         <div className="bg-gradient-to-r from-indigo-700 via-indigo-800 to-amber-700 text-white p-4 sm:p-5 flex justify-between items-start">
@@ -147,13 +147,13 @@ export default function AstrologerConsultationModal({
 
         {submittedSuccess ? (
           <div className="p-6 sm:p-8 text-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-md">
+            <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-900/45 text-emerald-600 flex items-center justify-center mx-auto shadow-md">
               <CheckCircle2 className="w-10 h-10" />
             </div>
-            <h4 className="text-lg font-black text-slate-900">
+            <h4 className="text-lg font-black text-slate-900 dark:text-stone-100">
               {tr('Consultation Request Submitted Successfully!', 'ஜோதிடர் ஆய்வு கோரிக்கை வெற்றிகரமாக அனுப்பப்பட்டது!')}
             </h4>
-            <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-stone-400 max-w-md mx-auto leading-relaxed">
               {tr(
                 'Your request has been delivered to the selected Astrologer. You will receive detailed notes, Dasa Sandhi score, and Vivaha Muhurtham recommendations in your Astrojit Appointments tab.',
                 'உங்கள் கோரிக்கை ஜோதிடருக்கு அனுப்பி வைக்கப்பட்டுள்ளது. ஆய்வு முடிவுகள் மற்றும் முகூர்த்த பரிந்துரைகள் உங்கள் அஸ்ட்ரோஜித் கணக்கில் பதிவேற்றப்படும்.'
@@ -171,24 +171,24 @@ export default function AstrologerConsultationModal({
         ) : (
           <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 text-xs">
             {errorMsg && (
-              <div className="bg-rose-50 border border-rose-200 text-rose-700 p-3 rounded-xl flex items-center gap-2">
+              <div className="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/50 text-rose-700 dark:text-rose-400 p-3 rounded-xl flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{errorMsg}</span>
               </div>
             )}
 
             {/* Candidate & Match Quick Pill */}
-            <div className="bg-amber-50/70 border border-amber-200 p-3 rounded-xl flex items-center justify-between">
+            <div className="bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 p-3 rounded-xl flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <img
                   src={candidate.photoUrl || candidate.primaryPhoto || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100'}
                   alt={candidate.fullName || candidate.name}
-                  className="w-10 h-10 rounded-full object-cover border border-amber-300"
+                  className="w-10 h-10 rounded-full object-cover border border-amber-300 dark:border-amber-700/60"
                 />
                 <div>
-                  <span className="text-[10px] text-amber-800 uppercase font-bold block">{tr('Match Under Review', 'ஆய்வு செய்யப்படும் வரன்')}</span>
-                  <strong className="text-slate-900 text-xs">{candidate.fullName || candidate.name}</strong>
-                  <span className="text-[10px] text-slate-500 block">
+                  <span className="text-[10px] text-amber-800 dark:text-amber-300 uppercase font-bold block">{tr('Match Under Review', 'ஆய்வு செய்யப்படும் வரன்')}</span>
+                  <strong className="text-slate-900 dark:text-stone-100 text-xs">{candidate.fullName || candidate.name}</strong>
+                  <span className="text-[10px] text-slate-500 dark:text-stone-400 block">
                     {candidate.nakshatra || candidate.starNakshatra} • {candidate.rasi || candidate.rasiMoonSign}
                   </span>
                 </div>
@@ -197,7 +197,7 @@ export default function AstrologerConsultationModal({
               {compatibilityResult && (
                 <div className="text-right">
                   <span className="text-[10px] text-slate-400 block">{tr('Vedic Score', 'பொருத்த மதிப்பு')}</span>
-                  <span className="text-sm font-black text-rose-700">
+                  <span className="text-sm font-black text-rose-700 dark:text-rose-400">
                     {compatibilityResult.ashtakoota?.totalScore || 28} / 36
                   </span>
                 </div>
@@ -206,12 +206,12 @@ export default function AstrologerConsultationModal({
 
             {/* Select Astrologer */}
             <div className="space-y-1.5">
-              <label className="text-slate-800 font-bold block">
+              <label className="text-slate-800 dark:text-stone-200 font-bold block">
                 {tr('Select Certified Vedic Astrologer *', 'சான்றளிக்கப்பட்ட வேத ஜோதிடரைத் தேர்ந்தெடுக்கவும் *')}
               </label>
               <div className="space-y-2">
                 {astrologers.length === 0 ? (
-                  <div className="p-4 rounded-xl border border-dashed border-slate-300 text-center text-slate-500 text-xs">
+                  <div className="p-4 rounded-xl border border-dashed border-slate-300 dark:border-stone-600 text-center text-slate-500 dark:text-stone-400 text-xs">
                     {tr('No verified astrologers registered yet.', 'சான்றளிக்கப்பட்ட ஜோதிடர்கள் தற்போது பதிவு செய்யப்படவில்லை.')}
                   </div>
                 ) : astrologers.map((a) => (
@@ -220,8 +220,8 @@ export default function AstrologerConsultationModal({
                     onClick={() => setSelectedAstrologer(a.id)}
                     className={`block p-3 rounded-xl border transition-all cursor-pointer ${
                       selectedAstrologer === a.id
-                        ? 'border-indigo-600 bg-indigo-50/60 shadow-xs'
-                        : 'border-slate-200 bg-slate-50/60 hover:bg-slate-100'
+                        ? 'border-indigo-600 bg-indigo-50/60 dark:bg-indigo-950/35 shadow-xs'
+                        : 'border-slate-200 dark:border-stone-700 bg-slate-50/60 dark:bg-stone-900/70 hover:bg-slate-100 dark:hover:bg-stone-800'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -234,12 +234,12 @@ export default function AstrologerConsultationModal({
                             onChange={() => setSelectedAstrologer(a.id)}
                             className="text-indigo-600"
                           />
-                          <strong className="text-slate-900">{a.name}</strong>
+                          <strong className="text-slate-900 dark:text-stone-100">{a.name}</strong>
                         </div>
-                        <p className="text-[11px] text-indigo-900 font-medium ml-5">{a.title}</p>
-                        <p className="text-[10px] text-slate-500 ml-5">{a.experience} • {a.rating}</p>
+                        <p className="text-[11px] text-indigo-900 dark:text-indigo-300 font-medium ml-5">{a.title}</p>
+                        <p className="text-[10px] text-slate-500 dark:text-stone-400 ml-5">{a.experience} • {a.rating}</p>
                       </div>
-                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/35 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800/50">
                         {a.fee}
                       </span>
                     </div>
@@ -250,7 +250,7 @@ export default function AstrologerConsultationModal({
 
             {/* Custom Query & Quick Chips */}
             <div className="space-y-1.5">
-              <label className="text-slate-800 font-bold block">
+              <label className="text-slate-800 dark:text-stone-200 font-bold block">
                 {tr('Specific Questions for the Astrologer *', 'ஜோதிடரிடம் கேட்க விரும்பும் குறிப்பிட்ட கேள்விகள் *')}
               </label>
               <textarea
@@ -258,7 +258,7 @@ export default function AstrologerConsultationModal({
                 required
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:border-indigo-600 font-medium"
+                className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl p-2.5 text-xs text-slate-900 dark:text-stone-100 focus:outline-none focus:border-indigo-600 font-medium"
               />
 
               {/* Quick Chip Suggestions */}
@@ -268,7 +268,7 @@ export default function AstrologerConsultationModal({
                     key={idx}
                     type="button"
                     onClick={() => setQuery(chip)}
-                    className="text-[10px] bg-slate-100 hover:bg-indigo-50 hover:text-indigo-800 text-slate-700 px-2 py-1 rounded-lg border border-slate-200 transition-colors cursor-pointer text-left"
+                    className="text-[10px] bg-slate-100 dark:bg-stone-800/80 hover:bg-indigo-50 hover:text-indigo-800 text-slate-700 dark:text-stone-300 px-2 py-1 rounded-lg border border-slate-200 dark:border-stone-700 transition-colors cursor-pointer text-left"
                   >
                     + {chip}
                   </button>
@@ -277,11 +277,11 @@ export default function AstrologerConsultationModal({
             </div>
 
             {/* Submit Action */}
-            <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+            <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-stone-800">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-xl font-bold transition-colors cursor-pointer text-xs"
+                className="px-4 py-2 text-slate-600 dark:text-stone-400 hover:bg-slate-100 dark:hover:bg-stone-800 rounded-xl font-bold transition-colors cursor-pointer text-xs"
               >
                 {tr('Cancel', 'ரத்து')}
               </button>

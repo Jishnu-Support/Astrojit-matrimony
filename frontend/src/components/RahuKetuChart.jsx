@@ -74,22 +74,22 @@ export default function RahuKetuChart({ matchReport }) {
     });
 
     return (
-      <div className="bg-white border-2 border-stone-800 rounded-none overflow-hidden shadow-xs">
+      <div className="bg-white dark:bg-[#1E1815] border-2 border-stone-800 rounded-none overflow-hidden shadow-xs">
         {/* Top Header */}
         <div className={`p-2 font-black text-xs sm:text-sm text-center flex items-center justify-between border-b-2 border-stone-800 ${
-          isGroom ? 'bg-teal-50 text-teal-950' : 'bg-purple-50 text-purple-950'
+          isGroom ? 'bg-teal-50 dark:bg-teal-950/35 text-teal-950 dark:text-teal-200' : 'bg-purple-50 dark:bg-purple-950/35 text-purple-950 dark:text-purple-200'
         }`}>
           <span className="flex items-center gap-1.5 font-bold">
-            <Compass className="w-4 h-4 text-teal-700" />
+            <Compass className="w-4 h-4 text-teal-700 dark:text-teal-400" />
             {title} ({person.name || (isGroom ? 'Groom' : 'Bride')})
           </span>
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white border border-stone-300">
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white dark:bg-[#1E1815] border border-stone-300 dark:border-stone-600">
             {translateEntity('rashis', person.lagnaRasi || 'Gemini', lang)} {isTa ? 'லக்னம்' : 'Lagna'}
           </span>
         </div>
 
         {/* 4x4 CSS Grid */}
-        <div className="grid grid-cols-4 grid-rows-4 aspect-square w-full max-w-[360px] mx-auto bg-[#FFFDF9] text-stone-900 border-collapse">
+        <div className="grid grid-cols-4 grid-rows-4 aspect-square w-full max-w-[360px] mx-auto bg-[#FFFDF9] dark:bg-[#1E1815] text-stone-900 dark:text-stone-100 border-collapse">
           {[0, 1, 2, 3].map((r) =>
             [0, 1, 2, 3].map((c) => {
               const isCenter = (r === 1 || r === 2) && (c === 1 || c === 2);
@@ -98,19 +98,25 @@ export default function RahuKetuChart({ matchReport }) {
                   return (
                     <div
                       key={`center-${r}-${c}`}
-                      className="col-span-2 row-span-2 border border-stone-800 flex flex-col items-center justify-center p-2 text-center bg-teal-50/40 relative"
+                      className="col-span-2 row-span-2 border border-stone-800 flex flex-col items-center justify-center p-2 text-center bg-teal-50/40 dark:bg-teal-950/35 relative overflow-hidden"
                     >
-                      <span className="text-xs uppercase font-black tracking-widest text-teal-950">
+                      <img
+                        src="/sri-yantra-center.png"
+                        alt=""
+                        aria-hidden="true"
+                        className="pointer-events-none select-none absolute inset-0 m-auto w-[84%] h-[84%] object-contain opacity-[0.13] dark:opacity-[0.18]"
+                      />
+                      <span className="relative z-10 text-xs uppercase font-black tracking-widest text-teal-950 dark:text-teal-200">
                         {isTa ? 'சர்ப்ப ராசிக் கட்டம்' : 'SARPA RASI (D1)'}
                       </span>
-                      <span className="text-[10px] font-bold text-stone-700 mt-0.5">
+                      <span className="relative z-10 text-[10px] font-bold text-stone-700 dark:text-stone-300 mt-0.5">
                         {person.starTamil || person.star || 'Mula'}
                         {person.pada ? ` (${person.pada})` : ''}
                       </span>
-                      <span className="text-[9px] text-stone-500 font-medium">
+                      <span className="relative z-10 text-[9px] text-stone-500 dark:text-stone-400 font-medium">
                         {translateEntity('rashis', person.moonRasi || 'Sagittarius', lang)}
                       </span>
-                      <div className="mt-1 flex items-center gap-1 text-[8.5px] font-bold text-teal-800 bg-teal-100/90 px-2 py-0.5 rounded-full border border-teal-300">
+                      <div className="relative z-10 mt-1 flex items-center gap-1 text-[8.5px] font-bold text-teal-800 dark:text-teal-300 bg-teal-100/90 px-2 py-0.5 rounded-full border border-teal-300">
                         <Zap className="w-2.5 h-2.5" />
                         {isTa ? person.axisNameTamil : person.axisName}
                       </div>
@@ -149,7 +155,7 @@ export default function RahuKetuChart({ matchReport }) {
                           >
                             <Zap className="w-2.5 h-2.5" />
                             {isTa ? 'ராகு' : 'Rahu'}
-                            <span className="text-[8px] bg-white text-teal-900 px-1 rounded-xs font-bold">
+                            <span className="text-[8px] bg-white dark:bg-[#1E1815] text-teal-900 dark:text-teal-300 px-1 rounded-xs font-bold">
                               {occ.houseFromLagna}
                             </span>
                           </span>
@@ -164,7 +170,7 @@ export default function RahuKetuChart({ matchReport }) {
                           >
                             <Zap className="w-2.5 h-2.5" />
                             {isTa ? 'கேது' : 'Ketu'}
-                            <span className="text-[8px] bg-white text-purple-900 px-1 rounded-xs font-bold">
+                            <span className="text-[8px] bg-white dark:bg-[#1E1815] text-purple-900 dark:text-purple-300 px-1 rounded-xs font-bold">
                               {occ.houseFromLagna}
                             </span>
                           </span>
@@ -184,7 +190,7 @@ export default function RahuKetuChart({ matchReport }) {
                         return (
                           <span
                             key={oIdx}
-                            className="inline-flex items-center px-1 py-0.2 rounded font-bold text-[9px] bg-rose-100 text-rose-900 border border-rose-300"
+                            className="inline-flex items-center px-1 py-0.2 rounded font-bold text-[9px] bg-rose-100 dark:bg-rose-900/40 text-rose-900 dark:text-rose-300 border border-rose-300 dark:border-rose-700/60"
                           >
                             {isTa ? 'செவ்' : 'Mars'}
                           </span>
@@ -204,7 +210,7 @@ export default function RahuKetuChart({ matchReport }) {
                         return (
                           <span
                             key={oIdx}
-                            className="inline-flex items-center px-1 py-0.2 rounded font-bold text-[9px] bg-emerald-100 text-emerald-900 border border-emerald-300"
+                            className="inline-flex items-center px-1 py-0.2 rounded font-bold text-[9px] bg-emerald-100 dark:bg-emerald-900/45 text-emerald-900 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/60"
                           >
                             {isTa ? 'சுக்' : 'Ven'}
                           </span>
@@ -214,7 +220,7 @@ export default function RahuKetuChart({ matchReport }) {
                         return (
                           <span
                             key={oIdx}
-                            className="inline-flex items-center px-1 py-0.2 rounded font-bold text-[9px] bg-amber-100 text-amber-900 border border-amber-300"
+                            className="inline-flex items-center px-1 py-0.2 rounded font-bold text-[9px] bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60"
                           >
                             {isTa ? 'குரு' : 'Jup'}
                           </span>
@@ -222,7 +228,7 @@ export default function RahuKetuChart({ matchReport }) {
                       }
 
                       return (
-                        <span key={oIdx} className="text-stone-700 text-[9px] font-semibold">
+                        <span key={oIdx} className="text-stone-700 dark:text-stone-300 text-[9px] font-semibold">
                           {isTa ? occ.code.split('/')[0].trim() : occ.name}
                         </span>
                       );
@@ -274,11 +280,11 @@ export default function RahuKetuChart({ matchReport }) {
       {/* 2. Dual South Indian Rasi Charts */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <h4 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5">
-            <Compass className="w-4 h-4 text-teal-700" />
+          <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-stone-100 flex items-center gap-1.5">
+            <Compass className="w-4 h-4 text-teal-700 dark:text-teal-400" />
             {isTa ? 'மணமகள் & மணமகன் சர்ப்ப ராசிக் கட்டங்கள் (ராகு-கேது நிலை)' : 'Bride & Groom Nodal Axis Kundli Charts'}
           </h4>
-          <span className="text-[11px] text-slate-500">
+          <span className="text-[11px] text-slate-500 dark:text-stone-400">
             {isTa ? 'தென்னிந்திய முறை' : 'Classical South Indian Nirayana Format'}
           </span>
         </div>
@@ -292,58 +298,58 @@ export default function RahuKetuChart({ matchReport }) {
       </div>
 
       {/* 3. Side-by-Side Nodal Placements & Sastric Nivrutti Comparison */}
-      <div className="bg-white border border-teal-200 rounded-2xl p-4 space-y-3 shadow-xs">
-        <h4 className="text-xs sm:text-sm font-bold text-teal-950 flex items-center gap-1.5 border-b border-teal-100 pb-2">
-          <Zap className="w-4 h-4 text-teal-700" />
+      <div className="bg-white dark:bg-[#1E1815] border border-teal-200 dark:border-teal-800/50 rounded-2xl p-4 space-y-3 shadow-xs">
+        <h4 className="text-xs sm:text-sm font-bold text-teal-950 dark:text-teal-200 flex items-center gap-1.5 border-b border-teal-100 pb-2">
+          <Zap className="w-4 h-4 text-teal-700 dark:text-teal-400" />
           {isTa ? 'ராகு-கேது அச்சு அமைவு மற்றும் சாஸ்திர நிவர்த்திகள்' : 'Rahu-Ketu Placements & Classical Sastric Nivrutti Comparison'}
         </h4>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           {/* Bride's Box (Female - Left Side Default) */}
-          <div className="p-3 bg-purple-50/40 rounded-xl border border-purple-100 space-y-2">
+          <div className="p-3 bg-purple-50/40 dark:bg-purple-950/35 rounded-xl border border-purple-100 space-y-2">
             <div className="flex justify-between items-center border-b border-purple-100 pb-1.5">
-              <span className="font-bold text-purple-950 text-xs">
+              <span className="font-bold text-purple-950 dark:text-purple-200 text-xs">
                 {isTa ? 'மணமகள்' : 'Bride'}: {girl.name || 'Bride'}
               </span>
               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                 girl.netHasDosha
-                  ? 'bg-rose-100 text-rose-800'
+                  ? 'bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-300'
                   : girl.isCancelled
-                  ? 'bg-emerald-100 text-emerald-800'
-                  : 'bg-slate-200 text-slate-800'
+                  ? 'bg-emerald-100 dark:bg-emerald-900/45 text-emerald-800 dark:text-emerald-300'
+                  : 'bg-slate-200 text-slate-800 dark:text-stone-200'
               }`}>
                 {isTa ? girl.doshaLevelTamil : girl.doshaLevel}
               </span>
             </div>
 
-            <div className="space-y-1 text-[11px] text-slate-700">
+            <div className="space-y-1 text-[11px] text-slate-700 dark:text-stone-300">
               <div className="flex justify-between">
                 <span>{isTa ? 'சர்ப்ப தோஷ அச்சு' : 'Active Nodal Axis'}:</span>
-                <strong className="text-purple-950">{isTa ? girl.axisNameTamil : girl.axisName}</strong>
+                <strong className="text-purple-950 dark:text-purple-200">{isTa ? girl.axisNameTamil : girl.axisName}</strong>
               </div>
               <div className="flex justify-between">
                 <span>{isTa ? 'லக்னத்திலிருந்து ராகு' : 'Rahu from Lagna'}:</span>
-                <strong className="text-slate-900">{formatHouseOrdinal(girl.houses?.lagnaRahu || 4)}</strong>
+                <strong className="text-slate-900 dark:text-stone-100">{formatHouseOrdinal(girl.houses?.lagnaRahu || 4)}</strong>
               </div>
               <div className="flex justify-between">
                 <span>{isTa ? 'லக்னத்திலிருந்து கேது' : 'Ketu from Lagna'}:</span>
-                <strong className="text-slate-900">{formatHouseOrdinal(girl.houses?.lagnaKetu || 10)}</strong>
+                <strong className="text-slate-900 dark:text-stone-100">{formatHouseOrdinal(girl.houses?.lagnaKetu || 10)}</strong>
               </div>
               <div className="flex justify-between">
                 <span>{isTa ? 'சந்திரனிலிருந்து ராகு / கேது' : 'Rahu / Ketu from Moon'}:</span>
-                <strong className="text-slate-900">
+                <strong className="text-slate-900 dark:text-stone-100">
                   {formatHouseOrdinal(girl.houses?.moonRahu || 1)} / {formatHouseOrdinal(girl.houses?.moonKetu || 7)}
                 </strong>
               </div>
               <div className="flex justify-between">
                 <span>{isTa ? 'சுக்கிரனிலிருந்து ராகு / கேது' : 'Rahu / Ketu from Venus'}:</span>
-                <strong className="text-slate-900">
+                <strong className="text-slate-900 dark:text-stone-100">
                   {formatHouseOrdinal(girl.houses?.venusRahu || 1)} / {formatHouseOrdinal(girl.houses?.venusKetu || 7)}
                 </strong>
               </div>
               <div className="flex justify-between">
                 <span>{isTa ? 'ராகு & கேது நின்ற ராசி' : 'Rahu & Ketu Signs'}:</span>
-                <strong className="text-purple-900">
+                <strong className="text-purple-900 dark:text-purple-300">
                   {translateEntity('rashis', girl.rahuRasi || 'Leo', lang)} / {translateEntity('rashis', girl.ketuRasi || 'Aquarius', lang)}
                 </strong>
               </div>
@@ -351,10 +357,10 @@ export default function RahuKetuChart({ matchReport }) {
 
             {/* Nivrutti rules */}
             <div className="pt-2 border-t border-purple-100 text-[10.5px]">
-              <span className="font-bold text-purple-950 block mb-1">
+              <span className="font-bold text-purple-950 dark:text-purple-200 block mb-1">
                 {isTa ? 'சாஸ்திர நிவர்த்தி விவரம்:' : 'Applied Nivrutti / Exemption:'}
               </span>
-              <ul className="list-disc pl-4 space-y-0.5 text-slate-700">
+              <ul className="list-disc pl-4 space-y-0.5 text-slate-700 dark:text-stone-300">
                 {(girl.cancellations || []).map((c, i) => (
                   <li key={i}>{c}</li>
                 ))}
@@ -363,50 +369,50 @@ export default function RahuKetuChart({ matchReport }) {
           </div>
 
           {/* Groom's Box (Male - Right Side Default) */}
-          <div className="p-3 bg-teal-50/40 rounded-xl border border-teal-100 space-y-2">
+          <div className="p-3 bg-teal-50/40 dark:bg-teal-950/35 rounded-xl border border-teal-100 space-y-2">
             <div className="flex justify-between items-center border-b border-teal-100 pb-1.5">
-              <span className="font-bold text-teal-950 text-xs">
+              <span className="font-bold text-teal-950 dark:text-teal-200 text-xs">
                 {isTa ? 'மணமகன்' : 'Groom'}: {boy.name || 'Groom'}
               </span>
               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                 boy.netHasDosha
-                  ? 'bg-rose-100 text-rose-800'
+                  ? 'bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-300'
                   : boy.isCancelled
-                  ? 'bg-emerald-100 text-emerald-800'
-                  : 'bg-slate-200 text-slate-800'
+                  ? 'bg-emerald-100 dark:bg-emerald-900/45 text-emerald-800 dark:text-emerald-300'
+                  : 'bg-slate-200 text-slate-800 dark:text-stone-200'
               }`}>
                 {isTa ? boy.doshaLevelTamil : boy.doshaLevel}
               </span>
             </div>
 
-            <div className="space-y-1 text-[11px] text-slate-700">
+            <div className="space-y-1 text-[11px] text-slate-700 dark:text-stone-300">
               <div className="flex justify-between">
                 <span>{isTa ? 'சர்ப்ப தோஷ அச்சு' : 'Active Nodal Axis'}:</span>
-                <strong className="text-teal-950">{isTa ? boy.axisNameTamil : boy.axisName}</strong>
+                <strong className="text-teal-950 dark:text-teal-200">{isTa ? boy.axisNameTamil : boy.axisName}</strong>
               </div>
               <div className="flex justify-between">
                 <span>{isTa ? 'லக்னத்திலிருந்து ராகு' : 'Rahu from Lagna'}:</span>
-                <strong className="text-slate-900">{formatHouseOrdinal(boy.houses?.lagnaRahu || 9)}</strong>
+                <strong className="text-slate-900 dark:text-stone-100">{formatHouseOrdinal(boy.houses?.lagnaRahu || 9)}</strong>
               </div>
               <div className="flex justify-between">
                 <span>{isTa ? 'லக்னத்திலிருந்து கேது' : 'Ketu from Lagna'}:</span>
-                <strong className="text-slate-900">{formatHouseOrdinal(boy.houses?.lagnaKetu || 3)}</strong>
+                <strong className="text-slate-900 dark:text-stone-100">{formatHouseOrdinal(boy.houses?.lagnaKetu || 3)}</strong>
               </div>
               <div className="flex justify-between">
                 <span>{isTa ? 'சந்திரனிலிருந்து ராகு / கேது' : 'Rahu / Ketu from Moon'}:</span>
-                <strong className="text-slate-900">
+                <strong className="text-slate-900 dark:text-stone-100">
                   {formatHouseOrdinal(boy.houses?.moonRahu || 1)} / {formatHouseOrdinal(boy.houses?.moonKetu || 7)}
                 </strong>
               </div>
               <div className="flex justify-between">
                 <span>{isTa ? 'சுக்கிரனிலிருந்து ராகு / கேது' : 'Rahu / Ketu from Venus'}:</span>
-                <strong className="text-slate-900">
+                <strong className="text-slate-900 dark:text-stone-100">
                   {formatHouseOrdinal(boy.houses?.venusRahu || 1)} / {formatHouseOrdinal(boy.houses?.venusKetu || 7)}
                 </strong>
               </div>
               <div className="flex justify-between">
                 <span>{isTa ? 'ராகு & கேது நின்ற ராசி' : 'Rahu & Ketu Signs'}:</span>
-                <strong className="text-teal-900">
+                <strong className="text-teal-900 dark:text-teal-300">
                   {translateEntity('rashis', boy.rahuRasi || 'Aries', lang)} / {translateEntity('rashis', boy.ketuRasi || 'Libra', lang)}
                 </strong>
               </div>
@@ -414,10 +420,10 @@ export default function RahuKetuChart({ matchReport }) {
 
             {/* Nivrutti rules */}
             <div className="pt-2 border-t border-teal-100 text-[10.5px]">
-              <span className="font-bold text-teal-950 block mb-1">
+              <span className="font-bold text-teal-950 dark:text-teal-200 block mb-1">
                 {isTa ? 'சாஸ்திர நிவர்த்தி விவரம்:' : 'Applied Nivrutti / Exemption:'}
               </span>
-              <ul className="list-disc pl-4 space-y-0.5 text-slate-700">
+              <ul className="list-disc pl-4 space-y-0.5 text-slate-700 dark:text-stone-300">
                 {(boy.cancellations || []).map((c, i) => (
                   <li key={i}>{c}</li>
                 ))}
@@ -428,34 +434,34 @@ export default function RahuKetuChart({ matchReport }) {
       </div>
 
       {/* 4. Rahu & Ketu Mahadashas Timeline */}
-      <div className="bg-white border border-teal-200 rounded-2xl p-4 space-y-3 shadow-xs">
+      <div className="bg-white dark:bg-[#1E1815] border border-teal-200 dark:border-teal-800/50 rounded-2xl p-4 space-y-3 shadow-xs">
         <div className="flex items-center justify-between border-b border-teal-100 pb-2">
-          <h4 className="text-xs sm:text-sm font-bold text-teal-950 flex items-center gap-1.5">
-            <Clock className="w-4 h-4 text-teal-700" />
+          <h4 className="text-xs sm:text-sm font-bold text-teal-950 dark:text-teal-200 flex items-center gap-1.5">
+            <Clock className="w-4 h-4 text-teal-700 dark:text-teal-400" />
             {isTa ? 'ராகு (18 வருடங்கள்) & கேது (7 வருடங்கள்) மகாதிசை கால அட்டவணை' : 'Rahu (18 Yrs) & Ketu (7 Yrs) Mahadasha Operating Periods'}
           </h4>
-          <span className="text-[10px] font-bold bg-teal-100 text-teal-900 px-2 py-0.5 rounded">
+          <span className="text-[10px] font-bold bg-teal-100 text-teal-900 dark:text-teal-300 px-2 py-0.5 rounded">
             {isTa ? 'விம்சொத்தரி முறை' : 'Vimshottari System'}
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           {/* Bride's Timeline (Female - Left Side Default) */}
-          <div className="p-3 bg-purple-50/40 rounded-xl border border-purple-200/80 space-y-2">
-            <strong className="text-purple-950 block">
+          <div className="p-3 bg-purple-50/40 dark:bg-purple-950/35 rounded-xl border border-purple-200/80 dark:border-purple-800/50 space-y-2">
+            <strong className="text-purple-950 dark:text-purple-200 block">
               {isTa ? 'மணமகள் ராகு & கேது திசை' : "Bride's Nodal Mahadashas"}
             </strong>
 
-            <div className="text-[11px] space-y-1.5 text-slate-700">
-              <div className="flex justify-between items-center p-1.5 bg-white rounded border border-purple-100">
+            <div className="text-[11px] space-y-1.5 text-slate-700 dark:text-stone-300">
+              <div className="flex justify-between items-center p-1.5 bg-white dark:bg-[#1E1815] rounded border border-purple-100">
                 <span>{isTa ? 'கேது மகாதிசை (7 வருடம்)' : 'Ketu Mahadasha (7y)'}:</span>
-                <span className="font-bold text-slate-900">
+                <span className="font-bold text-slate-900 dark:text-stone-100">
                   {girl.ketuDasha?.startDate || '-'} &rarr; {girl.ketuDasha?.endDate || '-'}
                 </span>
               </div>
-              <div className="flex justify-between items-center p-1.5 bg-white rounded border border-purple-100">
+              <div className="flex justify-between items-center p-1.5 bg-white dark:bg-[#1E1815] rounded border border-purple-100">
                 <span>{isTa ? 'ராகு மகாதிசை (18 வருடம்)' : 'Rahu Mahadasha (18y)'}:</span>
-                <span className="font-bold text-slate-900">
+                <span className="font-bold text-slate-900 dark:text-stone-100">
                   {girl.rahuDasha?.startDate || '-'} &rarr; {girl.rahuDasha?.endDate || '-'}
                 </span>
               </div>
@@ -463,21 +469,21 @@ export default function RahuKetuChart({ matchReport }) {
           </div>
 
           {/* Groom's Timeline (Male - Right Side Default) */}
-          <div className="p-3 bg-teal-50/40 rounded-xl border border-teal-200/80 space-y-2">
-            <strong className="text-teal-950 block">
+          <div className="p-3 bg-teal-50/40 dark:bg-teal-950/35 rounded-xl border border-teal-200/80 dark:border-teal-800/50 space-y-2">
+            <strong className="text-teal-950 dark:text-teal-200 block">
               {isTa ? 'மணமகன் ராகு & கேது திசை' : "Groom's Nodal Mahadashas"}
             </strong>
 
-            <div className="text-[11px] space-y-1.5 text-slate-700">
-              <div className="flex justify-between items-center p-1.5 bg-white rounded border border-teal-100">
+            <div className="text-[11px] space-y-1.5 text-slate-700 dark:text-stone-300">
+              <div className="flex justify-between items-center p-1.5 bg-white dark:bg-[#1E1815] rounded border border-teal-100">
                 <span>{isTa ? 'கேது மகாதிசை (7 வருடம்)' : 'Ketu Mahadasha (7y)'}:</span>
-                <span className="font-bold text-slate-900">
+                <span className="font-bold text-slate-900 dark:text-stone-100">
                   {boy.ketuDasha?.startDate || 'Birth'} &rarr; {boy.ketuDasha?.endDate || '-'}
                 </span>
               </div>
-              <div className="flex justify-between items-center p-1.5 bg-white rounded border border-teal-100">
+              <div className="flex justify-between items-center p-1.5 bg-white dark:bg-[#1E1815] rounded border border-teal-100">
                 <span>{isTa ? 'ராகு மகாதிசை (18 வருடம்)' : 'Rahu Mahadasha (18y)'}:</span>
-                <span className="font-bold text-slate-900">
+                <span className="font-bold text-slate-900 dark:text-stone-100">
                   {boy.rahuDasha?.startDate || '-'} &rarr; {boy.rahuDasha?.endDate || '-'}
                 </span>
               </div>
@@ -487,12 +493,12 @@ export default function RahuKetuChart({ matchReport }) {
       </div>
 
       {/* 5. Classical Remedies (பரிகாரங்கள் & சாந்தி) */}
-      <div className="p-3.5 bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-300 rounded-xl space-y-1.5 text-xs text-teal-950">
-        <strong className="font-bold flex items-center gap-1.5 text-teal-900">
-          <Sparkles className="w-4 h-4 text-teal-700" />
+      <div className="p-3.5 bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-950/50 dark:to-slate-900/80 border border-teal-300 dark:border-teal-700/60 rounded-xl space-y-1.5 text-xs text-teal-950 dark:text-teal-200">
+        <strong className="font-bold flex items-center gap-1.5 text-teal-900 dark:text-teal-300">
+          <Sparkles className="w-4 h-4 text-teal-700 dark:text-teal-400" />
           {isTa ? 'ராகு-கேது சர்ப்ப தோஷ சாஸ்திரப் பரிகாரங்கள் (பரிந்துரை):' : 'Classical Sastric Remedies & Auspicious Guidance for Rahu-Ketu:'}
         </strong>
-        <ul className="list-disc pl-4 space-y-1 text-slate-800 text-[11px] leading-relaxed">
+        <ul className="list-disc pl-4 space-y-1 text-slate-800 dark:text-stone-200 text-[11px] leading-relaxed">
           {remedies.map((rem, rIdx) => (
             <li key={rIdx}>{rem}</li>
           ))}

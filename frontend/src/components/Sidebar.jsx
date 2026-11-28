@@ -23,7 +23,7 @@ export default function Sidebar({
   currentView
 }) {
   const { user, role, logout } = useAuth();
-  const { theme, isDark, toggleTheme } = useTheme();
+  const { isDark, toggleTheme } = useTheme();
   const { lang, t } = useLang();
 
   const tr = (en, ta, kn, hi) => {
@@ -97,7 +97,7 @@ export default function Sidebar({
 
       {/* Main Sidebar Container */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-40 bg-white dark:bg-[#14100E] border-r border-slate-200/90 dark:border-stone-800 shadow-lg lg:shadow-xs flex flex-col justify-between transition-all duration-300 ease-in-out ${
+        className={`fixed top-0 bottom-0 left-0 z-40 bg-white dark:bg-[#060D21]/82 dark:backdrop-blur-md border-r border-slate-200/90 dark:border-indigo-400/20 shadow-lg lg:shadow-xs flex flex-col justify-between transition-all duration-300 ease-in-out ${
           isMobileOpen ? 'translate-x-0 w-72' : '-translate-x-full lg:translate-x-0'
         } ${isCollapsed ? 'lg:w-20' : 'lg:w-64'}`}
       >
@@ -114,7 +114,7 @@ export default function Sidebar({
           {/* Desktop Collapse Toggle */}
           <button
             onClick={onToggleCollapse}
-            className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+            className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-stone-200 hover:bg-slate-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
             title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
           >
             {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -123,7 +123,7 @@ export default function Sidebar({
           {/* Mobile Close Button */}
           <button
             onClick={onCloseMobile}
-            className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
+            className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-stone-200 hover:bg-slate-100 dark:hover:bg-stone-800 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -137,7 +137,7 @@ export default function Sidebar({
             {!isCollapsed && (
               <div className="px-2.5 pb-1.5 flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-slate-400">
                 <span>{tr('MODULES', 'தொகுதிகள்')}</span>
-                <span className="bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded-full">{modules.length}</span>
+                <span className="bg-slate-100 dark:bg-stone-800/80 text-slate-600 dark:text-stone-400 px-1.5 py-0.2 rounded-full">{modules.length}</span>
               </div>
             )}
 
@@ -169,7 +169,7 @@ export default function Sidebar({
                         isSelected
                           ? 'bg-white/20 text-white'
                           : mod.badge === 'NEW'
-                          ? 'bg-rose-100 text-rose-700 animate-pulse font-extrabold'
+                          ? 'bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-400 animate-pulse font-extrabold'
                           : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300'
                       }`}>
                         {mod.badge}
@@ -227,7 +227,7 @@ export default function Sidebar({
               {isDark ? (
                 <Sun className="w-4 h-4 text-amber-400 shrink-0" />
               ) : (
-                <Moon className="w-4 h-4 text-slate-500 group-hover:text-amber-600 shrink-0" />
+                <Moon className="w-4 h-4 text-slate-500 dark:text-stone-400 group-hover:text-amber-600 shrink-0" />
               )}
               {!isCollapsed && (
                 <div className="truncate flex-1">
@@ -248,7 +248,7 @@ export default function Sidebar({
               }`}
               title={isCollapsed ? tr('Settings & Preferences', 'அமைப்புகள்') : undefined}
             >
-              <Settings className="w-4 h-4 text-slate-500 group-hover:text-amber-600 shrink-0" />
+              <Settings className="w-4 h-4 text-slate-500 dark:text-stone-400 group-hover:text-amber-600 shrink-0" />
               {!isCollapsed && (
                 <div className="truncate flex-1">
                   <span className="truncate block text-xs">{tr('Preferences', 'விருப்பங்கள்')}</span>

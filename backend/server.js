@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'astrojit_super_secret_jwt_key_2026';
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 /**
  * Normalizes any phone input into a strict 10-digit Indian mobile number.
@@ -946,29 +946,36 @@ app.put('/api/user/profile', authenticate, (req, res) => {
 
       if (!db.astrologers[idx].pagerHeader) {
         db.astrologers[idx].pagerHeader = {
+          invocation: '',
           line1: '',
           line2: '',
           address1: '',
           address2: '',
-          phoneEmail: ''
+          phoneEmail: '',
+          astrologerLogo: ''
         };
       }
 
       if (updates.pagerHeader && typeof updates.pagerHeader === 'object') {
+        const cur = db.astrologers[idx].pagerHeader || {};
         db.astrologers[idx].pagerHeader = {
-          line1: updates.pagerHeader.line1 !== undefined ? updates.pagerHeader.line1 : db.astrologers[idx].pagerHeader.line1,
-          line2: updates.pagerHeader.line2 !== undefined ? updates.pagerHeader.line2 : db.astrologers[idx].pagerHeader.line2,
-          address1: updates.pagerHeader.address1 !== undefined ? updates.pagerHeader.address1 : db.astrologers[idx].pagerHeader.address1,
-          address2: updates.pagerHeader.address2 !== undefined ? updates.pagerHeader.address2 : db.astrologers[idx].pagerHeader.address2,
-          phoneEmail: updates.pagerHeader.phoneEmail !== undefined ? updates.pagerHeader.phoneEmail : db.astrologers[idx].pagerHeader.phoneEmail
+          invocation: updates.pagerHeader.invocation !== undefined ? updates.pagerHeader.invocation : (cur.invocation || ''),
+          line1: updates.pagerHeader.line1 !== undefined ? updates.pagerHeader.line1 : (cur.line1 || ''),
+          line2: updates.pagerHeader.line2 !== undefined ? updates.pagerHeader.line2 : (cur.line2 || ''),
+          address1: updates.pagerHeader.address1 !== undefined ? updates.pagerHeader.address1 : (cur.address1 || ''),
+          address2: updates.pagerHeader.address2 !== undefined ? updates.pagerHeader.address2 : (cur.address2 || ''),
+          phoneEmail: updates.pagerHeader.phoneEmail !== undefined ? updates.pagerHeader.phoneEmail : (cur.phoneEmail || ''),
+          astrologerLogo: updates.pagerHeader.astrologerLogo !== undefined ? updates.pagerHeader.astrologerLogo : (cur.astrologerLogo || '')
         };
       }
 
+      if (updates.invocation !== undefined) db.astrologers[idx].pagerHeader.invocation = updates.invocation;
       if (updates.brandLine1 !== undefined) db.astrologers[idx].pagerHeader.line1 = updates.brandLine1;
       if (updates.brandLine2 !== undefined) db.astrologers[idx].pagerHeader.line2 = updates.brandLine2;
       if (updates.address1 !== undefined) db.astrologers[idx].pagerHeader.address1 = updates.address1;
       if (updates.address2 !== undefined) db.astrologers[idx].pagerHeader.address2 = updates.address2;
       if (updates.phoneEmail !== undefined) db.astrologers[idx].pagerHeader.phoneEmail = updates.phoneEmail;
+      if (updates.astrologerLogo !== undefined) db.astrologers[idx].pagerHeader.astrologerLogo = updates.astrologerLogo;
 
       db.astrologers[idx].updatedAt = new Date().toISOString();
       writeDb(db);

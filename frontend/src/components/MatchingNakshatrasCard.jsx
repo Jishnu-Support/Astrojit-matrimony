@@ -5,10 +5,10 @@ import { useLang } from '../i18n';
 function NakshatraResultTile({ item, isTa, isExpanded, onToggle }) {
   const tierStyles =
     item.tier === 'uttamam'
-      ? 'bg-emerald-50/75 border-emerald-200 hover:border-emerald-400'
+      ? 'bg-emerald-50/75 dark:bg-emerald-950/35 border-emerald-200 dark:border-emerald-800/50 hover:border-emerald-400'
       : item.tier === 'madhyamam'
-      ? 'bg-amber-50/75 border-amber-200 hover:border-amber-400'
-      : 'bg-rose-50/60 border-rose-200 hover:border-rose-300';
+      ? 'bg-amber-50/75 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/50 hover:border-amber-400'
+      : 'bg-rose-50/60 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800/50 hover:border-rose-300';
 
   const scoreBadge =
     item.tier === 'uttamam'
@@ -25,26 +25,26 @@ function NakshatraResultTile({ item, isTa, isExpanded, onToggle }) {
         className="w-full p-2.5 flex items-center justify-between gap-2 text-left cursor-pointer"
       >
         <div className="min-w-0">
-          <div className="font-bold text-xs text-stone-900 flex flex-wrap items-center gap-1.5">
+          <div className="font-bold text-xs text-stone-900 dark:text-stone-100 flex flex-wrap items-center gap-1.5">
             <span>{isTa ? item.starTamil : item.starName}</span>
-            <span className="text-[10px] font-medium text-stone-500">
+            <span className="text-[10px] font-medium text-stone-500 dark:text-stone-400">
               ({isTa ? item.rasiTamil : item.rasiName})
             </span>
           </div>
-          <div className="text-[10px] text-stone-600 flex flex-wrap items-center gap-1.5 mt-0.5">
+          <div className="text-[10px] text-stone-600 dark:text-stone-400 flex flex-wrap items-center gap-1.5 mt-0.5">
             <span>{isTa ? item.padaLabelTa : item.padaLabelEn}</span>
             {item.subha68 && (
-              <span className="px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-semibold">
+              <span className="px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-900/45 text-emerald-800 dark:text-emerald-300 font-semibold">
                 {isTa ? 'சுப 6/8' : 'Subha 6/8'}
               </span>
             )}
             {item.rajjuExempt && (
-              <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 font-semibold">
+              <span className="px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 font-semibold">
                 {isTa ? 'ஆரோக-அவரோக விதிவிலக்கு' : 'Aroha-Avaroha'}
               </span>
             )}
             {item.tier === 'avoid' && (item.failReasonsEn?.length > 0) && (
-              <span className="text-rose-700 font-semibold">
+              <span className="text-rose-700 dark:text-rose-400 font-semibold">
                 · {(isTa ? item.failReasonsTa : item.failReasonsEn).join(', ')}
               </span>
             )}
@@ -55,22 +55,22 @@ function NakshatraResultTile({ item, isTa, isExpanded, onToggle }) {
           <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${scoreBadge}`}>
             {item.totalScore}/10
           </span>
-          {isExpanded ? <ChevronUp className="w-3.5 h-3.5 text-stone-500" /> : <ChevronDown className="w-3.5 h-3.5 text-stone-500" />}
+          {isExpanded ? <ChevronUp className="w-3.5 h-3.5 text-stone-500 dark:text-stone-400" /> : <ChevronDown className="w-3.5 h-3.5 text-stone-500 dark:text-stone-400" />}
         </div>
       </button>
 
       {isExpanded && (
-        <div className="px-2.5 pb-2.5 pt-1.5 border-t border-black/10 bg-white/85">
+        <div className="px-2.5 pb-2.5 pt-1.5 border-t border-black/10 bg-white/85 dark:bg-[#1E1815]/85">
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5 text-[10px]">
             {(item.poruthams || []).map((p, idx) => (
               <div
                 key={idx}
                 className={`px-2 py-1 rounded border flex items-center justify-between gap-1 ${
                   p.points >= 1
-                    ? 'bg-emerald-50/70 border-emerald-200 text-emerald-900'
+                    ? 'bg-emerald-50/70 dark:bg-emerald-950/35 border-emerald-200 dark:border-emerald-800/50 text-emerald-900 dark:text-emerald-300'
                     : p.points > 0
-                    ? 'bg-amber-50/70 border-amber-200 text-amber-900'
-                    : 'bg-rose-50/60 border-rose-200 text-rose-800'
+                    ? 'bg-amber-50/70 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/50 text-amber-900 dark:text-amber-300'
+                    : 'bg-rose-50/60 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800/50 text-rose-800 dark:text-rose-300'
                 }`}
               >
                 <span className="truncate font-semibold">{isTa ? p.nameTamil : p.name}</span>
@@ -121,7 +121,7 @@ export default function MatchingNakshatrasCard({ matchReport, standaloneData = n
 
   if (!activeData) {
     return (
-      <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-950">
+      <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 text-xs text-amber-950 dark:text-amber-200">
         {isTa
           ? 'பொருந்தும் 27 நட்சத்திர பட்டியலைக் காண பொருத்தத்தை மீண்டும் கணக்கிடவும்.'
           : 'Please recalculate the match (or click Find Matching Stars) to inspect all 27 matching Nakshatras.'}
@@ -135,10 +135,10 @@ export default function MatchingNakshatrasCard({ matchReport, standaloneData = n
   return (
     <div className="space-y-4 pt-2 text-xs">
       {/* 1. Source Horoscope Summary & Partner Direction Switcher */}
-      <div className="p-3.5 rounded-xl border border-amber-200 bg-gradient-to-r from-amber-50/80 via-white to-emerald-50/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="p-3.5 rounded-xl border border-amber-200 dark:border-amber-800/50 bg-gradient-to-r from-amber-50/80 via-white to-emerald-50/60 dark:from-amber-950/40 dark:via-slate-900/80 dark:to-emerald-950/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1 font-black text-xs sm:text-sm text-[#7A1A22]">
+            <span className="inline-flex items-center gap-1 font-black text-xs sm:text-sm text-[#7A1A22] dark:text-amber-300">
               <Star className="w-4 h-4 text-amber-600 fill-amber-500/20" />
               <span>
                 {isFindingGroomStars
@@ -147,7 +147,7 @@ export default function MatchingNakshatrasCard({ matchReport, standaloneData = n
               </span>
             </span>
           </div>
-          <p className="text-[11px] text-stone-700 font-medium">
+          <p className="text-[11px] text-stone-700 dark:text-stone-300 font-medium">
             {isTa
               ? `ஜாதகர்: ${source.name} · நட்சத்திரம்: ${source.starTamil} (${source.pada}-ம் பாதம், ${source.rasiTamil})`
               : `Chart: ${source.name} · Birth Star: ${source.starName} (Pada ${source.pada}, ${source.rasiName})`}
@@ -156,14 +156,14 @@ export default function MatchingNakshatrasCard({ matchReport, standaloneData = n
 
         {/* Toggle Bride vs Groom (when full matchReport exists and not standalone) */}
         {!standaloneData && pairAnalysis && (
-          <div className="inline-flex rounded-lg bg-stone-100 border border-stone-200 p-0.5 self-start sm:self-center shrink-0">
+          <div className="inline-flex rounded-lg bg-stone-100 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 p-0.5 self-start sm:self-center shrink-0">
             <button
               type="button"
               onClick={() => { setTargetSide('forGirl'); setExpandedKey(null); }}
               className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors cursor-pointer ${
                 targetSide === 'forGirl'
                   ? 'bg-[#7A1A22] text-white shadow-xs'
-                  : 'text-stone-600 hover:text-stone-900'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100'
               }`}
             >
               {isTa ? 'மணமகளுக்கான வரன்கள்' : 'For Bride (Find Groom)'}
@@ -174,7 +174,7 @@ export default function MatchingNakshatrasCard({ matchReport, standaloneData = n
               className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors cursor-pointer ${
                 targetSide === 'forBoy'
                   ? 'bg-[#7A1A22] text-white shadow-xs'
-                  : 'text-stone-600 hover:text-stone-900'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100'
               }`}
             >
               {isTa ? 'மணமகனுக்கான வரன்கள்' : 'For Groom (Find Bride)'}
@@ -192,7 +192,7 @@ export default function MatchingNakshatrasCard({ matchReport, standaloneData = n
             className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-colors cursor-pointer ${
               tierFilter === 'all'
                 ? 'bg-stone-800 text-white border-stone-800'
-                : 'bg-white text-stone-700 border-stone-200 hover:bg-stone-50'
+                : 'bg-white dark:bg-[#1E1815] text-stone-700 dark:text-stone-300 border-stone-200 dark:border-stone-700 hover:bg-stone-50 dark:hover:bg-stone-800'
             }`}
           >
             {isTa ? `அனைத்தும் (${counts.totalSlots})` : `All (${counts.totalSlots})`}
@@ -203,7 +203,7 @@ export default function MatchingNakshatrasCard({ matchReport, standaloneData = n
             className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border inline-flex items-center gap-1 transition-colors cursor-pointer ${
               tierFilter === 'uttamam'
                 ? 'bg-emerald-700 text-white border-emerald-700'
-                : 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100'
+                : 'bg-emerald-50 dark:bg-emerald-950/35 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/50 hover:bg-emerald-100'
             }`}
           >
             <CheckCircle2 className="w-3 h-3" />
@@ -215,7 +215,7 @@ export default function MatchingNakshatrasCard({ matchReport, standaloneData = n
             className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border inline-flex items-center gap-1 transition-colors cursor-pointer ${
               tierFilter === 'madhyamam'
                 ? 'bg-amber-600 text-white border-amber-600'
-                : 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100'
+                : 'bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/50 hover:bg-amber-100 dark:hover:bg-amber-900/50'
             }`}
           >
             <AlertTriangle className="w-3 h-3" />
@@ -227,7 +227,7 @@ export default function MatchingNakshatrasCard({ matchReport, standaloneData = n
             className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border inline-flex items-center gap-1 transition-colors cursor-pointer ${
               tierFilter === 'avoid'
                 ? 'bg-rose-700 text-white border-rose-700'
-                : 'bg-rose-50 text-rose-800 border-rose-200 hover:bg-rose-100'
+                : 'bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800/50 hover:bg-rose-100'
             }`}
           >
             <XCircle className="w-3 h-3" />
@@ -242,14 +242,14 @@ export default function MatchingNakshatrasCard({ matchReport, standaloneData = n
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={isTa ? 'நட்சத்திரம் / ராசி தேடு...' : 'Filter Nakshatra or Rasi...'}
-            className="w-full bg-white border border-stone-300 rounded-lg pl-8 pr-2.5 py-1.5 text-[11px] text-stone-800 focus:outline-none focus:border-[#7A1A22]"
+            className="w-full bg-white dark:bg-[#1E1815] border border-stone-300 dark:border-stone-600 rounded-lg pl-8 pr-2.5 py-1.5 text-[11px] text-stone-800 dark:text-stone-200 focus:outline-none focus:border-[#7A1A22]"
           />
         </div>
       </div>
 
       {/* 3. Matching Nakshatra Cards Grid */}
       {filteredSlots.length === 0 ? (
-        <div className="p-4 text-center rounded-xl bg-stone-50 border border-stone-200 text-stone-500 text-xs">
+        <div className="p-4 text-center rounded-xl bg-stone-50 dark:bg-stone-900/70 border border-stone-200 dark:border-stone-700 text-stone-500 dark:text-stone-400 text-xs">
           {isTa ? 'தேடலுக்குப் பொருத்தமான நட்சத்திரம் இல்லை.' : 'No matching Nakshatras found for this filter.'}
         </div>
       ) : (
@@ -267,10 +267,10 @@ export default function MatchingNakshatrasCard({ matchReport, standaloneData = n
       )}
 
       {/* 4. Classical Guidance */}
-      <div className="p-3 rounded-xl bg-amber-50/50 border border-amber-200 text-[11px] text-stone-700 flex items-start gap-2">
-        <Sparkles className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+      <div className="p-3 rounded-xl bg-amber-50/50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 text-[11px] text-stone-700 dark:text-stone-300 flex items-start gap-2">
+        <Sparkles className="w-4 h-4 text-amber-700 dark:text-amber-400 shrink-0 mt-0.5" />
         <div>
-          <strong className="text-[#7A1A22]">
+          <strong className="text-[#7A1A22] dark:text-amber-300">
             {isTa ? 'நட்சத்திரத் தேர்வு குறிப்பு:' : 'Nakshatra Selection Note:'}
           </strong>{' '}
           {isTa

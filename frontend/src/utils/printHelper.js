@@ -45,6 +45,7 @@ export function printElementById(elementId, customTitle = 'Astrojit_Document', o
     <html lang="en">
       <head>
         <meta charset="utf-8" />
+        <base href="${window.location.origin}/" />
         <title>${customTitle}</title>
         ${styles}
         <style>
@@ -149,8 +150,8 @@ export function printElementById(elementId, customTitle = 'Astrojit_Document', o
   `);
   iframeDoc.close();
 
-  // Allow styles and any SVGs/fonts to load, then trigger native print dialog on iframe
-  setTimeout(() => {
+  // Allow styles, images, and fonts to load before triggering native print dialog on iframe
+  const triggerPrint = () => {
     try {
       iframe.contentWindow.focus();
       iframe.contentWindow.print();
@@ -158,5 +159,27 @@ export function printElementById(elementId, customTitle = 'Astrojit_Document', o
       console.warn('Iframe print failed, falling back to window.print():', e);
       window.print();
     }
-  }, 350);
+  };
+
+  const pendingImages = Array.from(iframeDoc.images || []).filter((img) => !img.complete);
+  if (pendingImages.length === 0) {
+    setTimeout(triggerPrint, 350);
+  } else {
+    let printed = false;
+    const runOnce = () => {
+      if (printed) return;
+      printed = true;
+      setTimeout(triggerPrint, 150);
+    };
+    Promise.all(
+      pendingImages.map(
+        (img) =>
+          new Promise((resolve) => {
+            img.addEventListener('load', resolve, { once: true });
+            img.addEventListener('error', resolve, { once: true });
+          })
+      )
+    ).then(runOnce);
+    setTimeout(runOnce, 1500);
+  }
 }

@@ -482,15 +482,13 @@ export default function HoroscopePagerView({ initialBirthData, astrologerProfile
                             background: 'radial-gradient(circle, #FFFDF5 30%, #F5E8C9 100%)'
                           }}
                         >
-                          {/* Maroon and Gold Traditional Knotwork Decoration */}
-                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-25">
-                            <svg viewBox="0 0 100 100" className="w-20 h-20 text-[#7A1A22]">
-                              <circle cx="50" cy="50" r="44" fill="none" stroke="#7A1A22" strokeWidth="2.5" />
-                              <circle cx="50" cy="50" r="38" fill="none" stroke="#B8860B" strokeWidth="1.5" strokeDasharray="3,3" />
-                              <rect x="25" y="25" width="50" height="50" fill="none" stroke="#7A1A22" strokeWidth="1.5" transform="rotate(45 50 50)" />
-                              <circle cx="50" cy="50" r="28" fill="#FFFBE8" stroke="#B8860B" strokeWidth="1" />
-                            </svg>
-                          </div>
+                          {/* Transparent Sri Yantra Sacred Watermark */}
+                          <img
+                            src="/sri-yantra-center.png"
+                            alt=""
+                            aria-hidden="true"
+                            className="pointer-events-none select-none absolute inset-0 m-auto w-[84%] h-[84%] object-contain opacity-[0.15]"
+                          />
                           <div className="relative z-10 font-bold text-[#7A1A22] text-sm tracking-widest drop-shadow-xs">
                             {centerLabel}
                           </div>

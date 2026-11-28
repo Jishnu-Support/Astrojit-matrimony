@@ -1,8 +1,8 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Printer, Monitor, Sparkles, FileText } from 'lucide-react';
+import { Printer, Monitor, Sparkles } from 'lucide-react';
 import { useLang } from '../i18n';
 import { useAuth } from '../context/AuthContext';
-import LetterheadBrandingModal, { getInitialLetterhead } from './LetterheadBrandingModal';
+import { getInitialLetterhead } from './LetterheadBrandingModal';
 import {
   calculateThirukanithaHoroscope,
   RASHIS,
@@ -88,11 +88,17 @@ function SouthIndianChartBox({ title, chartBoxes, isTa, lagnaRasi }) {
                 return (
                   <div
                     key="center"
-                    className="col-span-2 row-span-2 flex flex-col items-center justify-center bg-amber-50/60 border border-black/40 p-1.5 text-center"
+                    className="col-span-2 row-span-2 relative overflow-hidden flex flex-col items-center justify-center bg-amber-50/60 border border-black/40 p-1.5 text-center"
                   >
-                    <span className="font-black text-[12px] text-black">{title}</span>
+                    <img
+                      src="/sri-yantra-center.png"
+                      alt=""
+                      aria-hidden="true"
+                      className="pointer-events-none select-none absolute inset-0 m-auto w-[84%] h-[84%] object-contain opacity-[0.14]"
+                    />
+                    <span className="relative z-10 font-black text-[12px] text-black">{title}</span>
                     {lagnaRasi !== undefined && RASHIS[lagnaRasi] && (
-                      <span className="text-[9px] font-bold text-stone-700 mt-0.5">
+                      <span className="relative z-10 text-[9px] font-bold text-stone-700 mt-0.5">
                         {isTa ? `லக்னம்: ${RASHIS[lagnaRasi].ta}` : `Asc: ${RASHIS[lagnaRasi].en}`}
                       </span>
                     )}
@@ -154,11 +160,13 @@ export default function HoroscopeA4PatrikaPrint({
   const isTa = lang === 'ta';
 
   const [letterhead, setLetterhead] = useState(() => getInitialLetterhead(user, isTa));
-  const [brandingModalOpen, setBrandingModalOpen] = useState(false);
   const [chartStyle, setChartStyle] = useState(() => birthData?.chartStyle || 'south');
 
   useEffect(() => {
     setLetterhead(getInitialLetterhead(user, isTa));
+    const onUpdated = () => setLetterhead(getInitialLetterhead(user, isTa));
+    window.addEventListener('astrojit-letterhead-updated', onUpdated);
+    return () => window.removeEventListener('astrojit-letterhead-updated', onUpdated);
   }, [user, isTa]);
 
   useEffect(() => {
@@ -186,13 +194,15 @@ export default function HoroscopeA4PatrikaPrint({
     user?.name ||
     (isTa ? 'ஸ்ரீ ஜிஷ்ணு ஜோதிடம் & வாஸ்து ஆராய்ச்சி மையம்' : 'Jishnu Astro & Vasthu Research Centre');
   const rawLine2 = letterhead?.line2 || '';
-  const isGenericSubtitle = rawLine2 === 'Authentic Vedic Natal Horoscope Dossier' || rawLine2 === 'SAI BALAJI ASTROLOGICAL RESEARCH CENTRE';
+  const isGenericSubtitle = rawLine2 === 'Authentic Vedic Natal Horoscope Dossier';
   const astrologerSubTitle = (!isGenericSubtitle && rawLine2)
     ? rawLine2
     : (user?.name ? `${isTa ? 'ஜோதிடர்' : 'Astrologer'}: ${user.name}` : rawLine2);
   const astrologerAddress = [letterhead?.address1, letterhead?.address2].filter(Boolean).join(' • ');
   const astrologerContact = letterhead?.phoneEmail || [user?.phone, user?.email].filter(Boolean).join(' | ');
-  const invocationText = letterhead?.invocation || (isTa ? 'ஸ்ரீ கணேசாய நமஹ • சுபம்' : 'Sri Ganeshaya Namah');
+  const invocationText = letterhead?.invocation !== undefined
+    ? letterhead.invocation
+    : (isTa ? 'ஸ்ரீ கணேசாய நமஹ • சுபம்' : 'Sri Ganeshaya Namah');
 
   // Personal & Birth Details (Formatted per Master Prompt Rules)
   const nativeName = birthData?.name || summary?.name || '---';
@@ -373,15 +383,6 @@ export default function HoroscopeA4PatrikaPrint({
             </button>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setBrandingModalOpen(true)}
-            className="px-3 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 dark:bg-amber-900/40 text-[#7A1A22] dark:text-amber-200 border border-amber-300 dark:border-amber-700 text-xs font-bold cursor-pointer flex items-center gap-1.5"
-          >
-            <FileText className="w-3.5 h-3.5" />
-            <span>{isTa ? 'லெட்டர்ஹெட் திருத்து' : 'Edit Letterhead'}</span>
-          </button>
-
           {onSwitchToScreen && (
             <button
               type="button"
@@ -455,21 +456,13 @@ export default function HoroscopeA4PatrikaPrint({
 
                   {/* Right: Astrologer Uploaded Logo ONLY (Enlarged, no name/Thirukanitha text) */}
                   <div className="w-[44mm] shrink-0 flex items-center justify-end">
-                    {(letterhead?.astrologerLogo || user?.pagerHeader?.astrologerLogo) ? (
+                    {letterhead?.astrologerLogo && (
                       <img
-                        src={letterhead?.astrologerLogo || user?.pagerHeader?.astrologerLogo}
+                        src={letterhead.astrologerLogo}
                         alt="Astrologer Logo"
                         className="h-[19mm] w-auto max-w-[43mm] object-contain rounded border border-black/30 bg-white p-0.5 shrink-0"
                         onError={e => { e.target.style.display = 'none'; }}
                       />
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => setBrandingModalOpen(true)}
-                        className="print:hidden text-[9px] font-bold text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-400 rounded px-2.5 py-1.5 cursor-pointer"
-                      >
-                        {isTa ? '+ ஜோதிடர் லோகோ' : '+ Add Logo'}
-                      </button>
                     )}
                   </div>
                 </div>
@@ -720,15 +713,6 @@ export default function HoroscopeA4PatrikaPrint({
           </div>
         </div>
       </div>
-
-      {/* Letterhead Branding Modal */}
-      <LetterheadBrandingModal
-        isOpen={brandingModalOpen}
-        onClose={() => setBrandingModalOpen(false)}
-        letterhead={letterhead}
-        onSave={(updated) => setLetterhead(updated)}
-        isTa={isTa}
-      />
     </div>
   );
 }

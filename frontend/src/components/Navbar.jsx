@@ -7,21 +7,21 @@ import Logo from './Logo';
 
 export default function Navbar({ activeTab, setActiveTab, onOpenMatrimony, onToggleSidebar, onOpenProfile, onOpenSettings }) {
   const { user, role, logout } = useAuth();
-  const { theme, isDark, toggleTheme } = useTheme();
+  const { isDark, toggleTheme } = useTheme();
   const { lang, setLanguage, t } = useLang();
   const [showLangMenu, setShowLangMenu] = useState(false);
 
   const getRoleBadge = () => {
     switch (role) {
       case 'company':
-        return { label: t('roleCompanyAdmin'), bg: 'bg-rose-50 text-rose-700 border-rose-200' };
+        return { label: t('roleCompanyAdmin'), bg: 'bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800/50' };
       case 'astrologer':
-        return { label: t('roleAstrologerPortal'), bg: 'bg-indigo-50 text-indigo-700 border-indigo-200' };
+        return { label: t('roleAstrologerPortal'), bg: 'bg-indigo-50 dark:bg-indigo-950/35 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800/50' };
       case 'vendor':
-        return { label: t('roleVendorPortal'), bg: 'bg-emerald-50 text-emerald-700 border-emerald-200' };
+        return { label: t('roleVendorPortal'), bg: 'bg-emerald-50 dark:bg-emerald-950/35 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/50' };
       case 'client':
       default:
-        return { label: t('roleClientUser'), bg: 'bg-amber-50 text-amber-800 border-amber-200' };
+        return { label: t('roleClientUser'), bg: 'bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/50' };
     }
   };
 
@@ -29,17 +29,17 @@ export default function Navbar({ activeTab, setActiveTab, onOpenMatrimony, onTog
   const currentLangObj = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
 
   return (
-    <header className="sticky top-0 z-30 bg-white dark:bg-[#181412] border-b border-amber-200/70 dark:border-amber-900/40 shadow-xs px-2 sm:px-6 py-1.5 sm:py-2.5 transition-colors">
+    <header className="sticky top-0 z-30 bg-white dark:bg-[#070E24]/75 dark:backdrop-blur-md border-b border-amber-200/70 dark:border-indigo-400/20 shadow-xs px-2 sm:px-6 py-1.5 sm:py-2.5 transition-colors">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-1 sm:gap-4">
         {/* Left: Hamburger & Brand */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           {user && (
             <button
               onClick={onToggleSidebar}
-              className="p-1.5 sm:p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
+              className="p-1.5 sm:p-2 rounded-xl text-slate-600 dark:text-stone-400 hover:text-slate-900 dark:hover:text-stone-100 hover:bg-slate-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
               title="Toggle Menu / Sidebar"
             >
-              <Menu className="w-5 h-5 text-slate-700" />
+              <Menu className="w-5 h-5 text-slate-700 dark:text-stone-300" />
             </button>
           )}
 
@@ -93,7 +93,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenMatrimony, onTog
             {isDark ? (
               <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
             ) : (
-              <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-700" />
+              <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-700 dark:text-stone-300" />
             )}
           </button>
 
@@ -170,7 +170,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenMatrimony, onTog
             </>
           ) : (
             <div className="hidden md:flex items-center gap-2">
-              <span className="text-xs text-slate-500">Welcome to Astrojit</span>
+              <span className="text-xs text-slate-500 dark:text-stone-400">Welcome to Astrojit</span>
             </div>
           )}
         </div>

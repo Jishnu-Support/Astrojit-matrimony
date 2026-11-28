@@ -43,7 +43,7 @@ export default function MarriageBiodataModal({ profile, isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 overflow-y-auto print:p-0 print:bg-white print:static print:inset-auto">
-      <div className="bg-white rounded-3xl max-w-3xl w-full border border-amber-300 shadow-2xl overflow-hidden my-4 print:border-none print:shadow-none print:rounded-none print:max-w-none print:my-0">
+      <div className="bg-white dark:bg-[#1E1815] rounded-3xl max-w-3xl w-full border border-amber-300 dark:border-amber-700/60 shadow-2xl overflow-hidden my-4 print:border-none print:shadow-none print:rounded-none print:max-w-none print:my-0">
         
         {/* Top Control Bar (Hidden on Print) */}
         <div className="bg-gradient-to-r from-amber-700 via-rose-700 to-amber-800 text-white p-3.5 sm:p-4 flex items-center justify-between print:hidden">
@@ -62,7 +62,7 @@ export default function MarriageBiodataModal({ profile, isOpen, onClose }) {
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="bg-white text-rose-800 hover:bg-amber-50 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+              className="bg-white dark:bg-[#1E1815] text-rose-800 dark:text-rose-300 hover:bg-amber-50 dark:hover:bg-stone-800/70 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>{tr('Print / Save PDF', 'அச்சு / PDF பதிவிறக்கு')}</span>
@@ -218,10 +218,16 @@ export default function MarriageBiodataModal({ profile, isOpen, onClose }) {
                   <span className="text-[8px] text-slate-400">கும்பம்</span>
                   <span className="text-amber-800 text-[9px]">{rasi.includes('Kumbha') ? 'சந்திரன்' : ''}</span>
                 </div>
-                <div className="col-span-2 row-span-2 border-2 border-amber-600 bg-amber-100/50 flex flex-col items-center justify-center p-1 text-center">
-                  <span className="text-sm font-black text-rose-800">ராசி</span>
-                  <span className="text-[9px] font-bold text-amber-900 mt-0.5">சுப யோகம்</span>
-                  <span className="text-[8px] text-slate-500 font-mono mt-0.5">{star}</span>
+                <div className="col-span-2 row-span-2 relative overflow-hidden border-2 border-amber-600 bg-amber-100/50 flex flex-col items-center justify-center p-1 text-center">
+                  <img
+                    src="/sri-yantra-center.png"
+                    alt=""
+                    aria-hidden="true"
+                    className="pointer-events-none select-none absolute inset-0 m-auto w-[84%] h-[84%] object-contain opacity-[0.14]"
+                  />
+                  <span className="relative z-10 text-sm font-black text-rose-800">ராசி</span>
+                  <span className="relative z-10 text-[9px] font-bold text-amber-900 mt-0.5">சுப யோகம்</span>
+                  <span className="relative z-10 text-[8px] text-slate-500 font-mono mt-0.5">{star}</span>
                 </div>
                 <div className="border border-amber-300 flex flex-col justify-between p-1 bg-white">
                   <span className="text-[8px] text-slate-400">கடகம்</span>

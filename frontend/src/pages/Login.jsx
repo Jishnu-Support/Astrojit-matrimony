@@ -175,10 +175,10 @@ export default function Login({ onSwitchToRegister }) {
   };
 
   const roles = [
-    { id: 'client', label: tr('Client / User', 'வாடிக்கையாளர் / பயனர்'), icon: User, color: 'text-amber-700', activeBg: 'bg-amber-50 text-amber-900 border-amber-300' },
-    { id: 'astrologer', label: tr('Astrologer', 'ஜோதிடர்'), icon: Compass, color: 'text-indigo-700', activeBg: 'bg-indigo-50 text-indigo-900 border-indigo-300' },
-    { id: 'vendor', label: tr('Vendor Partner', 'வணிகக் கூட்டாளர்'), icon: Store, color: 'text-emerald-700', activeBg: 'bg-emerald-50 text-emerald-900 border-emerald-300' },
-    { id: 'company', label: tr('Company (JIT)', 'நிறுவனம் (JIT)'), icon: Shield, color: 'text-rose-700', activeBg: 'bg-rose-50 text-rose-900 border-rose-300' },
+    { id: 'client', label: tr('Client / User', 'வாடிக்கையாளர் / பயனர்'), icon: User, color: 'text-amber-700 dark:text-amber-400', activeBg: 'bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-300 border-amber-300 dark:border-amber-700/60' },
+    { id: 'astrologer', label: tr('Astrologer', 'ஜோதிடர்'), icon: Compass, color: 'text-indigo-700 dark:text-indigo-400', activeBg: 'bg-indigo-50 dark:bg-indigo-950/35 text-indigo-900 dark:text-indigo-300 border-indigo-300 dark:border-indigo-700/60' },
+    { id: 'vendor', label: tr('Vendor Partner', 'வணிகக் கூட்டாளர்'), icon: Store, color: 'text-emerald-700 dark:text-emerald-400', activeBg: 'bg-emerald-50 dark:bg-emerald-950/35 text-emerald-900 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700/60' },
+    { id: 'company', label: tr('Company (JIT)', 'நிறுவனம் (JIT)'), icon: Shield, color: 'text-rose-700 dark:text-rose-400', activeBg: 'bg-rose-50 dark:bg-rose-950/30 text-rose-900 dark:text-rose-300 border-rose-300 dark:border-rose-700/60' },
   ];
 
   return (
@@ -370,18 +370,18 @@ export default function Login({ onSwitchToRegister }) {
 
       {/* VIEW MODE 2: FORGOT PASSWORD RECOVERY WORKFLOW */}
       {viewMode === 'forgot' && (
-        <div className="bg-white border-2 border-amber-500/30 rounded-2xl p-5 sm:p-7 shadow-lg space-y-4 animate-in fade-in duration-200">
+        <div className="bg-white dark:bg-[#1E1815] border-2 border-amber-500/30 rounded-2xl p-5 sm:p-7 shadow-lg space-y-4 animate-in fade-in duration-200">
           {/* Header */}
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-stone-800">
             <div className="flex items-center gap-2">
-              <span className="p-2 bg-amber-100 text-amber-800 rounded-xl">
+              <span className="p-2 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 rounded-xl">
                 <KeyRound className="w-4 h-4" />
               </span>
               <div>
-                <h3 className="text-sm font-extrabold text-slate-900">
+                <h3 className="text-sm font-extrabold text-slate-900 dark:text-stone-100">
                   {tr('Password Recovery', 'கடவுச்சொல் மீட்டெடுப்பு', 'पासवर्ड पुनर्प्राप्ति')}
                 </h3>
-                <p className="text-[11px] text-slate-500">
+                <p className="text-[11px] text-slate-500 dark:text-stone-400">
                   {tr('Reset your account password securely', 'உங்கள் கணக்கின் கடவுச்சொல்லை பாதுகாப்பாக மீட்டமைக்கவும்')}
                 </p>
               </div>
@@ -390,7 +390,7 @@ export default function Login({ onSwitchToRegister }) {
             <button
               type="button"
               onClick={handleBackToLogin}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 text-xs font-bold transition-all cursor-pointer flex items-center gap-1"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-stone-200 hover:bg-slate-100 dark:hover:bg-stone-800 text-xs font-bold transition-all cursor-pointer flex items-center gap-1"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>{tr('Back', 'பின்செல்')}</span>
@@ -399,14 +399,14 @@ export default function Login({ onSwitchToRegister }) {
 
           {/* Error / Success Notifications */}
           {forgotError && (
-            <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs p-3 rounded-xl font-medium flex items-center gap-2">
+            <div className="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/50 text-rose-700 dark:text-rose-400 text-xs p-3 rounded-xl font-medium flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
               <span>{forgotError}</span>
             </div>
           )}
 
           {forgotSuccess && forgotStep !== 3 && (
-            <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs p-3 rounded-xl font-medium flex items-center gap-2">
+            <div className="bg-emerald-50 dark:bg-emerald-950/35 border border-emerald-200 dark:border-emerald-800/50 text-emerald-800 dark:text-emerald-300 text-xs p-3 rounded-xl font-medium flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>{forgotSuccess}</span>
             </div>
@@ -416,7 +416,7 @@ export default function Login({ onSwitchToRegister }) {
           {forgotStep === 1 && (
             <form onSubmit={handleVerifyMobile} className="space-y-4 text-xs">
               <div>
-                <label className="text-slate-700 font-bold block mb-1">
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">
                   {tr('Select Account Role', 'கணக்கு வகையைத் தேர்வு செய்க')}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -427,8 +427,8 @@ export default function Login({ onSwitchToRegister }) {
                       onClick={() => setForgotRole(r.id)}
                       className={`p-2 rounded-xl font-bold text-xs border transition-all cursor-pointer flex items-center gap-1.5 justify-center ${
                         forgotRole === r.id
-                          ? 'bg-amber-50 text-amber-900 border-amber-400 shadow-2xs'
-                          : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                          ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-300 border-amber-400 shadow-2xs'
+                          : 'bg-slate-50 dark:bg-stone-900/70 text-slate-600 dark:text-stone-400 border-slate-200 dark:border-stone-700 hover:bg-slate-100 dark:hover:bg-stone-800'
                       }`}
                     >
                       <r.icon className="w-3.5 h-3.5" />
@@ -439,7 +439,7 @@ export default function Login({ onSwitchToRegister }) {
               </div>
 
               <div>
-                <label className="text-slate-700 font-bold block mb-1">
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">
                   {forgotRole === 'company'
                     ? tr('Company Username *', 'நிறுவன பயனர்பெயர் *')
                     : tr('Registered Mobile Number *', 'பதிவு செய்யப்பட்ட மொபைல் எண் *')}
@@ -453,12 +453,12 @@ export default function Login({ onSwitchToRegister }) {
                       value={forgotMobile}
                       onChange={(e) => setForgotMobile(e.target.value)}
                       placeholder="jit_admin"
-                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
+                      className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 dark:text-stone-100 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
                     />
                   </div>
                 ) : (
-                  <div className="flex rounded-xl overflow-hidden border border-slate-300 focus-within:ring-2 focus-within:ring-amber-500 focus-within:border-amber-500 bg-slate-50 transition-all">
-                    <span className="inline-flex items-center px-3 bg-amber-500/10 text-amber-900 font-bold border-r border-slate-300 select-none text-xs tracking-wider">
+                  <div className="flex rounded-xl overflow-hidden border border-slate-300 dark:border-stone-600 focus-within:ring-2 focus-within:ring-amber-500 focus-within:border-amber-500 bg-slate-50 dark:bg-stone-900/70 transition-all">
+                    <span className="inline-flex items-center px-3 bg-amber-500/10 text-amber-900 font-bold border-r border-slate-300 dark:border-stone-600 select-none text-xs tracking-wider">
                       +91
                     </span>
                     <input
@@ -472,7 +472,7 @@ export default function Login({ onSwitchToRegister }) {
                         setForgotMobile(clean10DigitMobile(e.clipboardData.getData('text')));
                       }}
                       placeholder="----------"
-                      className="w-full bg-transparent px-3 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden font-mono text-sm tracking-wider font-bold"
+                      className="w-full bg-transparent px-3 py-2.5 text-slate-900 dark:text-stone-100 placeholder-slate-400 focus:outline-hidden font-mono text-sm tracking-wider font-bold"
                     />
                   </div>
                 )}
@@ -499,15 +499,15 @@ export default function Login({ onSwitchToRegister }) {
             <form onSubmit={handleResetPassword} className="space-y-3.5 text-xs">
               {/* Account badge */}
               {verifiedUserInfo && (
-                <div className="bg-amber-50/80 border border-amber-200 p-2.5 rounded-xl flex items-center justify-between text-xs">
+                <div className="bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 p-2.5 rounded-xl flex items-center justify-between text-xs">
                   <div>
-                    <span className="text-[10px] text-amber-800 font-bold uppercase tracking-wider block">
+                    <span className="text-[10px] text-amber-800 dark:text-amber-300 font-bold uppercase tracking-wider block">
                       {tr('Verified Account', 'சரிபார்க்கப்பட்ட கணக்கு')}
                     </span>
-                    <strong className="text-slate-900 text-sm">{verifiedUserInfo.name}</strong>
-                    <span className="text-slate-500 ml-1.5 font-mono">({verifiedUserInfo.maskedMobile})</span>
+                    <strong className="text-slate-900 dark:text-stone-100 text-sm">{verifiedUserInfo.name}</strong>
+                    <span className="text-slate-500 dark:text-stone-400 ml-1.5 font-mono">({verifiedUserInfo.maskedMobile})</span>
                   </div>
-                  <span className="text-xs bg-amber-200/80 text-amber-900 font-black px-2 py-0.5 rounded-full">
+                  <span className="text-xs bg-amber-200/80 dark:bg-amber-900/50 text-amber-900 dark:text-amber-300 font-black px-2 py-0.5 rounded-full">
                     {forgotRole}
                   </span>
                 </div>
@@ -515,16 +515,16 @@ export default function Login({ onSwitchToRegister }) {
 
               {/* OTP Display (demo — no SMS gateway yet) */}
               {forgotDemoOtp && (
-                <div className="bg-amber-50 border border-amber-300 rounded-xl px-3.5 py-2.5 flex items-center gap-2">
-                  <span className="text-amber-700 font-bold text-xs">Your OTP:</span>
-                  <span className="font-mono font-black text-lg text-amber-900 tracking-widest">{forgotDemoOtp}</span>
+                <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700/60 rounded-xl px-3.5 py-2.5 flex items-center gap-2">
+                  <span className="text-amber-700 dark:text-amber-400 font-bold text-xs">Your OTP:</span>
+                  <span className="font-mono font-black text-lg text-amber-900 dark:text-amber-300 tracking-widest">{forgotDemoOtp}</span>
                   <span className="text-[10px] text-amber-600 ml-auto">(valid 10 min)</span>
                 </div>
               )}
 
               {/* OTP Field */}
               <div>
-                <label className="text-slate-700 font-bold block mb-1">
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">
                   {tr('Verification Code (OTP) *', 'சரிபார்ப்புக் குறியீடு (OTP) *')}
                 </label>
                 <input
@@ -533,13 +533,13 @@ export default function Login({ onSwitchToRegister }) {
                   value={forgotOtp}
                   onChange={(e) => setForgotOtp(e.target.value)}
                   placeholder="Enter 4-digit verification code"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-mono font-bold tracking-widest text-center text-sm"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3.5 py-2.5 text-slate-900 dark:text-stone-100 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-mono font-bold tracking-widest text-center text-sm"
                 />
               </div>
 
               {/* New Password */}
               <div>
-                <label className="text-slate-700 font-bold block mb-1">
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">
                   {tr('New Password (min 6 characters) *', 'புதிய கடவுச்சொல் (குறைந்தது 6 எழுத்துகள்) *')}
                 </label>
                 <div className="relative">
@@ -550,7 +550,7 @@ export default function Login({ onSwitchToRegister }) {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Enter new strong password"
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-10 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
+                    className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl pl-9 pr-10 py-2.5 text-slate-900 dark:text-stone-100 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
                   />
                   <button
                     type="button"
@@ -564,7 +564,7 @@ export default function Login({ onSwitchToRegister }) {
 
               {/* Confirm New Password */}
               <div>
-                <label className="text-slate-700 font-bold block mb-1">
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">
                   {tr('Confirm New Password *', 'புதிய கடவுச்சொல்லை உறுதிப்படுத்தவும் *')}
                 </label>
                 <div className="relative">
@@ -575,7 +575,7 @@ export default function Login({ onSwitchToRegister }) {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Re-enter new password"
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
+                    className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 dark:text-stone-100 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-medium"
                   />
                 </div>
               </div>
@@ -584,7 +584,7 @@ export default function Login({ onSwitchToRegister }) {
                 <button
                   type="button"
                   onClick={() => setForgotStep(1)}
-                  className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold transition-all cursor-pointer text-xs"
+                  className="px-4 py-2.5 bg-slate-100 dark:bg-stone-800/80 hover:bg-slate-200 dark:hover:bg-stone-700 text-slate-700 dark:text-stone-300 rounded-xl font-bold transition-all cursor-pointer text-xs"
                 >
                   {tr('Back', 'பின்செல்')}
                 </button>
@@ -603,14 +603,14 @@ export default function Login({ onSwitchToRegister }) {
           {/* STEP 3: Success Confirmation */}
           {forgotStep === 3 && (
             <div className="text-center py-4 space-y-3.5">
-              <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-sm">
+              <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/45 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-sm">
                 <CheckCircle2 className="w-7 h-7" />
               </div>
               <div>
-                <h4 className="text-base font-extrabold text-slate-900">
+                <h4 className="text-base font-extrabold text-slate-900 dark:text-stone-100">
                   {tr('Password Successfully Reset!', 'கடவுச்சொல் வெற்றிகரமாக மாற்றப்பட்டது!', 'पासवर्ड सफलतापूर्वक बदल गया!')}
                 </h4>
-                <p className="text-xs text-slate-600 mt-1 max-w-xs mx-auto">
+                <p className="text-xs text-slate-600 dark:text-stone-400 mt-1 max-w-xs mx-auto">
                   {tr('Your new password is now active. You can immediately sign in with your updated credentials.', 'உங்கள் புதிய கடவுச்சொல் செயல்படுத்தப்பட்டுள்ளது. இப்போது நீங்கள் உள்நுழையலாம்.')}
                 </p>
               </div>

@@ -16,6 +16,7 @@ import Sidebar from './components/Sidebar';
 import ProfileModal from './components/ProfileModal';
 import SettingsModal from './components/SettingsModal';
 import CosmicZodiac3DBackground from './components/CosmicZodiac3DBackground';
+import DarkSkyBackdrop from './components/DarkSkyBackdrop';
 
 function AppContent() {
   const { user, role, loading } = useAuth();
@@ -66,21 +67,32 @@ function AppContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FBF8F1] dark:bg-[#0F0D0C] flex flex-col items-center justify-center text-slate-700 dark:text-slate-300">
-        <Logo size="lg" showTagline={false} className="animate-pulse mb-3" />
-        <p className="text-xs text-amber-800 dark:text-amber-400 font-bold tracking-wider uppercase">Loading Astrojit...</p>
+      <div className="min-h-screen bg-[#FBF8F1] dark:bg-transparent relative flex flex-col items-center justify-center text-slate-700 dark:text-slate-300">
+        <DarkSkyBackdrop />
+        <div className="relative z-10 flex flex-col items-center">
+          <Logo size="lg" showTagline={false} className="animate-pulse mb-3" />
+          <p className="text-xs text-amber-800 dark:text-amber-400 font-bold tracking-wider uppercase">Loading Astrojit...</p>
+        </div>
       </div>
     );
   }
 
   // If Matrimony view is selected, render full-page AstroJit Matrimony portal!
   if (currentView === 'matrimony') {
-    return <AstroJitMatrimonyPage onBackToAstrology={backToAstrology} />;
+    return (
+      <div className="relative min-h-screen">
+        <DarkSkyBackdrop />
+        <div className="relative z-10">
+          <AstroJitMatrimonyPage onBackToAstrology={backToAstrology} />
+        </div>
+      </div>
+    );
   }
 
   if (!user || !role) {
     return (
-      <div className="min-h-screen bg-[#FBF8F1] dark:bg-[#0F0D0C] text-slate-800 dark:text-slate-100 relative overflow-x-hidden overflow-y-auto flex flex-col justify-between">
+      <div className="min-h-screen bg-[#FBF8F1] dark:bg-transparent text-slate-800 dark:text-slate-100 relative overflow-x-hidden overflow-y-auto flex flex-col justify-between">
+        <DarkSkyBackdrop />
         {/* 3D Vedic Celestial Astrolabe & Navagraha Background */}
         <CosmicZodiac3DBackground />
 
@@ -105,7 +117,9 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FBF8F1] dark:bg-[#0F0D0C] text-slate-800 dark:text-slate-100 flex">
+    <div className="min-h-screen bg-[#FBF8F1] dark:bg-transparent text-slate-800 dark:text-slate-100 relative flex">
+      <DarkSkyBackdrop />
+
       {/* Sidebar Navigation */}
       <Sidebar
         isMobileOpen={isMobileSidebarOpen}
@@ -124,7 +138,7 @@ function AppContent() {
       />
 
       {/* Main Content Area: dynamically offset on desktop for the fixed sidebar */}
-      <div className={`flex-1 flex flex-col min-w-0 overflow-x-clip transition-all duration-300 ${
+      <div className={`relative z-10 flex-1 flex flex-col min-w-0 overflow-x-clip transition-all duration-300 ${
         isSidebarCollapsed ? 'lg:pl-20' : 'lg:pl-64'
       }`}>
         <Navbar

@@ -107,15 +107,15 @@ export default function OtpMobileInput({
     <div className="space-y-2">
       <div>
         <div className="flex items-center justify-between mb-1">
-          <label className="text-slate-700 font-bold flex items-center gap-1">
+          <label className="text-slate-700 dark:text-stone-300 font-bold flex items-center gap-1">
             <Phone className={`w-3.5 h-3.5 ${accentColorClass}`} /> Mobile Number (Username) *
           </label>
           {isVerified ? (
-            <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full flex items-center gap-1">
+            <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/45 px-2 py-0.5 rounded-full flex items-center gap-1">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Verified (Username)
             </span>
           ) : (
-            <span className="text-[10px] text-amber-700 font-medium">
+            <span className="text-[10px] text-amber-700 dark:text-amber-400 font-medium">
               Mobile Number = Username
             </span>
           )}
@@ -173,13 +173,13 @@ export default function OtpMobileInput({
 
       {/* OTP Input and Verify Button when OTP is sent & not yet verified */}
       {otpSent && !isVerified && (
-        <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2 animate-in fade-in duration-150">
+        <div className="p-3 rounded-xl bg-slate-50 dark:bg-stone-900/70 border border-slate-200 dark:border-stone-700 space-y-2 animate-in fade-in duration-150">
           <div className="flex items-center justify-between">
-            <label className="text-slate-700 font-bold flex items-center gap-1 text-[11px]">
+            <label className="text-slate-700 dark:text-stone-300 font-bold flex items-center gap-1 text-[11px]">
               <KeyRound className={`w-3.5 h-3.5 ${accentColorClass}`} /> Enter Verification OTP *
             </label>
             {demoOtp && (
-              <span className="text-[10px] font-mono font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded">
+              <span className="text-[10px] font-mono font-bold text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/40 px-2 py-0.5 rounded">
                 OTP: {demoOtp}
               </span>
             )}
@@ -191,7 +191,7 @@ export default function OtpMobileInput({
               value={otp}
               onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))}
               placeholder="Enter 6-digit OTP"
-              className={`flex-1 bg-white border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-mono font-bold tracking-widest text-center focus:outline-none ${borderFocusClass}`}
+              className={`flex-1 bg-white dark:bg-[#1E1815] border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 font-mono font-bold tracking-widest text-center focus:outline-none ${borderFocusClass}`}
             />
 
             <button
@@ -211,8 +211,8 @@ export default function OtpMobileInput({
         <div
           className={`p-2 rounded-lg text-[11px] font-bold flex items-center gap-1.5 ${
             feedback.type === 'success'
-              ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-              : 'bg-rose-50 text-rose-800 border border-rose-200'
+              ? 'bg-emerald-50 dark:bg-emerald-950/35 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50'
+              : 'bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800/50'
           }`}
         >
           {feedback.type === 'success' ? (

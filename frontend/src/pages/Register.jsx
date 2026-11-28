@@ -250,7 +250,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
       {/* Form Container */}
       <div className="bg-white dark:bg-[#1A1513] border border-amber-200/80 dark:border-stone-800 rounded-2xl p-4 sm:p-7 shadow-xs">
         {error && (
-          <div className="mb-4 bg-rose-50 border border-rose-200 text-rose-700 text-xs p-3 rounded-xl font-medium flex items-center gap-2">
+          <div className="mb-4 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/50 text-rose-700 dark:text-rose-400 text-xs p-3 rounded-xl font-medium flex items-center gap-2">
             <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
             <span>{error}</span>
           </div>
@@ -259,46 +259,46 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
         {/* 1. CLIENT REGISTRATION */}
         {selectedRole === 'client' && (
           <form onSubmit={handleClientSubmit} className="space-y-3.5 text-xs">
-            <div className="border-b border-slate-100 pb-2.5 mb-3">
-              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+            <div className="border-b border-slate-100 dark:border-stone-800 pb-2.5 mb-3">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-stone-100 flex items-center gap-1.5">
                 <User className="w-4 h-4 text-amber-600" /> Client Registration & Birth Details
               </h3>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-slate-500 dark:text-stone-400">
                 Birth details will automatically synthesize your certified One-Page Janma Kundli
               </p>
             </div>
 
             {/* Full Name */}
             <div>
-              <label className="text-slate-700 font-bold block mb-1">Full Name *</label>
+              <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Full Name *</label>
               <input
                 type="text"
                 name="name"
                 required
                 placeholder="Enter Full Name"
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500 font-medium"
+                className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-500 font-medium"
               />
             </div>
 
             {/* Parents' Names */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label className="text-slate-700 font-bold block mb-1">Father's Name</label>
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Father's Name</label>
                 <input
                   type="text"
                   name="fatherName"
                   placeholder="Enter Father's Name"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div>
-                <label className="text-slate-700 font-bold block mb-1">Mother's Name</label>
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Mother's Name</label>
                 <input
                   type="text"
                   name="motherName"
                   placeholder="Enter Mother's Name"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
                 />
               </div>
             </div>
@@ -306,12 +306,12 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
             {/* Gender, DOB & Birth Time */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
               <div>
-                <label className="text-slate-700 font-bold block mb-1">Gender *</label>
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Gender *</label>
                 <select
                   name="gender"
                   required
                   defaultValue="male"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500 font-medium"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-500 font-medium"
                 >
                   <option value="male">Male (ஆண்)</option>
                   <option value="female">Female (பெண்)</option>
@@ -319,26 +319,26 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
               </div>
 
               <div>
-                <label className="text-slate-700 font-bold block mb-1 flex items-center gap-1">
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1 flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5 text-amber-600" /> Date of Birth (D.O.B) *
                 </label>
                 <input
                   type="date"
                   name="dob"
                   required
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div>
-                <label className="text-slate-700 font-bold block mb-1 flex items-center gap-1">
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1 flex items-center gap-1">
                   <Clock className="w-3.5 h-3.5 text-amber-600" /> Birth Time *
                 </label>
                 <input
                   type="time"
                   name="dobTime"
                   required
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
                 />
               </div>
             </div>
@@ -376,7 +376,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
             {/* Password & Confirm Password */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label className="text-slate-700 font-bold block mb-1 flex items-center gap-1">
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1 flex items-center gap-1">
                   <Lock className="w-3.5 h-3.5 text-amber-600" /> Password *
                 </label>
                 <input
@@ -387,13 +387,13 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                   required
                   minLength={6}
                   placeholder="Set password (min 6 chars)"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500 font-medium"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-500 font-medium"
                 />
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-slate-700 font-bold flex items-center gap-1">
+                  <label className="text-slate-700 dark:text-stone-300 font-bold flex items-center gap-1">
                     <Lock className="w-3.5 h-3.5 text-amber-600" /> Confirm Password *
                   </label>
                   {confirmPassword && (
@@ -414,10 +414,10 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                   required
                   minLength={6}
                   placeholder="Re-enter password"
-                  className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none font-medium ${
+                  className={`w-full bg-slate-50 dark:bg-stone-900/70 border rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none font-medium ${
                     confirmPassword && password !== confirmPassword
                       ? 'border-rose-400 focus:border-rose-500'
-                      : 'border-slate-300 focus:border-amber-500'
+                      : 'border-slate-300 dark:border-stone-600 focus:border-amber-500'
                   }`}
                 />
               </div>
@@ -425,14 +425,14 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
 
             {/* Astrologer Referral Code */}
             <div>
-              <label className="text-slate-700 font-bold block mb-1">
+              <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">
                 Astrologer Referral Code (Optional)
               </label>
               <input
                 type="text"
                 name="astrologerReferralCode"
                 placeholder="e.g. PANDIT101 or ASTROVEDA"
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500 uppercase font-mono"
+                className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-500 uppercase font-mono"
               />
             </div>
 
@@ -450,18 +450,18 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
         {/* 2. ASTROLOGER REGISTRATION */}
         {selectedRole === 'astrologer' && (
           <form onSubmit={handleAstrologerSubmit} className="space-y-3.5 text-xs">
-            <div className="border-b border-slate-100 pb-2.5 mb-3">
-              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+            <div className="border-b border-slate-100 dark:border-stone-800 pb-2.5 mb-3">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-stone-100 flex items-center gap-1.5">
                 <Compass className="w-4 h-4 text-indigo-600" /> Astrologer Practitioner Registration
               </h3>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-slate-500 dark:text-stone-400">
                 Register as an Individual Astrologer or Astrological Firm
               </p>
             </div>
 
             {/* Individual vs Firm Selector */}
-            <div className="flex gap-4 p-2 bg-slate-50 rounded-xl border border-slate-200">
-              <label className="flex items-center gap-2 text-slate-800 font-bold cursor-pointer">
+            <div className="flex gap-4 p-2 bg-slate-50 dark:bg-stone-900/70 rounded-xl border border-slate-200 dark:border-stone-700">
+              <label className="flex items-center gap-2 text-slate-800 dark:text-stone-200 font-bold cursor-pointer">
                 <input
                   type="radio"
                   name="astroType"
@@ -472,7 +472,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                 />
                 Individual Astrologer
               </label>
-              <label className="flex items-center gap-2 text-slate-800 font-bold cursor-pointer">
+              <label className="flex items-center gap-2 text-slate-800 dark:text-stone-200 font-bold cursor-pointer">
                 <input
                   type="radio"
                   name="astroType"
@@ -488,7 +488,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
             {/* Name and Contact Person */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label className="text-slate-700 font-bold block mb-1">
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">
                   {astroType === 'company' ? 'Firm / Company Name *' : 'Astrologer Full Name *'}
                 </label>
                 <input
@@ -496,13 +496,13 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                   name="name"
                   required
                   placeholder={astroType === 'company' ? 'Enter Firm / Company Name' : 'Enter Astrologer Full Name'}
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500 font-medium"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-indigo-500 font-medium"
                 />
               </div>
 
               {astroType === 'company' ? (
                 <div>
-                  <label className="text-slate-700 font-bold block mb-1">
+                  <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">
                     Contact Person / Lead Astrologer *
                   </label>
                   <input
@@ -510,17 +510,17 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                     name="contactPerson"
                     required
                     placeholder="Enter Contact Person Name"
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-indigo-500"
                   />
                 </div>
               ) : (
                 <div>
-                  <label className="text-slate-700 font-bold block mb-1">Experience</label>
+                  <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Experience</label>
                   <input
                     type="text"
                     name="experience"
                     placeholder="e.g. 15+ Years"
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-indigo-500"
                   />
                 </div>
               )}
@@ -544,58 +544,58 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
 
             {/* Street / Office Address */}
             <div>
-              <label className="text-slate-700 font-bold block mb-1">Office / Temple Street Address *</label>
+              <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Office / Temple Street Address *</label>
               <input
                 type="text"
                 name="address"
                 required
                 placeholder="Street address, building, landmark..."
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-indigo-500"
               />
             </div>
 
             {/* Specializations & Languages */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label className="text-slate-700 font-bold block mb-1">Specializations</label>
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Specializations</label>
                 <input
                   type="text"
                   name="specializations"
                   placeholder="e.g. Vedic, Kundli, Vastu, KP"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="text-slate-700 font-bold block mb-1">Languages</label>
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Languages</label>
                 <input
                   type="text"
                   name="languages"
                   placeholder="e.g. Tamil, English, Hindi"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-indigo-500"
                 />
               </div>
             </div>
 
             {astroType === 'company' && (
               <div>
-                <label className="text-slate-700 font-bold block mb-1">Registration / GSTIN Number</label>
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Registration / GSTIN Number</label>
                 <input
                   type="text"
                   name="gstNumber"
                   placeholder="e.g. 29ABCDE1234F1Z5"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500 font-mono"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-indigo-500 font-mono"
                 />
               </div>
             )}
 
             <div>
-              <label className="text-slate-700 font-bold block mb-1">Professional Bio</label>
+              <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Professional Bio</label>
               <textarea
                 name="bio"
                 rows={2}
                 placeholder="Summary of experience, lineage or astrological certifications..."
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-indigo-500"
               ></textarea>
             </div>
 
@@ -615,7 +615,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
             {/* Password & Confirm Password */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label className="text-slate-700 font-bold block mb-1 flex items-center gap-1">
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1 flex items-center gap-1">
                   <Lock className="w-3.5 h-3.5 text-indigo-600" /> Password *
                 </label>
                 <input
@@ -626,13 +626,13 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                   required
                   minLength={6}
                   placeholder="Set password (min 6 chars)"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-indigo-500 font-medium"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-indigo-500 font-medium"
                 />
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-slate-700 font-bold flex items-center gap-1">
+                  <label className="text-slate-700 dark:text-stone-300 font-bold flex items-center gap-1">
                     <Lock className="w-3.5 h-3.5 text-indigo-600" /> Confirm Password *
                   </label>
                   {confirmPassword && (
@@ -653,10 +653,10 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                   required
                   minLength={6}
                   placeholder="Re-enter password"
-                  className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none font-medium ${
+                  className={`w-full bg-slate-50 dark:bg-stone-900/70 border rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none font-medium ${
                     confirmPassword && password !== confirmPassword
                       ? 'border-rose-400 focus:border-rose-500'
-                      : 'border-slate-300 focus:border-indigo-500'
+                      : 'border-slate-300 dark:border-stone-600 focus:border-indigo-500'
                   }`}
                 />
               </div>
@@ -676,11 +676,11 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
         {/* 3. VENDOR REGISTRATION */}
         {selectedRole === 'vendor' && (
           <form onSubmit={handleVendorSubmit} className="space-y-3.5 text-xs">
-            <div className="border-b border-slate-100 pb-2.5 mb-3">
-              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+            <div className="border-b border-slate-100 dark:border-stone-800 pb-2.5 mb-3">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-stone-100 flex items-center gap-1.5">
                 <Store className="w-4 h-4 text-emerald-600" /> Merchant & Vendor Partner Registration
               </h3>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-slate-500 dark:text-stone-400">
                 Supply puja samagri, energized gemstones, rudraksha, and sacred ritual services
               </p>
             </div>
@@ -688,24 +688,24 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
             {/* Shop Name & Contact Person */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label className="text-slate-700 font-bold block mb-1">Shop / Business Name *</label>
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Shop / Business Name *</label>
                 <input
                   type="text"
                   name="shopName"
                   required
                   placeholder="Enter Shop / Business Name"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500 font-medium"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-emerald-500 font-medium"
                 />
               </div>
 
               <div>
-                <label className="text-slate-700 font-bold block mb-1">Proprietor / Contact Person *</label>
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Proprietor / Contact Person *</label>
                 <input
                   type="text"
                   name="contactPerson"
                   required
                   placeholder="Enter Proprietor / Contact Person Name"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-emerald-500"
                 />
               </div>
             </div>
@@ -713,10 +713,10 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
             {/* Category, GST, UPI */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
               <div>
-                <label className="text-slate-700 font-bold block mb-1">Category</label>
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Category</label>
                 <select
                   name="category"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-emerald-500"
                 >
                   <option value="Puja Samagri & Kits">Puja Samagri & Kits</option>
                   <option value="Rudraksha & Gemstones">Rudraksha & Gemstones</option>
@@ -726,22 +726,22 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
               </div>
 
               <div>
-                <label className="text-slate-700 font-bold block mb-1">GSTIN / MSME</label>
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">GSTIN / MSME</label>
                 <input
                   type="text"
                   name="gstNumber"
                   placeholder="GST or MSME ID"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500 font-mono"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-emerald-500 font-mono"
                 />
               </div>
 
               <div>
-                <label className="text-slate-700 font-bold block mb-1">UPI ID</label>
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">UPI ID</label>
                 <input
                   type="text"
                   name="upiId"
                   placeholder="yourname@upi"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-emerald-500"
                 />
               </div>
             </div>
@@ -765,23 +765,23 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
             {/* Shop Address & Pincode */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
               <div className="sm:col-span-2">
-                <label className="text-slate-700 font-bold block mb-1">Shop Street Address *</label>
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Shop Street Address *</label>
                 <input
                   type="text"
                   name="address"
                   required
                   placeholder="Shop number, market, street, landmark..."
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div>
-                <label className="text-slate-700 font-bold block mb-1">Pincode</label>
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1">Pincode</label>
                 <input
                   type="text"
                   name="pincode"
                   placeholder="e.g. 636001"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500 font-mono"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-emerald-500 font-mono"
                 />
               </div>
             </div>
@@ -802,7 +802,7 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
             {/* Password & Confirm Password */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label className="text-slate-700 font-bold block mb-1 flex items-center gap-1">
+                <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1 flex items-center gap-1">
                   <Lock className="w-3.5 h-3.5 text-emerald-600" /> Password *
                 </label>
                 <input
@@ -813,13 +813,13 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                   required
                   minLength={6}
                   placeholder="Set password (min 6 chars)"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500 font-medium"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-emerald-500 font-medium"
                 />
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-slate-700 font-bold flex items-center gap-1">
+                  <label className="text-slate-700 dark:text-stone-300 font-bold flex items-center gap-1">
                     <Lock className="w-3.5 h-3.5 text-emerald-600" /> Confirm Password *
                   </label>
                   {confirmPassword && (
@@ -840,10 +840,10 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
                   required
                   minLength={6}
                   placeholder="Re-enter password"
-                  className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none font-medium ${
+                  className={`w-full bg-slate-50 dark:bg-stone-900/70 border rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none font-medium ${
                     confirmPassword && password !== confirmPassword
                       ? 'border-rose-400 focus:border-rose-500'
-                      : 'border-slate-300 focus:border-emerald-500'
+                      : 'border-slate-300 dark:border-stone-600 focus:border-emerald-500'
                   }`}
                 />
               </div>
@@ -861,12 +861,12 @@ export default function Register({ defaultRole = 'client', onSwitchToLogin }) {
         )}
 
         {/* Back to Login link */}
-        <div className="mt-4 text-center text-xs text-slate-500">
+        <div className="mt-4 text-center text-xs text-slate-500 dark:text-stone-400">
           Already registered?{' '}
           <button
             type="button"
             onClick={onSwitchToLogin}
-            className="text-amber-700 hover:underline font-bold cursor-pointer"
+            className="text-amber-700 dark:text-amber-400 hover:underline font-bold cursor-pointer"
           >
             Sign in with mobile number →
           </button>

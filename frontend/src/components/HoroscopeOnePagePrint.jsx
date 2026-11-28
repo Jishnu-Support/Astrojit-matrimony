@@ -1,8 +1,8 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Printer, Monitor, ShieldCheck, Edit, FileText, Sparkles, BookOpen } from 'lucide-react';
+import { Printer, Monitor, ShieldCheck, FileText, Sparkles, BookOpen } from 'lucide-react';
 import { useLang } from '../i18n';
 import { useAuth } from '../context/AuthContext';
-import LetterheadBrandingModal, { getInitialLetterhead } from './LetterheadBrandingModal';
+import { getInitialLetterhead } from './LetterheadBrandingModal';
 import GeneralPredictionsModal from './GeneralPredictionsModal';
 import AIPrompt1PageModal from './AIPrompt1PageModal';
 import { getGeneralPredictions } from '../utils/generalPredictionsEngine';
@@ -166,8 +166,14 @@ export default function HoroscopeOnePagePrint({
 
   // Letterhead Branding State (synced with profile / localStorage)
   const [letterhead, setLetterhead] = useState(() => getInitialLetterhead(user, isTa));
-  const [brandingModalOpen, setBrandingModalOpen] = useState(false);
   const [chartStyle, setChartStyle] = useState(() => birthData?.chartStyle || 'south');
+
+  useEffect(() => {
+    setLetterhead(getInitialLetterhead(user, isTa));
+    const onUpdated = () => setLetterhead(getInitialLetterhead(user, isTa));
+    window.addEventListener('astrojit-letterhead-updated', onUpdated);
+    return () => window.removeEventListener('astrojit-letterhead-updated', onUpdated);
+  }, [user, isTa]);
 
   useEffect(() => {
     if (birthData?.chartStyle) {
@@ -634,11 +640,17 @@ export default function HoroscopeOnePagePrint({
                           key={col}
                           rowSpan={2}
                           colSpan={2}
-                          className="border border-black text-center align-middle p-1.5 relative"
+                          className="border border-black text-center align-middle p-1.5 relative overflow-hidden"
                           style={{
                             background: '#FFFDF9'
                           }}
                         >
+                          <img
+                            src="/sri-yantra-center.png"
+                            alt=""
+                            aria-hidden="true"
+                            className="pointer-events-none select-none absolute inset-0 m-auto w-[82%] h-[82%] object-contain opacity-[0.14]"
+                          />
                           {/* Traditional Decorative Corner Motifs (matches user sketch) */}
                           <div className="absolute top-1.5 left-1.5 w-3.5 h-3.5 border-t-2 border-l-2 border-black flex items-start justify-start">
                             <span className="w-1.5 h-1.5 border-t border-l border-black block" />
@@ -653,7 +665,7 @@ export default function HoroscopeOnePagePrint({
                             <span className="w-1.5 h-1.5 border-b border-r border-black block" />
                           </div>
 
-                          <div className="font-black text-[16px] sm:text-[17px] text-[#7A1A22] leading-none tracking-widest uppercase">
+                          <div className="relative z-10 font-black text-[16px] sm:text-[17px] text-[#7A1A22] leading-none tracking-widest uppercase">
                             {chartTitle}
                           </div>
                         </td>
@@ -864,17 +876,6 @@ export default function HoroscopeOnePagePrint({
             </button>
           </div>
 
-          {/* Edit Letterhead Branding Button */}
-          <button
-            type="button"
-            onClick={() => setBrandingModalOpen(true)}
-            className="px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 dark:bg-amber-900/40 dark:hover:bg-amber-900/70 text-[#7A1A22] dark:text-amber-200 border border-amber-300 dark:border-amber-700 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs"
-            title={isTa ? 'லெட்டர்ஹெட் அமைப்புகளைத் திருத்துக' : 'Edit Letterhead Branding Details'}
-          >
-            <FileText className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
-            <span>{isTa ? 'லெட்டர்ஹெட் திருத்து' : 'Edit Letterhead'}</span>
-          </button>
-
           {/* 1-Page AI Prompt Button */}
           <button
             type="button"
@@ -965,21 +966,7 @@ export default function HoroscopeOnePagePrint({
               {/* ======================================================== */}
               {/* BLOCK 1: OFFICIAL VEDIC HEADER (Top Box)                 */}
               {/* ======================================================== */}
-              <div
-                onClick={() => setBrandingModalOpen(true)}
-                className="py-1 px-2.5 text-center bg-[#FAF6EE] border-[1.5px] border-black rounded-none relative group cursor-pointer hover:ring-2 hover:ring-amber-600/40 transition-all"
-                title={isTa ? 'லெட்டர்ஹெட் அமைப்புகளைத் திருத்த கிளிக் செய்க' : 'Click to edit letterhead branding details'}
-              >
-                {/* On-hover edit pill */}
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); setBrandingModalOpen(true); }}
-                  className="no-print absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity bg-[#7A1A22] text-white text-[11px] font-bold px-2 py-0.5 rounded shadow cursor-pointer flex items-center gap-1 z-10"
-                >
-                  <Edit className="w-2.5 h-2.5" />
-                  <span>{isTa ? 'திருத்து' : 'Edit Header'}</span>
-                </button>
-
+              <div className="py-1 px-2.5 text-center bg-[#FAF6EE] border-[1.5px] border-black rounded-none relative">
                 {/* Auspicious Invocation */}
                 <div className="text-[14px] sm:text-[15px] font-black text-[#7A1A22] tracking-widest mb-0.5">
                   {invocationText}
@@ -1045,15 +1032,6 @@ export default function HoroscopeOnePagePrint({
                       </>
                     ) : (
                       <div className="flex flex-col items-end justify-center">
-                        <button
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); setBrandingModalOpen(true); }}
-                          className="print:hidden text-[9.5px] font-bold text-amber-800 hover:text-amber-950 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded px-2 py-0.5 mb-1 flex items-center gap-1 cursor-pointer transition-colors"
-                          title={isTa ? 'உங்கள் ஜோதிடர் லோகோவைச் சேர்க்க' : 'Add your astrologer logo'}
-                        >
-                          <span>+</span>
-                          <span>{isTa ? 'ஜோதிடர் லோகோ' : 'Add Logo'}</span>
-                        </button>
                         <span className="inline-block px-2 py-0.5 rounded-none text-[10.5px] sm:text-[11px] font-bold bg-amber-100 text-[#7A1A22] border border-black shadow-2xs">
                           {isTa ? 'திருக்கணித லஹரி' : 'Lahiri Ayanamsa'}
                         </span>
@@ -1489,15 +1467,6 @@ export default function HoroscopeOnePagePrint({
           }
         }
       `}</style>
-
-      {/* Letterhead Branding Modal */}
-      <LetterheadBrandingModal
-        isOpen={brandingModalOpen}
-        onClose={() => setBrandingModalOpen(false)}
-        letterhead={letterhead}
-        onSave={(updated) => setLetterhead(updated)}
-        isTa={isTa}
-      />
 
       {/* General Predictions Interactive Modal */}
       <GeneralPredictionsModal

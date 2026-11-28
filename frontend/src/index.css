@@ -11,8 +11,22 @@
     -moz-osx-font-smoothing: grayscale;
   }
   html.dark body {
-    background-color: #0F0D0C;
+    background-color: #030816;
     color: #F3F4F6;
+  }
+  html.dark input,
+  html.dark select,
+  html.dark textarea {
+    color-scheme: dark;
+  }
+  html.dark select option {
+    background-color: #1A1513;
+    color: #F3F4F6;
+  }
+  html:not(.dark) input,
+  html:not(.dark) select,
+  html:not(.dark) textarea {
+    color-scheme: light;
   }
 }
 
@@ -34,17 +48,48 @@
   background: #F4EFE6;
 }
 .dark ::-webkit-scrollbar-track {
-  background: #181412;
+  background: #050B1D;
 }
 ::-webkit-scrollbar-thumb {
   background: #CBD5E1;
   border-radius: 4px;
 }
 .dark ::-webkit-scrollbar-thumb {
-  background: #3F3935;
+  background: #334155;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #F59E0B;
+}
+
+/* Dark Theme Sky-Light Glass Harmonization (Dark Mode & Screen Only) */
+@media screen {
+  html.dark [class*="dark:bg-[#251E1A]"]:not(.print-page):not(.one-page-sheet):not(.a4-booklet-sheet):not(.a5-booklet-sheet):not(#astrojit-horoscope-1page),
+  html.dark [class*="dark:bg-[#201A17]"]:not(.print-page):not(.one-page-sheet):not(.a4-booklet-sheet):not(.a5-booklet-sheet):not(#astrojit-horoscope-1page),
+  html.dark [class*="dark:bg-[#201A16]"]:not(.print-page):not(.one-page-sheet):not(.a4-booklet-sheet):not(.a5-booklet-sheet):not(#astrojit-horoscope-1page),
+  html.dark [class*="dark:bg-[#1F1815]"]:not(.print-page):not(.one-page-sheet):not(.a4-booklet-sheet):not(.a5-booklet-sheet):not(#astrojit-horoscope-1page),
+  html.dark [class*="dark:bg-[#1E1815]"]:not(.print-page):not(.one-page-sheet):not(.a4-booklet-sheet):not(.a5-booklet-sheet):not(#astrojit-horoscope-1page),
+  html.dark [class*="dark:bg-[#1C1613]"]:not(.print-page):not(.one-page-sheet):not(.a4-booklet-sheet):not(.a5-booklet-sheet):not(#astrojit-horoscope-1page),
+  html.dark [class*="dark:bg-[#181412]"]:not(.print-page):not(.one-page-sheet):not(.a4-booklet-sheet):not(.a5-booklet-sheet):not(#astrojit-horoscope-1page),
+  html.dark [class*="dark:bg-[#14100E]"]:not(.print-page):not(.one-page-sheet):not(.a4-booklet-sheet):not(.a5-booklet-sheet):not(#astrojit-horoscope-1page) {
+    background-color: var(--dark-sky-card, rgba(8, 15, 38, 0.76)) !important;
+    backdrop-filter: blur(10px);
+  }
+  html.dark [class*="dark:bg-[#1A1513]"]:not(.print-page):not(.one-page-sheet):not(.a4-booklet-sheet):not(.a5-booklet-sheet):not(#astrojit-horoscope-1page),
+  html.dark [class*="dark:bg-[#1A1412]"]:not(.print-page):not(.one-page-sheet):not(.a4-booklet-sheet):not(.a5-booklet-sheet):not(#astrojit-horoscope-1page),
+  html.dark [class*="dark:bg-[#15110F]"]:not(.print-page):not(.one-page-sheet):not(.a4-booklet-sheet):not(.a5-booklet-sheet):not(#astrojit-horoscope-1page),
+  html.dark [class~="dark:bg-stone-900"]:not(.print-page):not(.one-page-sheet):not(.a4-booklet-sheet):not(.a5-booklet-sheet):not(#astrojit-horoscope-1page),
+  html.dark [class*="dark:bg-stone-900/"]:not(.print-page):not(.one-page-sheet):not(.a4-booklet-sheet):not(.a5-booklet-sheet):not(#astrojit-horoscope-1page),
+  html.dark [class~="dark:bg-stone-800"]:not(.print-page):not(.one-page-sheet):not(.a4-booklet-sheet):not(.a5-booklet-sheet):not(#astrojit-horoscope-1page),
+  html.dark [class*="dark:bg-stone-800/"]:not(.print-page):not(.one-page-sheet):not(.a4-booklet-sheet):not(.a5-booklet-sheet):not(#astrojit-horoscope-1page) {
+    background-color: var(--dark-sky-card-alt, rgba(11, 21, 52, 0.82)) !important;
+  }
+  html.dark [class*="dark:border-stone-800"]:not(.print-page),
+  html.dark [class*="dark:border-stone-700"]:not(.print-page),
+  html.dark [class*="dark:border-amber-500/20"]:not(.print-page),
+  html.dark [class*="dark:border-amber-500/15"]:not(.print-page),
+  html.dark [class*="dark:border-amber-500/10"]:not(.print-page) {
+    border-color: var(--dark-sky-border, rgba(148, 163, 184, 0.20)) !important;
+  }
 }
 
 /* Clean, universal print rules */

@@ -47,32 +47,38 @@ function PersonShashtashtagamCard({ person, title, isBride, isTa }) {
   });
 
   return (
-    <div className={`border rounded-xl p-3 space-y-2.5 ${isBride ? 'bg-rose-50/40 border-rose-200' : 'bg-indigo-50/40 border-indigo-200'}`}>
+    <div className={`border rounded-xl p-3 space-y-2.5 ${isBride ? 'bg-rose-50/40 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800/50' : 'bg-indigo-50/40 dark:bg-indigo-950/35 border-indigo-200 dark:border-indigo-800/50'}`}>
       <div className="flex items-center justify-between text-xs font-bold">
-        <span className={isBride ? 'text-rose-900' : 'text-indigo-900'}>{title}</span>
-        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white border border-stone-200 text-stone-700">
+        <span className={isBride ? 'text-rose-900 dark:text-rose-300' : 'text-indigo-900 dark:text-indigo-300'}>{title}</span>
+        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white dark:bg-[#1E1815] border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300">
           {isTa ? `${person.moonRasiTa} ராசி` : `${person.moonRasi} Rasi`}
         </span>
       </div>
 
       {/* South Indian Mini Chart Highlighting Moon, Lagnam & Jupiter */}
-      <div className="grid grid-cols-4 grid-rows-4 aspect-square max-w-[210px] mx-auto border border-stone-300 bg-white text-[9px]">
+      <div className="grid grid-cols-4 grid-rows-4 aspect-square max-w-[210px] mx-auto border border-stone-300 dark:border-stone-600 bg-white dark:bg-[#1E1815] text-[9px]">
         {[0, 1, 2, 3].map((r) =>
           [0, 1, 2, 3].map((c) => {
             if ((r === 1 || r === 2) && (c === 1 || c === 2)) {
               if (r === 1 && c === 1) {
                 return (
-                  <div key="center" className="col-span-2 row-span-2 flex flex-col items-center justify-center bg-amber-50/70 border border-stone-200 p-1 text-center">
-                    <span className="font-black text-[9.5px] text-[#7A1A22]">
+                  <div key="center" className="col-span-2 row-span-2 relative overflow-hidden flex flex-col items-center justify-center bg-amber-50/70 dark:bg-amber-950/30 border border-stone-200 dark:border-stone-700 p-1 text-center">
+                    <img
+                      src="/sri-yantra-center.png"
+                      alt=""
+                      aria-hidden="true"
+                      className="pointer-events-none select-none absolute inset-0 m-auto w-[84%] h-[84%] object-contain opacity-[0.13] dark:opacity-[0.18]"
+                    />
+                    <span className="relative z-10 font-black text-[9.5px] text-[#7A1A22] dark:text-amber-300">
                       {isTa ? 'ராசி & லக்னம்' : 'Rasi & Lagnam'}
                     </span>
-                    <span className="text-[8px] font-bold text-indigo-900 mt-0.5">
+                    <span className="relative z-10 text-[8px] font-bold text-indigo-900 dark:text-indigo-300 mt-0.5">
                       {isTa ? `ராசி: ${person.moonRasiTa}` : `Moon: ${person.moonRasi}`}
                     </span>
-                    <span className="text-[7.5px] text-stone-600">
+                    <span className="relative z-10 text-[7.5px] text-stone-600 dark:text-stone-400">
                       {isTa ? `லக்: ${person.lagnaRasiTa}` : `Asc: ${person.lagnaRasi}`}
                     </span>
-                    <span className="text-[7px] text-amber-800 font-semibold mt-0.5">
+                    <span className="relative z-10 text-[7px] text-amber-800 dark:text-amber-300 font-semibold mt-0.5">
                       {isTa ? `D9: ${person.navamsaMoonRasiTa}` : `D9: ${person.navamsaMoonRasi}`}
                     </span>
                   </div>
@@ -88,14 +94,14 @@ function PersonShashtashtagamCard({ person, title, isBride, isTa }) {
             return (
               <div
                 key={`${r}-${c}`}
-                className={`border border-stone-200 p-0.5 flex flex-col justify-between overflow-hidden ${
+                className={`border border-stone-200 dark:border-stone-700 p-0.5 flex flex-col justify-between overflow-hidden ${
                   isMoonCell && isLagnaCell
                     ? 'bg-purple-100/80 ring-1 ring-inset ring-purple-400'
                     : isMoonCell
-                    ? 'bg-indigo-100/75 ring-1 ring-inset ring-indigo-300'
+                    ? 'bg-indigo-100/75 dark:bg-indigo-900/45 ring-1 ring-inset ring-indigo-300'
                     : isLagnaCell
-                    ? 'bg-amber-100/70'
-                    : 'bg-white'
+                    ? 'bg-amber-100/70 dark:bg-amber-900/40'
+                    : 'bg-white dark:bg-[#1E1815]'
                 }`}
               >
                 <div className="flex flex-wrap gap-0.5">
@@ -111,7 +117,7 @@ function PersonShashtashtagamCard({ person, title, isBride, isTa }) {
                             ? 'bg-stone-800 text-white'
                             : role === 'jupiter'
                             ? 'bg-emerald-600 text-white'
-                            : 'text-stone-700'
+                            : 'text-stone-700 dark:text-stone-300'
                         }`}
                       >
                         {formatOccupantLabel(o, isTa)}
@@ -129,28 +135,28 @@ function PersonShashtashtagamCard({ person, title, isBride, isTa }) {
       </div>
 
       {/* Individual Reference Summary */}
-      <div className="bg-white rounded-lg border border-stone-200 p-2.5 text-[11px] space-y-1">
+      <div className="bg-white dark:bg-[#1E1815] rounded-lg border border-stone-200 dark:border-stone-700 p-2.5 text-[11px] space-y-1">
         <div className="flex justify-between">
-          <span className="text-stone-500">{isTa ? 'சந்திர ராசி (அதிபதி):' : 'Moon Rasi (Lord):'}</span>
-          <strong className="text-indigo-900">
+          <span className="text-stone-500 dark:text-stone-400">{isTa ? 'சந்திர ராசி (அதிபதி):' : 'Moon Rasi (Lord):'}</span>
+          <strong className="text-indigo-900 dark:text-indigo-300">
             {isTa ? `${person.moonRasiTa} (${person.moonLord})` : `${person.moonRasi} (${person.moonLord})`}
           </strong>
         </div>
         <div className="flex justify-between">
-          <span className="text-stone-500">{isTa ? 'ஜன்ம லக்னம் (அதிபதி):' : 'Janma Lagnam (Lord):'}</span>
-          <strong className="text-stone-900">
+          <span className="text-stone-500 dark:text-stone-400">{isTa ? 'ஜன்ம லக்னம் (அதிபதி):' : 'Janma Lagnam (Lord):'}</span>
+          <strong className="text-stone-900 dark:text-stone-100">
             {isTa ? `${person.lagnaRasiTa} (${person.lagnaLord})` : `${person.lagnaRasi} (${person.lagnaLord})`}
           </strong>
         </div>
         <div className="flex justify-between">
-          <span className="text-stone-500">{isTa ? 'நவாம்ச (D9) சந்திரன்:' : 'Navamsa (D9) Moon:'}</span>
-          <strong className="text-amber-800">
+          <span className="text-stone-500 dark:text-stone-400">{isTa ? 'நவாம்ச (D9) சந்திரன்:' : 'Navamsa (D9) Moon:'}</span>
+          <strong className="text-amber-800 dark:text-amber-300">
             {isTa ? person.navamsaMoonRasiTa : person.navamsaMoonRasi}
           </strong>
         </div>
-        <div className="flex justify-between border-t border-stone-100 pt-1">
-          <span className="text-stone-500">{isTa ? 'குரு பார்வை (சந் / லக்):' : 'Jupiter Grace (Moon / Asc):'}</span>
-          <strong className={(person.jupAspectsMoon || person.jupAspectsLagna) ? 'text-emerald-700' : 'text-stone-500'}>
+        <div className="flex justify-between border-t border-stone-100 dark:border-stone-800 pt-1">
+          <span className="text-stone-500 dark:text-stone-400">{isTa ? 'குரு பார்வை (சந் / லக்):' : 'Jupiter Grace (Moon / Asc):'}</span>
+          <strong className={(person.jupAspectsMoon || person.jupAspectsLagna) ? 'text-emerald-700 dark:text-emerald-400' : 'text-stone-500 dark:text-stone-400'}>
             {(person.jupAspectsMoon || person.jupAspectsLagna)
               ? (isTa ? 'உண்டு (சுபம்)' : 'Yes (Benefic)')
               : (isTa ? 'இல்லை' : 'None')}
@@ -162,9 +168,9 @@ function PersonShashtashtagamCard({ person, title, isBride, isTa }) {
 }
 
 function getAxisBadgeClass(status) {
-  if (status === 'favorable' || status === 'subha') return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-  if (status === 'mitigated' || status === 'dwidwadasam') return 'bg-amber-100 text-amber-800 border-amber-200';
-  return 'bg-rose-100 text-rose-800 border-rose-200';
+  if (status === 'favorable' || status === 'subha') return 'bg-emerald-100 dark:bg-emerald-900/45 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/50';
+  if (status === 'mitigated' || status === 'dwidwadasam') return 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800/50';
+  return 'bg-rose-100 dark:bg-rose-900/40 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800/50';
 }
 
 function formatOrd(n) {
@@ -181,7 +187,7 @@ export default function ShashtashtagamMatchCard({ matchReport }) {
   const sh = matchReport?.shashtashtagamAnalysis;
   if (!sh) {
     return (
-      <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
+      <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 text-xs text-amber-900 dark:text-amber-300">
         {isTa
           ? 'விரிவான ஷஷ்டாஷ்டக ஆய்வைக் காண பொருத்தத்தை மீண்டும் கணக்கிடவும்.'
           : 'Please recalculate the match to generate the full 3-axis Shashtashtagam & cancellation analysis.'}
@@ -228,14 +234,14 @@ export default function ShashtashtagamMatchCard({ matchReport }) {
       {/* 1. Overall Verdict Banner */}
       <div className={`p-3.5 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 ${
         isGoodBanner
-          ? 'bg-emerald-50/75 border-emerald-200 text-emerald-950'
+          ? 'bg-emerald-50/75 dark:bg-emerald-950/35 border-emerald-200 dark:border-emerald-800/50 text-emerald-950 dark:text-emerald-200'
           : isMidBanner
-          ? 'bg-amber-50/75 border-amber-200 text-amber-950'
-          : 'bg-rose-50/75 border-rose-200 text-rose-950'
+          ? 'bg-amber-50/75 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/50 text-amber-950 dark:text-amber-200'
+          : 'bg-rose-50/75 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800/50 text-rose-950 dark:text-rose-200'
       }`}>
         <div className="flex items-start gap-2.5">
-          <div className="p-2 rounded-lg bg-white border border-black/10 shrink-0">
-            <GitCompare className="w-4 h-4 text-[#7A1A22]" />
+          <div className="p-2 rounded-lg bg-white dark:bg-[#1E1815] border border-black/10 shrink-0">
+            <GitCompare className="w-4 h-4 text-[#7A1A22] dark:text-amber-300" />
           </div>
           <div>
             <div className="font-black text-xs sm:text-sm flex flex-wrap items-center gap-2">
@@ -246,9 +252,9 @@ export default function ShashtashtagamMatchCard({ matchReport }) {
             </p>
           </div>
         </div>
-        <div className="text-right shrink-0 self-end sm:self-center bg-white px-3 py-1.5 rounded-xl border border-black/10">
-          <div className="text-lg font-black text-[#7A1A22]">{score}%</div>
-          <div className="text-[10px] font-bold text-stone-500">
+        <div className="text-right shrink-0 self-end sm:self-center bg-white dark:bg-[#1E1815] px-3 py-1.5 rounded-xl border border-black/10">
+          <div className="text-lg font-black text-[#7A1A22] dark:text-amber-300">{score}%</div>
+          <div className="text-[10px] font-bold text-stone-500 dark:text-stone-400">
             {isTa ? 'ஷஷ்டாஷ்டக மதிப்பெண்' : 'Axis Score'}
           </div>
         </div>
@@ -271,26 +277,26 @@ export default function ShashtashtagamMatchCard({ matchReport }) {
       </div>
 
       {/* 3. Three-Axis Directional Distance Matrix (Moon Rasi / Lagnam / Navamsa D9) */}
-      <div className="bg-white border border-stone-200 rounded-xl overflow-hidden">
-        <div className="px-3.5 py-2.5 bg-amber-50/70 border-b border-stone-200 flex items-center justify-between">
-          <span className="font-bold text-[#7A1A22] flex items-center gap-1.5">
+      <div className="bg-white dark:bg-[#1E1815] border border-stone-200 dark:border-stone-700 rounded-xl overflow-hidden">
+        <div className="px-3.5 py-2.5 bg-amber-50/70 dark:bg-amber-950/30 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
+          <span className="font-bold text-[#7A1A22] dark:text-amber-300 flex items-center gap-1.5">
             <Compass className="w-4 h-4" />
             <span>
               {isTa ? '3-நிலை ஷஷ்டாஷ்டக (6/8) திசை ஆய்வு' : '3-Axis Directional 6/8 Position Matrix'}
             </span>
           </span>
         </div>
-        <div className="divide-y divide-stone-100">
+        <div className="divide-y divide-stone-100 dark:divide-stone-800">
           {axes.map(({ title, data }) => (
             <div key={data.axisId} className="p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px]">
               <div className="space-y-0.5">
-                <div className="font-bold text-stone-900">{title}</div>
-                <div className="text-stone-600">
+                <div className="font-bold text-stone-900 dark:text-stone-100">{title}</div>
+                <div className="text-stone-600 dark:text-stone-400">
                   {isTa
                     ? `மணமகள் ${data.girlRasiTa} (${data.girlLord}) ↔ மணமகன் ${data.boyRasiTa} (${data.boyLord})`
                     : `Bride ${data.girlRasi} (${data.girlLord}) ↔ Groom ${data.boyRasi} (${data.boyLord})`}
                 </div>
-                <div className="text-[10px] text-stone-500">
+                <div className="text-[10px] text-stone-500 dark:text-stone-400">
                   {isTa
                     ? `மணமகளிலிருந்து: ${data.brideToGroom}-ம் இடம் | மணமகனிலிருந்து: ${data.groomToBride}-ம் இடம் · அதிபதிகள்: ${data.lordRel?.ta}`
                     : `From Bride: ${formatOrd(data.brideToGroom)} | From Groom: ${formatOrd(data.groomToBride)} · Lords: ${data.lordRel?.en}`}
@@ -305,15 +311,15 @@ export default function ShashtashtagamMatchCard({ matchReport }) {
       </div>
 
       {/* 4. Classical Cancellation (Bhanga) Factors */}
-      <div className="bg-white border border-stone-200 rounded-xl p-3 space-y-2">
+      <div className="bg-white dark:bg-[#1E1815] border border-stone-200 dark:border-stone-700 rounded-xl p-3 space-y-2">
         <div className="flex items-center justify-between">
-          <span className="font-bold text-stone-900 flex items-center gap-1.5">
+          <span className="font-bold text-stone-900 dark:text-stone-100 flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
             <span>
               {isTa ? 'சாஸ்திர தோஷ நிவர்த்தி (பங்க) காரணிகள்' : 'Classical Cancellation (Bhanga) Checks'}
             </span>
           </span>
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/35 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
             {activeCancelCount} / {cancellations?.length || 5} {isTa ? 'சாதகம்' : 'Active'}
           </span>
         </div>
@@ -323,8 +329,8 @@ export default function ShashtashtagamMatchCard({ matchReport }) {
               key={item.id}
               className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg border ${
                 item.active
-                  ? 'bg-emerald-50/60 border-emerald-200 text-emerald-900 font-semibold'
-                  : 'bg-stone-50 border-stone-200 text-stone-500'
+                  ? 'bg-emerald-50/60 dark:bg-emerald-950/35 border-emerald-200 dark:border-emerald-800/50 text-emerald-900 dark:text-emerald-300 font-semibold'
+                  : 'bg-stone-50 dark:bg-stone-900/70 border-stone-200 dark:border-stone-700 text-stone-500 dark:text-stone-400'
               }`}
             >
               {item.active ? (
@@ -339,10 +345,10 @@ export default function ShashtashtagamMatchCard({ matchReport }) {
       </div>
 
       {/* 5. Classical Guidance & Pariharam */}
-      <div className="p-3 rounded-xl bg-amber-50/60 border border-amber-200 text-[11px] text-stone-700 flex items-start gap-2">
-        <Sparkles className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+      <div className="p-3 rounded-xl bg-amber-50/60 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 text-[11px] text-stone-700 dark:text-stone-300 flex items-start gap-2">
+        <Sparkles className="w-4 h-4 text-amber-700 dark:text-amber-400 shrink-0 mt-0.5" />
         <div>
-          <strong className="text-[#7A1A22]">
+          <strong className="text-[#7A1A22] dark:text-amber-300">
             {isTa ? 'சாஸ்திர குறிப்பு & பரிகாரம்:' : 'Classical Guidance & Pariharam:'}
           </strong>{' '}
           {isTa

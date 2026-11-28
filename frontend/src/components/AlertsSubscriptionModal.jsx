@@ -67,28 +67,28 @@ export default function AlertsSubscriptionModal({ isOpen, onClose, panchang }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-white border border-slate-200 rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl my-6">
-        <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+      <div className="bg-white dark:bg-[#1E1815] border border-slate-200 dark:border-stone-700 rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl my-6">
+        <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-stone-800">
           <div>
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-stone-100 flex items-center gap-2">
               <MessageCircle className="w-5 h-5 text-emerald-600" />
               <span>{lang === 'ta' ? 'வாட்ஸ்அப் பஞ்சாங்க அறிவிப்புகள்' : lang === 'kn' ? 'ವಾಟ್ಸಾಪ್ ಪಂಚಾಂಗ ಎಚ್ಚರಿಕೆಗಳು' : 'WhatsApp Daily Panchangam Alerts'}</span>
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 dark:text-stone-400">
               {lang === 'ta' ? 'தினசரி காலை பஞ்சாங்கம், அபிஜித் முகூர்த்தம் & இராகு கால எச்சரிக்கை' : lang === 'kn' ? 'ದೈನಂದಿನ ಬೆಳಗಿನ ಪಂಚಾಂಗ, ಅಭಿಜಿತ್ ಮುಹೂರ್ತ ಮತ್ತು ರಾಹು ಕಾಲದ ಮಾಹಿತಿ' : 'Instant morning Panchang, Abhijit Muhurat & Rahu alerts on your mobile'}
             </p>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-700 text-lg font-bold px-2 py-1 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-700 dark:hover:text-stone-200 text-lg font-bold px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-stone-800 transition-colors cursor-pointer">
             ✕
           </button>
         </div>
 
         {previewMsg ? (
           <div className="mt-4 space-y-4">
-            <div className="bg-emerald-50 border border-emerald-300 p-3 rounded-2xl flex items-center gap-2.5 text-xs text-emerald-950 font-medium">
+            <div className="bg-emerald-50 dark:bg-emerald-950/35 border border-emerald-300 dark:border-emerald-700/60 p-3 rounded-2xl flex items-center gap-2.5 text-xs text-emerald-950 dark:text-emerald-200 font-medium">
               <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" />
               <div>
-                <strong className="block text-emerald-900 font-bold">
+                <strong className="block text-emerald-900 dark:text-emerald-300 font-bold">
                   {lang === 'ta' ? 'வாட்ஸ்அப் செய்தி தயாராக உள்ளது!' : lang === 'kn' ? 'ವಾಟ್ಸಾಪ್ ಸಂದೇಶ ಸಿದ್ಧವಾಗಿದೆ!' : 'WhatsApp Dispatch Activated & Ready!'}
                 </strong>
                 <span>
@@ -124,26 +124,26 @@ export default function AlertsSubscriptionModal({ isOpen, onClose, panchang }) {
 
             {/* WhatsApp Message Preview UI */}
             <div className="bg-[#EFEAE2] border border-[#d1d7db] rounded-2xl p-4 text-xs font-sans shadow-xs space-y-2">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-300">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-300 dark:border-stone-600">
                 <div className="flex items-center gap-2">
                   <Logo size="xs" iconOnly={true} />
                   <div>
-                    <div className="font-bold text-slate-900 text-xs">Astrojit Official Dispatch</div>
-                    <div className="text-[10px] text-slate-500">Verified Service • Daily Panchangam</div>
+                    <div className="font-bold text-slate-900 dark:text-stone-100 text-xs">Astrojit Official Dispatch</div>
+                    <div className="text-[10px] text-slate-500 dark:text-stone-400">Verified Service • Daily Panchangam</div>
                   </div>
                 </div>
 
                 <button
                   type="button"
                   onClick={handleCopy}
-                  className="bg-white hover:bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-300 text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                  className="bg-white dark:bg-[#1E1815] hover:bg-slate-100 dark:hover:bg-stone-800 text-slate-700 dark:text-stone-300 px-2.5 py-1 rounded-lg border border-slate-300 dark:border-stone-600 text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-colors"
                 >
-                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-slate-600" />}
+                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-slate-600 dark:text-stone-400" />}
                   <span>{copied ? (lang === 'ta' ? 'நகலெடுக்கப்பட்டது!' : 'Copied!') : (lang === 'ta' ? 'நகலெடு' : 'Copy Text')}</span>
                 </button>
               </div>
 
-              <div className="bg-white p-3.5 rounded-xl text-slate-900 whitespace-pre-line leading-relaxed text-[11px] font-mono border-l-4 border-emerald-500 shadow-2xs max-h-56 overflow-y-auto">
+              <div className="bg-white dark:bg-[#1E1815] p-3.5 rounded-xl text-slate-900 dark:text-stone-100 whitespace-pre-line leading-relaxed text-[11px] font-mono border-l-4 border-emerald-500 shadow-2xs max-h-56 overflow-y-auto">
                 {previewMsg}
               </div>
             </div>
@@ -151,7 +151,7 @@ export default function AlertsSubscriptionModal({ isOpen, onClose, panchang }) {
             <div className="flex justify-end pt-1">
               <button
                 onClick={onClose}
-                className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-6 py-2 rounded-xl text-xs transition-colors cursor-pointer"
+                className="bg-slate-100 dark:bg-stone-800/80 hover:bg-slate-200 dark:hover:bg-stone-700 text-slate-700 dark:text-stone-300 font-bold px-6 py-2 rounded-xl text-xs transition-colors cursor-pointer"
               >
                 {lang === 'ta' ? 'மூடுக' : lang === 'kn' ? 'ಮುಚ್ಚಿ' : 'Done & Close'}
               </button>
@@ -160,18 +160,18 @@ export default function AlertsSubscriptionModal({ isOpen, onClose, panchang }) {
         ) : (
           <form onSubmit={handleSubscribe} className="space-y-4 mt-3 text-xs">
             <div>
-              <label className="text-slate-800 font-bold block mb-1">
+              <label className="text-slate-800 dark:text-stone-200 font-bold block mb-1">
                 {lang === 'ta' ? 'வாட்ஸ்அப் மொபைல் எண் *' : lang === 'kn' ? 'ವಾಟ್ಸಾಪ್ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ *' : 'WhatsApp / SMS Mobile Number *'}
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-2.5 text-slate-500 font-semibold text-xs">+91</span>
+                <span className="absolute left-3 top-2.5 text-slate-500 dark:text-stone-400 font-semibold text-xs">+91</span>
                 <input
                   type="tel"
                   required
                   value={mobile.length > 10 ? mobile.slice(-10) : mobile}
                   onChange={(e) => setMobile(e.target.value)}
                   placeholder="9876543210"
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-12 pr-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500 font-medium"
+                  className="w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl pl-12 pr-3 py-2 text-slate-900 dark:text-stone-100 focus:outline-none focus:border-emerald-500 font-medium"
                 />
               </div>
               <span className="text-[10px] text-slate-400 mt-1 block">
@@ -179,12 +179,12 @@ export default function AlertsSubscriptionModal({ isOpen, onClose, panchang }) {
               </span>
             </div>
 
-            <div className="space-y-2.5 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-              <span className="text-slate-700 font-bold block text-[11px] uppercase tracking-wider">
+            <div className="space-y-2.5 bg-slate-50 dark:bg-stone-900/70 p-3.5 rounded-2xl border border-slate-200 dark:border-stone-700">
+              <span className="text-slate-700 dark:text-stone-300 font-bold block text-[11px] uppercase tracking-wider">
                 {lang === 'ta' ? 'அறிவிப்பு விருப்பங்களைத் தேர்ந்தெடுக்கவும்:' : lang === 'kn' ? 'ಎಚ್ಚರಿಕೆ ಆದ್ಯತೆಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ:' : 'Select Alert Preferences:'}
               </span>
 
-              <label className="flex items-center gap-2.5 text-slate-700 cursor-pointer font-medium">
+              <label className="flex items-center gap-2.5 text-slate-700 dark:text-stone-300 cursor-pointer font-medium">
                 <input
                   type="checkbox"
                   checked={receivePanchang}
@@ -194,7 +194,7 @@ export default function AlertsSubscriptionModal({ isOpen, onClose, panchang }) {
                 <span>{lang === 'ta' ? 'தினசரி காலை பஞ்சாங்கம் & திதி (காலை 06:00)' : lang === 'kn' ? 'ದೈನಂದಿನ ಬೆಳಗಿನ ಪಂಚಾಂಗ ಮತ್ತು ತಿಥಿ (ಬೆಳಿಗ್ಗೆ 06:00)' : 'Daily Morning Panchangam & Tithi at 06:00 AM'}</span>
               </label>
 
-              <label className="flex items-center gap-2.5 text-slate-700 cursor-pointer font-medium">
+              <label className="flex items-center gap-2.5 text-slate-700 dark:text-stone-300 cursor-pointer font-medium">
                 <input
                   type="checkbox"
                   checked={receiveRahuKalam}
@@ -204,7 +204,7 @@ export default function AlertsSubscriptionModal({ isOpen, onClose, panchang }) {
                 <span>{lang === 'ta' ? 'இராகு கால எச்சரிக்கை (தொடங்குவதற்கு 30 நிமிடங்களுக்கு முன்)' : lang === 'kn' ? 'ರಾಹು ಕಾಲ ಮುನ್ನೆಚ್ಚರಿಕೆ (30 ನಿಮಿಷಗಳ ಮೊದಲು)' : 'Rahu Kalam Pre-Warning (30 mins before onset)'}</span>
               </label>
 
-              <label className="flex items-center gap-2.5 text-slate-700 cursor-pointer font-medium">
+              <label className="flex items-center gap-2.5 text-slate-700 dark:text-stone-300 cursor-pointer font-medium">
                 <input
                   type="checkbox"
                   checked={receiveHoroscope}
@@ -215,11 +215,11 @@ export default function AlertsSubscriptionModal({ isOpen, onClose, panchang }) {
               </label>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 pt-3 border-t border-slate-100">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-stone-800">
               <button
                 type="button"
                 onClick={handleQuickShare}
-                className="px-3.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 transition-colors font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                className="px-3.5 py-2 rounded-xl bg-teal-50 dark:bg-teal-950/35 hover:bg-teal-100 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800/50 transition-colors font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <Share2 className="w-3.5 h-3.5" />
                 <span>{lang === 'ta' ? 'உடனடி பகிர்வு' : lang === 'kn' ? 'ತಕ್ಷಣ ಹಂಚಿಕೊಳ್ಳಿ' : 'Instant WhatsApp Share'}</span>
@@ -229,7 +229,7 @@ export default function AlertsSubscriptionModal({ isOpen, onClose, panchang }) {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-stone-800/80 text-slate-700 dark:text-stone-300 hover:bg-slate-200 dark:hover:bg-stone-700 transition-colors cursor-pointer"
                 >
                   {t('cancelBtn') || 'Cancel'}
                 </button>

@@ -120,14 +120,14 @@ export default function LocationHierarchyInput({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
         {/* 1. Country Selection */}
         <div>
-          <label className="text-slate-700 font-bold block mb-1 flex items-center gap-1">
+          <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1 flex items-center gap-1">
             <Globe className={`w-3.5 h-3.5 ${accentColorClass}`} /> Country *
           </label>
           <select
             value={country}
             onChange={handleCountryChange}
             required={required}
-            className={`w-full bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2 text-slate-900 font-medium focus:outline-none ${borderFocusClass}`}
+            className={`w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-2.5 py-2 text-slate-900 dark:text-stone-100 font-medium focus:outline-none ${borderFocusClass}`}
           >
             {COUNTRIES.map(c => (
               <option key={c.code} value={c.name}>
@@ -139,7 +139,7 @@ export default function LocationHierarchyInput({
 
         {/* 2. State / Province Selection */}
         <div>
-          <label className="text-slate-700 font-bold block mb-1 flex items-center gap-1">
+          <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1 flex items-center gap-1">
             <Building className={`w-3.5 h-3.5 ${accentColorClass}`} /> State / Province *
           </label>
           {availableStates.length > 0 ? (
@@ -147,7 +147,7 @@ export default function LocationHierarchyInput({
               value={state}
               onChange={handleStateChange}
               required={required}
-              className={`w-full bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2 text-slate-900 font-medium focus:outline-none ${borderFocusClass}`}
+              className={`w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-2.5 py-2 text-slate-900 dark:text-stone-100 font-medium focus:outline-none ${borderFocusClass}`}
             >
               {availableStates.map(st => (
                 <option key={st} value={st}>
@@ -162,14 +162,14 @@ export default function LocationHierarchyInput({
               onChange={handleStateChange}
               placeholder="State or Province"
               required={required}
-              className={`w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-medium focus:outline-none ${borderFocusClass}`}
+              className={`w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 font-medium focus:outline-none ${borderFocusClass}`}
             />
           )}
         </div>
 
         {/* 3. City / Birth Place with Instant 1-Letter Auto-Suggestions */}
         <div className="relative">
-          <label className="text-slate-700 font-bold block mb-1 flex items-center gap-1">
+          <label className="text-slate-700 dark:text-stone-300 font-bold block mb-1 flex items-center gap-1">
             <MapPin className={`w-3.5 h-3.5 ${accentColorClass}`} /> {labelCity}
           </label>
           <input
@@ -186,13 +186,13 @@ export default function LocationHierarchyInput({
             placeholder={cityPlaceholder}
             required={required}
             autoComplete="off"
-            className={`w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-900 font-medium focus:outline-none ${borderFocusClass}`}
+            className={`w-full bg-slate-50 dark:bg-stone-900/70 border border-slate-300 dark:border-stone-600 rounded-xl px-3 py-2 text-slate-900 dark:text-stone-100 font-medium focus:outline-none ${borderFocusClass}`}
           />
 
           {/* Instant Auto-Suggestion Dropdown Popup */}
           {showSuggestions && suggestions.length > 0 && (
-            <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-300 rounded-xl shadow-xl z-20 max-h-56 overflow-y-auto divide-y divide-slate-100 animate-in fade-in zoom-in-95 duration-100">
-              <div className="p-1.5 bg-slate-50 text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center justify-between border-b border-slate-200">
+            <div className="absolute left-0 right-0 top-full mt-1 bg-white dark:bg-[#1E1815] border border-slate-300 dark:border-stone-600 rounded-xl shadow-xl z-20 max-h-56 overflow-y-auto divide-y divide-slate-100 dark:divide-stone-800 animate-in fade-in zoom-in-95 duration-100">
+              <div className="p-1.5 bg-slate-50 dark:bg-stone-900/70 text-[10px] text-slate-500 dark:text-stone-400 font-bold uppercase tracking-wider flex items-center justify-between border-b border-slate-200 dark:border-stone-700">
                 <span>Matching Cities ({suggestions.length})</span>
                 <span className="text-[9px] text-slate-400">Click to select</span>
               </div>
@@ -203,8 +203,8 @@ export default function LocationHierarchyInput({
                     key={`${item.name}-${idx}`}
                     type="button"
                     onClick={() => handleSelectSuggestion(item)}
-                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-slate-100 transition-colors cursor-pointer ${
-                      isSelected ? 'bg-amber-50/70 text-slate-950 font-bold' : 'text-slate-800'
+                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-slate-100 dark:hover:bg-stone-800 transition-colors cursor-pointer ${
+                      isSelected ? 'bg-amber-50/70 dark:bg-amber-950/30 text-slate-950 dark:text-stone-50 font-bold' : 'text-slate-800 dark:text-stone-200'
                     }`}
                   >
                     <div className="flex items-center gap-1.5">

@@ -227,16 +227,16 @@ export default function BirthCoordinatesPicker({
     : lookupCoordinates(selectedCountry, selectedState, selectedCity);
 
   return (
-    <div className="space-y-3.5 bg-slate-50/70 border border-slate-200 p-3 sm:p-4 rounded-2xl">
+    <div className="space-y-3.5 bg-slate-50/70 dark:bg-stone-900/70 border border-slate-200 dark:border-stone-700 p-3 sm:p-4 rounded-2xl">
       {/* ROW 1: 12-Hour Time of Birth Selector */}
       <div>
         <div className="flex justify-between items-center mb-1.5">
-          <label className="font-bold text-slate-800 text-xs flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-amber-700" />
+          <label className="font-bold text-slate-800 dark:text-stone-200 text-xs flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
             <span>Time of Birth (12-Hour AM/PM Format)</span>
             <span className="text-red-500">*</span>
           </label>
-          <span className="text-[11px] font-mono font-bold bg-amber-100 text-amber-950 px-2 py-0.5 rounded-md border border-amber-300">
+          <span className="text-[11px] font-mono font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-950 dark:text-amber-200 px-2 py-0.5 rounded-md border border-amber-300 dark:border-amber-700/60">
             {timeState.hour}:{timeState.minute}:{timeState.second} {timeState.period}
           </span>
         </div>
@@ -244,11 +244,11 @@ export default function BirthCoordinatesPicker({
         <div className="grid grid-cols-4 gap-2 text-xs">
           {/* Hours (01 - 12) */}
           <div>
-            <span className="text-[10px] text-slate-500 font-bold block mb-0.5">Hour (1-12)</span>
+            <span className="text-[10px] text-slate-500 dark:text-stone-400 font-bold block mb-0.5">Hour (1-12)</span>
             <select
               value={timeState.hour}
               onChange={(e) => updateTimeField('hour', e.target.value)}
-              className="w-full bg-white border border-slate-300 rounded-xl px-1 sm:px-2.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-mono font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
+              className="w-full bg-white dark:bg-[#1E1815] border border-slate-300 dark:border-stone-600 rounded-xl px-1 sm:px-2.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-mono font-bold text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
             >
               {Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0')).map((h) => (
                 <option key={h} value={h}>
@@ -260,11 +260,11 @@ export default function BirthCoordinatesPicker({
 
           {/* Minutes (00 - 59) */}
           <div>
-            <span className="text-[10px] text-slate-500 font-bold block mb-0.5">Minute (0-59)</span>
+            <span className="text-[10px] text-slate-500 dark:text-stone-400 font-bold block mb-0.5">Minute (0-59)</span>
             <select
               value={timeState.minute}
               onChange={(e) => updateTimeField('minute', e.target.value)}
-              className="w-full bg-white border border-slate-300 rounded-xl px-1 sm:px-2.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-mono font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
+              className="w-full bg-white dark:bg-[#1E1815] border border-slate-300 dark:border-stone-600 rounded-xl px-1 sm:px-2.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-mono font-bold text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
             >
               {Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0')).map((m) => (
                 <option key={m} value={m}>
@@ -276,11 +276,11 @@ export default function BirthCoordinatesPicker({
 
           {/* Seconds (00 - 59) */}
           <div>
-            <span className="text-[10px] text-slate-500 font-bold block mb-0.5">Second (0-59)</span>
+            <span className="text-[10px] text-slate-500 dark:text-stone-400 font-bold block mb-0.5">Second (0-59)</span>
             <select
               value={timeState.second}
               onChange={(e) => updateTimeField('second', e.target.value)}
-              className="w-full bg-white border border-slate-300 rounded-xl px-1 sm:px-2.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-mono font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
+              className="w-full bg-white dark:bg-[#1E1815] border border-slate-300 dark:border-stone-600 rounded-xl px-1 sm:px-2.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-mono font-bold text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
             >
               {Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0')).map((s) => (
                 <option key={s} value={s}>
@@ -292,15 +292,15 @@ export default function BirthCoordinatesPicker({
 
           {/* AM / PM Toggle */}
           <div>
-            <span className="text-[10px] text-slate-500 font-bold block mb-0.5">Meridiem (AM/PM)</span>
-            <div className="flex rounded-xl overflow-hidden border border-slate-300 shadow-2xs">
+            <span className="text-[10px] text-slate-500 dark:text-stone-400 font-bold block mb-0.5">Meridiem (AM/PM)</span>
+            <div className="flex rounded-xl overflow-hidden border border-slate-300 dark:border-stone-600 shadow-2xs">
               <button
                 type="button"
                 onClick={() => updateTimeField('period', 'AM')}
                 className={`flex-1 py-1.5 sm:py-2 font-black text-[10px] sm:text-xs transition-all cursor-pointer ${
                   timeState.period === 'AM'
                     ? 'bg-amber-600 text-white shadow-inner'
-                    : 'bg-white text-slate-700 hover:bg-slate-100'
+                    : 'bg-white dark:bg-[#1E1815] text-slate-700 dark:text-stone-300 hover:bg-slate-100 dark:hover:bg-stone-800'
                 }`}
               >
                 AM
@@ -311,7 +311,7 @@ export default function BirthCoordinatesPicker({
                 className={`flex-1 py-1.5 sm:py-2 font-black text-[10px] sm:text-xs transition-all cursor-pointer ${
                   timeState.period === 'PM'
                     ? 'bg-indigo-700 text-white shadow-inner'
-                    : 'bg-white text-slate-700 hover:bg-slate-100'
+                    : 'bg-white dark:bg-[#1E1815] text-slate-700 dark:text-stone-300 hover:bg-slate-100 dark:hover:bg-stone-800'
                 }`}
               >
                 PM
@@ -323,8 +323,8 @@ export default function BirthCoordinatesPicker({
 
       {/* ROW 2: Hierarchical Country -> State -> City Dropdowns */}
       <div>
-        <label className="font-bold text-slate-800 text-xs flex items-center gap-1.5 mb-1.5">
-          <MapPin className="w-3.5 h-3.5 text-amber-700" />
+        <label className="font-bold text-slate-800 dark:text-stone-200 text-xs flex items-center gap-1.5 mb-1.5">
+          <MapPin className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
           <span>Place of Birth (Country • State/Province • City)</span>
           <span className="text-red-500">*</span>
         </label>
@@ -332,11 +332,11 @@ export default function BirthCoordinatesPicker({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
           {/* Country Selection */}
           <div>
-            <span className="text-[10px] text-slate-500 font-bold block mb-0.5">Country</span>
+            <span className="text-[10px] text-slate-500 dark:text-stone-400 font-bold block mb-0.5">Country</span>
             <select
               value={selectedCountry}
               onChange={handleCountryChange}
-              className="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-2 font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
+              className="w-full bg-white dark:bg-[#1E1815] border border-slate-300 dark:border-stone-600 rounded-xl px-2.5 py-2 font-bold text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
             >
               {COUNTRIES.map((c) => (
                 <option key={c.code} value={c.name}>
@@ -349,7 +349,7 @@ export default function BirthCoordinatesPicker({
           {/* State / Province Selection */}
           <div>
             <div className="flex justify-between items-center mb-0.5">
-              <span className="text-[10px] text-slate-500 font-bold block">State / Province</span>
+              <span className="text-[10px] text-slate-500 dark:text-stone-400 font-bold block">State / Province</span>
               <span className="text-[9.5px] text-slate-400 font-mono font-semibold">
                 {availableStates.length} states
               </span>
@@ -357,7 +357,7 @@ export default function BirthCoordinatesPicker({
             <select
               value={selectedState}
               onChange={handleStateChange}
-              className="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-2 font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
+              className="w-full bg-white dark:bg-[#1E1815] border border-slate-300 dark:border-stone-600 rounded-xl px-2.5 py-2 font-bold text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
             >
               {availableStates.map((st) => {
                 const count = GEO_DATA[selectedCountry]?.[st]?.length || 0;
@@ -373,8 +373,8 @@ export default function BirthCoordinatesPicker({
           {/* City Selection */}
           <div>
             <div className="flex justify-between items-center mb-0.5">
-              <span className="text-[10px] text-slate-500 font-bold block">City / Town</span>
-              <span className="text-[9.5px] text-amber-800 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200 font-mono font-bold">
+              <span className="text-[10px] text-slate-500 dark:text-stone-400 font-bold block">City / Town</span>
+              <span className="text-[9.5px] text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/30 px-1.5 py-0.2 rounded border border-amber-200 dark:border-amber-800/50 font-mono font-bold">
                 {filteredCities.length} of {availableCities.length}
               </span>
             </div>
@@ -385,13 +385,13 @@ export default function BirthCoordinatesPicker({
                 value={citySearch}
                 onChange={handleCitySearchChange}
                 placeholder="🔍 Search city in state..."
-                className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-[11px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-amber-500"
+                className="w-full bg-white dark:bg-[#1E1815] border border-slate-200 dark:border-stone-700 rounded-lg px-2.5 py-1 text-[11px] text-slate-800 dark:text-stone-200 placeholder:text-slate-400 focus:outline-none focus:border-amber-500"
               />
 
               <select
                 value={isCustomCity ? '__custom__' : selectedCity}
                 onChange={handleCityChange}
-                className="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-2 font-bold text-slate-900 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
+                className="w-full bg-white dark:bg-[#1E1815] border border-slate-300 dark:border-stone-600 rounded-xl px-2.5 py-2 font-bold text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-600 cursor-pointer shadow-2xs"
               >
                 {selectOptions.map((ct) => (
                   <option key={ct.name} value={ct.name}>
@@ -411,69 +411,69 @@ export default function BirthCoordinatesPicker({
 
         {/* Custom City & Custom Coordinates Input if Selected */}
         {isCustomCity && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2 pt-2 border-t border-slate-200 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2 pt-2 border-t border-slate-200 dark:border-stone-700 text-xs">
             <div>
-              <span className="text-[10px] text-amber-900 font-bold block mb-0.5">Enter City Name</span>
+              <span className="text-[10px] text-amber-900 dark:text-amber-300 font-bold block mb-0.5">Enter City Name</span>
               <input
                 type="text"
                 required
                 value={customCityName}
                 onChange={(e) => setCustomCityName(e.target.value)}
                 placeholder="e.g. Tirupattur"
-                className="w-full bg-white border border-amber-300 rounded-xl px-2.5 py-1.5 font-bold text-slate-900 focus:outline-none focus:border-amber-600"
+                className="w-full bg-white dark:bg-[#1E1815] border border-amber-300 dark:border-amber-700/60 rounded-xl px-2.5 py-1.5 font-bold text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-600"
               />
             </div>
             <div>
-              <span className="text-[10px] text-slate-600 font-bold block mb-0.5">Custom Latitude</span>
+              <span className="text-[10px] text-slate-600 dark:text-stone-400 font-bold block mb-0.5">Custom Latitude</span>
               <input
                 type="text"
                 value={customLat}
                 onChange={(e) => setCustomLat(e.target.value)}
                 placeholder="e.g. 12° 30' N"
-                className="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 font-mono text-slate-900 focus:outline-none focus:border-amber-600"
+                className="w-full bg-white dark:bg-[#1E1815] border border-slate-300 dark:border-stone-600 rounded-xl px-2.5 py-1.5 font-mono text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-600"
               />
             </div>
             <div>
-              <span className="text-[10px] text-slate-600 font-bold block mb-0.5">Custom Longitude</span>
+              <span className="text-[10px] text-slate-600 dark:text-stone-400 font-bold block mb-0.5">Custom Longitude</span>
               <input
                 type="text"
                 value={customLon}
                 onChange={(e) => setCustomLon(e.target.value)}
                 placeholder="e.g. 78° 34' E"
-                className="w-full bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 font-mono text-slate-900 focus:outline-none focus:border-amber-600"
+                className="w-full bg-white dark:bg-[#1E1815] border border-slate-300 dark:border-stone-600 rounded-xl px-2.5 py-1.5 font-mono text-slate-900 dark:text-stone-100 focus:outline-none focus:border-amber-600"
               />
             </div>
           </div>
         )}
 
         {/* LATITUDE & LONGITUDE DISPLAY PLAQUE */}
-        <div className="mt-2.5 bg-gradient-to-r from-amber-100/90 via-amber-50 to-orange-100/80 border border-amber-300/80 rounded-xl p-2.5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 shadow-2xs">
+        <div className="mt-2.5 bg-gradient-to-r from-amber-100/90 via-amber-50 to-orange-100/80 border border-amber-300/80 dark:border-amber-700/60 rounded-xl p-2.5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 shadow-2xs">
           <div className="flex items-center gap-2">
             <span className="p-1.5 bg-amber-600 text-white rounded-lg shadow-xs">
               <Compass className="w-4 h-4 animate-spin-slow" />
             </span>
             <div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-amber-950 block">
+              <span className="text-[10px] font-black uppercase tracking-wider text-amber-950 dark:text-amber-200 block">
                 Geographic Coordinates (Ephemeris Precision)
               </span>
-              <span className="text-xs font-bold text-slate-800">
+              <span className="text-xs font-bold text-slate-800 dark:text-stone-200">
                 {isCustomCity ? (customCityName || 'Custom City') : selectedCity}, {selectedState} ({selectedCountry})
               </span>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 text-xs">
-            <div className="bg-white/90 px-2.5 py-1 rounded-lg border border-amber-300 font-mono">
-              <span className="text-[10px] text-slate-500 font-bold mr-1">LAT:</span>
-              <strong className="text-indigo-950 font-black">{currentCoords.lat}</strong>
+            <div className="bg-white/90 dark:bg-[#1E1815]/90 px-2.5 py-1 rounded-lg border border-amber-300 dark:border-amber-700/60 font-mono">
+              <span className="text-[10px] text-slate-500 dark:text-stone-400 font-bold mr-1">LAT:</span>
+              <strong className="text-indigo-950 dark:text-indigo-200 font-black">{currentCoords.lat}</strong>
             </div>
-            <div className="bg-white/90 px-2.5 py-1 rounded-lg border border-amber-300 font-mono">
-              <span className="text-[10px] text-slate-500 font-bold mr-1">LON:</span>
-              <strong className="text-indigo-950 font-black">{currentCoords.lon}</strong>
+            <div className="bg-white/90 dark:bg-[#1E1815]/90 px-2.5 py-1 rounded-lg border border-amber-300 dark:border-amber-700/60 font-mono">
+              <span className="text-[10px] text-slate-500 dark:text-stone-400 font-bold mr-1">LON:</span>
+              <strong className="text-indigo-950 dark:text-indigo-200 font-black">{currentCoords.lon}</strong>
             </div>
             {currentCoords.tz && (
-              <div className="bg-white/90 px-2.5 py-1 rounded-lg border border-amber-300 font-mono text-[11px] text-slate-600">
-                <span className="text-[10px] text-slate-500 font-bold mr-1">TZ:</span>
+              <div className="bg-white/90 dark:bg-[#1E1815]/90 px-2.5 py-1 rounded-lg border border-amber-300 dark:border-amber-700/60 font-mono text-[11px] text-slate-600 dark:text-stone-400">
+                <span className="text-[10px] text-slate-500 dark:text-stone-400 font-bold mr-1">TZ:</span>
                 <strong>{currentCoords.tz}</strong>
               </div>
             )}

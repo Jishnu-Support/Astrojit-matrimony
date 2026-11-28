@@ -24,11 +24,34 @@ export const DEFAULT_LETTERHEAD_EN = {
 };
 
 export function getInitialLetterhead(user, isTa) {
+  if (
+    user?.pagerHeader &&
+    (user.pagerHeader.line1 ||
+      user.pagerHeader.line2 ||
+      user.pagerHeader.address1 ||
+      user.pagerHeader.address2 ||
+      user.pagerHeader.phoneEmail ||
+      user.pagerHeader.astrologerLogo ||
+      user.pagerHeader.invocation)
+  ) {
+    return {
+      line1: user.pagerHeader.line1 || '',
+      line2: user.pagerHeader.line2 || '',
+      address1: user.pagerHeader.address1 || '',
+      address2: user.pagerHeader.address2 || '',
+      phoneEmail: user.pagerHeader.phoneEmail || '',
+      invocation: user.pagerHeader.invocation !== undefined
+        ? user.pagerHeader.invocation
+        : (isTa ? '|| ஓம் ஸ்ரீ கணேசாய நமஹ ||' : '|| Om Sri Ganeshayah Namaha ||'),
+      astrologerLogo: user.pagerHeader.astrologerLogo || ''
+    };
+  }
+
   try {
     const saved = localStorage.getItem('astrojit_letterhead');
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (parsed && typeof parsed === 'object' && (parsed.line1 || parsed.line2)) {
+      if (parsed && typeof parsed === 'object' && (parsed.line1 || parsed.line2 || parsed.address1 || parsed.phoneEmail || parsed.astrologerLogo)) {
         if (parsed.line2) {
           parsed.line2 = parsed.line2
             .replace(/Thirukanitha\s+Parashara\s+/gi, '')
@@ -37,19 +60,7 @@ export function getInitialLetterhead(user, isTa) {
         return parsed;
       }
     }
-  } catch (e) {}
-
-  if (user?.pagerHeader && (user.pagerHeader.line1 || user.pagerHeader.line2)) {
-    return {
-      line1: user.pagerHeader.line1 || '',
-      line2: user.pagerHeader.line2 || '',
-      address1: user.pagerHeader.address1 || '',
-      address2: user.pagerHeader.address2 || '',
-      phoneEmail: user.pagerHeader.phoneEmail || '',
-      invocation: user.pagerHeader.invocation || (isTa ? '|| ஓம் ஸ்ரீ கணேசாய நமஹ ||' : '|| Om Sri Ganeshayah Namaha ||'),
-      astrologerLogo: user.pagerHeader.astrologerLogo || user.logo || ''
-    };
-  }
+  } catch {}
 
   return isTa ? { ...DEFAULT_LETTERHEAD_TA } : { ...DEFAULT_LETTERHEAD_EN };
 }

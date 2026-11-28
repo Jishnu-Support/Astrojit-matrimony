@@ -1,14 +1,13 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   Printer,
-  FileText,
   CheckSquare,
   Square,
   Monitor
 } from 'lucide-react';
 import { useLang } from '../i18n';
 import { useAuth } from '../context/AuthContext';
-import LetterheadBrandingModal, { getInitialLetterhead } from './LetterheadBrandingModal';
+import { getInitialLetterhead } from './LetterheadBrandingModal';
 import {
   calculateThirukanithaHoroscope,
   NAKSHATRAS,
@@ -155,11 +154,17 @@ function A5SouthChart({ title, chartData, lagnaRasi, isTa, sizeClass = 'h-[40mm]
         {/* Center Box */}
         <div
           style={{ gridRowStart: 2, gridRowEnd: 4, gridColumnStart: 2, gridColumnEnd: 4 }}
-          className="border border-stone-300 bg-[#FDF9F0] flex flex-col items-center justify-center p-1 text-center"
+          className="relative overflow-hidden border border-stone-300 bg-[#FDF9F0] flex flex-col items-center justify-center p-1 text-center"
         >
-          <span className={`${compact ? 'text-[8.5px]' : 'text-[13px]'} font-black text-[#7A1A22] leading-tight`}>{title}</span>
+          <img
+            src="/sri-yantra-center.png"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none select-none absolute inset-0 m-auto w-[84%] h-[84%] object-contain opacity-[0.14]"
+          />
+          <span className={`relative z-10 ${compact ? 'text-[8.5px]' : 'text-[13px]'} font-black text-[#7A1A22] leading-tight`}>{title}</span>
           {typeof lagnaRasi === 'number' && (
-            <span className={`${compact ? 'text-[7px]' : 'text-[10.5px]'} text-stone-600 font-semibold mt-0.5`}>
+            <span className={`relative z-10 ${compact ? 'text-[7px]' : 'text-[10.5px]'} text-stone-600 font-semibold mt-0.5`}>
               {isTa ? SIGN_NAMES[lagnaRasi]?.ta : SIGN_NAMES[lagnaRasi]?.en}
             </span>
           )}
@@ -200,12 +205,14 @@ export default function HoroscopeMultiPagePrint({
   const { user } = useAuth();
 
   const [letterhead, setLetterhead] = useState(() => getInitialLetterhead(user, isTa));
-  const [brandingModalOpen, setBrandingModalOpen] = useState(false);
   const [chartStyle, setChartStyle] = useState(() => birthData?.chartStyle || 'south');
   const [selectedIds, setSelectedIds] = useState(() => HOROSCOPE_20_SECTIONS.map(s => s.id));
 
   useEffect(() => {
     setLetterhead(getInitialLetterhead(user, isTa));
+    const onUpdated = () => setLetterhead(getInitialLetterhead(user, isTa));
+    window.addEventListener('astrojit-letterhead-updated', onUpdated);
+    return () => window.removeEventListener('astrojit-letterhead-updated', onUpdated);
   }, [user, isTa]);
 
   useEffect(() => {
@@ -223,15 +230,15 @@ export default function HoroscopeMultiPagePrint({
     user?.name ||
     (isTa ? 'ஸ்ரீ ஜிஷ்ணு ஜோதிடம் & வாஸ்து ஆராய்ச்சி மையம்' : 'ASTROJIT VEDIC ASTROLOGY CENTRE');
   const rawLine2 = letterhead?.line2 || '';
-  const isGenericSubtitle =
-    rawLine2 === 'Authentic Vedic Natal Horoscope Dossier' ||
-    rawLine2 === 'SAI BALAJI ASTROLOGICAL RESEARCH CENTRE';
+  const isGenericSubtitle = rawLine2 === 'Authentic Vedic Natal Horoscope Dossier';
   const astrologerSubTitle = (!isGenericSubtitle && rawLine2)
     ? rawLine2
     : (user?.name ? `${isTa ? 'ஜோதிடர்' : 'Astrologer'}: ${user.name}` : '');
   const astrologerAddress = [letterhead?.address1, letterhead?.address2].filter(Boolean).join(' • ');
   const astrologerContact = letterhead?.phoneEmail || [user?.phone, user?.email].filter(Boolean).join(' | ');
-  const invocationText = letterhead?.invocation || (isTa ? '|| ஸ்ரீ கணேசாய நமஹ ||' : '|| OM SRI GANESHAYA NAMAHA ||');
+  const invocationText = letterhead?.invocation !== undefined
+    ? letterhead.invocation
+    : (isTa ? '|| ஸ்ரீ கணேசாய நமஹ ||' : '|| OM SRI GANESHAYA NAMAHA ||');
 
   const summary = horoscope?.summary || {};
   const nativeName = birthData?.name || summary?.name || '---';
@@ -2026,7 +2033,7 @@ export default function HoroscopeMultiPagePrint({
             <div>
               <h2 className="text-base font-black text-[#7A1A22] dark:text-[#E8838B] tracking-tight flex flex-wrap items-center gap-2">
                 <span>{isTa ? 'முழுமையான 20-பிரிவு ஜாதக புத்தகம்' : 'Complete 20-Section Horoscope Booklet'}</span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 font-bold border border-amber-300">
+                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 font-bold border border-amber-300 dark:border-amber-700/60">
                   {isTa ? 'Half A4 (A5: 148 × 210 மி.மீ)' : 'Half A4 (A5: 148 × 210 mm)'}
                 </span>
               </h2>
@@ -2066,20 +2073,11 @@ export default function HoroscopeMultiPagePrint({
               </button>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setBrandingModalOpen(true)}
-              className="px-3 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-[#7A1A22] border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
-            >
-              <FileText className="w-3.5 h-3.5" />
-              <span>{isTa ? 'லெட்டர்ஹெட்' : 'Edit Letterhead'}</span>
-            </button>
-
             {onSwitchToOnePage && (
               <button
                 type="button"
                 onClick={onSwitchToOnePage}
-                className="px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-300 text-xs font-bold cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-800/80 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-600 text-xs font-bold cursor-pointer"
               >
                 {isTa ? '1-பக்க A4' : '1-Page A4'}
               </button>
@@ -2089,7 +2087,7 @@ export default function HoroscopeMultiPagePrint({
               <button
                 type="button"
                 onClick={onSwitchToScreen}
-                className="px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-300 text-xs font-bold cursor-pointer flex items-center gap-1"
+                className="px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-800/80 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-600 text-xs font-bold cursor-pointer flex items-center gap-1"
               >
                 <Monitor className="w-3.5 h-3.5" />
                 <span>{isTa ? 'திரை' : 'Screen'}</span>
@@ -2109,13 +2107,13 @@ export default function HoroscopeMultiPagePrint({
 
         {/* 20-Section Filter Checkboxes */}
         <div className="flex items-center gap-2 flex-wrap">
-          <button type="button" onClick={selectAll} className="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-[#7A1A22] text-[11px] font-bold cursor-pointer">
+          <button type="button" onClick={selectAll} className="px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/40 hover:bg-amber-200 dark:hover:bg-amber-900/60 text-[#7A1A22] dark:text-amber-300 text-[11px] font-bold cursor-pointer">
             {isTa ? 'அனைத்தும் (20)' : 'Select All (20)'}
           </button>
-          <button type="button" onClick={selectCore} className="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 text-[11px] font-bold cursor-pointer">
+          <button type="button" onClick={selectCore} className="px-2.5 py-1 rounded-lg bg-stone-100 dark:bg-stone-800/80 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 text-[11px] font-bold cursor-pointer">
             {isTa ? 'முக்கிய பிரிவுகள்' : 'Core Summary'}
           </button>
-          <button type="button" onClick={clearAll} className="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-500 text-[11px] font-bold cursor-pointer">
+          <button type="button" onClick={clearAll} className="px-2.5 py-1 rounded-lg bg-stone-100 dark:bg-stone-800/80 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-500 dark:text-stone-400 text-[11px] font-bold cursor-pointer">
             {isTa ? 'அனைத்தும் நீக்கு' : 'Clear All'}
           </button>
         </div>
@@ -2130,11 +2128,11 @@ export default function HoroscopeMultiPagePrint({
                 onClick={() => toggleSection(sec.id)}
                 className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-left text-[11px] font-semibold transition-all cursor-pointer ${
                   active
-                    ? 'bg-amber-50/90 border-amber-400 text-[#7A1A22]'
-                    : 'bg-white border-stone-200 text-stone-500 hover:bg-stone-50'
+                    ? 'bg-amber-50/90 dark:bg-amber-950/30 border-amber-400 text-[#7A1A22] dark:text-amber-300'
+                    : 'bg-white dark:bg-[#1E1815] border-stone-200 dark:border-stone-700 text-stone-500 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800'
                 }`}
               >
-                {active ? <CheckSquare className="w-3.5 h-3.5 text-[#7A1A22] shrink-0" /> : <Square className="w-3.5 h-3.5 text-stone-400 shrink-0" />}
+                {active ? <CheckSquare className="w-3.5 h-3.5 text-[#7A1A22] dark:text-amber-300 shrink-0" /> : <Square className="w-3.5 h-3.5 text-stone-400 shrink-0" />}
                 <span className="truncate">{isTa ? sec.titleTa : sec.titleEn}</span>
               </button>
             );
@@ -2146,7 +2144,7 @@ export default function HoroscopeMultiPagePrint({
       <div className="w-full overflow-x-auto pb-8">
         <div id="astrojit-horoscope-multipage" className="space-y-6 print:space-y-0">
           {generatedPages.length === 0 ? (
-            <div className="bg-white p-8 text-center text-stone-500 border border-stone-300 max-w-[210mm] mx-auto rounded-xl">
+            <div className="bg-white dark:bg-[#1E1815] p-8 text-center text-stone-500 dark:text-stone-400 border border-stone-300 dark:border-stone-600 max-w-[210mm] mx-auto rounded-xl">
               {isTa ? 'எந்தப் பிரிவும் தேர்ந்தெடுக்கப்படவில்லை.' : 'No sections selected. Please select sections above.'}
             </div>
           ) : (
@@ -2203,15 +2201,6 @@ export default function HoroscopeMultiPagePrint({
           )}
         </div>
       </div>
-
-      {/* Letterhead Branding Modal */}
-      <LetterheadBrandingModal
-        isOpen={brandingModalOpen}
-        onClose={() => setBrandingModalOpen(false)}
-        letterhead={letterhead}
-        onSave={(updated) => setLetterhead(updated)}
-        isTa={isTa}
-      />
     </div>
   );
 }

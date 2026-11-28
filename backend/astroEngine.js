@@ -100,8 +100,14 @@ const YOGAS = [
 const KARANAS = ['Bava', 'Balava', 'Kaulava', 'Taitila', 'Gara', 'Vanija', 'Vishti', 'Shakuni', 'Chatushpada', 'Naga', 'Kintughna'];
 
 const ENEMY_YONIS = [
-  ['Monkey', 'Goat'], ['Lion', 'Elephant'], ['Horse', 'Buffalo'], ['Cow', 'Tiger'],
-  ['Rat', 'Cat'], ['Snake', 'Rat'], ['Mongoose', 'Snake'], ['Deer', 'Dog']
+  ['Monkey', 'Goat'], ['Monkey', 'Sheep'],
+  ['Lion', 'Elephant'],
+  ['Horse', 'Buffalo'],
+  ['Cow', 'Tiger'],
+  ['Rat', 'Cat'],
+  ['Snake', 'Rat'], ['Serpent', 'Rat'],
+  ['Mongoose', 'Snake'], ['Mongoose', 'Serpent'],
+  ['Deer', 'Dog']
 ];
 
 const VEDHA_PAIRS = [
@@ -594,8 +600,18 @@ function parseDobParts(dobStr) {
 
 function parseTimeParts(timeStr) {
   if (!timeStr) return { hour: 6, minute: 0 };
-  const parts = String(timeStr).split(':').map(s => parseInt(s, 10));
-  return { hour: isNaN(parts[0]) ? 6 : parts[0], minute: isNaN(parts[1]) ? 0 : parts[1] };
+  const raw = String(timeStr).trim();
+  const amPmMatch = raw.match(/\b(AM|PM)\b/i);
+  const clean = raw.replace(/\b(AM|PM)\b/i, '').trim();
+  const parts = clean.split(':').map(s => parseInt(s, 10));
+  let hour = isNaN(parts[0]) ? 6 : parts[0];
+  const minute = isNaN(parts[1]) ? 0 : parts[1];
+  if (amPmMatch) {
+    const period = amPmMatch[1].toUpperCase();
+    if (period === 'PM' && hour < 12) hour += 12;
+    else if (period === 'AM' && hour === 12) hour = 0;
+  }
+  return { hour, minute };
 }
 
 function computeJulianDay(Y, M, D, hour = 0, minute = 0) {
@@ -674,23 +690,30 @@ function computePersonGrahas(input = {}) {
   const ascTrop = normalizeDeg(ascRad * 180 / Math.PI);
   const ascSid = normalizeDeg(ascTrop - ayanamsha);
 
-  // Moon Position & Star (use astronomical Moon if no explicit star/pada override was given)
+  // Moon Position & Star (preserve exact astronomical Moon when DOB matches the supplied star)
   let moonSid = astroMoonSid;
   let starObj = findStarObj(input);
-  const rashiIdx = findRashiIdx(input);
   let pada = parseInt(input.pada || input.padam || 0, 10);
+  const astroPadaTotal = Math.floor((astroMoonSid * 3 + 1e-9) / 10);
+  const astroNakIdx = Math.floor(astroPadaTotal / 4) % 27;
+  const astroPada = (astroPadaTotal % 4) + 1;
+  const hasDob = Boolean(input.dob || input.birthDate || input.dateOfBirth);
 
   if (input.star || input.starNakshatra || input.nakshatra) {
     if (starObj && starObj.index !== undefined) {
-      const pVal = pada >= 1 && pada <= 4 ? pada : 1;
-      pada = pVal;
-      moonSid = normalizeDeg(starObj.index * (40 / 3) + (pVal - 1) * (10 / 3) + (5 / 3));
+      if (hasDob && astroNakIdx === starObj.index) {
+        // Use true astronomical longitude so Dasha balance & Tithi match Horoscope View exactly
+        pada = astroPada;
+        moonSid = astroMoonSid;
+      } else {
+        const pVal = pada >= 1 && pada <= 4 ? pada : 1;
+        pada = pVal;
+        moonSid = normalizeDeg(starObj.index * (40 / 3) + (pVal - 1) * (10 / 3) + (5 / 3));
+      }
     }
   } else {
-    const padaTotal = Math.floor((astroMoonSid * 3 + 1e-9) / 10);
-    const nakIdx = Math.floor(padaTotal / 4) % 27;
-    pada = (padaTotal % 4) + 1;
-    starObj = { ...NAKSHATRAS[nakIdx], index: nakIdx };
+    pada = astroPada;
+    starObj = { ...NAKSHATRAS[astroNakIdx], index: astroNakIdx };
     moonSid = astroMoonSid;
   }
   if (!pada || pada < 1 || pada > 4) pada = 1;
