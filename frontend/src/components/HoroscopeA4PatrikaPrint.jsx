@@ -570,7 +570,7 @@ export default function HoroscopeA4PatrikaPrint({
                         lagnaRasi={lagnaRasi}
                         isTamil={isTa}
                         isPrint={true}
-                        className="h-full w-auto aspect-square"
+                        fitHeight={true}
                       />
                     </div>
                     <div className="h-[57mm] border border-black bg-white p-1 flex items-center justify-center overflow-hidden">
@@ -584,7 +584,7 @@ export default function HoroscopeA4PatrikaPrint({
                         lagnaRasi={planets.find(p => p.id === 'lagna')?.navamsa ?? lagnaRasi}
                         isTamil={isTa}
                         isPrint={true}
-                        className="h-full w-auto aspect-square"
+                        fitHeight={true}
                       />
                     </div>
                   </>

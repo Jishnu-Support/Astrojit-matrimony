@@ -295,6 +295,7 @@ export default function HoroscopeMultiPagePrint({
               lagnaRasi={lRasi}
               isTamil={isTa}
               isPrint={true}
+              fitHeight={true}
             />
           </div>
         );

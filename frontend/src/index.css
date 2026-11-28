@@ -83,12 +83,20 @@
   html.dark [class*="dark:bg-stone-800/"]:not(.print-page):not(.one-page-sheet):not(.a4-booklet-sheet):not(.a5-booklet-sheet):not(#astrojit-horoscope-1page) {
     background-color: var(--dark-sky-card-alt, rgba(11, 21, 52, 0.82)) !important;
   }
-  html.dark [class*="dark:border-stone-800"]:not(.print-page),
+  html.dark [class~="dark:border-stone-800"]:not(.print-page),
   html.dark [class*="dark:border-stone-700"]:not(.print-page),
   html.dark [class*="dark:border-amber-500/20"]:not(.print-page),
   html.dark [class*="dark:border-amber-500/15"]:not(.print-page),
   html.dark [class*="dark:border-amber-500/10"]:not(.print-page) {
     border-color: var(--dark-sky-border, rgba(148, 163, 184, 0.20)) !important;
+  }
+  /* Keep print sheets strictly crisp black/white paper even while previewed in Dark Mode */
+  html.dark #astrojit-horoscope-1page *,
+  html.dark .a4-booklet-sheet *,
+  html.dark .a5-booklet-sheet *,
+  html.dark .one-page-sheet *,
+  html.dark .print-page * {
+    backdrop-filter: none !important;
   }
 }
 

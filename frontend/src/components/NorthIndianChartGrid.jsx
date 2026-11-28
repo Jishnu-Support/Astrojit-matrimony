@@ -36,7 +36,8 @@ export default function NorthIndianChartGrid({
   centerSub = '',
   isTamil = false,
   className = '',
-  isPrint = false
+  isPrint = false,
+  fitHeight = false
 }) {
   // 1. Build a map of sign index 0..11 -> array of occupant strings
   const signsMap = {};
@@ -137,25 +138,32 @@ export default function NorthIndianChartGrid({
   const bgColor = isPrint ? '#FFFFFF' : '#FFFDF9';
 
   return (
-    <div className={`flex flex-col items-center w-full max-w-[420px] mx-auto select-none ${className}`}>
+    <div className={`flex flex-col items-center w-full max-w-[420px] mx-auto select-none ${fitHeight ? 'h-full min-h-0' : ''} ${className}`}>
       {/* Title Badge if provided - positioned above chart to prevent any overlap with house numbers */}
       {centerTitle && (
-        <div className="text-center mb-1.5 shrink-0">
-          <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#7A1A22] dark:text-amber-300 bg-amber-50/90 dark:bg-stone-900/90 border border-amber-900/20 px-2.5 py-0.5 rounded shadow-2xs inline-block">
+        <div className={`text-center shrink-0 ${fitHeight ? 'mb-1 leading-tight' : 'mb-1.5'}`}>
+          <span
+            className={`text-[10px] sm:text-[11px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded shadow-2xs inline-block ${
+              isPrint
+                ? 'text-black bg-stone-100 border border-black/35'
+                : 'text-[#7A1A22] dark:text-amber-300 bg-amber-50/90 dark:bg-stone-900/90 border border-amber-900/20'
+            }`}
+          >
             {centerTitle}
           </span>
           {centerSub && (
-            <div className="text-[8px] font-bold text-stone-500 mt-0.5">
+            <div className={`text-[8px] font-bold leading-none mt-0.5 ${isPrint ? 'text-stone-700' : 'text-stone-500'}`}>
               {centerSub}
             </div>
           )}
         </div>
       )}
 
-      <div className="relative aspect-square w-full">
+      <div className={fitHeight ? 'relative flex-1 min-h-0 w-full flex items-center justify-center' : 'relative aspect-square w-full'}>
         <svg
           viewBox="0 0 400 400"
-          className="w-full h-full drop-shadow-2xs"
+          preserveAspectRatio="xMidYMid meet"
+          className={fitHeight ? 'h-full w-auto max-w-full max-h-full aspect-square drop-shadow-2xs' : 'w-full h-full drop-shadow-2xs'}
           style={{ fontFamily: isTamil ? "'Noto Serif Tamil', Georgia, serif" : "Georgia, serif" }}
         >
           {/* Background */}
