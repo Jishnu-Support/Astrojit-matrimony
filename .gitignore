@@ -29,3 +29,6 @@ __pycache__/
 *.pyc
 *.bak
 
+# Local runtime database storage
+backend/data/*.json
+
