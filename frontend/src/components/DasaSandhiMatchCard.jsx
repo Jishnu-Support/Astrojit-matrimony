@@ -7,7 +7,7 @@ function PersonDasaTimelineCard({ person, title, isBride, isTa }) {
 
   return (
     <div className={`border rounded-xl p-3 space-y-2.5 ${isBride ? 'bg-rose-50/40 border-rose-200' : 'bg-indigo-50/40 border-indigo-200'}`}>
-      <div className="flex items-center justify-between text-xs font-bold">
+      <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs font-bold">
         <span className={isBride ? 'text-rose-900' : 'text-indigo-900'}>{title}</span>
         {person?.inDashaChidram ? (
           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
@@ -54,7 +54,7 @@ function PersonDasaTimelineCard({ person, title, isBride, isTa }) {
           {upcomingList.map((tr, idx) => (
             <div
               key={`${tr.dateStr}-${idx}`}
-              className="flex items-center justify-between px-2 py-1 rounded bg-stone-50 border border-stone-100"
+              className="flex flex-wrap items-center justify-between gap-1 px-2 py-1 rounded bg-stone-50 border border-stone-100"
             >
               <span className="font-semibold text-stone-800 flex items-center gap-1">
                 <span>{isTa ? tr.fromTa : tr.fromEn}</span>

@@ -14,7 +14,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const { readDb, writeDb, getPgStatus, initDb } = require('./db');
-const { getDailyPanchangam, calculateKundliMatch, calculateTamilPoruthams, evaluateChevvaiDosha } = require('./astroEngine');
+const { getDailyPanchangam, calculateKundliMatch, calculateTamilPoruthams, evaluateChevvaiDosha, findMatchingNakshatrasForHoroscope } = require('./astroEngine');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -1767,6 +1767,21 @@ app.post('/api/matchmaking', (req, res) => {
   } catch (error) {
     console.error('Matchmaking error:', error);
     return res.status(500).json({ error: 'Failed to calculate matchmaking: ' + error.message });
+  }
+});
+
+// Find all matching partner Nakshatras (27-Star Porutham Scan) for a single horoscope
+app.post('/api/matchmaking/matching-nakshatras', (req, res) => {
+  try {
+    const { person, gender } = req.body || {};
+    if (!person) {
+      return res.status(400).json({ error: 'Person birth or Nakshatra details are required.' });
+    }
+    const result = findMatchingNakshatrasForHoroscope(person, gender || person.gender || 'female');
+    return res.json(result);
+  } catch (error) {
+    console.error('Matching nakshatras error:', error);
+    return res.status(500).json({ error: 'Failed to compute matching nakshatras: ' + error.message });
   }
 });
 

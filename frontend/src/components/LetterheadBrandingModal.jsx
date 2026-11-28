@@ -147,11 +147,6 @@ export default function LetterheadBrandingModal({
                   {isTa ? 'அச்சுடன் இணைக்கப்பட்டது' : '1-Pager Synced'}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 dark:text-stone-400 mt-0.5">
-                {isTa
-                  ? 'A4 தாளில் அச்சிடப்படும் மேல் பகுதி கட்டத்தின் தலைப்பு, முகவரி மற்றும் தொடர்பு விவரங்கள்'
-                  : 'Header details printed on the top box of 1-page A4 sheets and booklet front page'}
-              </p>
             </div>
           </div>
 

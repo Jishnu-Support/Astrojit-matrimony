@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  Search,
   User,
-  Phone,
   Calendar,
   MapPin,
   Sparkles,
@@ -10,7 +8,6 @@ import {
   Check,
   CheckCircle2,
   FileText,
-  ArrowRight,
   ShieldCheck,
   Building2,
   UserCheck,
@@ -53,6 +50,7 @@ import ShashtashtagamMatchCard from '../components/ShashtashtagamMatchCard';
 import ChandranMatchCard from '../components/ChandranMatchCard';
 import GuruMatchCard from '../components/GuruMatchCard';
 import DasaSandhiMatchCard from '../components/DasaSandhiMatchCard';
+import MatchingNakshatrasCard from '../components/MatchingNakshatrasCard';
 import HoroscopeHub from '../components/HoroscopeHub';
 import ThirukanithaHoroscopeView from '../components/ThirukanithaHoroscopeView';
 import HoroscopePagerView from '../components/HoroscopePagerView';
@@ -91,11 +89,6 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   useEffect(() => {
     refreshCalculations();
   }, [activeTab, refreshCalculations]);
-
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [showSearchKundli, setShowSearchKundli] = useState(false);
 
   // Live Matchmaking with Partner State (Support both existing client lookup & adding new couple manually)
   const [person1Mode, setPerson1Mode] = useState('client'); // 'client' | 'manual'
@@ -260,14 +253,17 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
   }, [p2CityInput]);
   const [activeClientMatchReport, setActiveClientMatchReport] = useState(null);
   const [calculatingActiveMatch, setCalculatingActiveMatch] = useState(false);
+  const [standaloneStarMatch, setStandaloneStarMatch] = useState(null);
+  const [findingStarsLoading, setFindingStarsLoading] = useState(false);
   const [activeMatchTab, setActiveMatchTab] = useState('tamil');
-  const [openMatchSections, setOpenMatchSections] = useState({ 1: true, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false, 10: false, 11: false });
+  const ALL_MATCH_SECTIONS_OPEN = { 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true, 11: true, 12: true };
+  const [openMatchSections, setOpenMatchSections] = useState(ALL_MATCH_SECTIONS_OPEN);
 
   const toggleMatchSection = (num) => {
     setOpenMatchSections(prev => ({ ...prev, [num]: !prev[num] }));
   };
-  const expandAllMatchSections = () => setOpenMatchSections({ 1: true, 2: true, 3: true, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true, 10: true, 11: true });
-  const collapseAllMatchSections = () => setOpenMatchSections({ 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false, 10: false, 11: false });
+  const expandAllMatchSections = () => setOpenMatchSections(ALL_MATCH_SECTIONS_OPEN);
+  const collapseAllMatchSections = () => setOpenMatchSections({ 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false, 10: false, 11: false, 12: false });
   const jumpToMatchSection = (num) => {
     setOpenMatchSections(prev => ({ ...prev, [num]: true }));
     setTimeout(() => {
@@ -608,54 +604,6 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
     }
   };
 
-  const astroSearchTimeoutRef = useRef(null);
-
-  const performAstroSearch = async (val) => {
-    const q = (typeof val === 'string' ? val : searchQuery).trim();
-    if (!q) {
-      setSearchResults([]);
-      setIsSearching(false);
-      return;
-    }
-    setIsSearching(true);
-    setSelectedClientMobile(null);
-    setClientProfile(null);
-    try {
-      const res = await API.searchClients(q);
-      setSearchResults(res.clients || []);
-    } catch (err) {
-      console.warn('Error searching clients:', err);
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  };
-
-  const handleAstroSearchInputChange = (e) => {
-    const val = e.target.value;
-    setSearchQuery(val);
-    if (astroSearchTimeoutRef.current) {
-      clearTimeout(astroSearchTimeoutRef.current);
-    }
-    if (!val.trim()) {
-      setSearchResults([]);
-      setIsSearching(false);
-      return;
-    }
-    setIsSearching(true);
-    astroSearchTimeoutRef.current = setTimeout(() => {
-      performAstroSearch(val);
-    }, 60);
-  };
-
-  const handleSearch = async (e) => {
-    if (e && e.preventDefault) e.preventDefault();
-    if (astroSearchTimeoutRef.current) {
-      clearTimeout(astroSearchTimeoutRef.current);
-    }
-    await performAstroSearch(searchQuery);
-  };
-
   const handleSelectClient = async (mobile) => {
     setSelectedClientMobile(mobile);
     setLoadingClient(true);
@@ -782,10 +730,65 @@ export default function AstrologerDashboard({ activeTab: propTab, onTabChange })
 
       const report = await API.calculateMatch(boyData, girlData);
       setActiveClientMatchReport(report);
+      expandAllMatchSections();
     } catch (err) {
       alert((lang === 'ta' ? 'பொருத்தம் கணக்கிட முடியவில்லை: ' : 'Failed to calculate matchmaking: ') + err.message);
     } finally {
       setCalculatingActiveMatch(false);
+    }
+  };
+
+  const handleFindMatchingStarsForPerson1 = async () => {
+    const isP1Manual = person1Mode === 'manual' || !(activeBirthData?.name && activeBirthData?.dob);
+    if (isP1Manual && (!manualPerson1Details.name?.trim() || !manualPerson1Details.dob?.trim())) {
+      alert(lang === 'ta' ? 'பெயர் மற்றும் பிறந்த தேதியை உள்ளிடவும்.' : 'Please enter Person 1 Name and Birth Date.');
+      return;
+    }
+    if (!isP1Manual && (!activeBirthData?.name || !activeBirthData?.dob)) {
+      alert(lang === 'ta' ? 'வாடிக்கையாளரைத் தேர்ந்தெடுக்கவும் அல்லது கைமுறையாக உள்ளிடவும்.' : 'Please select a client or switch to Enter Manually.');
+      return;
+    }
+    setFindingStarsLoading(true);
+    try {
+      const activeP1Horoscope = isP1Manual ? manualPerson1Horoscope : calculatedHoroscope;
+      const p1Gender = isP1Manual ? (manualPerson1Details.gender || 'female') : (activeBirthData?.gender || 'female');
+      const p1Nak = activeP1Horoscope?.summary?.nakshatraEn ||
+        activeP1Horoscope?.summary?.nakshatra ||
+        (typeof activeP1Horoscope?.summary?.moonNak === 'number' && NAKSHATRAS[activeP1Horoscope.summary.moonNak]?.en) ||
+        (!isP1Manual ? clientProfile?.nakshatra : '');
+      const p1Rasi = activeP1Horoscope?.summary?.moonSignEn ||
+        activeP1Horoscope?.summary?.moonSign ||
+        activeP1Horoscope?.summary?.rasiEn ||
+        (typeof activeP1Horoscope?.summary?.moonRasi === 'number' && RASHIS[activeP1Horoscope.summary.moonRasi]?.en) ||
+        (!isP1Manual ? clientProfile?.rasi : '');
+      const p1Pada = activeP1Horoscope?.summary?.moonPada || 1;
+      const p1DataObj = isP1Manual
+        ? {
+            name: manualPerson1Details.name.trim(),
+            dob: manualPerson1Details.dob,
+            dobTime: manualPerson1Details.dobTime || '12:00',
+            lat: manualPerson1Details.lat || 11.6643,
+            lon: manualPerson1Details.lon || 78.1460,
+            starNakshatra: p1Nak,
+            moonSign: p1Rasi,
+            pada: p1Pada
+          }
+        : {
+            name: activeBirthData.name || 'Client',
+            dob: activeBirthData.dob,
+            dobTime: activeBirthData.dobTime || '10:30',
+            lat: activeBirthData.lat || 11.6643,
+            lon: activeBirthData.lon || 78.1460,
+            starNakshatra: p1Nak,
+            moonSign: p1Rasi,
+            pada: p1Pada
+          };
+      const res = await API.findMatchingNakshatras(p1DataObj, p1Gender);
+      setStandaloneStarMatch(res);
+    } catch (err) {
+      alert((lang === 'ta' ? 'நட்சத்திரப் பட்டியல் பெற முடியவில்லை: ' : 'Failed to find matching stars: ') + err.message);
+    } finally {
+      setFindingStarsLoading(false);
     }
   };
 
@@ -1161,9 +1164,6 @@ Shubham Bhavatu! 🙏`;
                 <Calendar className="w-5 h-5 text-indigo-600" />
                 {t('consultationSessionsTitle')}
               </h3>
-              <p className="text-xs text-slate-500">
-                {t('consultationSessionsDesc')}
-              </p>
             </div>
 
             <div className="flex items-center gap-2">
@@ -1501,11 +1501,6 @@ Shubham Bhavatu! 🙏`;
                   <User className="w-4 h-4 text-indigo-600" />
                   <span>{lang === 'ta' ? 'வாடிக்கையாளர் ஜாதக வரலாறு & விபரங்கள்' : 'Client Horoscope History & Profile Summary'}</span>
                 </h4>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  {lang === 'ta'
-                    ? 'முந்தைய வாடிக்கையாளர் விவரங்கள் மற்றும் ஜாதக வரலாறு இங்கே காட்டப்படும்.'
-                    : 'Previous client details and horoscope history are displayed here.'}
-                </p>
               </div>
             </div>
 
@@ -1639,75 +1634,6 @@ Shubham Bhavatu! 🙏`;
               </div>
             )}
           </div>
-
-          {/* Database Client Lookup by Mobile */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-xs space-y-3">
-            <h3 className="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
-              <Search className="w-5 h-5 text-indigo-600" />
-              {t('clientSearchTitle')}
-            </h3>
-            <p className="text-xs text-slate-500 mb-3.5">
-              {t('clientSearchDesc')}
-            </p>
-
-            <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2.5">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={handleAstroSearchInputChange}
-                placeholder={t('searchMobilePlaceholder')}
-                className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500"
-              />
-              <button
-                type="submit"
-                disabled={isSearching}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs sm:text-sm transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
-              >
-                {isSearching ? <Sparkles className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                {t('searchBtn')}
-              </button>
-            </form>
-
-            {searchResults.length > 0 && (
-              <div className="pt-3 space-y-3 border-t border-slate-100">
-                <h4 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center justify-between">
-                  <span>{t('matchingClientsFound')} ({searchResults.length} {t('foundSuffix')})</span>
-                  <span className="text-[11px] text-slate-500 font-normal">{t('clickClientToGen')}</span>
-                </h4>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {searchResults.map((cl) => (
-                    <div
-                      key={cl.id}
-                      onClick={() => handleSelectClient(cl.mobile)}
-                      className="bg-slate-50/70 border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/30 p-4 rounded-xl transition-all cursor-pointer group flex justify-between items-center"
-                    >
-                      <div>
-                        <h5 className="font-bold text-slate-900 text-sm sm:text-base group-hover:text-indigo-700 transition-colors">
-                          {cl.name}
-                        </h5>
-                        <div className="text-xs text-slate-600 space-y-0.5 mt-1.5">
-                          <p className="flex items-center gap-1 text-amber-700 font-bold">
-                            <Phone className="w-3.5 h-3.5" /> {cl.mobile}
-                          </p>
-                          <p className="flex items-center gap-1">
-                            <Calendar className="w-3.5 h-3.5 text-slate-400" /> {t('born')}: {cl.dob} ({cl.dobTime})
-                          </p>
-                          <p className="flex items-center gap-1 truncate max-w-[200px]">
-                            <MapPin className="w-3.5 h-3.5 text-slate-400" /> {cl.dobPlace}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="bg-white border border-slate-200 group-hover:border-indigo-400 p-2 rounded-lg transition-colors">
-                        <ArrowRight className="w-4 h-4 text-indigo-600" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
         </div>
       )}
 
@@ -1734,13 +1660,8 @@ Shubham Bhavatu! 🙏`;
                   <div>
                     <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
                       <Heart className="w-5 h-5 text-rose-600 fill-rose-600/20" />
-                      <span>{lang === 'ta' ? 'நேரலை திருமணப் பொருத்தம் (10 பொருத்தங்கள் & குணங்கள்)' : 'Live Client Matchmaking (10 Poruthams & Gunas)'}</span>
+                      <span>{lang === 'ta' ? 'நேரலை திருமணப் பொருத்தம்' : 'Live Client Matchmaking'}</span>
                     </h3>
-                    <p className="text-xs text-slate-500 mt-0.5">
-                      {lang === 'ta'
-                        ? 'கிளையண்ட் தேடல் மூலமாகவோ அல்லது இருவரது விபரங்களையும் புதிதாக உள்ளிட்டோ உடனடிப் பொருத்தம் பார்க்கலாம்.'
-                        : 'Compare searched client with partner, or enter both couple details newly to calculate 10 Poruthams.'}
-                    </p>
                   </div>
 
                   <div className="flex items-center gap-2 flex-wrap">
@@ -1764,10 +1685,10 @@ Shubham Bhavatu! 🙏`;
                       ? 'md:order-1 bg-rose-50/40 border-rose-200'
                       : 'md:order-2 bg-indigo-50/40 border-indigo-200'
                   }`}>
-                    <div className={`flex justify-between items-center pb-2 border-b ${
+                    <div className={`flex flex-wrap justify-between items-center gap-2 pb-2 border-b ${
                       !isP1Male ? 'border-rose-100' : 'border-indigo-100'
                     }`}>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span className={`font-bold uppercase tracking-wider text-[11px] flex items-center gap-1.5 ${
                           !isP1Male ? 'text-rose-900' : 'text-indigo-900'
                         }`}>
@@ -1913,7 +1834,7 @@ Shubham Bhavatu! 🙏`;
                               <Clock className={`w-3 h-3 inline mr-1 ${!isP1Male ? 'text-rose-600' : 'text-indigo-600'}`} />
                               {lang === 'ta' ? 'பிறந்த நேரம் (12-மணி AM/PM)' : 'Birth Time (12-Hour AM/PM)'}
                             </label>
-                            <div className="flex items-center gap-1">
+                            <div className="flex flex-wrap items-center gap-1">
                               <select
                                 value={p1TimeState.hour}
                                 onChange={e => updateP1TimePart('hour', e.target.value)}
@@ -2013,7 +1934,7 @@ Shubham Bhavatu! 🙏`;
                             </div>
 
                             {showP1CityDropdown && p1CitySuggestions.length > 0 && (
-                              <div className={`absolute left-0 right-0 top-full mt-1 bg-white border rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto divide-y divide-slate-100 ${
+                              <div className={`absolute left-0 right-0 top-full mt-1 bg-white border rounded-xl shadow-xl z-20 max-h-48 overflow-y-auto divide-y divide-slate-100 ${
                                 !isP1Male ? 'border-rose-200' : 'border-indigo-200'
                               }`}>
                                 {p1CitySuggestions.map((item, idx) => (
@@ -2125,7 +2046,7 @@ Shubham Bhavatu! 🙏`;
                           <Clock className={`w-3 h-3 inline mr-1 ${isP1Male ? 'text-rose-600' : 'text-indigo-600'}`} />
                           {lang === 'ta' ? 'பிறந்த நேரம் (12-மணி AM/PM)' : 'Birth Time (12-Hour AM/PM)'}
                         </label>
-                        <div className="flex items-center gap-1">
+                        <div className="flex flex-wrap items-center gap-1">
                           <select
                             value={p2TimeState.hour}
                             onChange={e => updateP2TimePart('hour', e.target.value)}
@@ -2225,7 +2146,7 @@ Shubham Bhavatu! 🙏`;
                         </div>
 
                         {showP2CityDropdown && p2CitySuggestions.length > 0 && (
-                          <div className={`absolute left-0 right-0 top-full mt-1 bg-white border rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto divide-y divide-slate-100 ${
+                          <div className={`absolute left-0 right-0 top-full mt-1 bg-white border rounded-xl shadow-xl z-20 max-h-48 overflow-y-auto divide-y divide-slate-100 ${
                             isP1Male ? 'border-rose-200' : 'border-indigo-200'
                           }`}>
                             {p2CitySuggestions.map((item, idx) => (
@@ -2278,8 +2199,8 @@ Shubham Bhavatu! 🙏`;
                   </div>
                 </div>
 
-                {/* Calculate Button (Below Bride & Groom Details) */}
-                <div className="flex justify-center pt-1">
+                {/* Calculate & Quick 27-Star Finder Buttons (Below Bride & Groom Details) */}
+                <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
                   <button
                     type="button"
                     onClick={handleCalculateActiveMatch}
@@ -2289,7 +2210,36 @@ Shubham Bhavatu! 🙏`;
                     {calculatingActiveMatch ? <Sparkles className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                     <span>{lang === 'ta' ? 'கணக்கிடுக' : 'Calculate'}</span>
                   </button>
+                  <button
+                    type="button"
+                    onClick={handleFindMatchingStarsForPerson1}
+                    disabled={findingStarsLoading}
+                    className="bg-amber-100 hover:bg-amber-200 text-[#7A1A22] border border-amber-300 font-bold px-5 py-2.5 rounded-xl text-xs sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  >
+                    <Star className={`w-4 h-4 ${findingStarsLoading ? 'animate-spin' : ''}`} />
+                    <span>{lang === 'ta' ? 'பொருந்தும் நட்சத்திரங்கள் (27 நட்சத்திரம்)' : 'Find Matching Nakshatras (27 Stars)'}</span>
+                  </button>
                 </div>
+
+                {/* Standalone 27-Star Matching Result (for Person 1 before Partner 2) */}
+                {standaloneStarMatch && (
+                  <div className="bg-white rounded-2xl border border-amber-300 shadow-xs p-3.5 sm:p-4 space-y-2">
+                    <div className="flex items-center justify-between border-b border-amber-100 pb-2">
+                      <span className="text-xs sm:text-sm font-bold text-[#7A1A22] flex items-center gap-1.5">
+                        <Star className="w-4 h-4 text-amber-600" />
+                        <span>{MATCH_I18N.tabMatchingNakshatras[lang] || MATCH_I18N.tabMatchingNakshatras.en}</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setStandaloneStarMatch(null)}
+                        className="text-[11px] font-bold text-stone-500 hover:text-stone-900 cursor-pointer"
+                      >
+                        ✕ {lang === 'ta' ? 'மூடு' : 'Close'}
+                      </button>
+                    </div>
+                    <MatchingNakshatrasCard standaloneData={standaloneStarMatch} />
+                  </div>
+                )}
 
                 {/* Calculated Match Results View (Horoscope Screen View Style: Jump Bar + Collapsible Sections, No Scrolling Tabs) */}
                 {activeClientMatchReport && (
@@ -2308,7 +2258,7 @@ Shubham Bhavatu! 🙏`;
                           defaultValue=""
                           className="bg-white border border-stone-300 rounded-lg px-2.5 py-1.5 text-xs font-bold text-stone-800 focus:outline-none focus:border-[#7A1A22] w-full max-w-xs cursor-pointer"
                         >
-                          <option value="">{lang === 'ta' ? '-- 11 பிரிவுகள் (தேர்வு செய்க) --' : '-- Select Section (1 to 11) --'}</option>
+                          <option value="">{lang === 'ta' ? '-- 12 பிரிவுகள் (தேர்வு செய்க) --' : '-- Select Section (1 to 12) --'}</option>
                           <option value="1">1. {MATCH_I18N.tabTamilPorutham[lang] || MATCH_I18N.tabTamilPorutham.en}</option>
                           <option value="2">2. {MATCH_I18N.tabAshtakoota[lang] || MATCH_I18N.tabAshtakoota.en}</option>
                           <option value="3">3. {MATCH_I18N.tabGujaDasha[lang] || MATCH_I18N.tabGujaDasha.en}</option>
@@ -2320,6 +2270,7 @@ Shubham Bhavatu! 🙏`;
                           <option value="9">9. {MATCH_I18N.tabChandran[lang] || MATCH_I18N.tabChandran.en}</option>
                           <option value="10">10. {MATCH_I18N.tabGuru[lang] || MATCH_I18N.tabGuru.en}</option>
                           <option value="11">11. {MATCH_I18N.tabDasaSandhi[lang] || MATCH_I18N.tabDasaSandhi.en}</option>
+                          <option value="12">12. {MATCH_I18N.tabMatchingNakshatras[lang] || MATCH_I18N.tabMatchingNakshatras.en}</option>
                         </select>
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -2635,6 +2586,29 @@ Shubham Bhavatu! 🙏`;
                         </div>
                       )}
                     </div>
+
+                    {/* SECTION 12: Matching Nakshatras (27-Star Finder) */}
+                    <div id="match-section-12" className="bg-white rounded-2xl border border-amber-900/15 shadow-xs overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => toggleMatchSection(12)}
+                        className="w-full p-3.5 sm:p-4 flex items-center justify-between text-left hover:bg-amber-50/50 transition-colors cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-7 h-7 rounded-xl bg-amber-900/10 text-[#7A1A22] font-bold flex items-center justify-center text-xs font-mono shrink-0">12</span>
+                          <span className="text-sm font-bold text-[#7A1A22] flex items-center gap-1.5">
+                            <Star className="w-4 h-4 text-amber-600" />
+                            <span>{MATCH_I18N.tabMatchingNakshatras[lang] || MATCH_I18N.tabMatchingNakshatras.en}</span>
+                          </span>
+                        </div>
+                        <span className="text-xs font-bold text-stone-500">{openMatchSections[12] ? '▲' : '▼'}</span>
+                      </button>
+                      {openMatchSections[12] && (
+                        <div className="p-3.5 sm:p-4 pt-0 border-t border-amber-900/10">
+                          <MatchingNakshatrasCard matchReport={activeClientMatchReport} />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
@@ -2648,9 +2622,6 @@ Shubham Bhavatu! 🙏`;
                 <Heart className="w-5 h-5 text-rose-600 fill-rose-600/20" />
                 {t('matrimonialRequestsTitle')}
               </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                {t('matrimonialRequestsDesc')}
-              </p>
             </div>
 
             <div className="flex items-center gap-2">
@@ -3122,11 +3093,6 @@ Shubham Bhavatu! 🙏`;
                 <Edit3 className="w-5 h-5 text-indigo-600" />
                 <span>{lang === 'ta' ? 'ஜோதிடர் சுயவிவரம் & 1-பேஜர் லெட்டர்ஹெட் அமைப்புகள்' : 'Astrologer Profile & 1-Pager Letterhead Branding'}</span>
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
-                {lang === 'ta'
-                  ? 'இங்கு பதிவு செய்யும் ஜோதிட நிலையம், முகவரி & தொடர்பு விவரங்கள் அனைத்து 1-பேஜர் ஜாதகங்களிலும் தானாகவே புதுப்பிக்கப்படும்.'
-                  : 'Organization title, branches & contact details entered here will automatically update on every 1-pager horoscope.'}
-              </p>
             </div>
 
             <div className="flex items-center gap-2">
@@ -3151,9 +3117,6 @@ Shubham Bhavatu! 🙏`;
                     <FileText className="w-4 h-4 text-amber-600" />
                     <span>{lang === 'ta' ? '1-பேஜர் ஜாதக தலைப்பு & முகவரி (Letterhead)' : '1-Pager Letterhead Branding Details'}</span>
                   </h3>
-                  <p className="text-[11px] text-slate-500">
-                    {lang === 'ta' ? 'A4 தாளில் அச்சிடப்படும் மேல் பகுதி கட்டத்தின் விவரங்கள்' : 'Header details printed on the top box of 1-page A4 sheets'}
-                  </p>
                 </div>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
                   {lang === 'ta' ? '1-பேஜர் இணைப்பு' : '1-Pager Synced'}
@@ -3346,9 +3309,6 @@ Shubham Bhavatu! 🙏`;
                   <UserCheck className="w-4 h-4 text-indigo-600" />
                   <span>{lang === 'ta' ? 'ஜோதிடர் சுயவிவரம் & அலுவலகம்' : 'Astrologer Professional Details'}</span>
                 </h3>
-                <p className="text-[11px] text-slate-500">
-                  {lang === 'ta' ? 'உங்கள் கணக்கு & வாடிக்கையாளர் ஆலோசனை விவரங்கள்' : 'Your personal profile and consultation details'}
-                </p>
               </div>
 
               <div className="space-y-3.5 text-xs">

@@ -10708,10 +10708,12 @@ export function computeDashaCalculationsSection20(moonRow, dashaTable = [], dash
 
   const totalDashaYears = dashaLordObj.years;
   const rawBalYears = remainingFrac * totalDashaYears;
-  const balY = Math.floor(rawBalYears);
+  let balY = Math.floor(rawBalYears);
   const balMDec = (rawBalYears - balY) * 12;
-  const balM = Math.floor(balMDec);
-  const balD = Math.round((balMDec - balM) * 30);
+  let balM = Math.floor(balMDec);
+  let balD = Math.round((balMDec - balM) * 30);
+  if (balD >= 30) { balD -= 30; balM += 1; }
+  if (balM >= 12) { balM -= 12; balY += 1; }
 
   // Classical Phalam definitions for 9 Maha Dashas
   const DASHA_PHALAM = {

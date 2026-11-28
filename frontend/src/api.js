@@ -83,6 +83,7 @@ export const API = {
 
   // 1-A: Matchmaking & Astrologer Review Workflow
   calculateMatch: (boy, girl) => apiRequest('/matchmaking', 'POST', { boy, girl }),
+  findMatchingNakshatras: (person, gender) => apiRequest('/matchmaking/matching-nakshatras', 'POST', { person, gender }),
   getMyMatchmakingRequests: () => apiRequest('/matchmaking/my-requests', 'GET'),
   toggleMatchmakingSubscription: (data) => apiRequest('/matchmaking/subscribe', 'POST', data),
   calculateMatchSelf: (boy, girl) => apiRequest('/matchmaking/calculate-self', 'POST', { boy, girl }),

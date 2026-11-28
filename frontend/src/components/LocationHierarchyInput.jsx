@@ -191,7 +191,7 @@ export default function LocationHierarchyInput({
 
           {/* Instant Auto-Suggestion Dropdown Popup */}
           {showSuggestions && suggestions.length > 0 && (
-            <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-300 rounded-xl shadow-xl z-50 max-h-56 overflow-y-auto divide-y divide-slate-100 animate-in fade-in zoom-in-95 duration-100">
+            <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-300 rounded-xl shadow-xl z-20 max-h-56 overflow-y-auto divide-y divide-slate-100 animate-in fade-in zoom-in-95 duration-100">
               <div className="p-1.5 bg-slate-50 text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center justify-between border-b border-slate-200">
                 <span>Matching Cities ({suggestions.length})</span>
                 <span className="text-[9px] text-slate-400">Click to select</span>

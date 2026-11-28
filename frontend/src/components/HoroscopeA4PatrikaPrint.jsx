@@ -7,6 +7,7 @@ import {
   calculateThirukanithaHoroscope,
   RASHIS,
   NAKSHATRAS,
+  NAKSHATRA_SYLLABLES_TA,
   MAHADASHA_BHOGAN_VEDHAGAN_TABLE
 } from '../utils/thirukanithaEngine';
 import { printElementById } from '../utils/printHelper';
@@ -195,8 +196,8 @@ export default function HoroscopeA4PatrikaPrint({
 
   // Personal & Birth Details (Formatted per Master Prompt Rules)
   const nativeName = birthData?.name || summary?.name || '---';
-  const fatherName = birthData?.fatherName || '---';
-  const motherName = birthData?.motherName || '---';
+  const fatherName = birthData?.fatherName || birthData?.father || '---';
+  const motherName = birthData?.motherName || birthData?.mother || '---';
   const isFemale = (birthData?.gender || '').toLowerCase() === 'female' || (birthData?.gender || '').includes('பெண்');
   const genderLabel = birthData?.gender ? (isTa ? (isFemale ? 'பெண்' : 'ஆண்') : (isFemale ? 'Female' : 'Male')) : '---';
   const ageYears = summary?.age?.years;
@@ -236,15 +237,15 @@ export default function HoroscopeA4PatrikaPrint({
     ? `${Math.abs(latNum).toFixed(4)}° ${latNum >= 0 ? 'N' : 'S'} / ${Math.abs(lonNum).toFixed(4)}° ${lonNum >= 0 ? 'E' : 'W'}`
     : '---';
 
-  // Sunrise / Sunset based on birth latitude
+  // Sunrise / Sunset from Thirukanitha Engine astronomical calculation (matching Screen View Section 10)
   const effLat = latNum !== null && !isNaN(latNum) ? latNum : 11.65;
   const srDec = 6.0 - (effLat - 12.0) * 0.02;
   const srH = Math.floor(srDec);
   const srM = Math.floor((srDec - srH) * 60);
   const ssH = 18 - (srH - 6);
   const ssM = (60 - srM) % 60;
-  const sunriseTime = birthData?.sunrise || `${String(srH).padStart(2, '0')}:${String(srM).padStart(2, '0')} AM`;
-  const sunsetTime = birthData?.sunset || `${String(ssH > 12 ? ssH - 12 : ssH).padStart(2, '0')}:${String(ssM).padStart(2, '0')} PM`;
+  const sunriseTime = birthData?.sunrise || horoscope?.orai?.birthSunriseSunset?.sunriseFormatted || `${String(srH).padStart(2, '0')}:${String(srM).padStart(2, '0')} AM`;
+  const sunsetTime = birthData?.sunset || horoscope?.orai?.birthSunriseSunset?.sunsetFormatted || `${String(ssH > 12 ? ssH - 12 : ssH).padStart(2, '0')}:${String(ssM).padStart(2, '0')} PM`;
 
   const lagnaRoles = summary?.lagnaRoles || {};
   const grahaFourRoles = summary?.grahaFourRoles || {};
@@ -253,14 +254,17 @@ export default function HoroscopeA4PatrikaPrint({
   const tithiNum = summary?.tithiNum || 1;
   const pakshaText = tithiNum <= 15 ? (isTa ? 'வளர்பிறை' : 'Shukla') : (isTa ? 'தேய்பிறை' : 'Krishna');
 
-  // Moon Nakshatra & Lucky Letters
+  // Moon Nakshatra & Lucky Letters (Bilingual)
   const moonNakIdx = summary.moonNak ?? 0;
   const moonPada = summary.moonPada ?? 1;
   const moonNakshatraObj = NAKSHATRAS[moonNakIdx] || NAKSHATRAS[0];
   const moonLordEn = moonNakshatraObj?.lord || 'Ketu';
   const moonLordDisplay = isTa ? (NAKSHATRA_LORD_TA[moonLordEn] || moonLordEn) : moonLordEn;
-  const nakLetters = (NAKSHATRA_LETTERS[moonNakIdx] || []).join(', ');
-  const padaLetter = NAKSHATRA_LETTERS[moonNakIdx]?.[(moonPada - 1) % 4] || '';
+  const taStarSyllables = (NAKSHATRA_SYLLABLES_TA[moonNakIdx] || '').split(',').map(s => s.trim()).filter(Boolean);
+  const enStarSyllables = NAKSHATRA_LETTERS[moonNakIdx] || [];
+  const activeStarSyllables = isTa && taStarSyllables.length ? taStarSyllables : enStarSyllables;
+  const nakLetters = activeStarSyllables.join(', ');
+  const padaLetter = activeStarSyllables[(moonPada - 1) % 4] || '';
 
   // Lagna Lord & Dosha checks
   const lagnaRasi = summary.lagnaRasi ?? 0;
@@ -293,7 +297,7 @@ export default function HoroscopeA4PatrikaPrint({
 
   // 11 RIGHT COLUMN FIELDS (Current Dasha-Bhukti removed from top, shown below charts)
   const rightColumnRows = [
-    { label: isTa ? 'ஜனன லக்னம்' : 'Janma Lagna', value: (isTa ? summary.lagnaTa : summary.lagnaEn) || '---' },
+    { label: isTa ? 'ஜனன லக்னம்' : 'Janma Lagna', value: summary.lagnaTa || summary.lagnaEn ? `${isTa ? summary.lagnaTa : summary.lagnaEn}${summary.lagnaDegInSign ? ` (${summary.lagnaDegInSign})` : ''}` : '---' },
     { label: isTa ? 'லக்னாதிபதி' : 'Lagna Lord', value: (isTa ? lagnaRoles.lordTa : lagnaRoles.lordEn) || '---' },
     { label: isTa ? 'ஜனன ராசி' : 'Janma Rasi', value: (isTa ? summary.rasiTa : summary.rasiEn) || '---' },
     { label: isTa ? 'ஜனன நட்சத்திரம்' : 'Janma Nakshatra', value: (isTa ? summary.nakshatraWithPadaTa : summary.nakshatraWithPadaEn) || '---' },
@@ -565,20 +569,31 @@ export default function HoroscopeA4PatrikaPrint({
                   </>
                 ) : (
                   <>
-                    <NorthIndianChartGrid
-                      title={isTa ? 'ராசி கட்டம் (D1)' : 'Rasi Chart (D1)'}
-                      chartData={horoscope?.charts?.D1}
-                      lagnaRasi={lagnaRasi}
-                      isTamil={isTa}
-                      compact
-                    />
-                    <NorthIndianChartGrid
-                      title={isTa ? 'நவாம்ச கட்டம் (D9)' : 'Navamsa Chart (D9)'}
-                      chartData={horoscope?.charts?.D9}
-                      lagnaRasi={planets.find(p => p.id === 'lagna')?.navamsa ?? lagnaRasi}
-                      isTamil={isTa}
-                      compact
-                    />
+                    <div className="h-[57mm] border border-black bg-white p-1 flex items-center justify-center overflow-hidden">
+                      <NorthIndianChartGrid
+                        centerTitle={isTa ? 'ராசி கட்டம் (D1)' : 'Rasi Chart (D1)'}
+                        centerSub={RASHIS[lagnaRasi] ? (isTa ? RASHIS[lagnaRasi].ta : RASHIS[lagnaRasi].en) : ''}
+                        chartData={horoscope?.charts?.D1}
+                        lagnaRasi={lagnaRasi}
+                        isTamil={isTa}
+                        isPrint={true}
+                        className="h-full w-auto aspect-square"
+                      />
+                    </div>
+                    <div className="h-[57mm] border border-black bg-white p-1 flex items-center justify-center overflow-hidden">
+                      <NorthIndianChartGrid
+                        centerTitle={isTa ? 'நவாம்ச கட்டம் (D9)' : 'Navamsa Chart (D9)'}
+                        centerSub={(() => {
+                          const d9Asc = planets.find(p => p.id === 'lagna')?.navamsa ?? lagnaRasi;
+                          return RASHIS[d9Asc] ? (isTa ? RASHIS[d9Asc].ta : RASHIS[d9Asc].en) : '';
+                        })()}
+                        chartData={horoscope?.charts?.D9}
+                        lagnaRasi={planets.find(p => p.id === 'lagna')?.navamsa ?? lagnaRasi}
+                        isTamil={isTa}
+                        isPrint={true}
+                        className="h-full w-auto aspect-square"
+                      />
+                    </div>
                   </>
                 )}
               </div>

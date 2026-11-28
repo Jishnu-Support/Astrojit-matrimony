@@ -67,11 +67,6 @@ export default function HoroscopeHub({
                 {isTa ? 'திருக்கணித பராசர முறை' : 'Thirukanitha Parashara'}
               </span>
             </h1>
-            <p className="text-xs text-stone-600 dark:text-stone-400 mt-0.5">
-              {isTa
-                ? 'திருக்கணித வாக்கிய முறைப்படி அமைக்கப்பட்ட துல்லியமான வேத ஜோதிடக் கணிப்பு'
-                : 'Complete Thirukanitha Sidereal Ephemeris Engine & Authentic Vedic Horoscope Calculations'}
-            </p>
           </div>
         </div>
 
@@ -141,7 +136,7 @@ export default function HoroscopeHub({
             <span className="text-xs font-bold text-stone-700 dark:text-stone-300">
               {isTa ? 'அச்சு வடிவமைப்பு:' : 'Print Format:'}
             </span>
-            <div className="inline-flex items-center gap-1.5 p-1 bg-stone-100 dark:bg-stone-900/80 rounded-xl border border-stone-200 dark:border-stone-800">
+            <div className="inline-flex flex-wrap items-center gap-1.5 p-1 bg-stone-100 dark:bg-stone-900/80 rounded-xl border border-stone-200 dark:border-stone-800 max-w-full">
               <button
                 type="button"
                 onClick={() => setPrintFormat('onepage')}

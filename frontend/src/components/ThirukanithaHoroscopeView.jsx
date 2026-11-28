@@ -438,7 +438,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
         {/* MASTER SECTION DROP LIST & QUICK JUMPER TOOLBAR */}
         {/* ======================================================== */}
         <div className="bg-white/95 dark:bg-[#251E1A] p-3 sm:p-4 rounded-2xl border border-amber-900/15 dark:border-amber-500/20 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3 sticky top-14 sm:top-16 z-20 backdrop-blur-md print:hidden">
-          <div className="flex items-center gap-2 flex-1">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 flex-1 min-w-0">
             <span className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 whitespace-nowrap flex items-center gap-1.5">
               <span>📑</span>
               <span>{isTamil ? 'பிரிவுக்குச் செல்ல:' : 'Jump to Section:'}</span>
@@ -666,6 +666,36 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                     <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'நட்சத்திர ஓரை / நாதன்' : 'Nakshatra Hora / Lord'}</span>
                     <strong className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block break-words">
                       {isTamil ? horoscope.summary?.nakshatraHora?.combinedTa : horoscope.summary?.nakshatraHora?.combinedEn}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'பாலினம்' : 'Gender'}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block break-words">
+                      {((form.gender || '').toLowerCase() === 'female' || (form.gender || '').includes('பெண்'))
+                        ? (isTamil ? 'பெண்' : 'Female')
+                        : (isTamil ? 'ஆண்' : 'Male')}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'தந்தை பெயர்' : "Father's Name"}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block break-words">
+                      {form.father || initialData?.fatherName || '---'}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'தாய் பெயர்' : "Mother's Name"}</span>
+                    <strong className="text-xs sm:text-sm font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block break-words">
+                      {form.mother || initialData?.motherName || '---'}
+                    </strong>
+                  </div>
+
+                  <div className="p-2.5 bg-[#FAF6EF] dark:bg-[#1A1513] rounded-xl border border-amber-900/10 dark:border-amber-500/15">
+                    <span className="block text-[10px] text-stone-500 uppercase font-bold">{isTamil ? 'சூரிய உதயம் / அஸ்தமனம்' : 'Sunrise / Sunset'}</span>
+                    <strong className="text-xs sm:text-sm font-mono font-bold text-[#7A1A22] dark:text-amber-300 mt-0.5 block break-words">
+                      {horoscope.orai?.birthSunriseSunset?.sunriseFormatted || '--'} / {horoscope.orai?.birthSunriseSunset?.sunsetFormatted || '--'}
                     </strong>
                   </div>
 
@@ -1781,7 +1811,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                                       }
 
                                       return (
-                                        <div key={an.lord.id} className={`p-1.5 rounded border text-[10.5px] flex items-center justify-between gap-1.5 ${anBg}`}>
+                                        <div key={an.lord.id} className={`p-1.5 rounded border text-[10.5px] flex flex-wrap items-center justify-between gap-1.5 ${anBg}`}>
                                           <div className="flex items-center gap-1 min-w-[70px]">
                                             <span className="text-stone-400 text-[9.5px]">{aIdx + 1}.</span>
                                             <span className="font-bold text-[#7A1A22] dark:text-amber-200">
@@ -2557,7 +2587,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
               {/* Left: 4x4 Chart Grid */}
               <div className="lg:col-span-6 space-y-2">
-                <div className="flex items-center justify-between text-xs font-bold text-[#7A1A22] dark:text-amber-300">
+                <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs font-bold text-[#7A1A22] dark:text-amber-300">
                   <span>{T.savChartTitle}</span>
                   <div className="flex items-center gap-2 text-[10px] font-normal text-stone-500">
                     <span className="flex items-center gap-1">
@@ -3158,7 +3188,7 @@ export default function ThirukanithaHoroscopeView({ initialData, onClose, onSwit
                   {isTamil ? horoscope.gocharam.rahuKetu.titleTa : horoscope.gocharam.rahuKetu.titleEn}
                 </div>
                 <p className="text-[11px] text-stone-600 dark:text-stone-400">
-                  {isTamil ? horoscope.gocharam.rahuKetu.descTa : horoscope.gocharam.rahuKetu.titleEn}
+                  {isTamil ? horoscope.gocharam.rahuKetu.descTa : (horoscope.gocharam.rahuKetu.descEn || horoscope.gocharam.rahuKetu.titleEn)}
                 </p>
               </div>
 

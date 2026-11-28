@@ -9,7 +9,12 @@ import {
 import { useLang } from '../i18n';
 import { useAuth } from '../context/AuthContext';
 import LetterheadBrandingModal, { getInitialLetterhead } from './LetterheadBrandingModal';
-import { calculateThirukanithaHoroscope, NAKSHATRAS } from '../utils/thirukanithaEngine';
+import {
+  calculateThirukanithaHoroscope,
+  NAKSHATRAS,
+  NAKSHATRA_SYLLABLES_TA,
+  MAHADASHA_BHOGAN_VEDHAGAN_TABLE
+} from '../utils/thirukanithaEngine';
 import { printElementById } from '../utils/printHelper';
 import NorthIndianChartGrid from './NorthIndianChartGrid';
 
@@ -58,6 +63,10 @@ const PLANET_SHORT_TA = {
 
 const PLANET_LORDS_TA = ['செவ்', 'சுக்', 'புத', 'சந்', 'சூரி', 'புத', 'சுக்', 'செவ்', 'குரு', 'சனி', 'சனி', 'குரு'];
 const PLANET_LORDS_EN = ['Mars', 'Venus', 'Mercury', 'Moon', 'Sun', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Saturn', 'Jupiter'];
+const NAK_LORD_TA = {
+  Ketu: 'கேது', Venus: 'சுக்கிரன்', Sun: 'சூரியன்', Moon: 'சந்திரன்',
+  Mars: 'செவ்வாய்', Rahu: 'ராகு', Jupiter: 'குரு', Saturn: 'சனி', Mercury: 'புதன்'
+};
 
 // All 20 Horoscope Screen View Titles mapped 1-to-1
 const HOROSCOPE_20_SECTIONS = [
@@ -299,14 +308,20 @@ export default function HoroscopeMultiPagePrint({
         ? `${Math.abs(latNum).toFixed(4)}°${latNum >= 0 ? 'N' : 'S'}, ${Math.abs(lonNum).toFixed(4)}°${lonNum >= 0 ? 'E' : 'W'}`
         : '---';
 
+      const isFemale = (birthData?.gender || '').toLowerCase() === 'female' || (birthData?.gender || '').includes('பெண்');
+      const genderStr = birthData?.gender ? (isTa ? (isFemale ? 'பெண்' : 'ஆண்') : (isFemale ? 'Female' : 'Male')) : '---';
+      const fatherStr = birthData?.fatherName || birthData?.father || '---';
+      const motherStr = birthData?.motherName || birthData?.mother || '---';
+      const lagnaDegSuffix = summary?.lagnaDegInSign ? ` ${summary.lagnaDegInSign}` : '';
+
       const birthRows = [
-        [isTa ? 'பெயர் / பாலினம்' : 'Name / Gender', `${nativeName} (${birthData?.gender || '---'}${summary?.age?.years !== undefined ? `, ${summary.age.years} ${isTa ? 'வயது' : 'Yrs'}` : ''})`],
-        [isTa ? 'தந்தை / தாய் பெயர்' : 'Father / Mother', `${birthData?.fatherName || '---'} / ${birthData?.motherName || '---'}`],
+        [isTa ? 'பெயர் / பாலினம்' : 'Name / Gender', `${nativeName} (${genderStr}${summary?.age?.years !== undefined ? `, ${summary.age.years} ${isTa ? 'வயது' : 'Yrs'}` : ''})`],
+        [isTa ? 'தந்தை / தாய் பெயர்' : 'Father / Mother', `${fatherStr} / ${motherStr}`],
         [isTa ? 'பிறந்த தேதி & நேரம்' : 'Birth Date & Time', `${dobDisplay} • ${birthData?.dobTime12 || birthData?.dobTime || '---'}`],
         [isTa ? 'பிறந்த ஊர் & அட்சரேகை' : 'Place & Coordinates', `${birthData?.placeName || birthData?.city || '---'} (${latLonStr})`],
         [isTa ? 'தமிழ் தேதி / கிழமை' : 'Tamil Date / Weekday', `${isTa ? (summary?.tamilDate?.textTa || summary?.tamilDate?.ta || '---') : (summary?.tamilDate?.textEn || summary?.tamilDate?.en || '---')} • ${isTa ? (summary?.weekday?.ta || '---') : (summary?.weekday?.en || '---')}`],
         [isTa ? 'அயனாம்சம் (லஹரி)' : 'Ayanamsha (Lahiri)', `${summary?.ayanamshaDMS || '---'} | ${isTa ? (summary?.ayanam?.ta || '---') : (summary?.ayanam?.en || '---')}`],
-        [isTa ? 'ஜன்ம லக்னம் & அதிபதி' : 'Janma Lagna & Lord', `${isTa ? (summary?.lagnaTa || '---') : (summary?.lagnaEn || '---')} (${isTa ? (lagnaRoles?.lordTa || '---') : (lagnaRoles?.lordEn || '---')})`],
+        [isTa ? 'ஜன்ம லக்னம் & அதிபதி' : 'Janma Lagna & Lord', `${isTa ? (summary?.lagnaTa || '---') : (summary?.lagnaEn || '---')}${lagnaDegSuffix} (${isTa ? (lagnaRoles?.lordTa || '---') : (lagnaRoles?.lordEn || '---')})`],
         [isTa ? 'ஜன்ம ராசி & நட்சத்திரம்' : 'Rasi & Nakshatra', `${isTa ? (summary?.moonSignTa || '---') : (summary?.moonSignEn || '---')} • ${isTa ? (summary?.nakshatraTa || '---') : (summary?.nakshatraEn || '---')} (${isTa ? 'பாதம்' : 'Pd'} ${summary?.moonPada || 1})`],
         [isTa ? 'திதி / பக்ஷம்' : 'Tithi & Paksha', `${isTa ? (summary?.tithiNameTa || '---') : (summary?.tithiNameEn || '---')} (${(summary?.tithiNum || 1) <= 15 ? (isTa ? 'வளர்பிறை' : 'Shukla') : (isTa ? 'தேய்பிறை' : 'Krishna')})`],
         [isTa ? 'நித்திய யோகம் / கரணம்' : 'Yoga & Karana', `${isTa ? (summary?.yogaKarana?.yogaTa || '---') : (summary?.yogaKarana?.yogaEn || '---')} / ${isTa ? (summary?.yogaKarana?.karanaTa || '---') : (summary?.yogaKarana?.karanaEn || '---')}`],
@@ -559,12 +574,12 @@ export default function HoroscopeMultiPagePrint({
                     return (
                       <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-stone-50/70'}>
                         <td className="py-1 px-1 font-bold text-[#7A1A22]">
-                          {isTa ? (p.info?.ta || '---') : (p.info?.en || '---')}{p.isRetrograde ? ' (R)' : ''}
+                          {isTa ? (p.info?.ta || '---') : (p.info?.en || '---')}{p.isRetrograde ? (isTa ? ' (வ)' : ' (R)') : ''}
                         </td>
                         <td className="py-1 px-1 font-mono text-[9px]">{p.dms || '---'}</td>
                         <td className="py-1 px-1">
                           <span className="font-semibold">{isTa ? (nakObj?.ta || '---') : (nakObj?.en || '---')}</span> ({p.pada || 1})
-                          <span className="text-[8.6px] text-stone-500 block">{isTa ? nakObj?.lordTa : nakObj?.lord}</span>
+                          <span className="text-[8.6px] text-stone-500 block">{isTa ? (NAK_LORD_TA[nakObj?.lord] || nakObj?.lord || '---') : (nakObj?.lord || '---')}</span>
                         </td>
                         <td className="py-1 px-1">
                           <span className="font-semibold">{isTa ? (rasiObj?.ta || '---') : (rasiObj?.en || '---')}</span>
@@ -742,7 +757,7 @@ export default function HoroscopeMultiPagePrint({
     // =========================================================================
     if (has(6)) {
       const sb = horoscope?.shadbala || {};
-      const gHeaders = isTa ? (sb.grahaHeaders || []) : (sb.grahaHeadersEn || sb.grahaHeaders || []);
+      const gHeaders = (isTa ? (sb.grahaHeaders || []) : (sb.grahaHeadersEn || sb.grahaHeaders || [])).slice(1);
       const gRows = sb.grahaRows || [];
       const bHeaders = sb.bhavaHeaders || [];
       const bRows = sb.bhavaRows || [];
@@ -839,9 +854,12 @@ export default function HoroscopeMultiPagePrint({
                       <td className="py-0.5 px-1 font-bold text-[#7A1A22]">{r.key} ({isTa ? r.nameTa : r.nameEn})</td>
                       {(r.dignities || []).map((dg, j) => {
                         const sShort = isTa ? r.signsTa?.[j] : r.signsEn?.[j];
+                        const digLabel = isTa
+                          ? dg
+                          : (dg === 'உ' ? 'Ex' : dg === 'ஆ' ? 'Own' : dg === 'ந' ? 'Fr' : dg === 'ச' ? 'Neu' : dg === 'ப' ? 'En' : dg === 'நீ' ? 'Db' : dg);
                         return (
                           <td key={j} className="py-0.5 px-0.5 text-center font-semibold">
-                            {sShort ? `${sShort}(${dg})` : dg}
+                            {sShort ? `${sShort}(${digLabel})` : digLabel}
                           </td>
                         );
                       })}
@@ -851,7 +869,7 @@ export default function HoroscopeMultiPagePrint({
                   {dv.subhaTotals && (
                     <tr className="bg-amber-50 border-t border-stone-400 font-black">
                       <td className="py-1 px-1 text-[#7A1A22]">{isTa ? 'சுப / அசுப கூட்டு' : 'Benefic Totals'}</td>
-                      {dv.subhaTotals.map((t, j) => <td key={j} className="py-1 px-0.5 text-center font-mono">{t}</td>)}
+                      {dv.subhaTotals.slice(0, 10).map((t, j) => <td key={j} className="py-1 px-0.5 text-center font-mono">{t}</td>)}
                       <td className="py-1 px-0.5 text-center font-mono text-[#7A1A22]">{dv.grandSubha}/{dv.grandTotal}</td>
                     </tr>
                   )}
@@ -1698,7 +1716,6 @@ export default function HoroscopeMultiPagePrint({
     // =========================================================================
     if (has(16)) {
       const pbt = horoscope?.pasakarBodhakarTaraData || {};
-      const pRows = pbt.pasakarRows || [];
       const tRows = pbt.taraRows || [];
       pages.push({
         key: 'sec-16',
@@ -1711,20 +1728,20 @@ export default function HoroscopeMultiPagePrint({
                   <thead>
                     <tr className="bg-[#FAF3E0] border-b border-stone-400 text-[#7A1A22] font-black text-left">
                       <th className="py-1 px-1">{isTa ? 'தசை' : 'Dasha'}</th>
-                      <th className="py-1 px-1">{isTa ? 'போதகர்' : 'Bhogan'}</th>
-                      <th className="py-1 px-1">{isTa ? 'வேதகர்' : 'Vedhagan'}</th>
-                      <th className="py-1 px-1">{isTa ? 'பாசகர்' : 'Pasagan'}</th>
-                      <th className="py-1 px-1">{isTa ? 'காரகர்' : 'Karagan'}</th>
+                      <th className="py-1 px-1">{isTa ? 'போகன்' : 'Bhogan'}</th>
+                      <th className="py-1 px-1">{isTa ? 'வேதகன்' : 'Vedhagan'}</th>
+                      <th className="py-1 px-1">{isTa ? 'பாசகன்' : 'Pasagan'}</th>
+                      <th className="py-1 px-1">{isTa ? 'காரகன்' : 'Karagan'}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-stone-200">
-                    {pRows.map((r, i) => (
+                    {MAHADASHA_BHOGAN_VEDHAGAN_TABLE.map((r, i) => (
                       <tr key={i}>
-                        <td className="py-0.5 px-1 font-bold text-[#7A1A22]">{isTa ? r.grahaTa : r.grahaEn}</td>
-                        <td className="py-0.5 px-1">{isTa ? r.pothakarTa : r.pothakarEn}</td>
-                        <td className="py-0.5 px-1">{isTa ? r.vedhakarTa : r.vedhakarEn}</td>
-                        <td className="py-0.5 px-1">{isTa ? r.pasakarTa : r.pasakarEn}</td>
-                        <td className="py-0.5 px-1">{isTa ? r.karakarTa : r.karakarEn}</td>
+                        <td className="py-0.5 px-1 font-bold text-[#7A1A22]">{isTa ? r.idTa : r.idEn}</td>
+                        <td className="py-0.5 px-1">{isTa ? r.bhoganTa : r.bhoganEn}</td>
+                        <td className="py-0.5 px-1">{isTa ? r.vedhaganTa : r.vedhaganEn}</td>
+                        <td className="py-0.5 px-1">{isTa ? r.pasaganTa : r.pasaganEn}</td>
+                        <td className="py-0.5 px-1">{isTa ? r.karaganTa : r.karaganEn}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -1816,16 +1833,33 @@ export default function HoroscopeMultiPagePrint({
     // =========================================================================
     if (has(18)) {
       const nm = horoscope?.numerologyData || {};
+      const birthNumDisplay = (isTa ? (nm.dateNumTa || nm.dateNum) : (nm.dateNumEn || nm.dateNum))
+        || (nm.rawDateNum ? `${nm.rawDateNum}${nm.datePlanetTa || nm.datePlanetEn ? ` (${isTa ? nm.datePlanetTa : nm.datePlanetEn})` : ''}` : '---');
+      const lifeNumDisplay = (isTa ? (nm.yearNumTa || nm.yearNum) : (nm.yearNumEn || nm.yearNum))
+        || (nm.rawLifeNum ? `${nm.rawLifeNum}${nm.lifePlanetTa || nm.lifePlanetEn ? ` (${isTa ? nm.lifePlanetTa : nm.lifePlanetEn})` : ''}` : '---');
+      const nakSylEn = [
+        'Chu, Che, Cho, La', 'Li, Lu, Le, Lo', 'A, I, U, E', 'O, Va, Vi, Vu',
+        'Ve, Vo, Ka, Ki', 'Ku, Gha, Ng, Chha', 'Ke, Ko, Ha, Hi', 'Hu, He, Ho, Da',
+        'Di, Du, De, Do', 'Ma, Mi, Mu, Me', 'Mo, Ta, Ti, Tu', 'Te, To, Pa, Pi',
+        'Pu, Sha, Na, Tha', 'Pe, Po, Ra, Ri', 'Ru, Re, Ro, Ta', 'Ti, Tu, Te, To',
+        'Na, Ni, Nu, Ne', 'No, Ya, Yi, Yu', 'Ye, Yo, Bha, Bhi', 'Bhu, Dha, Pha, Dha',
+        'Bhe, Bho, Ja, Ji', 'Ju, Je, Jo, Gha', 'Ga, Gi, Gu, Ge', 'Go, Sa, Si, Su',
+        'Se, So, Da, Di', 'Du, Tha, Jha, Da', 'De, Do, Cha, Chi'
+      ];
+      const moonNakIdx = summary?.moonNak ?? 0;
+      const starSyllablesStr = isTa
+        ? (NAKSHATRA_SYLLABLES_TA[moonNakIdx] || '---')
+        : (nakSylEn[moonNakIdx] || '---');
       const rows = [
-        [isTa ? 'பெயர் எண் (சால்டியன்)' : 'Name Number (Chaldean)', `${nm.engSum ?? '---'}`],
-        [isTa ? 'பிறப்பு எண் (உடல் எண்)' : 'Birth Number (Psychic)', `${nm.rawDateNum ?? '---'} (${isTa ? nm.datePlanetTa : nm.datePlanetEn})`],
-        [isTa ? 'விதி எண் (உயிர் எண்)' : 'Life Path Number', `${nm.rawLifeNum ?? '---'} (${isTa ? nm.lifePlanetTa : nm.lifePlanetEn})`],
+        [isTa ? 'பெயர் எண் (சால்டியன்)' : 'Name Number (Chaldean)', (isTa ? (nm.engSumTa || nm.engSum) : (nm.engSumEn || nm.engSum)) || '---'],
+        [isTa ? 'பிறப்பு எண் (உடல் எண்)' : 'Birth Number (Psychic)', birthNumDisplay],
+        [isTa ? 'விதி எண் (உயிர் எண்)' : 'Life Path Number', lifeNumDisplay],
         [isTa ? 'அதிர்ஷ்ட எண்கள் & தேதிகள்' : 'Lucky Numbers & Dates', `${nm.luckyNums || '---'} • ${nm.luckyDates || '---'}`],
         [isTa ? 'அதிர்ஷ்ட நிறங்கள்' : 'Lucky Colours', isTa ? (nm.luckyColorsTa || nm.luckyColors) : (nm.luckyColorsEn || nm.luckyColors)],
         [isTa ? 'அதிர்ஷ்ட ரத்தினம்' : 'Lucky Gemstone', isTa ? nm.luckyStonesTa : nm.luckyStonesEn],
         [isTa ? 'வழிபட வேண்டிய தெய்வம்' : 'Ishta Devata', isTa ? nm.deityTa : nm.deityEn],
         [isTa ? 'செல்ல வேண்டிய கோவில்கள்' : 'Recommended Temples', isTa ? nm.templesTa : nm.templesEn],
-        [isTa ? 'நட்சத்திர & அதிர்ஷ்ட எழுத்துக்கள்' : 'Lucky Letters', nm.letters || '---']
+        [isTa ? 'நட்சத்திர நாம எழுத்துக்கள்' : 'Nakshatra Syllables', starSyllablesStr]
       ];
       const chaldean = [
         ['1', 'A, I, J, Q, Y'], ['2', 'B, K, R'], ['3', 'C, G, L, S'], ['4', 'D, M, T'],

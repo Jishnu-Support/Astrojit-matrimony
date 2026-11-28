@@ -616,33 +616,8 @@ Shubham Bhavatu! 🙏`;
                 </button>
               )}
             </div>
-            <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
-              {module === 'search'
-                ? (isTa
-                    ? 'முந்தைய வாடிக்கையாளர் ஜாதக வரலாற்றை மொபைல் எண், பெயர் அல்லது பிறந்த தேதி மூலம் தேடவும்.'
-                    : 'Search existing clients by mobile number, name, DOB, or place to view horoscope history.')
-                : module === 'matchmaking'
-                ? (isTa
-                    ? 'பொருத்தம் பார்க்க விரும்பும் வாடிக்கையாளரை தேடி தேர்வு செய்யவும்.'
-                    : 'Search and select an active client for Kundli matchmaking comparison.')
-                : (isTa
-                    ? 'முந்தைய வாடிக்கையாளர் விவரங்களை தேடவும் அல்லது புதிய விவரங்களை உள்ளிடவும் (ஜாதகம், ஜாதக வரலாறு & பொருத்தம் மூன்றுக்கும் தானாக இணையும்)'
-                    : 'Search existing clients by mobile/name/dob/place, or enter new birth data (syncs automatically across Horoscope, Client Horoscope History & Matchmaking)')}
-            </p>
           </div>
         </div>
-
-        {/* Quick Badges: Time & Timezone - shown only in horoscope module */}
-        {module === 'horoscope' && (
-          <div className="flex items-center gap-2 self-start md:self-auto">
-            <span className="text-[11px] font-mono font-bold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-stone-800 px-2.5 py-1 rounded-lg border border-amber-900/10">
-              🕒 {clientData.timeState?.hour || '12'}:{clientData.timeState?.minute || '00'}:{clientData.timeState?.second || '00'} {clientData.timeState?.period || 'AM'}
-            </span>
-            <span className="text-[11px] font-mono font-bold text-indigo-800 dark:text-indigo-300 bg-indigo-50 dark:bg-stone-800 px-2.5 py-1 rounded-lg border border-indigo-900/10">
-              🌐 {clientData.utcOffset || '05:30 UTC'}
-            </span>
-          </div>
-        )}
       </div>
 
       {/* Action feedback banner */}
@@ -679,7 +654,7 @@ Shubham Bhavatu! 🙏`;
 
       {/* Previous Client Lookup Bar */}
       {!shouldHideLookup && (
-        <div ref={searchBoxRef} className="relative z-30">
+        <div ref={searchBoxRef} className="relative z-20">
           <label className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
             🔍 {isTa ? 'முந்தைய வாடிக்கையாளர் தேடல் (Client ID CLI-..., மொபைல், பெயர், பிறந்த தேதி, இடம்):' : 'Previous Client Lookup (Search by Client ID CLI-..., Mobile No., Name, D.O.B or Place):'}
           </label>
@@ -724,7 +699,7 @@ Shubham Bhavatu! 🙏`;
 
           {/* Search Dropdown Results */}
           {showDropdown && searchQuery.trim().length > 0 && (
-            <div className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white dark:bg-[#1E1815] rounded-2xl border border-amber-900/20 dark:border-amber-500/20 shadow-2xl max-h-72 overflow-y-auto divide-y divide-amber-900/10 dark:divide-amber-500/10">
+            <div className="absolute left-0 right-0 top-full mt-1.5 z-20 bg-white dark:bg-[#1E1815] rounded-2xl border border-amber-900/20 dark:border-amber-500/20 shadow-2xl max-h-72 overflow-y-auto divide-y divide-amber-900/10 dark:divide-amber-500/10">
               {isSearching && searchResults.length === 0 ? (
                 <div className="p-4 text-center text-xs text-stone-500 flex items-center justify-center gap-2">
                   <Sparkles className="w-3.5 h-3.5 animate-spin text-[#7A1A22]" />
@@ -783,7 +758,7 @@ Shubham Bhavatu! 🙏`;
       {module === 'horoscope' && (
         <form onSubmit={handleCalculateClick} className="space-y-3 pt-1">
         {/* ROW 1: Name, DOB, 12-Hour AM/PM Time */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {/* Full Name */}
           <div>
             <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
@@ -821,7 +796,7 @@ Shubham Bhavatu! 🙏`;
               <Clock className="w-3.5 h-3.5 inline mr-1 text-[#7A1A22] dark:text-amber-400" />
               {isTa ? 'பிறந்த நேரம் (12 மணி AM/PM)' : 'Birth Time (12-Hour AM/PM)'}
             </label>
-            <div className="flex items-center gap-1">
+            <div className="flex flex-wrap items-center gap-1">
               <select
                 value={clientData.timeState?.hour || '12'}
                 onChange={e => updateField('timeState', { ...clientData.timeState, hour: e.target.value })}
@@ -1045,7 +1020,7 @@ Shubham Bhavatu! 🙏`;
 
             {/* Instant Letter-by-Letter Auto-Suggestions Dropdown */}
             {showCityDropdown && citySuggestions.length > 0 && (
-              <div className="absolute left-0 right-0 top-full mt-1 bg-white dark:bg-[#1E1815] border border-amber-900/20 dark:border-amber-500/30 rounded-xl shadow-2xl z-50 max-h-56 overflow-y-auto divide-y divide-stone-100 dark:divide-stone-800 animate-in fade-in zoom-in-95 duration-100">
+              <div className="absolute left-0 right-0 top-full mt-1 bg-white dark:bg-[#1E1815] border border-amber-900/20 dark:border-amber-500/30 rounded-xl shadow-2xl z-20 max-h-56 overflow-y-auto divide-y divide-stone-100 dark:divide-stone-800 animate-in fade-in zoom-in-95 duration-100">
                 <div className="p-1.5 bg-amber-50/70 dark:bg-stone-900/80 text-[10px] text-amber-900 dark:text-amber-300 font-bold uppercase tracking-wider flex items-center justify-between border-b border-amber-100 dark:border-stone-800">
                   <span>
                     {cityInput.trim()
@@ -1127,7 +1102,7 @@ Shubham Bhavatu! 🙏`;
         </div>
 
         {/* ROW 4: Father, Mother, Native Place, Mobile No. (All Optional) */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div>
             <label className="block font-bold mb-1 opacity-90 text-stone-800 dark:text-stone-200">
               <User className="w-3.5 h-3.5 inline mr-1 text-purple-700 dark:text-purple-400" />
@@ -1192,12 +1167,7 @@ Shubham Bhavatu! 🙏`;
         </div>
 
         {/* BOTTOM ACTION BUTTONS */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-amber-900/10 dark:border-amber-500/15">
-          <div className="text-[11px] text-stone-500 dark:text-stone-400 flex items-center gap-1.5">
-            <span className="text-amber-600 font-bold">⚡</span>
-            <span>{isTa ? 'சுத்த திருக்கணித பராசர முறையில் கணிக்கப்படுகிறது.' : 'Calculated strictly following pure Thirukanitha Drik Ganitha ephemeris.'}</span>
-          </div>
-
+        <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-2 border-t border-amber-900/10 dark:border-amber-500/15">
           <div className="flex items-center gap-2 w-full sm:w-auto justify-end flex-wrap">
             {/* Button 1: Calculate & View Horoscope */}
             <button

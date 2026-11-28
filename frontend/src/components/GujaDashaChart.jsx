@@ -529,26 +529,28 @@ export default function GujaDashaChart({ matchReport }) {
               <div className="bg-indigo-100/80 p-1.5 font-bold text-indigo-950 text-center">
                 {isTa ? 'மணமகன் 9 மகாதிசைகள்' : "Groom's 9 Mahadashas"}
               </div>
-              <table className="w-full text-left">
-                <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200 text-[10px]">
-                  <tr>
-                    <th className="p-1.5">{isTa ? 'திசை' : 'Lord'}</th>
-                    <th className="p-1.5">{isTa ? 'வருடம்' : 'Yrs'}</th>
-                    <th className="p-1.5">{isTa ? 'ஆரம்பம் - முடிவு' : 'Dates'}</th>
-                    <th className="p-1.5 text-right">{isTa ? 'வயது' : 'Age'}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {(boy.allDashas || []).map((d, i) => (
-                    <tr key={i} className={d.lordId === 'mars' ? 'bg-rose-50 font-bold text-rose-900' : 'hover:bg-slate-50'}>
-                      <td className="p-1.5">{isTa ? d.lordTamil : d.lord}</td>
-                      <td className="p-1.5">{d.durationYears}</td>
-                      <td className="p-1.5 font-mono text-[9.5px]">{d.startDate} &rarr; {d.endDate}</td>
-                      <td className="p-1.5 text-right">{d.startAge}-{d.endAge}</td>
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[290px] text-left">
+                  <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200 text-[10px]">
+                    <tr>
+                      <th className="p-1.5">{isTa ? 'திசை' : 'Lord'}</th>
+                      <th className="p-1.5">{isTa ? 'வருடம்' : 'Yrs'}</th>
+                      <th className="p-1.5">{isTa ? 'ஆரம்பம் - முடிவு' : 'Dates'}</th>
+                      <th className="p-1.5 text-right">{isTa ? 'வயது' : 'Age'}</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {(boy.allDashas || []).map((d, i) => (
+                      <tr key={i} className={d.lordId === 'mars' ? 'bg-rose-50 font-bold text-rose-900' : 'hover:bg-slate-50'}>
+                        <td className="p-1.5">{isTa ? d.lordTamil : d.lord}</td>
+                        <td className="p-1.5">{d.durationYears}</td>
+                        <td className="p-1.5 font-mono text-[9.5px]">{d.startDate} &rarr; {d.endDate}</td>
+                        <td className="p-1.5 text-right">{d.startAge}-{d.endAge}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             {/* Bride's Dashas */}
@@ -556,26 +558,28 @@ export default function GujaDashaChart({ matchReport }) {
               <div className="bg-rose-100/80 p-1.5 font-bold text-rose-950 text-center">
                 {isTa ? 'மணமகள் 9 மகாதிசைகள்' : "Bride's 9 Mahadashas"}
               </div>
-              <table className="w-full text-left">
-                <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200 text-[10px]">
-                  <tr>
-                    <th className="p-1.5">{isTa ? 'திசை' : 'Lord'}</th>
-                    <th className="p-1.5">{isTa ? 'வருடம்' : 'Yrs'}</th>
-                    <th className="p-1.5">{isTa ? 'ஆரம்பம் - முடிவு' : 'Dates'}</th>
-                    <th className="p-1.5 text-right">{isTa ? 'வயது' : 'Age'}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {(girl.allDashas || []).map((d, i) => (
-                    <tr key={i} className={d.lordId === 'mars' ? 'bg-rose-50 font-bold text-rose-900' : 'hover:bg-slate-50'}>
-                      <td className="p-1.5">{isTa ? d.lordTamil : d.lord}</td>
-                      <td className="p-1.5">{d.durationYears}</td>
-                      <td className="p-1.5 font-mono text-[9.5px]">{d.startDate} &rarr; {d.endDate}</td>
-                      <td className="p-1.5 text-right">{d.startAge}-{d.endAge}</td>
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[290px] text-left">
+                  <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200 text-[10px]">
+                    <tr>
+                      <th className="p-1.5">{isTa ? 'திசை' : 'Lord'}</th>
+                      <th className="p-1.5">{isTa ? 'வருடம்' : 'Yrs'}</th>
+                      <th className="p-1.5">{isTa ? 'ஆரம்பம் - முடிவு' : 'Dates'}</th>
+                      <th className="p-1.5 text-right">{isTa ? 'வயது' : 'Age'}</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {(girl.allDashas || []).map((d, i) => (
+                      <tr key={i} className={d.lordId === 'mars' ? 'bg-rose-50 font-bold text-rose-900' : 'hover:bg-slate-50'}>
+                        <td className="p-1.5">{isTa ? d.lordTamil : d.lord}</td>
+                        <td className="p-1.5">{d.durationYears}</td>
+                        <td className="p-1.5 font-mono text-[9.5px]">{d.startDate} &rarr; {d.endDate}</td>
+                        <td className="p-1.5 text-right">{d.startAge}-{d.endAge}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}

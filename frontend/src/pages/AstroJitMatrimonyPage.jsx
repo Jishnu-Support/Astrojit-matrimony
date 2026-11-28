@@ -70,24 +70,24 @@ export default function AstroJitMatrimonyPage({ onBackToAstrology }) {
   const currentLangObj = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0F0D0C] text-slate-800 dark:text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0F0D0C] text-slate-800 dark:text-slate-100 flex flex-col font-sans overflow-x-clip">
       {/* ========================================================================= */}
       {/* DEDICATED ASTROJIT MATRIMONY FULL-PAGE TOP NAVBAR */}
       {/* ========================================================================= */}
       <header className="sticky top-0 z-50 bg-white/95 dark:bg-[#181412]/95 backdrop-blur-md border-b border-rose-200/80 dark:border-rose-900/40 shadow-xs px-2.5 sm:px-6 py-2.5 sm:py-3">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-1.5 sm:gap-3">
           {/* Brand & Matrimony Logo */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            <div className="flex items-center gap-2 sm:gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 lg:flex-initial">
+            <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
               <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-rose-600 via-pink-600 to-amber-500 flex items-center justify-center text-white shadow-md shadow-rose-500/20 shrink-0">
                 <HeartHandshake className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <div className="flex items-center gap-1 sm:gap-1.5">
-                  <span className="text-sm sm:text-lg font-black tracking-tight bg-gradient-to-r from-rose-700 via-pink-700 to-amber-700 bg-clip-text text-transparent">
+                  <span className="text-[13px] sm:text-lg font-black tracking-tight bg-gradient-to-r from-rose-700 via-pink-700 to-amber-700 bg-clip-text text-transparent truncate">
                     {tr('AstroJit Matrimony', 'அஸ்ட்ரோஜித் மேட்ரிமோனி', 'ಆಸ್ಟ್ರೋಜಿತ್ ಮ್ಯಾಟ್ರಿಮೋನಿ', 'एस्ट्रोजित मैट्रिमोनी')}
                   </span>
-                  <span className="bg-rose-100 text-rose-800 text-[9px] sm:text-[10px] font-black uppercase px-1.5 sm:px-2 py-0.2 rounded-full border border-rose-200">
+                  <span className="hidden sm:inline-flex bg-rose-100 text-rose-800 text-[9px] sm:text-[10px] font-black uppercase px-1.5 sm:px-2 py-0.2 rounded-full border border-rose-200 shrink-0">
                     {tr('Vedic', 'வைதீகம்', 'ವೈದಿಕ', 'वैदिक')}
                   </span>
                 </div>
@@ -166,7 +166,7 @@ export default function AstroJitMatrimonyPage({ onBackToAstrology }) {
           </div>
 
           {/* Right Controls: Theme Toggle + Language + Back to Astrology */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
@@ -185,11 +185,12 @@ export default function AstroJitMatrimonyPage({ onBackToAstrology }) {
             <div className="relative">
               <button
                 onClick={() => setShowLangMenu(!showLangMenu)}
-                className="flex items-center gap-1 bg-white hover:bg-slate-50 text-slate-700 text-xs px-2.5 py-1.5 rounded-xl border border-slate-200 transition-colors cursor-pointer"
+                className="flex items-center gap-1 bg-white hover:bg-slate-50 text-slate-700 text-xs px-2 sm:px-2.5 py-1.5 rounded-xl border border-slate-200 transition-colors cursor-pointer"
               >
-                <Globe className="w-3.5 h-3.5 text-rose-600" />
-                <span className="font-semibold text-xs">{currentLangObj.native}</span>
-                <ChevronDown className="w-3 h-3 text-slate-400" />
+                <Globe className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                <span className="font-bold text-xs uppercase sm:hidden">{lang}</span>
+                <span className="font-semibold text-xs hidden sm:inline">{currentLangObj.native}</span>
+                <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
               </button>
 
               {showLangMenu && (

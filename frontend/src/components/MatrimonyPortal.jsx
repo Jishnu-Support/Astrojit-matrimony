@@ -2960,7 +2960,8 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
                       {tr('Primary 10 Poruthams Breakdown:', '10 முக்கியப் பொருத்தங்கள் விவரம்:', 'ಪ್ರಮುಖ 10 ಹೊಂದಾಣಿಕೆಗಳ ವಿವರ:', 'मुख्य 10 पोरुथम विवरण:')}
                     </h4>
                     <div className="border border-slate-200 rounded-2xl overflow-hidden">
-                      <table className="w-full text-left text-[11px]">
+                      <div className="overflow-x-auto">
+                        <table className="w-full min-w-[340px] text-left text-[11px]">
                         <thead className="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
                           <tr>
                             <th className="p-2">{tr('Porutham', 'பொருத்தம்', 'ಹೊಂದಾಣಿಕೆ', 'पोरुथम')}</th>
@@ -2989,7 +2990,8 @@ export default function MatrimonyPortal({ isModal = false, onClose, defaultTab =
                             </tr>
                           ))}
                         </tbody>
-                      </table>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </div>

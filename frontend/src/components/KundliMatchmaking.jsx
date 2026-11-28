@@ -34,6 +34,7 @@ import ShashtashtagamMatchCard from './ShashtashtagamMatchCard';
 import ChandranMatchCard from './ChandranMatchCard';
 import GuruMatchCard from './GuruMatchCard';
 import DasaSandhiMatchCard from './DasaSandhiMatchCard';
+import MatchingNakshatrasCard from './MatchingNakshatrasCard';
 import { MATCH_I18N, ASHTAKOOTA_I18N, getMatchText } from '../matchmakingI18n';
 import { GEO_DATA, lookupCoordinates } from '../data/geoCoordinates';
 
@@ -298,6 +299,8 @@ export default function KundliMatchmaking() {
   // Self-check results (for subscribed users)
   const [selfResult, setSelfResult] = useState(null);
   const [calculatingSelf, setCalculatingSelf] = useState(false);
+  const [standaloneStars, setStandaloneStars] = useState(null);
+  const [findingStars, setFindingStars] = useState(false);
   const [sendAfterSelfReview, setSendAfterSelfReview] = useState(false);
   const [selfResultTab, setSelfResultTab] = useState('tamil'); // 'tamil' | 'ashtakoota'
   const [reqTabs, setReqTabs] = useState({}); // reqId -> 'tamil' | 'ashtakoota'
@@ -332,6 +335,20 @@ export default function KundliMatchmaking() {
       console.error('Error loading matchmaking data:', err);
     } finally {
       setLoadingRequests(false);
+    }
+  };
+
+  const handleFindMatchingStars = async (role = 'female') => {
+    setFindingStars(true);
+    setActionMessage(null);
+    try {
+      const targetPerson = role === 'female' ? girl : boy;
+      const res = await API.findMatchingNakshatras(targetPerson, role);
+      setStandaloneStars(res);
+    } catch (err) {
+      setActionMessage({ type: 'error', text: 'Failed to scan matching Nakshatras: ' + err.message });
+    } finally {
+      setFindingStars(false);
     }
   };
 
@@ -564,7 +581,7 @@ export default function KundliMatchmaking() {
                 <Clock className="w-3 h-3 inline mr-1 text-rose-600" />
                 {lang === 'ta' ? 'பிறந்த நேரம் (12-மணி AM/PM)' : 'Birth Time (12-Hour AM/PM)'} *
               </label>
-              <div className="flex items-center gap-1">
+              <div className="flex flex-wrap items-center gap-1">
                 <select
                   value={girlTimeState.hour}
                   onChange={e => updateGirlTimePart('hour', e.target.value)}
@@ -658,7 +675,7 @@ export default function KundliMatchmaking() {
             </div>
 
             {showGirlCityDropdown && girlCitySuggestions.length > 0 && (
-              <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-rose-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto divide-y divide-slate-100">
+              <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-rose-200 rounded-xl shadow-xl z-20 max-h-48 overflow-y-auto divide-y divide-slate-100">
                 {girlCitySuggestions.map((item, idx) => (
                   <button
                     key={`${item.name}-${idx}`}
@@ -726,7 +743,7 @@ export default function KundliMatchmaking() {
                 <Clock className="w-3 h-3 inline mr-1 text-indigo-600" />
                 {lang === 'ta' ? 'பிறந்த நேரம் (12-மணி AM/PM)' : 'Birth Time (12-Hour AM/PM)'} *
               </label>
-              <div className="flex items-center gap-1">
+              <div className="flex flex-wrap items-center gap-1">
                 <select
                   value={boyTimeState.hour}
                   onChange={e => updateBoyTimePart('hour', e.target.value)}
@@ -820,7 +837,7 @@ export default function KundliMatchmaking() {
             </div>
 
             {showBoyCityDropdown && boyCitySuggestions.length > 0 && (
-              <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-indigo-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto divide-y divide-slate-100">
+              <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-indigo-200 rounded-xl shadow-xl z-20 max-h-48 overflow-y-auto divide-y divide-slate-100">
                 {boyCitySuggestions.map((item, idx) => (
                   <button
                     key={`${item.name}-${idx}`}
@@ -865,14 +882,34 @@ export default function KundliMatchmaking() {
               </span>
             </div>
 
-            <button
-              onClick={handleSelfCalculate}
-              disabled={calculatingSelf}
-              className="bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 text-white font-bold px-8 py-3 rounded-xl text-sm shadow-md shadow-rose-500/20 transition-all cursor-pointer inline-flex items-center gap-2"
-            >
-              {calculatingSelf ? <Sparkles className="w-4 h-4 animate-spin" /> : <Heart className="w-4 h-4 fill-current" />}
-              <span>{MATCH_I18N.calculateSelfBtn[lang] || MATCH_I18N.calculateSelfBtn.en}</span>
-            </button>
+            <div className="flex flex-wrap items-center justify-center gap-2.5">
+              <button
+                onClick={handleSelfCalculate}
+                disabled={calculatingSelf}
+                className="bg-gradient-to-r from-rose-500 via-amber-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 text-white font-bold px-8 py-3 rounded-xl text-sm shadow-md shadow-rose-500/20 transition-all cursor-pointer inline-flex items-center gap-2"
+              >
+                {calculatingSelf ? <Sparkles className="w-4 h-4 animate-spin" /> : <Heart className="w-4 h-4 fill-current" />}
+                <span>{MATCH_I18N.calculateSelfBtn[lang] || MATCH_I18N.calculateSelfBtn.en}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleFindMatchingStars('female')}
+                disabled={findingStars}
+                className="bg-amber-50 hover:bg-amber-100 text-[#7A1A22] border border-amber-300 font-bold px-4 py-3 rounded-xl text-xs sm:text-sm transition-all cursor-pointer inline-flex items-center gap-1.5"
+              >
+                <Star className={`w-4 h-4 text-amber-600 ${findingStars ? 'animate-spin' : ''}`} />
+                <span>{lang === 'ta' ? 'மணமகளுக்குப் பொருந்தும் நட்சத்திரங்கள்' : 'Matching Stars (For Bride)'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleFindMatchingStars('male')}
+                disabled={findingStars}
+                className="bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 font-bold px-4 py-3 rounded-xl text-xs sm:text-sm transition-all cursor-pointer inline-flex items-center gap-1.5"
+              >
+                <Star className={`w-4 h-4 text-indigo-600 ${findingStars ? 'animate-spin' : ''}`} />
+                <span>{lang === 'ta' ? 'மணமகனுக்குப் பொருந்தும் நட்சத்திரங்கள்' : 'Matching Stars (For Groom)'}</span>
+              </button>
+            </div>
           </div>
         ) : (
           /* UNSUBSCRIBED MODE: Must request an astrologer */
@@ -933,7 +970,36 @@ export default function KundliMatchmaking() {
                 {submittingRequest ? <Sparkles className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 <span>{MATCH_I18N.sendRequestBtn[lang] || MATCH_I18N.sendRequestBtn.en}</span>
               </button>
+              <button
+                type="button"
+                onClick={() => handleFindMatchingStars((user?.gender || '').toLowerCase() === 'male' ? 'male' : 'female')}
+                disabled={findingStars}
+                className="mt-2 sm:mt-0 sm:ml-2.5 w-full sm:w-auto bg-amber-50 hover:bg-amber-100 text-[#7A1A22] border border-amber-300 font-bold px-5 py-2.5 rounded-xl text-xs sm:text-sm transition-all cursor-pointer inline-flex items-center justify-center gap-1.5"
+              >
+                <Star className={`w-4 h-4 text-amber-600 ${findingStars ? 'animate-spin' : ''}`} />
+                <span>{lang === 'ta' ? 'பொருந்தும் நட்சத்திரங்கள் (27 நட்சத்திரம்)' : 'Find Matching Nakshatras (27 Stars)'}</span>
+              </button>
             </div>
+          </div>
+        )}
+
+        {/* Standalone 27-Nakshatra Scan Card */}
+        {standaloneStars && (
+          <div className="mt-4 pt-4 border-t border-slate-200 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs sm:text-sm font-bold text-[#7A1A22] flex items-center gap-1.5">
+                <Star className="w-4 h-4 text-amber-600" />
+                <span>{MATCH_I18N.tabMatchingNakshatras[lang] || MATCH_I18N.tabMatchingNakshatras.en}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setStandaloneStars(null)}
+                className="text-xs font-bold text-slate-500 hover:text-slate-900 cursor-pointer"
+              >
+                ✕ {lang === 'ta' ? 'மூடு' : 'Close'}
+              </button>
+            </div>
+            <MatchingNakshatrasCard standaloneData={standaloneStars} />
           </div>
         )}
       </div>
@@ -978,7 +1044,7 @@ export default function KundliMatchmaking() {
           </div>
 
           {/* View Tab Switcher */}
-          <div className="flex border-b border-slate-200 text-xs font-bold gap-2">
+          <div className="flex flex-wrap border-b border-slate-200 text-xs font-bold gap-2 pb-1">
             <button
               type="button"
               onClick={() => setSelfResultTab('tamil')}
@@ -1075,6 +1141,18 @@ export default function KundliMatchmaking() {
               <Clock className="w-4 h-4 text-[#7A1A22]" />
               <span>{MATCH_I18N.tabDasaSandhi[lang] || MATCH_I18N.tabDasaSandhi.en}</span>
             </button>
+            <button
+              type="button"
+              onClick={() => setSelfResultTab('matching_nakshatras')}
+              className={`pb-2.5 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                selfResultTab === 'matching_nakshatras'
+                  ? 'border-emerald-700 text-emerald-900 font-bold'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              <Star className="w-4 h-4 text-emerald-600" />
+              <span>{MATCH_I18N.tabMatchingNakshatras[lang] || MATCH_I18N.tabMatchingNakshatras.en}</span>
+            </button>
           </div>
 
           {/* Tab 1: 10 Poruthams View */}
@@ -1110,6 +1188,11 @@ export default function KundliMatchmaking() {
           {/* Tab 7: Dasa Sandhi Porutham (Transition Overlap Scan) View */}
           {selfResultTab === 'dasa_sandhi' && (
             <DasaSandhiMatchCard matchReport={selfResult} />
+          )}
+
+          {/* Tab 8: Matching Nakshatras (27-Star Finder) View */}
+          {selfResultTab === 'matching_nakshatras' && (
+            <MatchingNakshatrasCard matchReport={selfResult} />
           )}
 
           {/* Tab 3: Ashtakoota 36 Gunas View */}
@@ -1388,7 +1471,7 @@ export default function KundliMatchmaking() {
                       const currentTab = reqTabs[req.id] || 'tamil';
                       return (
                         <div className="space-y-4">
-                          <div className="flex border-b border-slate-200 text-xs font-bold gap-2">
+                          <div className="flex flex-wrap border-b border-slate-200 text-xs font-bold gap-2 pb-1">
                             <button
                               type="button"
                               onClick={() => setReqTabs({ ...reqTabs, [req.id]: 'tamil' })}
@@ -1485,6 +1568,18 @@ export default function KundliMatchmaking() {
                               <Clock className="w-4 h-4 text-[#7A1A22]" />
                               <span>{MATCH_I18N.tabDasaSandhi[lang] || MATCH_I18N.tabDasaSandhi.en}</span>
                             </button>
+                            <button
+                              type="button"
+                              onClick={() => setReqTabs({ ...reqTabs, [req.id]: 'matching_nakshatras' })}
+                              className={`pb-2.5 px-3 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+                                currentTab === 'matching_nakshatras'
+                                  ? 'border-emerald-700 text-emerald-900 font-bold'
+                                  : 'border-transparent text-slate-500 hover:text-slate-700'
+                              }`}
+                            >
+                              <Star className="w-4 h-4 text-emerald-600" />
+                              <span>{MATCH_I18N.tabMatchingNakshatras[lang] || MATCH_I18N.tabMatchingNakshatras.en}</span>
+                            </button>
                           </div>
 
                           {currentTab === 'tamil' ? (
@@ -1501,6 +1596,8 @@ export default function KundliMatchmaking() {
                             <GuruMatchCard matchReport={req.matchReport} />
                           ) : currentTab === 'dasa_sandhi' ? (
                             <DasaSandhiMatchCard matchReport={req.matchReport} />
+                          ) : currentTab === 'matching_nakshatras' ? (
+                            <MatchingNakshatrasCard matchReport={req.matchReport} />
                           ) : (
                             <div className="space-y-4">
                               {/* Score Bar */}

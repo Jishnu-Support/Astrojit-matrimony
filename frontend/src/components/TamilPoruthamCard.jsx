@@ -11,14 +11,10 @@ import {
   Compass,
   Heart,
   Info,
-  Flame,
   Award,
-  Zap,
 } from 'lucide-react';
 import { useLang } from '../i18n';
 import { MATCH_I18N, getMatchText, translateEntity } from '../matchmakingI18n';
-import GujaDashaChart from './GujaDashaChart';
-import RahuKetuChart from './RahuKetuChart';
 
 /**
  * Astrojit Classical 10 & 12 Vivaha Porutham Card
@@ -32,12 +28,10 @@ export default function TamilPoruthamCard({ matchReport }) {
   const { lang } = useLang();
   const [expandedPorutham, setExpandedPorutham] = useState(null);
   const [showAllPoruthams, setShowAllPoruthams] = useState(false);
-  const [showGujaChart, setShowGujaChart] = useState(false);
-  const [showRahuKetuChart, setShowRahuKetuChart] = useState(false);
 
   if (!matchReport) return null;
 
-  const { tamilPorutham, chevvaiAnalysis, boy, girl } = matchReport;
+  const { tamilPorutham, boy, girl } = matchReport;
 
   if (!tamilPorutham) return null;
 
@@ -203,83 +197,6 @@ export default function TamilPoruthamCard({ matchReport }) {
       return `উভয়ের একই ${limbName} রজ্জু হলেও, বরের ${boyDir} এবং কনের ${girlDir} গতির কারণে শাস্ত্রীয় বিধিমতে রজ্জু দোষ দূরীভূত হয়ে উত্তম মিলন হয়।`;
     }
     return `Although both belong to the ${limbName} limb, Groom has ${boyDir} and Bride has ${girlDir}. As per classical Sastra, the Rajju affliction is fully cancelled into Uttamam.`;
-  };
-
-  // Chevvai Dosha summary text
-  const getChevvaiStatusText = (person) => {
-    if (person?.isCancelled) {
-      if (lang === 'kn') return 'ಕುಜ ದೋಷ ನಿವಾರಣೆ (ದೋಷ ಮುಕ್ತ)';
-      if (lang === 'ta') return 'செவ்வாய் தோஷ நிவர்த்தி (தோஷமில்லை)';
-      if (lang === 'hi') return 'मंगल दोष निवृत्ति (दोष रहित)';
-      if (lang === 'te') return 'కుజ దోష నివారణ (దోషం లేదు)';
-      if (lang === 'bn') return 'মঙ্গল দোষ খণ্ডন (দোষমুক্ত)';
-      return 'Mars Dosha Cancelled (Exempted)';
-    }
-    if (person?.hasDosha) {
-      if (lang === 'kn') return 'ಕುಜ ದೋಷವಿದೆ';
-      if (lang === 'ta') return 'செவ்வாய் தோஷம் உள்ளது';
-      if (lang === 'hi') return 'मंगल दोष उपस्थित';
-      if (lang === 'te') return 'కుజ దోషం ఉన్నది';
-      if (lang === 'bn') return 'মঙ্গল দোষ বিদ্যমান';
-      return 'Mars Dosha Present';
-    }
-    if (lang === 'kn') return 'ದೋಷವಿಲ್ಲ (ಸಾಮಾನ್ಯ ಸ್ಥಿತಿ)';
-    if (lang === 'ta') return 'தோஷமில்லை';
-    if (lang === 'hi') return 'दोष नहीं';
-    if (lang === 'te') return 'దోషం లేదు';
-    if (lang === 'bn') return 'দোষ নেই';
-    return 'No Mars Dosha';
-  };
-
-  // Chevvai houses placement string
-  const getChevvaiHousesString = (houses = {}) => {
-    const lagna = houses?.lagna || 9;
-    const moon = houses?.moon || 11;
-    const venus = houses?.venus || 5;
-
-    if (lang === 'kn') {
-      return `ಲಗ್ನದಿಂದ ${lagna}, ಚಂದ್ರನಿಂದ ${moon}, ಶುಕ್ರನಿಂದ ${venus} ನೇ ಮನೆ.`;
-    }
-    if (lang === 'ta') {
-      return `லக்னத்திலிருந்து ${lagna}-ஆம் இடம், சந்திரனிலிருந்து ${moon}-ஆம் இடம், சுக்கிரனிலிருந்து ${venus}-ஆம் இடம்.`;
-    }
-    if (lang === 'hi') {
-      return `लग्न से ${lagna} भाव, चन्द्र से ${moon} भाव, शुक्र से ${venus} भाव।`;
-    }
-    if (lang === 'te') {
-      return `లగ్నం నుండి ${lagna}, చంద్రుని నుండి ${moon}, శుక్రుని నుండి ${venus} వ స్థానం.`;
-    }
-    if (lang === 'bn') {
-      return `লগ্ন থেকে ${lagna}, চন্দ্র থেকে ${moon}, শুক্র থেকে ${venus} ভাব।`;
-    }
-    return `House ${lagna} from Ascendant, ${moon} from Moon, ${venus} from Venus.`;
-  };
-
-  // Localized cancellation rules for Chevvai
-  const getChevvaiCancellationText = (c) => {
-    if (lang === 'ta') return c;
-    if (c.includes('Simha') || c.includes('சிம்மம்')) {
-      if (lang === 'kn') return 'ಸಿಂಹ ಅಥವಾ ಕಟಕ ಲಗ್ನದಲ್ಲಿ ಜನಿಸಿದವರಿಗೆ ಕುಜ ಶುಭ ಯೋಗಕಾರಕನಾದ್ದರಿಂದ ದೋಷವಿಲ್ಲ.';
-      if (lang === 'hi') return 'कर्क अथवा सिंह लग्न में जन्मे जातकों हेतु मंगल योगकारक होने से दोष नहीं होता।';
-      if (lang === 'te') return 'కర్కాటక, సింహ లగ్నాలలో జన్మించిన వారికి కుజుడు యోగకారకుడు కావున దోషం ఉండదు.';
-      if (lang === 'bn') return 'কর্কট বা সিংহ লগ্নে জন্মগ্রহণকারীদের জন্য মঙ্গল যোগকারক হওয়ায় কোনও দোষ হয় না।';
-      return 'Born in Cancer or Leo Ascendant: Mars is auspicious Yogakaraka, hence no affliction.';
-    }
-    if (c.includes('Jupiter') || c.includes('குரு')) {
-      if (lang === 'kn') return 'ಕುಜನಿಗೆ ಶುಭ ಗುರು ದೃಷ್ಟಿ ಅಥವಾ ಸಂಯೋಗವಿರುವುದರಿಂದ ಕುಜ ದೋಷ ನಿವಾರಣೆಯಾಗಿದೆ.';
-      if (lang === 'hi') return 'मंगल पर शुभ बृहस्पति की दृष्टि अथवा युति होने से दोष निवृत्ति हो जाती है।';
-      if (lang === 'te') return 'కుజునిపై శుభ గురు దృష్టి లేదా కలయిక ఉన్నందున కుజ దోషం తొలగిపోయింది.';
-      if (lang === 'bn') return 'মঙ্গলের উপর শুভ বৃহস্পতির দৃষ্টি বা সংযোগ থাকার কারণে মঙ্গল দোষ খণ্ডিত হয়।';
-      return 'Mars is aspected or conjoined by benefic Jupiter, cancelling the affliction.';
-    }
-    if (c.includes('own') || c.includes('ஆட்சி')) {
-      if (lang === 'kn') return 'ಕುಜನು ಸ್ವಕ್ಷೇತ್ರ, ಉಚ್ಚ ಅಥವಾ ಮಿತ್ರ ರಾಶಿಯಾದ ಮೇಷ, ವೃಶ್ಚಿಕ, ಮಕರ, ಸಿಂಹ, ಕುಂಭದಲ್ಲಿ ಇರುವುದರಿಂದ ದೋಷವಿಲ್ಲ.';
-      if (lang === 'hi') return 'मंगल स्वराशि, उच्च या मित्र राशि (मेष, वृश्चिक, मकर, सिंह, कुंभ) में स्थित होने से दोषमुक्त है।';
-      if (lang === 'te') return 'కుజుడు స్వక్షేత్రం, ఉచ్ఛ లేదా మిత్ర రాశులలో ఉన్నందున దోషం ఉండదు.';
-      if (lang === 'bn') return 'মঙ্গল স্বক্ষেত্র, তুঙ্গ বা মিত্র রাশিতে অবস্থিত হওয়ায় দোষমুক্ত।';
-      return 'Mars is positioned in own, exaltation or friendly sign, granting exemption.';
-    }
-    return c;
   };
 
   const displayedPoruthams = showAllPoruthams ? poruthams : poruthams.slice(0, 10);
@@ -563,212 +480,6 @@ export default function TamilPoruthamCard({ matchReport }) {
           </table>
         </div>
       </div>
-
-      {/* 5. Chevvai / Kuja / Mars Dosha Section */}
-      {chevvaiAnalysis && (
-        <div className="bg-white border border-rose-200 rounded-2xl p-4 sm:p-5 space-y-3 shadow-xs">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-rose-100 pb-2 gap-2">
-            <div>
-              <h4 className="font-bold text-rose-950 text-xs sm:text-sm flex items-center gap-1.5">
-                <Flame className="w-4 h-4 text-rose-600" />
-                {MATCH_I18N.chevvaiDoshaHeading[lang] || MATCH_I18N.chevvaiDoshaHeading.en}
-              </h4>
-              <span className="text-[10px] text-slate-500">
-                {MATCH_I18N.referenceBookPage[lang] || MATCH_I18N.referenceBookPage.en}
-              </span>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setShowGujaChart(!showGujaChart)}
-              className="text-[11px] font-bold px-3 py-1 bg-gradient-to-r from-rose-600 to-amber-700 hover:from-rose-700 hover:to-amber-800 text-white rounded-lg shadow-2xs cursor-pointer flex items-center gap-1.5 transition-all self-end sm:self-auto"
-            >
-              <Flame className="w-3.5 h-3.5 text-amber-300" />
-              <span>
-                {showGujaChart
-                  ? (lang === 'ta' ? '▲ கட்டத்தை மறைக்கவும்' : '▲ Hide Chart')
-                  : (lang === 'ta' ? '▼ செவ்வாய் தசா & கட்ட ஆய்வு' : '▼ View Guja Dasha & Chart')}
-              </span>
-            </button>
-          </div>
-
-          {/* Expandable Guja Dasha & South Indian Chart */}
-          {showGujaChart && (
-            <div className="pt-2 border-t border-rose-100">
-              <GujaDashaChart matchReport={matchReport} />
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-            {/* Girl's / Bride's Chevvai Status (Female - Left Side Default) */}
-            <div
-              className={`p-3 rounded-xl border ${
-                chevvaiAnalysis.girl?.hasDosha
-                  ? 'bg-rose-50/60 border-rose-200'
-                  : chevvaiAnalysis.girl?.isCancelled
-                  ? 'bg-emerald-50/60 border-emerald-200'
-                  : 'bg-slate-50 border-slate-200'
-              }`}
-            >
-              <div className="flex justify-between items-center mb-1">
-                <span className="font-bold text-slate-900">{MATCH_I18N.brideHoroscope[lang] || MATCH_I18N.brideHoroscope.en}</span>
-                <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    chevvaiAnalysis.girl?.hasDosha
-                      ? 'bg-rose-200 text-rose-900'
-                      : chevvaiAnalysis.girl?.isCancelled
-                      ? 'bg-emerald-200 text-emerald-900'
-                      : 'bg-slate-200 text-slate-800'
-                  }`}
-                >
-                  {getChevvaiStatusText(chevvaiAnalysis.girl)}
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-600 mb-1">
-                {getChevvaiHousesString(chevvaiAnalysis.girl?.houses)}
-              </p>
-              {chevvaiAnalysis.girl?.cancellations?.length > 0 && (
-                <div className="mt-1.5 p-2 bg-white/80 rounded border border-emerald-200 text-[11px] text-emerald-900">
-                  <span className="font-bold block mb-0.5">
-                    {MATCH_I18N.nivrittiRuleHeading[lang] || MATCH_I18N.nivrittiRuleHeading.en}
-                  </span>
-                  <ul className="list-disc pl-3.5 space-y-0.5">
-                    {chevvaiAnalysis.girl.cancellations.map((c, i) => (
-                      <li key={i}>{getChevvaiCancellationText(c)}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            {/* Boy's / Groom's Chevvai Status (Male - Right Side Default) */}
-            <div
-              className={`p-3 rounded-xl border ${
-                chevvaiAnalysis.boy?.hasDosha
-                  ? 'bg-rose-50/60 border-rose-200'
-                  : chevvaiAnalysis.boy?.isCancelled
-                  ? 'bg-emerald-50/60 border-emerald-200'
-                  : 'bg-slate-50 border-slate-200'
-              }`}
-            >
-              <div className="flex justify-between items-center mb-1">
-                <span className="font-bold text-slate-900">{MATCH_I18N.groomHoroscope[lang] || MATCH_I18N.groomHoroscope.en}</span>
-                <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    chevvaiAnalysis.boy?.hasDosha
-                      ? 'bg-rose-200 text-rose-900'
-                      : chevvaiAnalysis.boy?.isCancelled
-                      ? 'bg-emerald-200 text-emerald-900'
-                      : 'bg-slate-200 text-slate-800'
-                  }`}
-                >
-                  {getChevvaiStatusText(chevvaiAnalysis.boy)}
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-600 mb-1">
-                {getChevvaiHousesString(chevvaiAnalysis.boy?.houses)}
-              </p>
-              {chevvaiAnalysis.boy?.cancellations?.length > 0 && (
-                <div className="mt-1.5 p-2 bg-white/80 rounded border border-emerald-200 text-[11px] text-emerald-900">
-                  <span className="font-bold block mb-0.5">
-                    {MATCH_I18N.nivrittiRuleHeading[lang] || MATCH_I18N.nivrittiRuleHeading.en}
-                  </span>
-                  <ul className="list-disc pl-3.5 space-y-0.5">
-                    {chevvaiAnalysis.boy.cancellations.map((c, i) => (
-                      <li key={i}>{getChevvaiCancellationText(c)}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {chevvaiAnalysis.compatibilitySummary && (
-            <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-700">
-              <strong>{MATCH_I18N.compatibilityVerdictHeading[lang] || MATCH_I18N.compatibilityVerdictHeading.en}</strong>{' '}
-              {lang === 'kn'
-                ? (chevvaiAnalysis.boy?.isCancelled && chevvaiAnalysis.girl?.isCancelled
-                    ? 'ಇಬ್ಬರಿಗೂ ಕುಜ ದೋಷ ಶಾಸ್ತ್ರೋಕ್ತವಾಗಿ ನಿವಾರಣೆಯಾಗಿರುವುದರಿಂದ ವಿವಾಹಕ್ಕೆ ಅತ್ಯಂತ ಶುಭವಾಗಿದೆ.'
-                    : 'ಕುಜ ದೋಷ ಸಮಸ್ಥಿತಿಯಲ್ಲಿದ್ದು ವಿವಾಹ ಅನುಕೂಲಕರವಾಗಿದೆ.')
-                : lang === 'ta'
-                ? chevvaiAnalysis.compatibilitySummary
-                : lang === 'hi'
-                ? 'दोनों कुंडलियों में मंगल दोष परिहार होने से विवाह हेतु शुभ स्थिति है।'
-                : chevvaiAnalysis.compatibilitySummary}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* 6. Rahu-Ketu / Sarpa Dosha Section */}
-      {matchReport.rahuKetuAnalysis && (
-        <div className="bg-white border border-teal-200 rounded-2xl p-4 sm:p-5 space-y-3 shadow-xs">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-teal-100 pb-2 gap-2">
-            <div>
-              <h4 className="font-bold text-teal-950 text-xs sm:text-sm flex items-center gap-1.5">
-                <Zap className="w-4 h-4 text-teal-700" />
-                {MATCH_I18N.tabRahuKetu[lang] || MATCH_I18N.tabRahuKetu.en}
-              </h4>
-              <span className="text-[10px] text-slate-500">
-                {lang === 'ta' ? '1/7, 2/8, 5/11 சர்ப்ப தோஷ அச்சு மற்றும் சமநிலை ஆய்வு' : '1/7, 2/8, 5/11 Nodal Axis & Sarpa Samyam Evaluation'}
-              </span>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setShowRahuKetuChart(!showRahuKetuChart)}
-              className="text-[11px] font-bold px-3 py-1 bg-gradient-to-r from-teal-700 to-cyan-800 hover:from-teal-800 hover:to-cyan-900 text-white rounded-lg shadow-2xs cursor-pointer flex items-center gap-1.5 transition-all self-end sm:self-auto"
-            >
-              <Zap className="w-3.5 h-3.5 text-amber-300" />
-              <span>
-                {showRahuKetuChart
-                  ? (lang === 'ta' ? '▲ கட்டத்தை மறைக்கவும்' : '▲ Hide Chart')
-                  : (lang === 'ta' ? '▼ சர்ப்ப தோஷக் கட்ட ஆய்வு' : '▼ View Rahu-Ketu Chart')}
-              </span>
-            </button>
-          </div>
-
-          {/* Expandable Rahu-Ketu Chart */}
-          {showRahuKetuChart && (
-            <div className="pt-2 border-t border-teal-100">
-              <RahuKetuChart matchReport={matchReport} />
-            </div>
-          )}
-
-          {/* Compact summary row if collapsed (Bride Left, Groom Right) */}
-          {!showRahuKetuChart && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div className="p-3 bg-rose-50/50 rounded-xl border border-rose-100 flex justify-between items-center">
-                <span className="font-bold text-rose-950">
-                  {({ ta: 'மணமகள் சர்ப்ப நிலை:', kn: 'ವಧು ಸರ್ಪ ಸ್ಥಿತಿ:', hi: 'वधू सर्प स्थिति:', te: 'వధువు సర్ప స్థితి:', bn: 'কনে সর্প অবস্থান:' }[lang] || "Bride's Axis:")}{' '}
-                  {lang === 'ta' ? matchReport.rahuKetuAnalysis.girl?.axisNameTamil : matchReport.rahuKetuAnalysis.girl?.axisName}
-                </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-900">
-                  {lang === 'ta' ? matchReport.rahuKetuAnalysis.girl?.doshaLevelTamil : matchReport.rahuKetuAnalysis.girl?.doshaLevel}
-                </span>
-              </div>
-              <div className="p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 flex justify-between items-center">
-                <span className="font-bold text-indigo-950">
-                  {({ ta: 'மணமகன் சர்ப்ப நிலை:', kn: 'ವರ ಸರ್ಪ ಸ್ಥಿತಿ:', hi: 'वर सर्प स्थिति:', te: 'వరుడు సర్ప స్థితి:', bn: 'বর সর্প অবস্থান:' }[lang] || "Groom's Axis:")}{' '}
-                  {lang === 'ta' ? matchReport.rahuKetuAnalysis.boy?.axisNameTamil : matchReport.rahuKetuAnalysis.boy?.axisName}
-                </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-900">
-                  {lang === 'ta' ? matchReport.rahuKetuAnalysis.boy?.doshaLevelTamil : matchReport.rahuKetuAnalysis.boy?.doshaLevel}
-                </span>
-              </div>
-            </div>
-          )}
-
-          {matchReport.rahuKetuAnalysis.doshaSamyam && (
-            <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-700">
-              <strong>{MATCH_I18N.compatibilityVerdictHeading[lang] || MATCH_I18N.compatibilityVerdictHeading.en}</strong>{' '}
-              {lang === 'ta'
-                ? (matchReport.rahuKetuAnalysis.doshaSamyam.summaryTamil || matchReport.rahuKetuAnalysis.doshaSamyam.summary)
-                : matchReport.rahuKetuAnalysis.doshaSamyam.summary}
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }

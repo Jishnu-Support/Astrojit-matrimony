@@ -992,7 +992,7 @@ export default function DailyPanchangam() {
                 </button>
 
                 {showCityPicker && (
-                  <div className="absolute left-0 lg:left-auto lg:right-0 mt-2 w-72 rounded-xl border border-indigo-700/60 bg-[#0E162E] text-white shadow-2xl p-2.5 z-30">
+                  <div className="absolute left-0 lg:left-auto lg:right-0 mt-2 w-[min(18rem,calc(100vw-3rem))] sm:w-72 rounded-xl border border-indigo-700/60 bg-[#0E162E] text-white shadow-2xl p-2.5 z-30">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-[11px] font-bold uppercase tracking-wider text-amber-300">
                         {lang === 'ta' ? 'ஊரைத் தேர்ந்தெடுக்கவும்' : 'Select Location'}
@@ -1068,7 +1068,7 @@ export default function DailyPanchangam() {
                     type="date"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className={`bg-transparent text-[11px] font-semibold px-1.5 py-0.5 focus:outline-none ${
+                    className={`bg-transparent text-[11px] font-semibold px-1.5 py-0.5 max-w-[128px] sm:max-w-none focus:outline-none ${
                       isBrightDay ? 'text-slate-900 [color-scheme:light]' : 'text-white [color-scheme:dark]'
                     }`}
                   />

@@ -189,7 +189,7 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
         <div className="flex items-center gap-1.5 mt-4 pt-3 border-t border-slate-100 overflow-x-auto no-scrollbar whitespace-nowrap">
           <button
             onClick={() => { setActiveTab('overview'); setSelectedClientMobile(null); }}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'overview'
                 ? 'bg-rose-600 text-white shadow-xs'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -199,7 +199,7 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
           </button>
           <button
             onClick={() => { setActiveTab('clients'); setSelectedClientMobile(null); }}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'clients'
                 ? 'bg-rose-600 text-white shadow-xs'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -209,7 +209,7 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
           </button>
           <button
             onClick={() => { setActiveTab('astrologers'); setSelectedClientMobile(null); }}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'astrologers'
                 ? 'bg-rose-600 text-white shadow-xs'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -219,7 +219,7 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
           </button>
           <button
             onClick={() => { setActiveTab('horoscope'); setSelectedClientMobile(null); }}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'horoscope' || activeTab === 'thirukanitha' || activeTab === 'horoscope_pagers'
                 ? 'bg-rose-600 text-white shadow-xs'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -229,7 +229,7 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
           </button>
           <button
             onClick={() => { setActiveTab('vendors'); setSelectedClientMobile(null); }}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'vendors'
                 ? 'bg-rose-600 text-white shadow-xs'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -239,7 +239,7 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
           </button>
           <button
             onClick={() => { setActiveTab('products'); setSelectedClientMobile(null); }}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'products'
                 ? 'bg-rose-600 text-white shadow-xs'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -249,7 +249,7 @@ export default function CompanyDashboard({ activeTab: propTab, onTabChange }) {
           </button>
           <button
             onClick={() => { setActiveTab('matrimony'); setSelectedClientMobile(null); }}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'matrimony'
                 ? 'bg-rose-600 text-white shadow-xs'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'

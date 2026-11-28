@@ -29,7 +29,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenMatrimony, onTog
   const currentLangObj = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
 
   return (
-    <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#181412]/95 backdrop-blur-md border-b border-amber-200/70 dark:border-amber-900/40 shadow-xs px-2 sm:px-6 py-1.5 sm:py-2.5 transition-colors">
+    <header className="sticky top-0 z-30 bg-white dark:bg-[#181412] border-b border-amber-200/70 dark:border-amber-900/40 shadow-xs px-2 sm:px-6 py-1.5 sm:py-2.5 transition-colors">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-1 sm:gap-4">
         {/* Left: Hamburger & Brand */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
@@ -169,7 +169,7 @@ export default function Navbar({ activeTab, setActiveTab, onOpenMatrimony, onTog
               </button>
             </>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2">
               <span className="text-xs text-slate-500">Welcome to Astrojit</span>
             </div>
           )}

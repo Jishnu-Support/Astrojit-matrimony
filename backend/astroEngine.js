@@ -2989,6 +2989,203 @@ function calculateDasaSandhiAnalysis(boyInput = {}, girlInput = {}) {
 }
 
 /**
+ * Section 12: Matching Nakshatras Finder (பொருந்தும் நட்சத்திரங்கள் பட்டியல்)
+ * Evaluates all 27 Nakshatras (handling split-Rasi padas) for a given horoscope.
+ */
+function buildCandidateNakshatraRasiSlots() {
+  const slots = [];
+  for (let sIdx = 0; sIdx < TAMIL_STARS.length; sIdx++) {
+    const starObj = TAMIL_STARS[sIdx];
+    const startDeg = sIdx * (40 / 3);
+    const padaSigns = [1, 2, 3, 4].map((p) => {
+      const midDeg = normalizeDeg(startDeg + (p - 0.5) * (10 / 3));
+      return { p, rasiIdx: Math.floor(midDeg / 30) % 12 };
+    });
+
+    const uniqueRasis = [...new Set(padaSigns.map((x) => x.rasiIdx))];
+    if (uniqueRasis.length === 1) {
+      slots.push({
+        starIdx: sIdx,
+        starName: starObj.name,
+        starTamil: starObj.tamil,
+        padaLabelEn: 'All Padas (1–4)',
+        padaLabelTa: 'அனைத்து பாதங்கள் (1–4)',
+        pada: 1,
+        rasiIdx: uniqueRasis[0],
+        rasiName: RASHIS[uniqueRasis[0]].name,
+        rasiTamil: RASHIS[uniqueRasis[0]].tamil
+      });
+    } else {
+      uniqueRasis.forEach((rIdx) => {
+        const matchingPadas = padaSigns.filter((x) => x.rasiIdx === rIdx).map((x) => x.p);
+        const firstP = matchingPadas[0];
+        const lastP = matchingPadas[matchingPadas.length - 1];
+        const rangeEn = firstP === lastP ? `Pada ${firstP}` : `Pada ${firstP}–${lastP}`;
+        const rangeTa = firstP === lastP ? `${firstP}-ம் பாதம்` : `${firstP}–${lastP} பாதங்கள்`;
+        slots.push({
+          starIdx: sIdx,
+          starName: starObj.name,
+          starTamil: starObj.tamil,
+          padaLabelEn: rangeEn,
+          padaLabelTa: rangeTa,
+          pada: firstP,
+          rasiIdx: rIdx,
+          rasiName: RASHIS[rIdx].name,
+          rasiTamil: RASHIS[rIdx].tamil
+        });
+      });
+    }
+  }
+  return slots;
+}
+
+const CANDIDATE_NAKSHATRA_SLOTS = buildCandidateNakshatraRasiSlots();
+
+function resolvePersonStarAndRasi(personInput = {}) {
+  const hasExplicitStar = Boolean(personInput.starNakshatra || personInput.nakshatra || personInput.star);
+  const hasExplicitRasi = Boolean(personInput.rasiMoonSign || personInput.moonSign || personInput.rasi || personInput.rashi);
+
+  let starObj = hasExplicitStar ? findStarObj(personInput) : null;
+  let rasiIdx = hasExplicitRasi ? findRashiIdx(personInput) : null;
+  let pada = parseInt(personInput.pada || personInput.padam || 1, 10) || 1;
+
+  if (!starObj || rasiIdx === null) {
+    try {
+      const grahas = computePersonGrahas(personInput);
+      if (!starObj && grahas.starObj) starObj = TAMIL_STARS[grahas.starObj.index] || TAMIL_STARS[0];
+      if (rasiIdx === null && typeof grahas.rashis?.moon === 'number') rasiIdx = grahas.rashis.moon;
+      if (grahas.pada) pada = grahas.pada;
+    } catch {
+      // Fallback below
+    }
+  }
+
+  starObj = starObj || TAMIL_STARS[0];
+  rasiIdx = typeof rasiIdx === 'number' ? rasiIdx : 0;
+
+  return {
+    name: personInput.name || 'Person',
+    starIdx: starObj.index,
+    starName: starObj.name,
+    starTamil: starObj.tamil,
+    pada,
+    rasiIdx,
+    rasiName: RASHIS[rasiIdx]?.name || 'Aries',
+    rasiTamil: RASHIS[rasiIdx]?.tamil || 'மேஷம்'
+  };
+}
+
+function findMatchingNakshatrasForHoroscope(personInput = {}, gender = 'female') {
+  const isSourceBride = String(gender || personInput.gender || 'female').toLowerCase() === 'female';
+  const source = resolvePersonStarAndRasi(personInput);
+
+  const sourcePayload = {
+    name: source.name,
+    starNakshatra: source.starName,
+    moonSign: source.rasiName,
+    pada: source.pada
+  };
+
+  const evaluated = CANDIDATE_NAKSHATRA_SLOTS.map((cand) => {
+    const candidatePayload = {
+      name: cand.starName,
+      starNakshatra: cand.starName,
+      moonSign: cand.rasiName,
+      pada: cand.pada
+    };
+
+    const poruthamRes = isSourceBride
+      ? calculateTamilPoruthams(candidatePayload, sourcePayload)
+      : calculateTamilPoruthams(sourcePayload, candidatePayload);
+
+    const totalScore = poruthamRes.totalScore || 0;
+    const rajjuClear = !poruthamRes.rajjuAnalysis?.hasDosha;
+    const rajjuExempt = Boolean(poruthamRes.rajjuAnalysis?.isArohaAvarohaException);
+    const vedhaClear = !poruthamRes.vedhaAnalysis?.hasVedha;
+    const dinaClear = Boolean(poruthamRes.isDinaMatching);
+    const subha68 = Boolean(poruthamRes.subhaShashtashtakam?.isSubhaShashtashtakam);
+
+    const failReasonsEn = [];
+    const failReasonsTa = [];
+    if (!rajjuClear && !rajjuExempt) {
+      failReasonsEn.push(`Rajju Dosha (${poruthamRes.rajjuAnalysis?.limbAfflicted})`);
+      failReasonsTa.push(`ரஜ்ஜு தோஷம் (${poruthamRes.rajjuAnalysis?.limbAfflicted})`);
+    }
+    if (!vedhaClear) {
+      failReasonsEn.push('Vedha Conflict');
+      failReasonsTa.push('வேதை தோஷம்');
+    }
+    if (totalScore < 5) {
+      failReasonsEn.push(`Low Score (${totalScore}/10)`);
+      failReasonsTa.push(`குறைந்த மதிப்பெண் (${totalScore}/10)`);
+    }
+
+    let tier = 'avoid';
+    if (rajjuClear && vedhaClear && totalScore >= 7) {
+      tier = 'uttamam';
+    } else if ((rajjuClear || rajjuExempt) && vedhaClear && totalScore >= 5) {
+      tier = 'madhyamam';
+    }
+
+    return {
+      key: `${cand.starIdx}_${cand.rasiIdx}`,
+      starIdx: cand.starIdx,
+      starName: cand.starName,
+      starTamil: cand.starTamil,
+      padaLabelEn: cand.padaLabelEn,
+      padaLabelTa: cand.padaLabelTa,
+      rasiIdx: cand.rasiIdx,
+      rasiName: cand.rasiName,
+      rasiTamil: cand.rasiTamil,
+      totalScore,
+      tier,
+      rajjuClear,
+      rajjuExempt,
+      vedhaClear,
+      dinaClear,
+      subha68,
+      failReasonsEn,
+      failReasonsTa,
+      poruthams: (poruthamRes.poruthams || []).slice(0, 10).map((p) => ({
+        name: p.name,
+        nameTamil: p.nameTamil,
+        points: p.points,
+        status: p.status,
+        statusTamil: p.statusTamil
+      }))
+    };
+  });
+
+  const sortStars = (a, b) => (b.totalScore - a.totalScore) || (a.starIdx - b.starIdx) || (a.rasiIdx - b.rasiIdx);
+  const uttamam = evaluated.filter((x) => x.tier === 'uttamam').sort(sortStars);
+  const madhyamam = evaluated.filter((x) => x.tier === 'madhyamam').sort(sortStars);
+  const avoid = evaluated.filter((x) => x.tier === 'avoid').sort(sortStars);
+
+  return {
+    source,
+    sourceGender: isSourceBride ? 'female' : 'male',
+    lookingFor: isSourceBride ? 'groom' : 'bride',
+    counts: {
+      uttamam: uttamam.length,
+      madhyamam: madhyamam.length,
+      avoid: avoid.length,
+      totalSlots: evaluated.length
+    },
+    uttamam,
+    madhyamam,
+    avoid,
+    allSlots: [...uttamam, ...madhyamam, ...avoid]
+  };
+}
+
+function calculateMatchingNakshatrasPair(boyBirth = {}, girlBirth = {}) {
+  return {
+    forGirl: findMatchingNakshatrasForHoroscope(girlBirth, 'female'),
+    forBoy: findMatchingNakshatrasForHoroscope(boyBirth, 'male')
+  };
+}
+
+/**
  * 36 Gunas Ashtakoota Matchmaking
  */
 function calculateKundliMatch(boyBirth, girlBirth) {
@@ -3050,6 +3247,7 @@ function calculateKundliMatch(boyBirth, girlBirth) {
   const chandranAnalysis = calculateChandranMatchAnalysis(boyBirth, girlBirth);
   const guruAnalysis = calculateGuruMatchAnalysis(boyBirth, girlBirth);
   const dasaSandhiAnalysis = calculateDasaSandhiAnalysis(boyBirth, girlBirth);
+  const matchingNakshatrasAnalysis = calculateMatchingNakshatrasPair(boyBirth, girlBirth);
 
   return {
     boy: boyBirth,
@@ -3075,7 +3273,8 @@ function calculateKundliMatch(boyBirth, girlBirth) {
     shashtashtagamAnalysis: shashtashtagamAnalysis,
     chandranAnalysis: chandranAnalysis,
     guruAnalysis: guruAnalysis,
-    dasaSandhiAnalysis: dasaSandhiAnalysis
+    dasaSandhiAnalysis: dasaSandhiAnalysis,
+    matchingNakshatrasAnalysis: matchingNakshatrasAnalysis
   };
 }
 
@@ -3416,5 +3615,7 @@ module.exports = {
   calculateChandranMatchAnalysis,
   calculateGuruMatchAnalysis,
   calculateDasaSandhiAnalysis,
+  findMatchingNakshatrasForHoroscope,
+  calculateMatchingNakshatrasPair,
   getDailyPanchangam,
 };
